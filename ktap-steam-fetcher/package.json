@@ -1,0 +1,16 @@
+{
+  "name": "ktap-steam-fetcher",
+  "version": "1.0.0",
+  "description": "fetch steam games",
+  "main": "index.js",
+  "author": "rui",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "apps": "node index.js apps",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0"
+  }
+}

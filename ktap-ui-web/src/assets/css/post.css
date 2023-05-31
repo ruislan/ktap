@@ -1,0 +1,20 @@
+.post {
+    font-size: 14px;
+}
+
+.post h1 {
+    font-size: 18px;
+}
+
+.post h2 {
+    font-size: 16px;
+}
+
+.post img {
+    max-width: 100%;
+}
+
+.post a {
+    text-decoration: none;
+    color          : #ffffff;
+}

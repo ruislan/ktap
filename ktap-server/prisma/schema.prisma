@@ -1,0 +1,447 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // 注意：sqlite 还不支持 BigInt 的autoincrement，也不支持Json Type 以及 Full-text Search
+  url      = env("DATABASE_URL")
+}
+
+// 用户
+model User {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  name              String    @unique
+  password          String
+  phone             String?
+  avatar            String?
+  title             String?   @default("普通用户") //称号
+  gender            String?
+  bio               String?
+  location          String?
+  birthday          DateTime?
+  balance           BigInt    @default(0) // 余额
+  pwdResetCode      String?   @map("pwd_reset_code") // 重置密码
+  pwdResetExpireAt  DateTime? @map("pwd_reset_expire_at") // 重置密码过期时间
+  lastUpdatedNameAt DateTime? @map("last_updated_name_at")
+  isActivated       Boolean   @default(false) @map("is_activated")
+  isLocked          Boolean   @default(false) @map("is_locked")
+  isAdmin           Boolean   @default(false) @map("is_admin")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // ref
+  organizations Organization[]
+  reviews       Review[]
+  comments      ReviewComment[]
+  reviewGifts   ReviewGiftRef[] // review gifts 对评测送的礼物
+  reviewReports ReviewReport[] // 对评测的举报
+  followers     FollowUser[] // 关注的人
+}
+
+// 交易记录（避免关键词和容易引起歧义的词Transaction）
+// 保持简单，暂不考虑实物，都是虚拟物品交易，
+// 没有物流环节，也不存在订单和账户概念，没有交易对手，这里只和系统交易
+// 暂时也不支持退货
+model Trading {
+  id       Int    @id @default(autoincrement())
+  userId   Int    @map("user_id") // 购买人
+  target   String // 购买对象，Gift/Gear/...
+  targetId Int // 购买对象Id
+  amount   BigInt // 交易总金额
+
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model App {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique // 名称
+  slogan        String? // 标语 长度应该不能超过10个字符
+  summary       String? //简短说明 长度应该不能超过200个字符
+  description   String? //详细介绍，支持markdown 长度应该不能超过5000个字符
+  score         Float     @default(3.0) // 评分，默认3.0，根据评论的打分汇总评分到这里
+  releasedAt    DateTime? @map("released_at") //发布时间
+  legalText     String?   @map("legal_text") //法律声明
+  legalUrl      String?   @map("legal_url") //法律声明链接
+  downloadUrl   String?   @map("download_url") // 下载链接
+  downloadCount Int       @default(0) // 下载次数
+  isVisible     Boolean   @default(false) @map("is_visible")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // ref
+  languages   AppLanguages? // 支持的语言
+  platforms   AppPlatform[] // 平台 win或者os
+  media       AppMedia[] // 媒体资源，图
+  socialLinks AppSocialLink[] // 社交链接
+  developers  AppDeveloperRef[] // 开发商
+  publishers  AppPublisherRef[] // 发行商
+  reviews     Review[] // 评价
+  news        News[] // 新闻
+  awards      AppAward[] // 奖项
+  proReviews  ProReview[] // 专业评测
+  genres      AppGenreRef[] // 游戏类型
+  features    AppFeatureRef[] // 游戏功能
+  tags        AppUserTagRef[] // 用户标签
+  followers   FollowApp[] // 关注的人
+}
+
+// 支持的语言
+model AppLanguages {
+  id        Int      @id @default(autoincrement())
+  appId     Int      @unique
+  text      String   @default("") // 文本，用","分割，例如：中文,English,……
+  audio     String   @default("") // 音频，用","分割，例如：中文,English,……
+  caption   String   @default("") // 字幕，用","分割，例如：中文,English,……
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+// 应用的媒体资源
+model AppMedia {
+  id        Int      @id @default(autoincrement())
+  appId     Int      @map("app_id")
+  image     String // 图片地址/video海报地址
+  video     String? // 视频地址
+  thumbnail String? // 缩略图地址
+  usage     String // 媒体用途：头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）、截图（screenshot）
+  type      String   @default("image") // image, video
+  size      Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  category  String   @default("normal") // 标签分类：normal（自定义标签), genre(游戏类型，角色扮演，射击...)，feature(游戏功能，多人，单人，跨平台合作……)
+  colorHex  String?  @map("color_hex") // 标签颜色
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  appUserTagRefs AppUserTagRef[]
+  appGenreRefs   AppGenreRef[]
+  appFeatureRefs AppFeatureRef[]
+}
+
+// 应用类型多对多关系
+model AppGenreRef {
+  appId Int @map("app_id")
+  tagId Int @map("tag_id")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+  tag Tag @relation(fields: [tagId], references: [id])
+
+  @@id([appId, tagId])
+}
+
+// 应用功能多对多关系
+model AppFeatureRef {
+  appId Int @map("app_id")
+  tagId Int @map("tag_id")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+  tag Tag @relation(fields: [tagId], references: [id])
+
+  @@id([appId, tagId])
+}
+
+// 用户为应用打的标签
+model AppUserTagRef {
+  userId Int @map("user_id")
+  appId  Int @map("app_id")
+  tagId  Int @map("tag_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  tag Tag @relation(fields: [tagId], references: [id])
+  app App @relation(fields: [appId], references: [id])
+
+  @@id([appId, userId, tagId])
+}
+
+model Organization {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // 名称
+  type      String   @default("company") //类型， 个人/工作室/公司 individual/studio/company
+  summary   String? //简介
+  logo      String? // 品牌图片
+  site      String? //官网
+  country   String? // 地区，ISO 3166-1 三位字母代码，例如：中国 CHN
+  userId    Int?     @map("user_id") // 组织所有人，也可以不属于任何人
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  user          User?             @relation(fields: [userId], references: [id])
+  publishedApps AppPublisherRef[] // 该组织发行的游戏
+  developedApps AppDeveloperRef[] // 该组织开发的游戏
+}
+
+// 应用与发行商多对多关系
+model AppPublisherRef {
+  appId          Int          @map("app_id")
+  organizationId Int          @map("organization_id")
+  app            App          @relation(fields: [appId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@id([appId, organizationId])
+}
+
+// 应用与组织多对多关系
+model AppDeveloperRef {
+  appId          Int          @map("app_id")
+  organizationId Int          @map("organization_id")
+  app            App          @relation(fields: [appId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@id([appId, organizationId])
+}
+
+// 应用的社交链接
+model AppSocialLink {
+  id        Int      @id @default(autoincrement())
+  appId     Int      @map("app_id")
+  brand     String // 品牌：site, qq、wechat、github等等
+  name      String // 展示名称，例如：1群: xxxxxx；或者 公众号：xxxxx;
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+// 应用平台
+model AppPlatform {
+  id           Int      @id @default(autoincrement())
+  appId        Int      @map("app_id")
+  os           String // Windows, Macos, Linux, Android, iOS
+  requirements String // 这里可以简便处理，直接存储JSON数据，第一、电脑硬件固定就那些。第二、搜索只需要到OS即可，不需要到具体单个Requirement。第三、JSON可以动态变化结构
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+model AppAward {
+  id        Int      @id @default(autoincrement())
+  appId     Int      @map("app_id")
+  image     String // 图片地址
+  url       String? // 跳转地址
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+// 专业评测
+model ProReview {
+  id      Int     @id @default(autoincrement())
+  appId   Int     @map("app_id")
+  name    String // 评测机构名称
+  score   String // just for display
+  summary String // 评测总结或者内容概要
+  url     String? // 评测原文地址
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+// 评测
+model Review {
+  id           Int      @id @default(autoincrement())
+  appId        Int      @map("app_id")
+  userId       Int?     @map("user_id")
+  score        Float // 评分
+  content      String
+  allowComment Boolean  @default(true) @map("allow_comment") // 允许回复？
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app      App             @relation(fields: [appId], references: [id])
+  user     User?           @relation(fields: [userId], references: [id])
+  comments ReviewComment[]
+  images   ReviewImage[]
+  gifts    ReviewGiftRef[] // 所有的礼物
+  reports  ReviewReport[] // 举报
+
+  @@unique([appId, userId]) // 一个用户对一个app只能有一个评测
+}
+
+// 评测图片
+model ReviewImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  reviewId  Int      @map("review_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  // ref
+  review    Review   @relation(fields: [reviewId], references: [id])
+}
+
+// 评测回复
+model ReviewComment {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int?     @map("review_id") // 不强制关联review，A用户的review被删除之后，B用户的Comment不需要删除，在B的Timeline中还能看到自己的Comment
+  userId    Int      @map("user_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  review Review? @relation(fields: [reviewId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+}
+
+// 评测举报
+model ReviewReport {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int      @map("review_id")
+  userId    Int      @map("user_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // ref
+  review Review @relation(fields: [reviewId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+// 赞和踩
+model Thumb {
+  id        Int      @id @default(autoincrement())
+  target    String // 赞踩的对象，Review/Comment/News等
+  targetId  Int      @map("target_id") // 赞踩对象的Id
+  userId    Int      @map("user_id")
+  direction String   @default("up") //方向 up赞，down踩
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+// 礼物
+model Gift {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String // 描述
+  price       BigInt // 平台币单价
+  url         String // 礼物的图片地址
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // ref
+  reviews ReviewGiftRef[] // 有该礼物的评测
+}
+
+// 评测礼物多对多关系，用户可以对同一个review，多次送礼物
+model ReviewGiftRef {
+  id       Int @id @default(autoincrement())
+  giftId   Int @map("gift_id")
+  reviewId Int @map("review_id")
+  userId   Int @map("user_id")
+
+  // ref
+  review Review @relation(fields: [reviewId], references: [id])
+  gift   Gift   @relation(fields: [giftId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+// 应用的新闻
+model News {
+  id        Int      @id @default(autoincrement())
+  appId     Int      @map("app_id") // which app
+  title     String
+  summary   String
+  head      String? // 头图
+  banner    String? // 横幅
+  content   String
+  viewCount Int      @default(0) // 观看次数
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+}
+
+// 热搜
+model HotSearch {
+  id        Int      @id @default(autoincrement())
+  keyword   String   @unique // 关键词
+  count     Int // 计数
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+// 关注的游戏
+model FollowApp {
+  id         Int      @id @default(autoincrement())
+  followerId Int      @map("follower_id")
+  appId      Int      @map("app_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // ref
+  app App @relation(fields: [appId], references: [id])
+
+  @@unique([followerId, appId])
+}
+
+// 关注的人
+model FollowUser {
+  id         Int      @id @default(autoincrement())
+  followerId Int      @map("follower_id")
+  userId     Int      @map("user_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // ref
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([followerId, userId])
+}
+
+// 流行语
+model Buzzword {
+  id        Int      @id @default(autoincrement())
+  content   String // 内容
+  weight    Int      @default(0) // 权重
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+// 用户动态时间线
+model Timeline {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  target    String // 动态对象：评论、回复、关注
+  targetId  Int      @map("target_id") // 动态对象的ID
+  createdAt DateTime @default(now()) @map("created_at") // 发生时间
+}
+
+// 页面组件
+model PageWidget {
+  id        Int      @id @default(autoincrement())
+  title     String
+  type      String // CardList / TextList / Carousel
+  style     String   @default("Standard") // Standard(Four) / Two
+  target    String // 数据对象：App / Review
+  targetIds String // 对象的ID e.g. 1,2,3...
+  createdAt DateTime @default(now()) @map("created_at") // 发生时间
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+// Token的黑名单
+model TokenBlackList {
+  token     String   @id
+  createdAt DateTime @default(now()) @map("created_at")
+}

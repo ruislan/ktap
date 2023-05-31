@@ -1,0 +1,10 @@
+.fleet
+.idea
+.vscode
+node_modules
+docs
+.git
+prisma/*.db
+temp
+NOTE.md
+.gitignore

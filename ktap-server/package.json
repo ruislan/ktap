@@ -1,0 +1,40 @@
+{
+    "name": "ktap-server",
+    "version": "1.0.0",
+    "main": "server.js",
+    "author": "Rui",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "start:dev": "NODE_ENV=dev node server.js",
+        "start:prod": "NODE_ENV=production node server.js",
+        "seed:steam": "npx prisma db push --force-reset & npx prisma db seed -- --environment steam",
+        "seed": "npx prisma db push --force-reset & npx prisma db seed"
+    },
+    "prisma": {
+        "seed": "node prisma/seed.js"
+    },
+    "dependencies": {
+        "@fastify/compress": "^6.4.0",
+        "@fastify/cookie": "^8.3.0",
+        "@fastify/cors": "^8.3.0",
+        "@fastify/helmet": "^10.1.1",
+        "@fastify/jwt": "^7.0.0",
+        "@fastify/multipart": "^7.6.0",
+        "@fastify/sensible": "^5.2.0",
+        "@fastify/static": "^6.10.2",
+        "@prisma/client": "^4.15.0",
+        "ajv-errors": "^3.0.0",
+        "bcrypt": "^5.1.0",
+        "cheerio": "^1.0.0-rc.12",
+        "dotenv": "^16.0.3",
+        "fastify": "^4.17.0",
+        "nodemailer": "^6.9.1",
+        "pino-pretty": "^9.1.1",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "chokidar": "^3.5.3",
+        "prisma": "^4.15.0"
+    }
+}
