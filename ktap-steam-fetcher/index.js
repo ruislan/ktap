@@ -47,6 +47,8 @@ const fetchWithRetry = async (url, options, retryCount = 5) => {
 const main = async () => {
     // parse args
     const cmd = process.argv[2];
+    // test files
+    if (!fs.existsSync(FILE_FETCHED_GAME_LIST)) fs.writeFileSync(FILE_FETCHED_GAME_LIST, '');
     if (cmd === 'apps') {
         await fetchAppList();
     } else {
