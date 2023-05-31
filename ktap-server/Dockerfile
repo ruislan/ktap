@@ -9,8 +9,9 @@ COPY . /usr/src/ktap-server
 WORKDIR /usr/src/ktap-server
 RUN yarn install
 RUN yarn prisma db push
-# RUN yarn prisma db seed
-RUN node prisma/seed.steam.js
+# RUN yarn seed
+RUN yarn seed:steam
+
 
 EXPOSE 8000
 ENTRYPOINT ["node", "server.js"]
