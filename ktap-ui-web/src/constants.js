@@ -86,7 +86,7 @@ export const Organization = {
             { label: '个人', id: 'individual' },
         ]
     },
-}
+};
 
 export const Tag = {
     category: {
@@ -102,7 +102,47 @@ export const Tag = {
             { label: '标签', id: 'normal' },
         ]
     },
-}
+};
+
+export const PageWidget = {
+    target: {
+        ids: {
+            App: 'App',
+            Review: 'Review',
+            Tag: 'Tag'
+        },
+        getDisplayLabel(id) {
+            return this.options.find(item => item.id === id).label;
+        },
+        options: [
+            { label: '游戏', id: 'App' },
+            { label: '评测', id: 'Review' },
+            { label: '标签', id: 'Tag' },
+        ]
+    },
+    style: {
+        ids: {
+            Standard: 'Standard',
+            Two: 'Two',
+        }
+    },
+    type: {
+        ids: {
+            Carousel: 'Carousel',
+            CardList: 'CardList',
+            TextList: 'TextList',
+        },
+        getDisplayLabel(id) {
+            return this.options.find(item => item.id === id).label;
+        },
+        options: [
+            { label: '旋转木马', id: 'Carousel-Standard' },
+            { label: '卡片列表-四联布局', id: 'CardList-Standard' },
+            { label: '卡片列表-左右布局', id: 'CardList-Two' },
+            { label: '文本列表', id: 'TextList-Standard' },
+        ]
+    }
+};
 
 export const Messages = {
     authFail: '您输入的邮箱或密码不正确',

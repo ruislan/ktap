@@ -1,9 +1,10 @@
-import { AppMedia, LIMIT_CAP } from "../../constants.js";
+import { AppMedia, LIMIT_CAP, Pages } from "../../constants.js";
 
 const discover = async (fastify, opts) => {
     // 编辑推荐
     fastify.get('/', async function (req, reply) {
         const widgets = await fastify.db.pageWidget.findMany({
+            where: { page: Pages.discover, },
             select: { title: true, type: true, style: true, target: true, targetIds: true, }
         });
         for await (const widget of widgets) {

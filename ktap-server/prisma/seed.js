@@ -1015,13 +1015,13 @@ const reviewGiftRefs = [
 
 // 探索页面的组件
 const discoverPageWidgets = [
-    { title: '编辑推荐', type: 'Carousel', target: 'App', targetIds: [1, 2, 3, 4].join(',') },
-    { title: '关注最多', type: 'CardList', target: 'App', targetIds: [1, 2, 3, 4, 5].join(',') },
-    { title: '精选分类', type: 'TextList', target: 'Tag', targetIds: [1, 2, 3, 4, 5, 7, 8, 9].join(',') },
-    { title: '新鲜上架', type: 'CardList', target: 'App', targetIds: [1, 2, 3, 4, 5].join(',') },
-    { title: '热评推荐', type: 'CardList', target: 'Review', targetIds: [1, 3, 5, 6].join(',') },
-    { title: '厂商赞助', type: 'CardList', style: 'Two', target: 'App', targetIds: [1, 2].join(',') },
-    { title: '随机推荐', type: 'CardList', target: 'App', targetIds: [1, 2, 3, 4, 5].join(',') },
+    { page: 'discover', title: '编辑推荐', type: 'Carousel', target: 'App', targetIds: [1, 2, 3, 4].join(',') },
+    { page: 'discover', title: '关注最多', type: 'CardList', target: 'App', targetIds: [1, 2, 3, 4, 5].join(',') },
+    { page: 'discover', title: '精选分类', type: 'TextList', target: 'Tag', targetIds: [1, 2, 3, 4, 5, 7, 8, 9].join(',') },
+    { page: 'discover', title: '新鲜上架', type: 'CardList', target: 'App', targetIds: [1, 2, 3, 4, 5].join(',') },
+    { page: 'discover', title: '热评推荐', type: 'CardList', target: 'Review', targetIds: [1, 3, 5, 6].join(',') },
+    { page: 'discover', title: '厂商赞助', type: 'CardList', style: 'Two', target: 'App', targetIds: [1, 2].join(',') },
+    { page: 'discover', title: '随机推荐', type: 'CardList', target: 'App', targetIds: [1, 2, 3, 4, 5].join(',') },
 ].map((v, index) => {
     v.id = index + 1;
     return v;

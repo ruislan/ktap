@@ -20,6 +20,10 @@ export const USER_CHANGE_NAME_INTERVAL = 1000 * 60 * 60 * 24 * 30; // 30 days
 export const REVIEW_IMAGE_COUNT_LIMIT = 3; // 3 images
 export const LIMIT_CAP = 50; // 取数据最大的数量
 
+export const Pages = {
+    discover: 'discover',
+};
+
 export const AppMedia = {
     // 媒体用途：头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）
     usage: {

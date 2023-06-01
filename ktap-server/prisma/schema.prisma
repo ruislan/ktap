@@ -431,6 +431,7 @@ model Timeline {
 // 页面组件
 model PageWidget {
   id        Int      @id @default(autoincrement())
+  page      String // 所属页面， 目前就只有discover
   title     String
   type      String // CardList / TextList / Carousel
   style     String   @default("Standard") // Standard(Four) / Two

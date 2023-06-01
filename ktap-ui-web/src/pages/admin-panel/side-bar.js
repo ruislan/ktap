@@ -18,6 +18,7 @@ function SideBar() {
                     { title: '标签管理', itemId: '/admin-panel/tags' },
                     { title: '礼物管理', itemId: '/admin-panel/gifts' },
                     { title: '流行语管理', itemId: '/admin-panel/buzzwords' },
+                    { title: '探索页面管理', itemId: '/admin-panel/discover' },
                 ]}
                 activeItemId={location.pathname}
                 onChange={({ event, item }) => {

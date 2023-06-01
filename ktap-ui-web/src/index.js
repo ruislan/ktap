@@ -53,6 +53,7 @@ import AdminPanelOrganizations from './pages/admin-panel/organizations';
 import AdminPanelTags from './pages/admin-panel/tags';
 import AdminPanelBuzzwords from './pages/admin-panel/buzzwords';
 import AdminPanelGifts from './pages/admin-panel/gifts';
+import AdminPanelDiscover from './pages/admin-panel/discover';
 
 
 const engine = new Styletron();
@@ -131,6 +132,7 @@ root.render(
                   <Route path='organizations' element={<AdminPanelOrganizations />} />
                   <Route path='gifts' element={<AdminPanelGifts />} />
                   <Route path='buzzwords' element={<AdminPanelBuzzwords />} />
+                  <Route path='discover' element={<AdminPanelDiscover />} />
                 </Route>
                 <Route path='/panic' element={<NotWork />} />
                 <Route path='*' element={<NotFound />} />
