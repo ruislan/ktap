@@ -144,7 +144,7 @@ function Carousel({ title, dataList }) {
                                                 navigate(`/tags/${tag.name}`);
                                             }}>{tag.name}</Tag>)}
                                         </Block>
-                                        <LabelSmall color='primary300'>{data.meta.reviews} 条评测</LabelSmall>
+                                        <LabelSmall color='primary300'>{data.meta?.reviews} 条评测</LabelSmall>
                                     </Block>
                                 </Block>
                             </Link>

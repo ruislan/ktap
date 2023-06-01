@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_MAIN } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_MAIN, PageWidget } from '../../constants';
 import TextList from './text-list';
 import Carousel from './carousel';
 import CardListApp from './card-list-app';
@@ -43,30 +43,48 @@ function Discover() {
                     let dataList = [];
                     switch (component.type) {
                         case 'Carousel':
-                            dataList = component.data?.map(item => {
-                                return { ...item, link: `/apps/${item.id}`, image: item.media.landscape.image, tags: [...item.genres, ...item.features] };
-                            });
-                            return <Carousel key={index} title={component.title} dataList={dataList} />;
+                            if (PageWidget.target.ids.App === component.dataType) {
+                                dataList = component.data?.map(item => {
+                                    return { ...item, link: `/apps/${item.id}`, image: item.media?.landscape?.image, tags: [...item.genres, ...item.features] };
+                                });
+                                return <Carousel key={index} title={component.title} dataList={dataList} />;
+                            }
+                            if (PageWidget.target.ids.Review === component.dataType) {
+                                dataList = component.data?.map(item => {
+                                    return { ...item.app, link: `/apps/${item.id}`, image: item.app.media.landscape.image, tags: [...item.app.genres, ...item.app.features] };
+                                });
+                                return <Carousel key={index} title={component.title} dataList={dataList} />;
+                            }
+                            return null;
                         case 'CardList':
-                            if ('App' === component.dataType) {
+                            if (PageWidget.target.ids.App === component.dataType) {
                                 dataList = component.data?.map(item => {
                                     return { ...item, link: `/apps/${item.id}`, image: item.media.head.image, tags: [...item.genres, ...item.features] };
                                 });
                                 return <CardListApp key={index} title={component.title} dataList={dataList} perViewSize={'Two' === component.style ? 2 : 4} />;
                             }
-                            if ('Review' === component.dataType) {
+                            if (PageWidget.target.ids.Review === component.dataType) {
                                 dataList = component.data?.map(item => {
                                     return { ...item, link: `/reviews/${item.id}`, image: item.app.media.head.image };
                                 });
                                 return <CardListReview key={index} title={component.title} dataList={dataList} />;
                             }
-                            return <></>;
+                            return null;
                         case 'TextList':
-                            dataList = component.data?.map(item => {
-                                return { ...item, link: `/tags/${item.name}` };
-                            });
-                            return <TextList key={index} title={component.title} dataList={dataList} />
-                        default: return <></>;
+                            if (PageWidget.target.ids.App === component.dataType) {
+                                dataList = component.data?.map(item => {
+                                    return { ...item, link: `/apps/${item.id}` };
+                                });
+                                return <Carousel key={index} title={component.title} dataList={dataList} />;
+                            }
+                            if (PageWidget.target.ids.Tag === component.dataType) {
+                                dataList = component.data?.map(item => {
+                                    return { ...item, link: `/tags/${item.name}` };
+                                });
+                                return <TextList key={index} title={component.title} dataList={dataList} />
+                            }
+                            return null;
+                        default: return null;
                     }
                 })
             }
