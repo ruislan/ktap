@@ -15,7 +15,6 @@
         "seed": "node prisma/seed.js"
     },
     "dependencies": {
-        "@fastify/compress": "^6.4.0",
         "@fastify/cookie": "^8.3.0",
         "@fastify/cors": "^8.3.0",
         "@fastify/helmet": "^10.1.1",
@@ -29,6 +28,7 @@
         "cheerio": "^1.0.0-rc.12",
         "dotenv": "^16.0.3",
         "fastify": "^4.17.0",
+        "node-cron": "^3.0.2",
         "nodemailer": "^6.9.1",
         "pino-pretty": "^9.1.1",
         "uuid": "^9.0.0"

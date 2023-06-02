@@ -44,7 +44,6 @@ function AdminPanelDiscover() {
             const widget = widgets[index];
             const url = widget.id ? `/admin/discover/${widget.id}` : '/admin/discover';
             const method = widget.id ? 'PUT' : 'POST';
-            console.log(method);
             const res = await fetch(url, { method, body: JSON.stringify(widget), headers: { 'Content-Type': 'application/json' } });
             if (res.ok) {
                 if (method === 'POST') {
@@ -116,7 +115,6 @@ function AdminPanelDiscover() {
                                 type: PageWidget.type.ids.CardList,
                                 title: '', target: PageWidget.target.ids.App, targetIds: '', style: PageWidget.style.ids.Standard,
                             });
-                            console.log(newWidgets);
                             return newWidgets;
                         });
                     }}><Plus width={16} height={16} title='增加组件' /></Button>
@@ -184,14 +182,15 @@ function AdminPanelDiscover() {
                                     </Block>
                                 </Block>
                                 <FormControl label='内容' caption='ID列表，逗号分隔'>
-                                    <Input size='compact' placeholder='1,2,3...' value={widget.targetIds} onChange={e => {
-                                        const value = e.target.value;
-                                        setWidgets(prev => {
-                                            const newWidgets = [...prev];
-                                            newWidgets[index].targetIds = value;
-                                            return newWidgets;
-                                        })
-                                    }} />
+                                    <Input size='compact' placeholder='1,2,3...' value={widget.targetIds}
+                                        onChange={e => {
+                                            const value = e.target.value;
+                                            setWidgets(prev => {
+                                                const newWidgets = [...prev];
+                                                newWidgets[index].targetIds = value;
+                                                return newWidgets;
+                                            })
+                                        }} />
                                 </FormControl>
                                 <Block display='flex' gridGap='scale300'>
                                     <Button size='compact' kind='tertiary' onClick={e => {

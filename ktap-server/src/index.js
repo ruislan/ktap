@@ -9,6 +9,7 @@ import { Keys } from './constants.js';
 
 import apiRoutes from './api.js';
 import adminRoutes from './admin.js'
+import schedule from './schedule.js';
 
 import userSchema from './json-schema/user.js';
 
@@ -40,6 +41,9 @@ export default async function (fastify, opts, next) {
             signed: true
         }
     });
+
+    // schedule
+    await fastify.register(schedule);
 
     // routes
     await fastify.register(apiRoutes, { prefix: '/api' });

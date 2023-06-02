@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import fastify from 'fastify';
 import ajvErrors from 'ajv-errors';
 import fastifyStatic from '@fastify/static';
-import fastifyCompress from '@fastify/compress';
 
 import prismaPlugin from './src/plugins/prisma.js';
 import bcryptPlugin from './src/plugins/bcrypt.js';
@@ -23,7 +22,7 @@ const main = async () => {
     // setup server
     const server = fastify({
         logger: {
-            transport: process.env.NODE_ENV === 'dev' ? { target: 'pino-pretty' } : undefined,
+            transport: { target: 'pino-pretty' },
             level: process.env.NODE_ENV === 'production' ? 'warn' : 'debug'
         },
         ajv: {
@@ -34,7 +33,6 @@ const main = async () => {
 
     // setup global plugins
     await server.register(fastifyStatic, { root: path.join(process.cwd(), './public'), prefix: '/public', });
-    await server.register(fastifyCompress);
     await server.register(prismaPlugin);
     await server.register(bcryptPlugin);
     await server.register(storagePlugin, { base: process.env.STORAGE_DISK_BASE });
@@ -68,8 +66,8 @@ const main = async () => {
 
     // print routes
     server.ready(() => {
-        console.log(server.printPlugins());
-        console.log(server.printRoutes({ commonPrefix: false }));
+        server.log.info('Server plugins: \n' + server.printPlugins());
+        server.log.info('Server routes: \n' + server.printRoutes({ commonPrefix: false }));
     });
 
     // start server

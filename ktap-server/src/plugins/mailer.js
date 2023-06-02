@@ -1,19 +1,20 @@
 import fp from 'fastify-plugin';
 import { createTransport } from 'nodemailer';
+
 /*
- options: {
-   defaults: { from: 'John Doe <john.doe@example.tld>' },
-  transport: {
-    host: 'smtp.example.tld',
-    port: 465,
-    secure: true, // use TLS
-    auth: {
-      user: 'john.doe',
-      pass: 'super strong password'
+options: {
+    defaults: { from: 'John Doe <john.doe@example.tld>' },
+    transport: {
+        host: 'smtp.example.tld',
+        port: 465,
+        secure: true, // use TLS
+        auth: {
+        user: 'john.doe',
+        pass: 'super strong password'
+        }
     }
-  }
 }
- */
+*/
 const mailerPlugin = async (fastify, opts, next) => {
     const { defaults, transport, } = opts;
     transport.port = Number(transport.port);
