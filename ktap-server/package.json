@@ -28,6 +28,7 @@
         "cheerio": "^1.0.0-rc.12",
         "dotenv": "^16.0.3",
         "fastify": "^4.17.0",
+        "ms": "^2.1.3",
         "node-cron": "^3.0.2",
         "nodemailer": "^6.9.1",
         "pino-pretty": "^9.1.1",
