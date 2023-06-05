@@ -5,10 +5,10 @@ import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Button } from 'baseui/button';
-import { LAYOUT_MAIN } from '../../constants';
+import { LAYOUT_MAIN, Trading } from '../../constants';
 
 function TradingHistory() {
-    const limit = 2;
+    const limit = 20;
     const [isLoading, setIsLoading] = React.useState(false);
     const [data, setData] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
@@ -44,10 +44,13 @@ function TradingHistory() {
                     {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row.createdAt).format('YYYY 年 MM 月 DD 日 HH:mm:ss')}</LabelSmall>}
                 </TableBuilderColumn>
                 <TableBuilderColumn header='内容'>
-                    {row => <LabelSmall>{row.target === 'Gift' ? '赠送礼物' : ''}</LabelSmall>}
+                    {row => <LabelSmall>{Trading.target.getContentLabel(row.target)}</LabelSmall>}
+                </TableBuilderColumn>
+                <TableBuilderColumn header='类型'>
+                    {row => <LabelSmall>{Trading.type.getDisplayLabel(row.type)}</LabelSmall>}
                 </TableBuilderColumn>
                 <TableBuilderColumn header='总计'>
-                    {row => <LabelSmall>{row.amount}</LabelSmall>}
+                    {row => <LabelSmall>{Trading.type.getDirectionLabel(row.type)} {row.amount}</LabelSmall>}
                 </TableBuilderColumn>
             </TableBuilder>
             {isLoading && <Block display='flex' justifyContent='center' marginTop='scale900' marginBottom='scale900'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>}

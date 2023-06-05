@@ -72,6 +72,44 @@ export const SocialLinks = {
     },
 };
 
+export const Trading = {
+    type: {
+        ids: {
+            buy: 'buy',
+            give: 'give',
+        },
+        getDisplayLabel(id) {
+            switch (id) {
+                case this.ids.buy: return '消费';
+                case this.ids.give: return '赠送';
+                default: return '';
+            }
+        },
+        getDirectionLabel(id) {
+            switch (id) {
+                case this.ids.buy: return '-';
+                case this.ids.give: return '+';
+                default: return '';
+            }
+        },
+    },
+    target: {
+        ids: {
+            User: 'User',
+            Gift: 'Gift',
+        },
+        getContentLabel(id) {
+            switch (id) {
+                case this.ids.User:
+                    return '用户/平台';
+                case this.ids.Gift:
+                    return '礼物';
+                default: break;
+            }
+        },
+    }
+};
+
 export const Organization = {
     type: {
         individual: 'individual',

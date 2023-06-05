@@ -20,7 +20,7 @@ function Header() {
         if (isAuthenticated()) {
             const items = [
                 { label: '个人中心', href: `/users/${user?.id}` },
-                { label: '消费历史', href: `/tradings/history` },
+                { label: '交易历史', href: `/tradings/history` },
                 { label: '设置', href: '/settings' },
             ];
             if (isAdmin()) items.push({ label: '管理', href: '/admin-panel' });

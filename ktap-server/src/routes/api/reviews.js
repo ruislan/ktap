@@ -1,5 +1,5 @@
-import { AppMedia, LIMIT_CAP, REVIEW_IMAGE_COUNT_LIMIT } from "../../constants.js";
-import { authenticate } from "../../lib/auth.js";
+import { AppMedia, LIMIT_CAP, REVIEW_IMAGE_COUNT_LIMIT, Trading } from '../../constants.js';
+import { authenticate } from '../../lib/auth.js';
 
 // params
 //  db: database orm
@@ -302,7 +302,7 @@ const reviews = async (fastify, opts) => {
                 });
                 // 检查余额， 有问题就回滚事务
                 if (updatedUser.balance < 0) throw new Error('insufficient balance');
-                await tx.trading.create({ data: { userId, target: 'Gift', targetId: giftId, amount: gift.price, } }); // 生成交易
+                await tx.trading.create({ data: { userId, target: 'Gift', targetId: giftId, amount: gift.price, type: Trading.type.buy } }); // 生成交易
                 const giftRef = await tx.reviewGiftRef.create({ data: { userId, giftId, reviewId } }); // 创建关系
                 await tx.timeline.create({ data: { userId, target: 'ReviewGiftRef', targetId: giftRef.id } }); // 创建动态
             });

@@ -1,3 +1,5 @@
+import { Trading } from '../../constants.js';
+
 const home = async function (fastify, opts) {
     fastify.get('/', async function (req, reply) { return { version: '1.0.0' }; });
     fastify.get('/stats', async function (req, reply) {
@@ -39,7 +41,8 @@ const home = async function (fastify, opts) {
             where: {
                 createdAt: {
                     gte: new Date(Date.now() - days * 24 * 60 * 60 * 1000),
-                }
+                },
+                type: Trading.type.buy,
             },
             _sum: {
                 amount: true,

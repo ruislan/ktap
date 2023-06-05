@@ -7,6 +7,7 @@ import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { LabelSmall } from 'baseui/typography';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
+import { Trading } from '../../../constants';
 
 function UserDetailTradings({ data }) {
     const limit = 10;
@@ -70,8 +71,11 @@ function UserDetailTradings({ data }) {
                         <TableBuilderColumn header='对象ID'>
                             {row => <LabelSmall>{row.targetId}</LabelSmall>}
                         </TableBuilderColumn>
-                        <TableBuilderColumn header='消费'>
-                            {row => <LabelSmall>{row.amount}</LabelSmall>}
+                        <TableBuilderColumn header='类型'>
+                            {row => <LabelSmall>{Trading.type.getDisplayLabel(row.type)}</LabelSmall>}
+                        </TableBuilderColumn>
+                        <TableBuilderColumn header='金额'>
+                            {row => <LabelSmall>{Trading.type.getDirectionLabel(row.type)} {row.amount}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
                             {row => <LabelSmall>{dayjs(row?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}

@@ -111,12 +111,20 @@ const user = async (fastify, opts) => {
         let data = [];
         let count = 0;
         if (take > 0) {
-            count = await fastify.db.trading.count({ where: { userId, } });
+            const whereCondition = {
+                OR: [
+                    { userId, },
+                    {
+                        AND: {
+                            target: 'User',
+                            targetId: userId,
+                        }
+                    }
+                ]
+            };
+            count = await fastify.db.trading.count({ where: whereCondition });
             data = await fastify.db.trading.findMany({
-                where: { userId },
-                select: {
-                    id: true, amount: true, target: true, targetId: true, createdAt: true,
-                },
+                where: whereCondition,
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take

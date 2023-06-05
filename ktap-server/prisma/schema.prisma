@@ -45,10 +45,11 @@ model User {
 // 暂时也不支持退货
 model Trading {
   id       Int    @id @default(autoincrement())
-  userId   Int    @map("user_id") // 购买人
-  target   String // 购买对象，Gift/Gear/...
-  targetId Int // 购买对象Id
+  userId   Int    @map("user_id") // 付款人
+  target   String // 付款对象，User/Gift/Gear/...
+  targetId Int // 付款对象Id
   amount   BigInt // 交易总金额
+  type     String // 交易类型 购买/赠送
 
   createdAt DateTime @default(now()) @map("created_at")
 }

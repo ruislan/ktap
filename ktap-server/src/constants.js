@@ -24,6 +24,13 @@ export const Pages = {
     discover: 'discover',
 };
 
+export const Trading = {
+    type: {
+        buy: 'buy', // 购买/消费
+        give: 'give', // 赠送
+    }
+};
+
 export const AppMedia = {
     // 媒体用途：头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）
     usage: {

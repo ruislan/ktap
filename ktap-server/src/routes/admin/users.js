@@ -1,4 +1,4 @@
-import { LIMIT_CAP } from "../../constants.js";
+import { LIMIT_CAP, Trading } from '../../constants.js';
 
 const users = async function (fastify, opts) {
     fastify.get('', async (req, reply) => {
@@ -58,8 +58,14 @@ const users = async function (fastify, opts) {
                 balance: { increment: amount, }
             }
         });
-        // TODO 思考一下，这里是不是应该有一个交易信息，由系统赠与给用户
-        // 后续甚至出一个账户体系，由系统铸造之后，转账给用户，这里就直接是一条交易信息即可？
+        if (amount > 0) {
+            // XXX 现在就直接一条交易信息即可，后续可以推出一个账户体系，由系统铸造之后，转账给用户
+            await fastify.db.trading.create({
+                data: {
+                    userId: 0, target: 'User', targetId: id, amount, type: Trading.type.give,
+                },
+            });
+        }
         return reply.code(204).send();
     });
 
@@ -132,10 +138,20 @@ const users = async function (fastify, opts) {
         const id = Number(req.params.id) || 0;
         const skip = Math.max(0, Number(req.query.skip) || 0);
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const count = await fastify.db.trading.count({ where: { userId: id } });
+        const whereCondition = {
+            OR: [
+                { userId: id, },
+                {
+                    AND: {
+                        target: 'User',
+                        targetId: id,
+                    }
+                }
+            ]
+        };
+        const count = await fastify.db.trading.count({ where: whereCondition });
         const data = await fastify.db.trading.findMany({
-            where: { userId: id, },
-            select: { id: true, target: true, targetId: true, amount: true, createdAt: true },
+            where: whereCondition,
             orderBy: { createdAt: 'desc' },
             take: limit,
             skip,
