@@ -36,19 +36,23 @@ SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果
 
 ## 截图
 
-<div>
-    <img src="./docs/screenshots/index.png" width="25%">
-    <img src="./docs/screenshots/discover.png" width="25%">
-    <img src="./docs/screenshots/rank.png" width="25%">
-    <img src="./docs/screenshots/tag.png" width="25%">
-    <img src="./docs/screenshots/app-detail.png" width="25%">
-    <img src="./docs/screenshots/user-center.png" width="25%">
-    <img src="./docs/screenshots/review.png" width="25%">
-    <img src="./docs/screenshots/gift.png" width="25%">
-    <img src="./docs/screenshots/search.png" width="25%">
-    <img src="./docs/screenshots/login.png" width="25%">
-    <img src="./docs/screenshots/profile.png" width="25%">
-    <img src="./docs/screenshots/admin-panel.png" width="25%">
+<div style="display:grid;  grid-template-columns:1fr 1fr 1fr 1fr; grid-gap: 4px;">
+    <img src="./docs/screenshots/index.png"/>
+    <img src="./docs/screenshots/discover.png"/>
+    <img src="./docs/screenshots/rank.png"/>
+    <img src="./docs/screenshots/tag.png"/>
+    <img src="./docs/screenshots/app-detail.png"/>
+    <img src="./docs/screenshots/news.png"/>
+    <img src="./docs/screenshots/app-news.png"/>
+    <img src="./docs/screenshots/news-detail.png"/>
+    <img src="./docs/screenshots/user-center.png"/>
+    <img src="./docs/screenshots/review.png"/>
+    <img src="./docs/screenshots/gift.png"/>
+    <img src="./docs/screenshots/search.png"/>
+    <img src="./docs/screenshots/login.png"/>
+    <img src="./docs/screenshots/profile.png"/>
+    <img src="./docs/screenshots/admin-panel.png"/>
+    <img src="./docs/screenshots/organizations.png"/>
 </div>
 
 ## 快速开始
@@ -85,10 +89,10 @@ docker-compose up
 
 ### 两个数据初始化方式
 
-* 通过命令"yarn seed" 进行数据初始化。这个文件初始化少量数据，但是涵盖了几乎所有用到的数据，例如用户、游戏、评测、回复、标签、礼物等等等等。可以用于开发和测试功能。
-* 通过命令"yarn seed:steam" 进行数据初始化，这个文件初始化的内容包括1个Admin用户和一些系统正常运行的数据和以及gameList中所有的steam游戏(通过steam api下载)，并且在服务启动后，通过/admin-panel，在管理站点，在用户、评测、回复等管理页面下，可以看到一个🚀的按钮，点击即可进行疯狂的数据生成，首先可以生成几十万用户，然后选择几个用户生成几十万个评测，再生成上百万个回复。这样网站看起来就生机勃勃，可以用于各种玩耍。
+* 通过命令"yarn seed" 进行数据初始化。将初始化少量数据，但是涵盖了几乎所有用到的场景，例如用户、游戏、评测、回复、标签、礼物等等等等。可以用于开发和测试功能。
+* 通过命令"yarn seed:steam" 进行数据初始化，将初始化的内容包括基础数据和用户以及gameList中所有的steam游戏(通过steam api下载)，并且在服务启动后，通过/admin-panel，在管理站点，在用户、评测、回复等管理页面下，可以看到一个🚀的按钮，点击即可进行疯狂的数据生成，首先可以生成几十万用户，然后选择几个用户生成几十万个评测，再生成上百万个回复。这样网站看起来就生机勃勃，可以用于各种玩耍。
 
-注意：两种数据初始化都会清空数据重新开始。
+注意：两种数据初始化都会清空数据库并重新初始化。
 
 ### 跨域问题
 
@@ -96,9 +100,10 @@ docker-compose up
 
 ## Next
 
-* 还有不少功能和想法没有做进去，会持续做进去
-* BaseWeb已经快1年没有更新了，我又找到一个比较契合这类主题的UI，是[NextUI](https://nextui.org)，但是第一版还没有release，期待中
-* 持续优化
+* 还有不少功能和想法没有做进去，会持续做进去。
+* BaseWeb已经快1年没有更新了，找到一个比较惊喜的UI[NextUI](https://nextui.org)，不过其第一版还没有release，release 之后会酌情替换。
+* 数据库新增MySQL或PG
+* 持续重构和优化。
 
 ## 致敬
 

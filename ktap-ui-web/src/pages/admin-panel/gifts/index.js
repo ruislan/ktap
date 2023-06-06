@@ -3,13 +3,14 @@ import dayjs from 'dayjs';
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
-import { Input } from 'baseui/input';
+import { Input, StatefulInput } from 'baseui/input';
 import { HeadingSmall, LabelSmall, } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
+import { StatefulPopover } from 'baseui/popover';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 import { EditLine, TrashBin, ExternalLink } from '../../../components/icons';
 import { MOBILE_BREAKPOINT } from '../../../constants';
@@ -22,6 +23,8 @@ function AdminPanelGifts() {
     const [isLoading, setIsLoading] = React.useState(true);
     const [gifts, setGifts] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
+    const [total, setTotal] = React.useState(0);
+    const pageInputRef = React.useRef(null);
     const [hasNext, setHasNext] = React.useState(false);
     const [hasPrev, setHasPrev] = React.useState(false);
     const [keyword, setKeyword] = React.useState('');
@@ -39,6 +42,7 @@ function AdminPanelGifts() {
             if (res.ok) {
                 const json = await res.json();
                 setGifts(json.data);
+                setTotal(json.count);
                 setHasNext(json.skip + json.limit < json.count);
                 setHasPrev(json.skip + json.limit > json.limit);
             }
@@ -104,7 +108,7 @@ function AdminPanelGifts() {
                     <form className={css({ display: 'flex', alignItems: 'center', gap: theme.sizing.scale300, [MOBILE_BREAKPOINT]: { width: '100%' } })}
                         onSubmit={e => {
                             e.preventDefault();
-                            fetchData();
+                            skip === 0 ? fetchData() : setSkip(0);
                         }}>
                         <Block flex='1'><Input inputRef={keywordRef} value={keyword} size='compact' placeholder='搜索标题/概括/内容...' onChange={e => setKeyword(e.target.value)} clearOnEscape clearable /></Block>
                         <Block><Button kind='secondary' size='compact' type='submit'>搜索</Button></Block>
@@ -125,6 +129,26 @@ function AdminPanelGifts() {
                         onClick={() => setSkip(prev => prev + limit)}>
                         <ArrowRight width={16} title='下一页' />
                     </Button>
+                    <Block display='flex' whiteSpace='nowrap'>
+                        <StatefulPopover focusLock placement='left'
+                            content={({ close }) => (
+                                <Block display='flex' whiteSpace='nowrap' gridGap='scale0'>
+                                    <StatefulInput type='number' inputRef={pageInputRef} min={1} max={Math.ceil(total / limit)} size='mini' initialState={{ value: skip / limit + 1 }} placeholder='页码' />
+                                    <Button size='mini' kind='default' onClick={e => {
+                                        e.preventDefault();
+                                        const page = Math.min(parseInt(pageInputRef.current.value), Math.ceil(total / limit));
+                                        setSkip((page - 1) * limit);
+                                        close();
+                                    }}>跳转</Button>
+                                </Block>
+                            )}
+                        >
+                            <Button size='mini' kind='secondary' isLoading={isLoading} shape='pill'
+                                onClick={() => setSkip(prev => prev - limit)}>
+                                {Math.ceil(skip / limit) + 1} / {Math.ceil(total / limit)}
+                            </Button>
+                        </StatefulPopover>
+                    </Block>
                 </Block>
             </Block>
             {isLoading
