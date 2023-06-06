@@ -36,24 +36,32 @@ SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果
 
 ## 截图
 
-<div style="display:grid;  grid-template-columns:1fr 1fr 1fr 1fr; grid-gap: 4px;">
-    <img src="./docs/screenshots/index.png"/>
-    <img src="./docs/screenshots/discover.png"/>
-    <img src="./docs/screenshots/rank.png"/>
-    <img src="./docs/screenshots/tag.png"/>
-    <img src="./docs/screenshots/app-detail.png"/>
-    <img src="./docs/screenshots/news.png"/>
-    <img src="./docs/screenshots/app-news.png"/>
-    <img src="./docs/screenshots/news-detail.png"/>
-    <img src="./docs/screenshots/user-center.png"/>
-    <img src="./docs/screenshots/review.png"/>
-    <img src="./docs/screenshots/gift.png"/>
-    <img src="./docs/screenshots/search.png"/>
-    <img src="./docs/screenshots/login.png"/>
-    <img src="./docs/screenshots/profile.png"/>
-    <img src="./docs/screenshots/admin-panel.png"/>
-    <img src="./docs/screenshots/organizations.png"/>
-</div>
+<table>
+    <tr>
+        <td><img src="./docs/screenshots/index.png"/></td>
+        <td><img src="./docs/screenshots/discover.png"/></td>
+        <td><img src="./docs/screenshots/rank.png"/></td>
+        <td><img src="./docs/screenshots/tag.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/screenshots/app-detail.png"/></td>
+        <td><img src="./docs/screenshots/news.png"/></td>
+        <td><img src="./docs/screenshots/app-news.png"/></td>
+        <td><img src="./docs/screenshots/news-detail.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/screenshots/user-center.png"/></td>
+        <td><img src="./docs/screenshots/review.png"/></td>
+        <td><img src="./docs/screenshots/gift.png"/></td>
+        <td><img src="./docs/screenshots/search.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/screenshots/login.png"/></td>
+        <td><img src="./docs/screenshots/profile.png"/></td>
+        <td><img src="./docs/screenshots/admin-panel.png"/></td>
+        <td><img src="./docs/screenshots/organizations.png"/></td>
+    </tr>
+</table>
 
 ## 快速开始
 
