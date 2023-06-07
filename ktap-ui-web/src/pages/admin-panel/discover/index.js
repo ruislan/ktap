@@ -13,12 +13,10 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { MOBILE_BREAKPOINT, PageWidget } from '../../../constants';
 import { Eye } from '../../../components/icons';
 
-function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
+function DiscoverWidget({ widget, onChanged, onSaved, onDeleted }) {
     const { enqueue } = useSnackbar();
     const [isLoading, setIsLoading] = React.useState(false);
     const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
-    const [widget, setWidget] = React.useState(initWidget);
-    const [isCollapsed, setIsCollapsed] = React.useState(!!initWidget.id);
 
     const handleSave = async () => {
         try {
@@ -29,7 +27,7 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
             if (res.ok) {
                 if (method === 'POST') {
                     const json = await res.json();
-                    onSaved({ data: json.data });
+                    onSaved({ data: { ...json.data, isCollapsed: false } });
                 }
                 enqueue({ message: '保存成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, })
             } else {
@@ -56,7 +54,7 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
                 setIsLoading(false);
             }
         } else {
-            onDeleted({ data: widget });
+            onDeleted();
             setIsOpenDeleteConfirmModal(false);
             enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, });
         }
@@ -73,19 +71,21 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
                 })
             }
         }}>
-            {isCollapsed ?
+            {widget.isCollapsed ?
                 <Block display='flex' alignItems='center' justifyContent='space-between'>
                     <LabelMedium>{widget.title}</LabelMedium>
                     <Block display='flex'>
                         <Button size='compact' kind='tertiary' isLoading={isLoading} onClick={e => {
                             e.preventDefault();
-                            setIsCollapsed(false);
+                            onChanged({ data: { ...widget, isCollapsed: false } });
                         }}><ChevronDown /></Button>
                     </Block>
                 </Block> :
                 <>
                     <FormControl label='标题' caption=''>
-                        <Input size='compact' placeholder='标题' value={widget.title} onChange={e => setWidget(prev => ({ ...prev, title: e.target.value }))} />
+                        <Input size='compact' placeholder='标题' value={widget.title} onChange={e => {
+                            onChanged({ data: { ...widget, title: e.target.value } });
+                        }} />
                     </FormControl>
                     <Block display='grid' gridTemplateColumns='1fr 1fr' gridGap='scale300'>
                         <Block>
@@ -95,7 +95,7 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
                                     value={[{ label: PageWidget.type.getDisplayLabel(`${widget.type}-${widget.style}`), id: `${widget.type}-${widget.style}` }]}
                                     onChange={params => {
                                         const values = params.value[0].id.split('-');
-                                        setWidget(prev => ({ ...prev, type: values[0], style: values[1] }));
+                                        onChanged({ data: { ...widget, type: values[0], style: values[1] } });
                                     }}
                                 />
                             </FormControl>
@@ -105,7 +105,9 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
                                 <Select type='select' closeOnSelect size='compact' required clearable={false}
                                     options={PageWidget.target.options}
                                     value={[{ label: PageWidget.target.getDisplayLabel(widget.target), id: widget.target }]}
-                                    onChange={params => setWidget(prev => ({ ...prev, target: params.value[0].id }))}
+                                    onChange={params => {
+                                        onChanged({ data: { ...widget, target: params.value[0].id } });
+                                    }}
                                 />
                             </FormControl>
                         </Block>
@@ -114,7 +116,7 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
                         <Input size='compact' placeholder='1,2,3...' value={widget.targetIds}
                             onChange={e => {
                                 const value = e.target.value;
-                                setWidget(prev => ({ ...prev, targetIds: value }))
+                                onChanged({ data: { ...widget, targetIds: value } });
                             }} />
                     </FormControl>
                     <Block display='flex' justifyContent='space-between'>
@@ -131,7 +133,7 @@ function DiscoverWidget({ initWidget, onSaved, onDeleted }) {
                         <Block display='flex' gridGap='scale300' alignItems='center'>
                             <Button size='compact' kind='tertiary' isLoading={isLoading} onClick={e => {
                                 e.preventDefault();
-                                setIsCollapsed(true);
+                                onChanged({ data: { ...widget, isCollapsed: true } });
                             }}><ChevronUp /></Button>
                         </Block>
                     </Block>
@@ -167,7 +169,7 @@ function AdminPanelDiscover() {
                 const res = await fetch('/admin/discover');
                 if (res.ok) {
                     const json = await res.json();
-                    setWidgets(json.data);
+                    setWidgets(json.data.map(item => ({ ...item, isCollapsed: true })));
                 }
             } finally {
                 setIsLoading(false);
@@ -195,8 +197,15 @@ function AdminPanelDiscover() {
             {isLoading ?
                 <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1400' $borderWidth='scale200' /></Block> :
                 <Block display='flex' flexDirection='column' gridGap='scale300'>
-                    {widgets && widgets.map((widget, index) => (
-                        <DiscoverWidget key={index} initWidget={widget}
+                    {widgets && widgets.map((widget, index) => {
+                        return (<DiscoverWidget key={index} widget={widget}
+                            onChanged={({ data }) => {
+                                setWidgets(prev => {
+                                    const newWidgets = [...prev];
+                                    newWidgets[index] = data;
+                                    return newWidgets;
+                                });
+                            }}
                             onSaved={({ data }) => {
                                 setWidgets(prev => {
                                     const newWidgets = [...prev];
@@ -210,9 +219,8 @@ function AdminPanelDiscover() {
                                     newWidgets.splice(index, 1);
                                     return newWidgets;
                                 });
-                            }} />
-                    )
-                    )}
+                            }} />)
+                    })}
                 </Block>
             }
             <Block display='flex' alignItems='center' justifyContent='center' marginTop='scale900'>
