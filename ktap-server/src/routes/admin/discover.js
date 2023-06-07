@@ -22,7 +22,7 @@ const discover = async function (fastify, opts) {
                 page: Pages.discover, title, type, style, target, targetIds,
             }
         });
-        return reply.code(200).send({ data });
+        return reply.code(201).send({ data });
     });
 
     fastify.put('/:id', async (req, reply) => {
@@ -34,7 +34,7 @@ const discover = async function (fastify, opts) {
                 title, type, style, target, targetIds,
             }
         });
-        return reply.code(200).send();
+        return reply.code(204).send();
     });
 };
 

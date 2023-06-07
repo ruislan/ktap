@@ -1,5 +1,4 @@
 import { AppMedia, LIMIT_CAP, AppPlatform, SocialLinkBrands, TagCategory, AppLanguages } from '../../constants.js';
-// import * as cheerio from 'cheerio';
 import steam from '../../lib/steam.js';
 
 // 暂不支持删除App，这个操作的Ref太多了，影响太大了，设置为isVisible=false即可
@@ -152,7 +151,7 @@ const apps = async function (fastify, opts) {
         const data = await fastify.db.appSocialLink.create({
             data: { appId: id, name, brand, url, }
         });
-        return reply.code(200).send({ data });
+        return reply.code(201).send({ data });
     });
 
     fastify.delete('/:id/social-links/:socialLinkId', async (req, reply) => {
@@ -348,7 +347,7 @@ const apps = async function (fastify, opts) {
                 appId: id,
             }
         });
-        return reply.code(200).send({ data });
+        return reply.code(201).send({ data });
     });
 
     fastify.delete('/:id/pro-reviews/:proReviewId', async (req, reply) => {
@@ -372,7 +371,7 @@ const apps = async function (fastify, opts) {
                 appId: id,
             }
         });
-        return reply.code(200).send({ data });
+        return reply.code(201).send({ data });
     });
 
     fastify.delete('/:id/awards/:awardId', async (req, reply) => {

@@ -108,9 +108,10 @@ docker-compose up
 
 ## Next
 
-* 还有不少功能和想法没有做进去，会持续做进去。
+* 还有不少功能和想法（例如成就体系、专题等）没有做进去，会持续做进去。
+* 增加搜索引擎，改进搜索、相关性
 * BaseWeb已经快1年没有更新了，找到一个比较惊喜的UI[NextUI](https://nextui.org)，不过其第一版还没有release，release 之后会酌情替换。
-* 数据库新增MySQL或PG
+* 数据库新增MySQL或PG（SQLite只有文件锁）
 * 持续重构和优化。
 
 ## 致敬
