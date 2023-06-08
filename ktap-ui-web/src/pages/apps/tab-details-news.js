@@ -11,7 +11,7 @@ function TabDetailsNews({ app }) {
     const [isLoading, setIsLoading] = React.useState(false);
     const [newsList, setNewsList] = React.useState([]);
     React.useEffect(() => {
-        const fetchNews = async () => {
+        (async () => {
             if (appId > 0) {
                 setIsLoading(true);
                 try {
@@ -24,8 +24,7 @@ function TabDetailsNews({ app }) {
                     setIsLoading(false);
                 }
             }
-        };
-        fetchNews();
+        })();
     }, [appId]);
     return (
         <Block paddingTop='scale600' paddingBottom='scale600'>
@@ -35,28 +34,31 @@ function TabDetailsNews({ app }) {
             </Block>
             {isLoading ?
                 <Skeleton width="100%" height="150px" animation /> :
-                newsList.map(({ id, title }, index) => {
-                    return (
-                        <RouterLink key={index} href={`/news/apps/${appId}/view/${id}`} >
-                            <ListItem
-                                overrides={{
-                                    Content: {
-                                        style: {
-                                            minHeight: '44px',
-                                            paddingRight: '0px',
-                                            marginLeft: '0px',
-                                            width: '100%',
-                                            borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-                                        }
-                                    },
-                                }}
-                                endEnhancer={() => <ChevronRight />}
-                            >
-                                <LabelMedium textOverflow='ellipsis' whiteSpace='nowrap' overflow='hidden' paddingRight='scale300'>{title}</LabelMedium>
-                            </ListItem>
-                        </RouterLink>
-                    );
-                })
+                (newsList.length === 0 ?
+                    <LabelMedium color='primary500'>无资讯</LabelMedium> :
+                    newsList.map(({ id, title }, index) => {
+                        return (
+                            <RouterLink key={index} href={`/news/apps/${appId}/view/${id}`} >
+                                <ListItem
+                                    overrides={{
+                                        Content: {
+                                            style: {
+                                                minHeight: '44px',
+                                                paddingRight: '0px',
+                                                marginLeft: '0px',
+                                                width: '100%',
+                                                borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+                                            }
+                                        },
+                                    }}
+                                    endEnhancer={() => <ChevronRight />}
+                                >
+                                    <LabelMedium textOverflow='ellipsis' whiteSpace='nowrap' overflow='hidden' paddingRight='scale300'>{title}</LabelMedium>
+                                </ListItem>
+                            </RouterLink>
+                        );
+                    })
+                )
             }
         </Block >
     );

@@ -15,6 +15,7 @@ function AdminPanel() {
                     flexDirection: 'row',
                     [MOBILE_BREAKPOINT]: {
                         flexDirection: 'column',
+                        justifyContent: 'flex-start',
                         marginTop: $theme.sizing.scale600,
                     },
                 })

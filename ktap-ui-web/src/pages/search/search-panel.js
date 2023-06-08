@@ -75,13 +75,13 @@ function SearchPanel() {
                         onKeyDown={e => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                navigate(`/search/${word}`, { replace: true });
+                                if (word.length > 0) navigate(`/search/${word}`, { replace: true });
                             }
                         }}
                     />
                 </Block>
                 <Block marginLeft='scale300'>
-                    <Button kind='secondary' size='compact' isLoading={isLoading} onClick={() => { navigate(`/search/${word}`, { replace: true }); }}>
+                    <Button kind='secondary' size='compact' disabled={word.length === 0} isLoading={isLoading} onClick={() => { navigate(`/search/${word}`, { replace: true }); }}>
                         搜索
                     </Button>
                 </Block>
@@ -153,11 +153,10 @@ function SearchPanel() {
                 ))}
 
                 {
-                    isLoading ?
-                        (<Block display='flex' justifyContent='center' marginTop='scale600'>
-                            <Spinner $size='scale1600' $borderWidth='scale200' />
-                        </Block>)
-                        : null
+                    isLoading &&
+                    <Block display='flex' justifyContent='center' marginTop='scale600'>
+                        <Spinner $size='scale1600' $borderWidth='scale200' />
+                    </Block>
                 }
             </Block>
         </>

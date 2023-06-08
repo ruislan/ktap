@@ -297,40 +297,53 @@ const apps = async function (fastify, opts) {
     });
 
     // 相关联的游戏
-    // XXX 采用简单的算法，通过该游戏的标签，返回同标签的游戏
+    // XXX v1（已经弃用）采用简单的算法，通过该游戏的标签，返回同标签的游戏
+    // XXX v1.2 采用简单的算法，通过查询游戏的名称，将名称分词，取前三个，然后将这三个用于SQL进行查询，如果没有找到，则查询最近更新的
     fastify.get('/:id/related', async function (req, reply) {
         const id = Number(req.params.id) || 0;
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
         let data = {};
         if (id > 0) {
-            const appUserTagRefs = await fastify.db.appUserTagRef.findMany({
-                where: { appId: id },
-                take: 20, // 避免标签返回过多，20个足以了
-            });
-            const tagIds = appUserTagRefs.map(ref => ref.tagId);
-            data = await fastify.db.appUserTagRef.findMany({
-                where: { tagId: { in: tagIds }, app: { isVisible: true } },
-                include: {
-                    app: {
-                        include: {
-                            media: {
-                                where: { usage: AppMedia.usage.landscape },
-                                select: {
-                                    image: true,
-                                    thumbnail: true,
-                                },
-                            },
-                        },
-                    }
+            const app = await fastify.db.app.findUnique({ where: { id }, select: { name: true } });
+            const extractWords = await fastify.jieba.extract(app.name, 3);
+            data = await fastify.db.app.findMany({
+                where: {
+                    OR: [
+                        ...extractWords.map(item => ({ name: { contains: item.word } })),
+                        ...extractWords.map(item => ({ description: { contains: item.word } })),
+                    ],
+                    AND: { id: { not: id } },
                 },
-                distinct: ['appId'],
+                include: {
+                    media: {
+                        where: { usage: AppMedia.usage.landscape },
+                        select: {
+                            image: true,
+                            thumbnail: true,
+                        },
+                    },
+                },
                 take: limit,
-                orderBy: { app: { id: 'desc' } }
             });
+        }
+        if (data.length === 0) { // 如果没有相关的，则直接取最新的几个
+            data = await fastify.db.app.findMany({
+                where: { id: { not: id } },
+                include: {
+                    media: {
+                        where: { usage: AppMedia.usage.landscape },
+                        select: {
+                            image: true,
+                            thumbnail: true,
+                        },
+                    },
+                },
+                orderBy: { updatedAt: 'desc' },
+                take: limit,
+            })
         }
         // transform data to the form that suite the view
         data = data.map(item => {
-            item = item.app;
             return {
                 id: item.id,
                 name: item.name,

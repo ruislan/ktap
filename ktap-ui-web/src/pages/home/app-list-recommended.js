@@ -95,7 +95,7 @@ function AppListRecommend() {
                         <ParagraphMedium marginTop='scale200' marginBottom='scale200'>{summary}</ParagraphMedium>
                         <Block>
                             {tags.map((tag, i) => (
-                                <Tag key={i} closeable={false} variant='solid' kind='primary'>
+                                <Tag key={i} closeable={false} variant='light' kind='primary'>
                                     <RouterLink href={`/tags/${tag.name}`}>{tag.name}</RouterLink>
                                 </Tag>
                             ))}

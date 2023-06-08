@@ -9,6 +9,7 @@ import bcryptPlugin from './src/plugins/bcrypt.js';
 import storagePlugin from './src/plugins/storage.js';
 import eventPlugin from './src/plugins/events.js';
 import mailerPlugin from './src/plugins/mailer.js';
+import jiebaPlugin from './src/plugins/jieba.js';
 
 import restService from './src/index.js';
 
@@ -53,6 +54,7 @@ const main = async () => {
             }
         }
     });
+    await server.register(jiebaPlugin);
 
     // setup rest service
     await server.register(restService);
