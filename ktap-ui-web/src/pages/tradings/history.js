@@ -30,7 +30,7 @@ function TradingHistory() {
     }, [limit, skip]);
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_MAIN}>
-            <HeadingSmall>交易记录</HeadingSmall>
+            <HeadingSmall>交易历史</HeadingSmall>
             <TableBuilder data={data} size='default' emptyMessage='没有数据'
                 overrides={{
                     TableBodyCell: {

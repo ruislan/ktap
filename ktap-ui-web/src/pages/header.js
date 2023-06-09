@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '../constants';
 import { useStyletron } from 'baseui';
 import { User, Coins } from '../components/icons';
-import { Menu } from 'baseui/icon';
+import { Delete, Menu } from 'baseui/icon';
 
 function NavBar() {
     const [css, theme] = useStyletron();
@@ -28,7 +28,7 @@ function NavBar() {
         color: theme.colors.primary,
         cursor: 'pointer',
         ':hover': {
-            backgroundColor: 'rgb(51,51,51)',
+            backgroundColor: 'rgb(31, 31, 31)',
         },
     });
 
@@ -80,7 +80,7 @@ function NavBar() {
             <nav className={css({
                 width: '100%', backgroundColor: 'transparent', top: '0',
                 minHeight: '68px', display: 'flex', alignItems: 'stretch', justifyContent: 'center',
-                zIndex: 9999, boxShadow: 'none',
+                boxShadow: 'none', borderBottom: '1px solid rgb(51,51,51)',
                 [MOBILE_BREAKPOINT]: {
                     flexDirection: 'column',
                     minHeight: '58px',
@@ -88,10 +88,9 @@ function NavBar() {
             })}>
                 <div className={css({
                     display: 'flex', alignItems: 'center', width: '100%', paddingLeft: theme.sizing.scale600, paddingRight: theme.sizing.scale600,
-                    paddingTop: theme.sizing.scale200, paddingBottom: theme.sizing.scale200,
                     maxWidth: MOBILE_BREAKPOINT_PX + 32 + 'px', flexWrap: 'nowrap',
                     [MOBILE_BREAKPOINT]: {
-                        paddingLeft: theme.sizing.scale300, paddingRight: theme.sizing.scale300,
+                        paddingLeft: theme.sizing.scale500, paddingRight: theme.sizing.scale500,
                         paddingTop: theme.sizing.scale0, paddingBottom: theme.sizing.scale0,
                     }
                 })}>
@@ -108,25 +107,38 @@ function NavBar() {
                         <span>Tap</span>
                     </div>
                     <div className={css({
-                        display: 'flex', flex: '1', alignItems: 'center', justifyContent: 'space-between', height: '100%',
-                        position: 'relative',
+                        display: 'none',
+                        [MOBILE_BREAKPOINT]: {
+                            display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flex: 1,
+                        }
                     })}>
                         <div className={css({
-                            display: 'none',
-                            [MOBILE_BREAKPOINT]: {
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            }
-                        })}>
-                            <div className={css({
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                cursor: 'pointer',
-                            })} onClick={() => setShowMenu(!showMenu)}><Menu size='scale900' /></div>
-                        </div>
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer',
+                        })} onClick={e => {
+                            e.stopPropagation();
+                            setShowMenu(!showMenu);
+                            setShowDropdownMenu(false);
+                        }}>{showMenu ? <Delete size='scale900' /> : <Menu size='scale900' />}</div>
+                    </div>
+                    <div className={css({
+                        display: 'flex', flex: '1', alignItems: 'center', height: '100%',
+                        [MOBILE_BREAKPOINT]: {
+                            visibility: showMenu ? 'visible' : 'hidden',
+                            opacity: showMenu ? 1 : 0,
+                            position: 'absolute', width: '100%',
+                            backgroundColor: 'rgb(41,41,41)',
+                            top: '58px', left: 0, right: 0,
+                            padding: theme.sizing.scale600, zIndex: 9996,
+                            transition: 'all 0.3s ease-in-out',
+                            transform: showMenu ? 'translateX(0)' : 'translateX(-100%)',
+                        },
+                    })}>
                         <ul className={css({
                             display: 'flex', flexDirection: 'row', listStyle: 'none', margin: '0', padding: '0', height: '100%',
                             fontFamily: 'system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif',
                             [MOBILE_BREAKPOINT]: {
-                                display: 'none'
+                                flexDirection: 'column',
                             },
                         })}>
                             {mainItems.map((item, index) => (
@@ -134,6 +146,11 @@ function NavBar() {
                                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                     paddingLeft: theme.sizing.scale300, paddingRight: theme.sizing.scale300,
                                     boxShadow: item.active ? 'inset 0 -4px ' + theme.colors.primary : 'unset',
+                                    [MOBILE_BREAKPOINT]: {
+                                        // backgroundColor: item.active ? 'rgb(31, 31, 31)' : 'unset',
+                                        padding: theme.sizing.scale600,
+                                        // borderRadius: theme.borders.radius300,
+                                    }
                                 })}>
                                     <Link to={item.href} className={css({
                                         textDecoration: 'none', fontSize: theme.sizing.scale600,
@@ -143,107 +160,79 @@ function NavBar() {
                                         ':hover': {
                                             color: theme.colors.primary,
                                         }
-                                    })}>{item.label}</Link>
+                                    })} onClick={() => setShowMenu(false)}>{item.label}</Link>
                                 </li>
                             ))}
                         </ul>
+                    </div>
+                    <div className={css({
+                        display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+                        gap: theme.sizing.scale600,
+                    })}>
                         <div className={css({
                             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                            gap: theme.sizing.scale600,
+                            color: theme.colors.primary100, gap: theme.sizing.scale100,
                         })}>
+                            <Coins width='24px' height='24px' /> <span>{user?.balance}</span>
+                        </div>
+                        <div className={css({ position: 'relative', })}>
                             <div className={css({
-                                display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                                color: theme.colors.primary100, gap: theme.sizing.scale100,
-                            })}>
-                                <Coins width='24px' height='24px' /> <span>{user?.balance}</span>
-                            </div>
-                            <div className={css({ position: 'relative', })}>
-                                <div className={css({
-                                    width: theme.sizing.scale950, height: theme.sizing.scale950,
-                                    backgroundColor: theme.colors.backgroundInversePrimary,
-                                    borderRadius: theme.borders.radius300,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                                })} onClick={e => {
-                                    e.stopPropagation();
-                                    setShowDropdownMenu(!showDropdownMenu)
+                                width: theme.sizing.scale950, height: theme.sizing.scale950,
+                                backgroundColor: theme.colors.backgroundInversePrimary,
+                                borderRadius: theme.borders.radius300,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                            })} onClick={e => {
+                                e.stopPropagation();
+                                setShowDropdownMenu(!showDropdownMenu);
+                                setShowMenu(false);
+                            }
+                            }>
+                                {user?.avatar ?
+                                    <img src={user?.avatar} width='100%' height='100%' className={css({
+                                        objectFit: 'cover',
+                                        borderRadius: theme.borders.radius300,
+                                    })} /> :
+                                    <User color={theme.colors.backgroundPrimary} width='24px' height='24px' />
                                 }
-                                }>
-                                    {user?.avatar ?
-                                        <img src={user?.avatar} width='100%' height='100%' className={css({
-                                            objectFit: 'cover',
-                                            borderRadius: theme.borders.radius300,
-                                        })} /> :
-                                        <User color={theme.colors.backgroundPrimary} width='24px' height='24px' />
-                                    }
-                                </div>
-                                {/* dropdown menu */}
-                                {showDropdownMenu && (
-                                    <ul ref={dropdownMenuRef} className={css({
-                                        zIndex: 9999,
-                                        position: 'absolute', top: '100%', left: 'auto', right: '0', marginBottom: '0',
-                                        marginTop: theme.sizing.scale300,
-                                        backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
-                                        listStyle: 'none', borderRadius: theme.borders.radius300,
-                                        boxShadow: 'rgba(0, 0, 0, 0.16) 0px 4px 16px',
-                                        minWidth: '10rem',
-                                    })}>
-                                        {userItems.map((item, index) => (
-                                            <li key={index}>
-                                                {item.role === 'button' ?
-                                                    <div className={dropdownMenuItemStyle} onClick={() => {
-                                                        if (item.href === '/logout') {
-                                                            logout().then(() => navigate('/', { replace: true }));
-                                                        } else {
-                                                            navigate(item.href);
-                                                        }
-                                                        setShowDropdownMenu(false);
-                                                    }}>{item.label}</div> :
-                                                    item.role === 'divider' ?
-                                                        <hr className={css({
-                                                            width: '100%', height: '0', marginTop: theme.sizing.scale100, marginBottom: theme.sizing.scale100,
-                                                            border: 0,
-                                                            borderTop: '1px solid rgba(255, 255, 255, 0.15)', overflow: 'hidden', opacity: 1, color: 'inherit',
-                                                        })} /> :
-                                                        <Link className={dropdownMenuItemStyle} to={item.href} onClick={() => setShowDropdownMenu(false)}>{item.label}</Link>
-                                                }
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
                             </div>
+                            {/* dropdown menu */}
+                            {showDropdownMenu && (
+                                <ul ref={dropdownMenuRef} className={css({
+                                    zIndex: 9999,
+                                    position: 'absolute', top: '100%', left: 'auto', right: '0', marginBottom: '0',
+                                    marginTop: theme.sizing.scale300,
+                                    backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
+                                    listStyle: 'none', borderRadius: theme.borders.radius300,
+                                    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 4px 16px',
+                                    minWidth: '10rem',
+                                })}>
+                                    {userItems.map((item, index) => (
+                                        <li key={index}>
+                                            {item.role === 'button' ?
+                                                <div className={dropdownMenuItemStyle} onClick={() => {
+                                                    if (item.href === '/logout') {
+                                                        logout().then(() => navigate('/', { replace: true }));
+                                                    } else {
+                                                        navigate(item.href);
+                                                    }
+                                                    setShowDropdownMenu(false);
+                                                }}>{item.label}</div> :
+                                                item.role === 'divider' ?
+                                                    <hr className={css({
+                                                        width: '100%', height: '0', marginTop: theme.sizing.scale100, marginBottom: theme.sizing.scale100,
+                                                        border: 0,
+                                                        borderTop: '1px solid rgba(255, 255, 255, 0.15)', overflow: 'hidden', opacity: 1, color: 'inherit',
+                                                    })} /> :
+                                                    <Link className={dropdownMenuItemStyle} to={item.href} onClick={() => setShowDropdownMenu(false)}>{item.label}</Link>
+                                            }
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </div>
                 </div>
             </nav>
-            {showMenu &&
-                <div className={css({
-                    display: 'none',
-                    [MOBILE_BREAKPOINT]: {
-                        display: 'block',
-                        padding: theme.sizing.scale600,
-                    }
-                })}>
-                    <ul className={css({
-                        display: 'flex', flexDirection: 'column', listStyle: 'none', margin: '0', padding: '0', height: 'auto',
-                        fontFamily: 'system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif',
-                    })}>
-                        {mainItems.map((item, index) => (
-                            <li key={index} className={css({
-                                display: 'flex', alignItems: 'center'
-                            })}>
-                                <Link to={item.href} className={css({
-                                    textDecoration: 'none', fontSize: theme.sizing.scale600, width: '100%',
-                                    textAlign: 'center',
-                                    backgroundColor: item.active ? theme.colors.backgroundSecondary : 'unset',
-                                    padding: theme.sizing.scale300, borderRadius: theme.borders.radius300,
-                                    fontWeight: item.active ? 700 : 500, whiteSpace: 'nowrap',
-                                    color: item.active ? theme.colors.primary : theme.colors.contentTertiary,
-                                })}>{item.label}</Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            }
         </>
     );
 }
@@ -256,16 +245,6 @@ function NavBar() {
 function Header() {
     return (
         <header>
-            {/* <AppNavBar
-                title={<span>KTap</span>}
-                mainItems={mainItems}
-                mapItemToNode={item => (<RouterLink href={item.href} role='NavLink'>{item.label}</RouterLink>)}
-                userItems={userItems}
-                onUserItemSelect={userItemSelectHandler}
-                username={user?.name}
-                usernameSubtitle={user && `余额: ${user?.balance}`}
-                userImgUrl={user?.avatar}
-            /> */}
             <NavBar />
         </header>
     );
