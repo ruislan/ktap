@@ -11,13 +11,14 @@ function NavBar() {
     const pathname = new URL(window.location.href).pathname;
     const navigate = useNavigate();
     const { user, logout, isAuthenticated, isAdmin } = useAuth();
-    const [mainItems, setMainItems] = React.useState([]);
-    const [showDropdownMenu, setShowDropdownMenu] = React.useState(false);
-    const [userItems, setUserItems] = React.useState([]);
-    const dropdownMenuRef = React.useRef(null);
-    const [showMenu, setShowMenu] = React.useState(false);
 
-    const dropdownMenuItemStyle = css({
+    const [mainItems, setMainItems] = React.useState([]);
+    const [showMainItems, setShowMainItems] = React.useState(false);
+
+    const [userItems, setUserItems] = React.useState([]);
+    const [showUserItems, setShowUserItems] = React.useState(false);
+    const userItemsRef = React.useRef(null);
+    const userItemStyle = css({
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         borderRadius: theme.borders.radius200,
         paddingLeft: theme.sizing.scale600, paddingRight: theme.sizing.scale600,
@@ -65,8 +66,8 @@ function NavBar() {
 
     React.useEffect(() => {
         function handleClickOutside(e) {
-            if (dropdownMenuRef.current && !dropdownMenuRef.current.contains(e.target)) {
-                setShowDropdownMenu(false);
+            if (userItemsRef.current && !userItemsRef.current.contains(e.target)) {
+                setShowUserItems(false);
             }
         }
         document.addEventListener('click', handleClickOutside);
@@ -95,9 +96,29 @@ function NavBar() {
                     }
                 })}>
                     <div className={css({
+                        display: 'none',
+                        [MOBILE_BREAKPOINT]: {
+                            display: 'flex', alignItems: 'center', justifyContent: 'flex-start',
+                            marginRight: theme.sizing.scale500,
+                        }
+                    })}>
+                        <div className={css({
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer',
+                        })} onClick={e => {
+                            e.stopPropagation();
+                            setShowMainItems(!showMainItems);
+                            userItems && setShowUserItems(false);
+                        }}>{showMainItems ? <Delete size='scale900' /> : <Menu size='scale900' />}</div>
+                    </div>
+
+                    <div className={css({
                         fontFamily: 'system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif', fontWeight: 700,
                         lineHeight: theme.sizing.scale900, fontSize: theme.sizing.scale700,
                         marginRight: theme.sizing.scale600, display: 'flex', alignItems: 'center', gap: theme.sizing.scale100,
+                        [MOBILE_BREAKPOINT]: {
+                            flex: 1, marginRight: 0,
+                        }
                     })}>
                         <div className={css({
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -106,32 +127,18 @@ function NavBar() {
                         })}>K</div>
                         <span>Tap</span>
                     </div>
-                    <div className={css({
-                        display: 'none',
-                        [MOBILE_BREAKPOINT]: {
-                            display: 'flex', alignItems: 'center', justifyContent: 'flex-start', flex: 1,
-                        }
-                    })}>
-                        <div className={css({
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            cursor: 'pointer',
-                        })} onClick={e => {
-                            e.stopPropagation();
-                            setShowMenu(!showMenu);
-                            setShowDropdownMenu(false);
-                        }}>{showMenu ? <Delete size='scale900' /> : <Menu size='scale900' />}</div>
-                    </div>
+
                     <div className={css({
                         display: 'flex', flex: '1', alignItems: 'center', height: '100%',
                         [MOBILE_BREAKPOINT]: {
-                            visibility: showMenu ? 'visible' : 'hidden',
-                            opacity: showMenu ? 1 : 0,
+                            visibility: showMainItems ? 'visible' : 'hidden',
+                            opacity: showMainItems ? 1 : 0,
                             position: 'absolute', width: '100%',
                             backgroundColor: 'rgb(41,41,41)',
                             top: '58px', left: 0, right: 0,
                             padding: theme.sizing.scale600, zIndex: 9996,
                             transition: 'all 0.3s ease-in-out',
-                            transform: showMenu ? 'translateX(0)' : 'translateX(-100%)',
+                            transform: showMainItems ? 'translateX(0)' : 'translateX(-100%)',
                         },
                     })}>
                         <ul className={css({
@@ -147,9 +154,7 @@ function NavBar() {
                                     paddingLeft: theme.sizing.scale300, paddingRight: theme.sizing.scale300,
                                     boxShadow: item.active ? 'inset 0 -4px ' + theme.colors.primary : 'unset',
                                     [MOBILE_BREAKPOINT]: {
-                                        // backgroundColor: item.active ? 'rgb(31, 31, 31)' : 'unset',
                                         padding: theme.sizing.scale600,
-                                        // borderRadius: theme.borders.radius300,
                                     }
                                 })}>
                                     <Link to={item.href} className={css({
@@ -160,7 +165,7 @@ function NavBar() {
                                         ':hover': {
                                             color: theme.colors.primary,
                                         }
-                                    })} onClick={() => setShowMenu(false)}>{item.label}</Link>
+                                    })} onClick={() => showMainItems && setShowMainItems(false)}>{item.label}</Link>
                                 </li>
                             ))}
                         </ul>
@@ -169,12 +174,14 @@ function NavBar() {
                         display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
                         gap: theme.sizing.scale600,
                     })}>
-                        <div className={css({
-                            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                            color: theme.colors.primary100, gap: theme.sizing.scale100,
-                        })}>
-                            <Coins width='24px' height='24px' /> <span>{user?.balance}</span>
-                        </div>
+                        {user?.balance &&
+                            <div className={css({
+                                display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+                                color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
+                            })}>
+                                <Coins width='24px' height='24px' /> <span>{user.balance}</span>
+                            </div>
+                        }
                         <div className={css({ position: 'relative', })}>
                             <div className={css({
                                 width: theme.sizing.scale950, height: theme.sizing.scale950,
@@ -183,8 +190,8 @@ function NavBar() {
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                             })} onClick={e => {
                                 e.stopPropagation();
-                                setShowDropdownMenu(!showDropdownMenu);
-                                setShowMenu(false);
+                                setShowUserItems(!showUserItems);
+                                showMainItems && setShowMainItems(false);
                             }
                             }>
                                 {user?.avatar ?
@@ -195,27 +202,27 @@ function NavBar() {
                                     <User color={theme.colors.backgroundPrimary} width='24px' height='24px' />
                                 }
                             </div>
-                            {/* dropdown menu */}
-                            {showDropdownMenu && (
-                                <ul ref={dropdownMenuRef} className={css({
+                            {/* user items menu */}
+                            {showUserItems && (
+                                <ul ref={userItemsRef} className={css({
                                     zIndex: 9999,
                                     position: 'absolute', top: '100%', left: 'auto', right: '0', marginBottom: '0',
                                     marginTop: theme.sizing.scale300,
                                     backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
                                     listStyle: 'none', borderRadius: theme.borders.radius300,
-                                    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 4px 16px',
+                                    boxShadow: theme.lighting.shadow600,
                                     minWidth: '10rem',
                                 })}>
                                     {userItems.map((item, index) => (
                                         <li key={index}>
                                             {item.role === 'button' ?
-                                                <div className={dropdownMenuItemStyle} onClick={() => {
+                                                <div className={userItemStyle} onClick={() => {
                                                     if (item.href === '/logout') {
                                                         logout().then(() => navigate('/', { replace: true }));
                                                     } else {
                                                         navigate(item.href);
                                                     }
-                                                    setShowDropdownMenu(false);
+                                                    setShowUserItems(false);
                                                 }}>{item.label}</div> :
                                                 item.role === 'divider' ?
                                                     <hr className={css({
@@ -223,7 +230,7 @@ function NavBar() {
                                                         border: 0,
                                                         borderTop: '1px solid rgba(255, 255, 255, 0.15)', overflow: 'hidden', opacity: 1, color: 'inherit',
                                                     })} /> :
-                                                    <Link className={dropdownMenuItemStyle} to={item.href} onClick={() => setShowDropdownMenu(false)}>{item.label}</Link>
+                                                    <Link className={userItemStyle} to={item.href} onClick={() => setShowUserItems(false)}>{item.label}</Link>
                                             }
                                         </li>
                                     ))}
