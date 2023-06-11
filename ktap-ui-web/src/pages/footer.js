@@ -18,7 +18,7 @@ function Footer() {
                             })
                         }
                     }}>
-                        <RouterLink href='#' kind='underline' role='a' target='_blank'>Github</RouterLink>
+                        <RouterLink href='https://github.com/ruislan/ktap' kind='underline' role='a' target='_blank'>Github</RouterLink>
                         <RouterLink href='#' kind='underline' role='a' target='_blank'>博客</RouterLink>
                         <RouterLink href='/about' kind='underline' target='_blank'>关于我们</RouterLink>
                         <RouterLink href='/terms' kind='underline' target='_blank'>服务协议</RouterLink>

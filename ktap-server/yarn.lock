@@ -44,10 +44,10 @@
   resolved "https://registry.yarnpkg.com/@fastify/deepmerge/-/deepmerge-1.1.0.tgz#91f0a5a27034ff76b7bece63a5906894940ace82"
   integrity sha512-E8Hfdvs1bG6u0N4vN5Nty6JONUfTdOciyD5rn8KnEsLKIenvOVcr210BQR9t34PRkNyjqnMLGk3e0BsaxRdL+g==
 
-"@fastify/error@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@fastify/error/-/error-3.0.0.tgz#bfcb7b33cec0196413083a91ef2edc7b2c88455b"
-  integrity sha512-dPRyT40GiHRzSCll3/Jn2nPe25+E1VXc9tDwRAIKwFCxd5Np5wzgz1tmooWG3sV0qKgrBibihVoCna2ru4SEFg==
+"@fastify/error@^3.0.0", "@fastify/error@^3.2.0":
+  version "3.2.1"
+  resolved "https://registry.npmmirror.com/@fastify/error/-/error-3.2.1.tgz#5d1cb182a8bb9b103c556b0da35fd77f319fc15e"
+  integrity sha512-scZVbcpPNWw/yyFmzzO7cf1daTeJp53spN2n7dBTHZd+cV7791fcWJCPP1Tfhdbre+8vDiCyQyqqXfQnYMntYQ==
 
 "@fastify/fast-json-stringify-compiler@^4.3.0":
   version "4.3.0"
@@ -255,7 +255,7 @@ atomic-sleep@^1.0.0:
   resolved "https://registry.yarnpkg.com/atomic-sleep/-/atomic-sleep-1.0.0.tgz#eb85b77a601fc932cfe432c5acd364a9e2c9075b"
   integrity sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==
 
-avvio@^8.2.0:
+avvio@^8.2.1:
   version "8.2.1"
   resolved "https://registry.npmmirror.com/avvio/-/avvio-8.2.1.tgz#b5a482729847abb84d5aadce06511c04a0a62f82"
   integrity sha512-TAlMYvOuwGyLK3PfBb5WKBXZmXz2fVCgv23d6zZFdle/q3gPjmxBaeuC0pY0Dzs5PWMSgfqqEZkrye19GlDTgw==
@@ -536,25 +536,25 @@ fast-json-stringify@^5.7.0:
     rfdc "^1.2.0"
 
 fast-jwt@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.npmmirror.com/fast-jwt/-/fast-jwt-3.1.0.tgz#3d835181bddeb9764989b0d9f839d51017ddb4a7"
-  integrity sha512-3xTjNdKul+YJMuknYrxiJfXL9Qg4TuqQu0SSPSCs89XikJWgnD4Zey5YREWOsnjB2R042SkJsDt1dE1AZ5XwgA==
+  version "3.1.1"
+  resolved "https://registry.npmmirror.com/fast-jwt/-/fast-jwt-3.1.1.tgz#d663f008370a061f8f490c9ae57ff4aed63c0052"
+  integrity sha512-c6gqmiMU9kUIMs0XcsnnpBMA4A+zi/XULA47r6hYoLR7s1teJ+LwviwZdttCeTZ+F5ZuHlRigNe98C4qN6h4pw==
   dependencies:
     asn1.js "^5.4.1"
     ecdsa-sig-formatter "^1.0.11"
     mnemonist "^0.39.5"
 
 fast-querystring@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.npmmirror.com/fast-querystring/-/fast-querystring-1.1.1.tgz#f4c56ef56b1a954880cfd8c01b83f9e1a3d3fda2"
-  integrity sha512-qR2r+e3HvhEFmpdHMv//U8FnFlnYjaC6QKDuaXALDkw2kvHO8WDjxH+f/rHGR4Me4pnk8p9JAkRNTjYHAKRn2Q==
+  version "1.1.2"
+  resolved "https://registry.npmmirror.com/fast-querystring/-/fast-querystring-1.1.2.tgz#a6d24937b4fc6f791b4ee31dcb6f53aeafb89f53"
+  integrity sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==
   dependencies:
     fast-decode-uri-component "^1.0.1"
 
 fast-redact@^3.1.1:
-  version "3.1.2"
-  resolved "https://registry.npmmirror.com/fast-redact/-/fast-redact-3.1.2.tgz#d58e69e9084ce9fa4c1a6fa98a3e1ecf5d7839aa"
-  integrity sha512-+0em+Iya9fKGfEQGcd62Yv6onjBmmhV1uh86XVfOU8VwAe6kaFdQCWI9s0/Nnugx5Vd9tdbZ7e6gE2tR9dzXdw==
+  version "3.2.0"
+  resolved "https://registry.npmmirror.com/fast-redact/-/fast-redact-3.2.0.tgz#b1e2d39bc731376d28bde844454fa23e26919987"
+  integrity sha512-zaTadChr+NekyzallAMXATXLOR8MNx3zqpZ0MUF2aGf4EathnG0f32VLODNlY8IuGY3HoRO2L6/6fSzNsLaHIw==
 
 fast-safe-stringify@^2.1.1:
   version "2.1.1"
@@ -578,26 +578,26 @@ fastify-plugin@^4.0.0, fastify-plugin@^4.2.1:
   resolved "https://registry.npmmirror.com/fastify-plugin/-/fastify-plugin-4.5.0.tgz#8b853923a0bba6ab6921bb8f35b81224e6988d91"
   integrity sha512-79ak0JxddO0utAXAQ5ccKhvs6vX2MGyHHMMsmZkBANrq3hXc1CHzvNPHOcvTsVMEPl5I+NT+RO4YKMGehOfSIg==
 
-fastify@^4.17.0:
-  version "4.17.0"
-  resolved "https://registry.npmmirror.com/fastify/-/fastify-4.17.0.tgz#b2c8245e572edef0b02a167d2d411a3c8a46d01a"
-  integrity sha512-tzuY1tgWJo2Y6qEKwmLhFvACUmr68Io2pqP/sDKU71KRM6A6R3DrCDqLGqANbeLZcKUfdfY58ut35CGqemcTgg==
+fastify@^4.18.0:
+  version "4.18.0"
+  resolved "https://registry.npmmirror.com/fastify/-/fastify-4.18.0.tgz#d369630ac1dcedb218e6a933380ed81447c3af11"
+  integrity sha512-L5o/2GEkBastQ3HV0dtKo7SUZ497Z1+q4fcqAoPyq6JCQ/8zdk1JQEoTQwnBWCp+EmA7AQa6mxNqSAEhzP0RwQ==
   dependencies:
     "@fastify/ajv-compiler" "^3.5.0"
-    "@fastify/error" "^3.0.0"
+    "@fastify/error" "^3.2.0"
     "@fastify/fast-json-stringify-compiler" "^4.3.0"
     abstract-logging "^2.0.1"
-    avvio "^8.2.0"
+    avvio "^8.2.1"
     fast-content-type-parse "^1.0.0"
     fast-json-stringify "^5.7.0"
     find-my-way "^7.6.0"
-    light-my-request "^5.6.1"
-    pino "^8.5.0"
-    process-warning "^2.0.0"
+    light-my-request "^5.9.1"
+    pino "^8.12.0"
+    process-warning "^2.2.0"
     proxy-addr "^2.0.7"
     rfdc "^1.3.0"
     secure-json-parse "^2.5.0"
-    semver "^7.3.7"
+    semver "^7.5.0"
     tiny-lru "^11.0.1"
 
 fastparallel@^2.2.0:
@@ -631,9 +631,9 @@ fill-range@^7.0.1:
     to-regex-range "^5.0.1"
 
 find-my-way@^7.6.0:
-  version "7.6.0"
-  resolved "https://registry.npmmirror.com/find-my-way/-/find-my-way-7.6.0.tgz#f1e271fd1aafe87e87860662f9940124274f73c7"
-  integrity sha512-H7berWdHJ+5CNVr4ilLWPai4ml7Y2qAsxjw3pfeBxPigZmaDTzF0wjJLj90xRCmGcWYcyt050yN+34OZDJm1eQ==
+  version "7.6.2"
+  resolved "https://registry.npmmirror.com/find-my-way/-/find-my-way-7.6.2.tgz#4dd40200d3536aeef5c7342b10028e04cf79146c"
+  integrity sha512-0OjHn1b1nCX3eVbm9ByeEHiscPYiHLfhei1wOUU9qffQkk98wE0Lo8VrVYfSGMgnSnDh86DxedduAnBf4nwUEw==
   dependencies:
     fast-deep-equal "^3.1.3"
     fast-querystring "^1.0.0"
@@ -826,10 +826,10 @@ json-schema-traverse@^1.0.0:
   resolved "https://registry.npmmirror.com/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz#ae7bcb3656ab77a73ba5c49bf654f38e6b6860e2"
   integrity sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
 
-light-my-request@^5.6.1:
-  version "5.9.1"
-  resolved "https://registry.npmmirror.com/light-my-request/-/light-my-request-5.9.1.tgz#076f8d4cc4639408cc48381d4f2860212d469d4b"
-  integrity sha512-UT7pUk8jNCR1wR7w3iWfIjx32DiB2f3hFdQSOwy3/EPQ3n3VocyipUxcyRZR0ahoev+fky69uA+GejPa9KuHKg==
+light-my-request@^5.9.1:
+  version "5.10.0"
+  resolved "https://registry.npmmirror.com/light-my-request/-/light-my-request-5.10.0.tgz#0a2bbc1d1bb573ed3b78143960920ecdc05bf157"
+  integrity sha512-ZU2D9GmAcOUculTTdH9/zryej6n8TzT+fNGdNtm6SDp5MMMpHrJJkvAdE3c6d8d2chE9i+a//dS9CWZtisknqA==
   dependencies:
     cookie "^0.5.0"
     process-warning "^2.0.0"
@@ -1081,14 +1081,14 @@ pino-pretty@^9.1.1:
     strip-json-comments "^3.1.1"
 
 pino-std-serializers@^6.0.0:
-  version "6.2.0"
-  resolved "https://registry.npmmirror.com/pino-std-serializers/-/pino-std-serializers-6.2.0.tgz#169048c0df3f61352fce56aeb7fb962f1b66ab43"
-  integrity sha512-IWgSzUL8X1w4BIWTwErRgtV8PyOGOOi60uqv0oKuS/fOA8Nco/OeI6lBuc4dyP8MMfdFwyHqTMcBIA7nDiqEqA==
+  version "6.2.1"
+  resolved "https://registry.npmmirror.com/pino-std-serializers/-/pino-std-serializers-6.2.1.tgz#369f4ae2a19eb6d769ddf2c88a2164b76879a284"
+  integrity sha512-wHuWB+CvSVb2XqXM0W/WOYUkVSPbiJb9S5fNB7TBhd8s892Xq910bRxwHtC4l71hgztObTjXL6ZheZXFjhDrDQ==
 
-pino@^8.5.0:
-  version "8.11.0"
-  resolved "https://registry.npmmirror.com/pino/-/pino-8.11.0.tgz#2a91f454106b13e708a66c74ebc1c2ab7ab38498"
-  integrity sha512-Z2eKSvlrl2rH8p5eveNUnTdd4AjJk8tAsLkHYZQKGHP4WTh2Gi1cOSOs3eWPqaj+niS3gj4UkoreoaWgF3ZWYg==
+pino@^8.12.0:
+  version "8.14.1"
+  resolved "https://registry.npmmirror.com/pino/-/pino-8.14.1.tgz#bb38dcda8b500dd90c1193b6c9171eb777a47ac8"
+  integrity sha512-8LYNv7BKWXSfS+k6oEc6occy5La+q2sPwU3q2ljTX5AZk7v+5kND2o5W794FyRaqha6DJajmkNRsWtPpFyMUdw==
   dependencies:
     atomic-sleep "^1.0.0"
     fast-redact "^3.1.1"
@@ -1109,7 +1109,7 @@ prisma@^4.15.0:
   dependencies:
     "@prisma/engines" "4.15.0"
 
-process-warning@^2.0.0:
+process-warning@^2.0.0, process-warning@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmmirror.com/process-warning/-/process-warning-2.2.0.tgz#008ec76b579820a8e5c35d81960525ca64feb626"
   integrity sha512-/1WZ8+VQjR6avWOgHeEPd7SDQmFQ1B5mC1eRXsCm5TarlNmx/wCsa5GEaxGm05BORRtyG/Ex/3xq3TuRvq57qg==
@@ -1239,10 +1239,10 @@ semver@^7.3.5:
   dependencies:
     lru-cache "^6.0.0"
 
-semver@^7.3.7:
-  version "7.5.0"
-  resolved "https://registry.npmmirror.com/semver/-/semver-7.5.0.tgz#ed8c5dc8efb6c629c88b23d41dc9bf40c1d96cd0"
-  integrity sha512-+XC0AD/R7Q2mPSRuy2Id0+CGTZ98+8f+KvwirxOKIEyid+XSx6HbC63p+O4IndTHuX5Z+JxQ0TghCkO5Cg/2HA==
+semver@^7.5.0:
+  version "7.5.1"
+  resolved "https://registry.npmmirror.com/semver/-/semver-7.5.1.tgz#c90c4d631cf74720e46b21c1d37ea07edfab91ec"
+  integrity sha512-Wvss5ivl8TMRZXXESstBA4uR5iXgEN/VC5/sOcuXdVLzcdkz4HWetIoRfG5gb5X+ij/G9rw9YoGn3QoQ8OCSpw==
   dependencies:
     lru-cache "^6.0.0"
 
