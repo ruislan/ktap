@@ -33,6 +33,7 @@ function AdminPanel() {
                             [MOBILE_BREAKPOINT]: {
                                 width: '100vw',
                                 marginRight: 0,
+                                marginBottom: $theme.sizing.scale300,
                             },
                         })
                     }
@@ -49,7 +50,7 @@ function AdminPanel() {
                         minHeight: '50vh',
                         [MOBILE_BREAKPOINT]: {
                             margin: '0',
-                            padding: $theme.sizing.scale300,
+                            // padding: $theme.sizing.scale300,
                         }
                     })
                 }

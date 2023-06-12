@@ -11,7 +11,7 @@ import { useStyletron } from 'baseui';
  */
 function RouterLink({ href, target, kind = 'none', role = 'Link', children }) {
     const [css, theme] = useStyletron();
-    const style = { color: 'inherit', };
+    const style = { color: 'inherit' };
     if (kind === 'none') style.textDecoration = 'none';
     if (kind === 'underline') {
         style.textDecoration = 'underline';

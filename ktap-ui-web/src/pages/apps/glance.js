@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { useStyletron } from 'baseui';
 import { useNavigate } from 'react-router-dom';
 import { Block } from 'baseui/block';
-import { Tag } from 'baseui/tag';
 import { Button } from 'baseui/button';
 import { LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Check, Plus } from 'baseui/icon';
@@ -12,23 +11,9 @@ import { Modal, ModalBody, ModalHeader } from 'baseui/modal';
 import { Input } from 'baseui/input';
 import { MOBILE_BREAKPOINT, AppMedia } from '../../constants';
 import { useAuth } from '../../hooks/use-auth';
+import Tag from '../../components/tag';
 import { Linux, Mac, Win } from '../../components/icons';
 import RouterLink from '../../components/router-link';
-
-function TagPlusEnhancer({ title = '添加', size = 16, onClick }) {
-    const [css, theme] = useStyletron();
-    return (<div className={css({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.colors.backgroundSecondary,
-        color: theme.colors.backgroundInverseSecondary,
-        borderRadius: '50%',
-    })}
-        onClick={onClick}>
-        <Plus size={size} title={title} />
-    </div>)
-}
 
 function Field({ label, value }) {
     return (<Block
@@ -157,9 +142,9 @@ function Glance({ data }) {
             }}
             >
                 <Block marginTop='scale600' marginBottom='scale600' justifyContent='space-between' display='flex'>
-                    <Block flex='1' display='flex' alignItems='center' flexWrap='wrap'>
+                    <Block flex='1' display='flex' alignItems='center' flexWrap gridGap='scale300'>
                         {data?.tags?.slice(0, APP_TAG_LIMIT).map((tag, index) =>
-                            <Tag key={index} closeable={false}><RouterLink href={`/tags/${tag.name}`}>{tag.name}</RouterLink></Tag>
+                            <Tag key={index}><RouterLink href={`/tags/${tag.name}`}>{tag.name}</RouterLink></Tag>
                         )}
                         <Block marginLeft='scale100' display='inline-flex'>
                             <Button size='mini' kind='tertiary' shape='circle' onClick={() => user ? setIsOpenTagModal(true) : navigate('/login')}>
@@ -169,83 +154,88 @@ function Glance({ data }) {
                                 <ModalHeader>{data?.name} 的标签</ModalHeader>
                                 <ModalBody>
                                     <Block display='flex' flexDirection='column'>
-                                        <Block display='flex' flexDirection='column' marginTop='scale600'>
-                                            <LabelSmall>热门标签</LabelSmall>
-                                            <Block display='flex' flexWrap='wrap' marginTop='scale300'>
-                                                {data.tags.map((tag, index) => (
-                                                    <Tag key={index} variant='solid' size='small' closeable={false}
-                                                        onClick={() => navigate(`/tags/${tag.name}`)}
-                                                        startEnhancer={() => {
+                                        <Block display='grid' gridTemplateColumns='1fr 1fr' gridGap='scale300'>
+                                            <Block display='flex' flexDirection='column' marginTop='scale600'>
+                                                <LabelSmall>热门标签</LabelSmall>
+                                                <Block display='flex' flexWrap gridGap='scale300' marginTop='scale300'>
+                                                    {data.tags.map((tag, index) => (
+                                                        <Tag key={index} endEnhancer={() => {
                                                             return userTags.length < USER_TAG_LIMIT && !userTags.find(ut => ut.name === tag.name) ?
-                                                                <TagPlusEnhancer onClick={(e) => {
+                                                                <Plus className={css({ cursor: 'pointer' })} onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleSaveTag(tag.name);
                                                                 }} /> :
                                                                 null;
-                                                        }}
-                                                    >
-                                                        {tag.name}({tag.count})
-                                                    </Tag>
-                                                ))}
-                                            </Block>
-                                        </Block>
-                                        {frequentTags.length > 0 &&
-                                            <Block display='flex' flexDirection='column' marginTop='scale600'>
-                                                <LabelSmall>你的常用</LabelSmall>
-                                                <Block display='flex' flexWrap='wrap' marginTop='scale300'>
-                                                    {frequentTags.map((tag, index) => (
-                                                        <Tag key={index} variant='solid' size='small' closeable={false}
-                                                            onClick={() => navigate(`/tags/${tag.name}`)}
-                                                            startEnhancer={() => {
-                                                                return userTags.length < USER_TAG_LIMIT && !userTags.find(ut => ut.name === tag.name) ?
-                                                                    <TagPlusEnhancer onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleSaveTag(tag.name);
-                                                                    }} /> :
-                                                                    null;
-                                                            }}
-                                                        >
+                                                        }}>
                                                             {tag.name}({tag.count})
                                                         </Tag>
                                                     ))}
                                                 </Block>
                                             </Block>
-                                        }
-                                        {userTags.length > 0 &&
-                                            <Block display='flex' flexDirection='column' marginTop='scale600'>
-                                                <LabelSmall>你的标签</LabelSmall>
-                                                <Block display='flex' alignItems='baseline' marginTop='scale300' flexWrap='wrap'>
-                                                    {userTags.map((tag, index) => (
-                                                        <Tag key={index} variant='solid' size='small' onActionClick={(e) => {
-                                                            e.preventDefault();
-                                                            handleDeleteTag(tag.name);
-                                                        }}>
-                                                            {tag.name}
-                                                        </Tag>
-                                                    ))}
+                                            <Block display='flex' flexDirection='column'>
+                                                {userTags.length > 0 &&
+                                                    <Block display='flex' flexDirection='column' marginTop='scale600'>
+                                                        <LabelSmall>你用于此游戏的标签</LabelSmall>
+                                                        <Block display='flex' flexWrap gridGap='scale300' marginTop='scale300'>
+                                                            {userTags.map((tag, index) => (
+                                                                <Tag key={index} closeable onCloseClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    handleDeleteTag(tag.name);
+                                                                }}>
+                                                                    {tag.name}
+                                                                </Tag>
+                                                            ))}
+                                                        </Block>
+                                                    </Block>
+                                                }
+
+                                                <Block display='flex' marginTop='scale900' flexDirection='column' gridGap='scale300'>
+                                                    <LabelSmall>输入一个新的标签</LabelSmall>
+                                                    <Block display='flex' gridGap='scale300' alignItems='center'>
+                                                        <Input
+                                                            value={newTag}
+                                                            onChange={e => setNewTag(e.target.value)}
+                                                            readOnly={userTags.length >= USER_TAG_LIMIT}
+                                                            maxLength={10} size='mini'
+                                                            placeholder={userTags.length < USER_TAG_LIMIT ? '最长10字' : '最多只能添加5个标签'}
+                                                            onKeyUp={e => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault();
+                                                                    handleSaveTag(newTag);
+                                                                }
+                                                            }}
+                                                        />
+                                                        <Block whiteSpace='nowrap'>
+                                                            <Button size='mini' kind='secondary' disabled={userTags.length >= USER_TAG_LIMIT} onClick={() => handleSaveTag(newTag)}>确定</Button>
+                                                        </Block>
+                                                    </Block>
+                                                    <LabelXSmall color='primary500'>小提醒：与游戏 <b>类型</b> 或 <b>功能</b> 相同的内容将不起作用哦</LabelXSmall>
                                                 </Block>
+
+                                                {frequentTags.length > 0 &&
+                                                    <Block display='flex' flexDirection='column' marginTop='scale600'>
+                                                        <LabelSmall>你的常用</LabelSmall>
+                                                        <Block display='flex' flexWrap gridGap='scale300' marginTop='scale300'>
+                                                            {frequentTags.map((tag, index) => (
+                                                                <Tag key={index} endEnhancer={() => {
+                                                                    return userTags.length < USER_TAG_LIMIT && !userTags.find(ut => ut.name === tag.name) ?
+                                                                        <Plus className={css({ cursor: 'pointer' })} onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleSaveTag(tag.name);
+                                                                        }} /> :
+                                                                        null;
+                                                                }}>
+                                                                    {tag.name}({tag.count})
+                                                                </Tag>
+                                                            ))}
+                                                        </Block>
+                                                    </Block>
+                                                }
                                             </Block>
-                                        }
-                                        <Block display='flex' marginTop='scale900'>
-                                            <Block flex='1'>
-                                                <Input
-                                                    value={newTag}
-                                                    onChange={e => setNewTag(e.target.value)}
-                                                    readOnly={userTags.length >= USER_TAG_LIMIT}
-                                                    maxLength={10} size='compact'
-                                                    placeholder={userTags.length < USER_TAG_LIMIT ? '输入标签,最长10字' : '最多只能添加5个标签'}
-                                                    onKeyUp={e => {
-                                                        if (e.key === 'Enter') {
-                                                            e.preventDefault();
-                                                            handleSaveTag(newTag);
-                                                        }
-                                                    }}
-                                                />
-                                                <LabelXSmall marginTop='scale300' color='primary500'>小提醒：与游戏 <b>类型</b> 或 <b>功能</b> 相同的内容将不起作用哦</LabelXSmall>
-                                            </Block>
-                                            <Block marginLeft='scale300'>
-                                                <Button size='compact' onClick={() => userTags.length < USER_TAG_LIMIT ? handleSaveTag(newTag) : setIsOpenTagModal(false)}>{userTags.length < USER_TAG_LIMIT ? '确定' : '关闭'}</Button>
-                                            </Block>
+                                        </Block>
+
+                                        <Block marginTop='scale900' display='flex' justifyContent='flex-end'>
+                                            <Button size='compact' onClick={() => setIsOpenTagModal(false)}>关闭</Button>
                                         </Block>
                                     </Block>
                                 </ModalBody>

@@ -19,7 +19,7 @@ import GenderLabel from '../../components/gender-label';
 
 function TabReviewsUsersListItem({ review }) {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const { remark, color } = useScoreRemark({ score: review.score });
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
     const [isDoingThumbDown, setIsDoingThumbDown] = React.useState(false);
@@ -69,8 +69,7 @@ function TabReviewsUsersListItem({ review }) {
             const res = await fetch(`/api/reviews/${review.id}/gifts/${checkedGift.id}`, { method: 'POST' });
             if (res.ok) {
                 const json = await res.json();
-
-                user.balance = user.balance - checkedGift.price;
+                setUser({ ...user, balance: user.balance - checkedGift.price });
                 review.meta.gifts = json.count;
                 review.gifts = json.data;
                 setIsOpenGiftConfirmModal(false); // close confirm

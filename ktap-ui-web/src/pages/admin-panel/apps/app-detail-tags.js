@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { HeadingXSmall, ParagraphXSmall, } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { StyledDivider } from 'baseui/divider'
-import { Tag } from "baseui/tag";
+import Tag from '../../../components/tag';
 import { Select } from 'baseui/select';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete, } from 'baseui/icon';
@@ -107,9 +107,9 @@ function GenresBlock({ data }) {
                     <Block><Button kind='secondary' size='compact' type='submit' disabled={!newGenres || newGenres.length === 0} isLoading={isLoading}>保存</Button></Block>
                 </Block>
             </form>
-            <Block marginTop='scale600'>
+            <Block marginTop='scale600' display='flex' alignItems='center' gridGap='scale300' flexWrap>
                 {genres && genres.map((genre, index) => (
-                    <Tag key={index} kind='primary' size='small' closeable variant='solid' onActionClick={(e) => {
+                    <Tag key={index} closeable onCloseClick={(e) => {
                         e.preventDefault();
                         handleDelete(genre.id);
                     }}>{genre.name}</Tag>

@@ -6,7 +6,7 @@ import { Search as SearchIcon } from 'baseui/icon';
 import { Button } from 'baseui/button';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { LabelXSmall, LabelMedium } from 'baseui/typography';
-import { Tag } from 'baseui/tag';
+import Tag from '../../components/tag';
 import { Spinner } from "baseui/spinner";
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
@@ -133,7 +133,7 @@ function SearchPanel() {
                                 <LabelMedium marginRight='scale0'>{app.score}</LabelMedium>
                                 <Star width='20px' height='20px' />
                             </Block>
-                            <Block display='flex' overflow='auto' alignItems='center' marginTop='scale100'>
+                            <Block display='flex' gridGap='scale300' overflow='auto' alignItems='center' marginTop='scale300'>
                                 {app.tags && app.tags.map((tag, index) => {
                                     return (
                                         <Tag key={index} closeable={false}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'baseui/card';
-import { Tag } from 'baseui/tag';
+import Tag from '../../components/tag';
 import { Block } from 'baseui/block';
 import { Button } from "baseui/button";
 import { ParagraphMedium } from 'baseui/typography';
@@ -93,9 +93,9 @@ function AppListRecommend() {
                             </Block>
                         </Block>
                         <ParagraphMedium marginTop='scale200' marginBottom='scale200'>{summary}</ParagraphMedium>
-                        <Block>
+                        <Block display='flex' gridGap='scale300' alignItems='center' flexWrap marginTop='scale400'>
                             {tags.map((tag, i) => (
-                                <Tag key={i} closeable={false} variant='light' kind='primary'>
+                                <Tag key={i}>
                                     <RouterLink href={`/tags/${tag.name}`}>{tag.name}</RouterLink>
                                 </Tag>
                             ))}

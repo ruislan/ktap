@@ -29,7 +29,7 @@ import RouterLink from '../../components/router-link';
 function Review() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const [review, setReview] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(true);
     const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
@@ -139,7 +139,7 @@ function Review() {
             const res = await fetch(`/api/reviews/${review.id}/gifts/${checkedGift.id}`, { method: 'POST' });
             if (res.ok) {
                 const json = await res.json();
-                user.balance = user.balance - checkedGift.price;
+                setUser({ ...user, balance: user.balance - checkedGift.price });
                 review.meta.gifts = json.count;
                 review.gifts = json.data;
                 setIsOpenGiftConfirmModal(false);

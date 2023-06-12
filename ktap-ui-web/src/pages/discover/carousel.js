@@ -2,7 +2,7 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium, HeadingSmall, ParagraphMedium, LabelSmall } from 'baseui/typography';
-import { Tag } from 'baseui/tag';
+import Tag from '../../components/tag';
 import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '../../constants';
 import { Star } from '../../components/icons';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -131,15 +131,15 @@ function Carousel({ title, dataList }) {
                                         }
                                     }}>{data.summary}</ParagraphMedium>
                                     <Block display='flex' flexDirection='column'>
-                                        <Block marginBottom='scale300' overrides={{
+                                        <Block marginBottom='scale300' display='flex' alignItems='center' flexWrap gridGap='scale300' overrides={{
                                             Block: {
                                                 style: {
-                                                    maxHeight: '66px',
+                                                    maxHeight: '64px',
                                                     overflow: 'hidden',
                                                 }
                                             }
                                         }}>
-                                            {data.tags && data.tags.map((tag, j) => <Tag key={j} closeable={false} onClick={e => {
+                                            {data.tags && data.tags.map((tag, j) => <Tag key={j} onClick={e => {
                                                 e.preventDefault();
                                                 navigate(`/tags/${tag.name}`);
                                             }}>{tag.name}</Tag>)}

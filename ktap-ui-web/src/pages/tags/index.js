@@ -5,7 +5,7 @@ import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
-import { Tag } from 'baseui/tag';
+import Tag from '../../components/tag';
 import { Button } from 'baseui/button';
 import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
 import RoundTab from '../../components/round-tab';
@@ -18,8 +18,7 @@ import SideHotTags from './side-hot-tags';
 function TagItem({ name }) {
     const navigate = useNavigate();
     return (
-        <Tag closeable={false} size='small'
-            onClick={(e) => {
+        <Tag onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 navigate(`/tags/${name}`);
@@ -111,7 +110,7 @@ function Tags() {
                                     <LabelMedium marginRight='scale0'>{app.score}</LabelMedium>
                                     <Star width='20px' height='20px' />
                                 </Block>
-                                <Block display='flex' overflow='hidden' alignItems='center' marginTop='scale100'>
+                                <Block display='flex' overflow='auto' gridGap='scale300' alignItems='center' marginTop='scale300'>
                                     {app.tags && app.tags.map((tag, index) => <TagItem key={index} name={tag.name} />)}
                                     {app.genres && app.genres.map((tag, index) => <TagItem key={index} name={tag.name} />)}
                                     {app.features && app.features.map((tag, index) => <TagItem key={index} name={tag.name} />)}
