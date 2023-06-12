@@ -8,7 +8,7 @@ function Tag({ startEnhancer, endEnhancer, closeable, onCloseClick, onClick, chi
             display: 'inline-flex',
             whiteSpace: 'nowrap',
             alignItems: 'center',
-            gap: theme.sizing.scale300,
+            gap: theme.sizing.scale100,
             borderRadius: theme.borders.radius200,
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
             paddingTop: theme.sizing.scale100, paddingBottom: theme.sizing.scale100,
