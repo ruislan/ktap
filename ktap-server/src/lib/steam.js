@@ -114,6 +114,8 @@ const steam = {
         // organizations
         if (steamApp.developers) {
             newApp.developers = { create: [] };
+            const arrSet = new Set(steamApp.developers);
+            steamApp.developers = Array.from(arrSet);// remove duplicates
             for (const developer of steamApp.developers) {
                 newApp.developers.create.push({
                     organization: {
@@ -124,6 +126,8 @@ const steam = {
         }
         if (steamApp.publishers) {
             newApp.publishers = { create: [] };
+            const arrSet = new Set(steamApp.publishers);
+            steamApp.publishers = Array.from(arrSet); // remove duplicates
             for (const publisher of steamApp.publishers) {
                 newApp.publishers.create.push({
                     organization: {
@@ -136,12 +140,14 @@ const steam = {
         // features
         if (steamApp.categories) {
             newApp.features = { create: [] };
+            const arrSet = new Set(steamApp.categories.map(category => category.description));
+            steamApp.categories = Array.from(arrSet); // remove duplicates
             for (const category of steamApp.categories) {
                 newApp.features.create.push({
                     tag: {
                         connectOrCreate: {
-                            where: { name: category.description },
-                            create: { name: category.description, category: TagCategory.feature },
+                            where: { name: category },
+                            create: { name: category, category: TagCategory.feature },
                         },
                     }
                 });
@@ -151,12 +157,15 @@ const steam = {
         // genres
         if (steamApp.genres) {
             newApp.genres = { create: [] };
+            const arrSet = new Set(steamApp.genres.map(genre => genre.description));
+            steamApp.genres = Array.from(arrSet); // remove duplicates
+
             for (const genre of steamApp.genres) {
                 newApp.genres.create.push({
                     tag: {
                         connectOrCreate: {
-                            where: { name: genre.description },
-                            create: { name: genre.description, category: TagCategory.genre },
+                            where: { name: genre },
+                            create: { name: genre, category: TagCategory.genre },
                         }
                     }
                 });

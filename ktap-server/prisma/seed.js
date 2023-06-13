@@ -1061,7 +1061,7 @@ async function initForSteam() {
         const steamAppId = pair[0];
         const gameData = JSON.parse(Buffer.from(pair[1], 'base64').toString());
         if (gameData) {
-            console.log(`初始化游戏 ${gameData[steamAppId].data.name} ...`);
+            console.log(`初始化游戏 [${steamAppId}] ${gameData[steamAppId].data.name} ...`);
             const newApp = await steam.parseGameDetailToPrismaData(gameData);
             newApp.isVisible = true; // set it visible
             if (newApp) await db.app.create({ data: newApp });

@@ -56,7 +56,7 @@ model Trading {
 
 model App {
   id            Int       @id @default(autoincrement())
-  name          String    @unique // 名称
+  name          String // 名称 并非唯一，很多游戏的名字可能是一样的
   slogan        String? // 标语 长度应该不能超过10个字符
   summary       String? //简短说明 长度应该不能超过200个字符
   description   String? //详细介绍，支持markdown 长度应该不能超过5000个字符

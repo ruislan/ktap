@@ -410,7 +410,6 @@ const apps = async function (fastify, opts) {
         const newApp = await steam.parseGameDetailToPrismaData(json);
 
         if (!newApp) return reply.code(400).send();
-        if ((await fastify.db.app.count({ where: { name: newApp.name } })) > 0) return reply.code(400).send();
 
         const app = await fastify.db.app.create({ data: newApp });
         return reply.code(201).send({ data: { id: app.id } });

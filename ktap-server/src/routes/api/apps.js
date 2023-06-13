@@ -18,7 +18,7 @@ const apps = async function (fastify, opts) {
                     select: { image: true, thumbnail: true, },
                 },
             },
-            orderBy: [{ score: 'desc' }],
+            orderBy: [{ score: 'desc' }, { updatedAt: 'desc' }],
             take: limit,
             skip,
         });
