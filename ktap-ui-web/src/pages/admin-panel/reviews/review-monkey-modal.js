@@ -41,14 +41,11 @@ function ReviewMonkeyModal({ isOpen, setIsOpen, onSuccess = () => { }, onFail = 
 
     return (
         <Modal onClose={() => setIsOpen(false)} closeable={false}
-            isOpen={isOpen}
-            animate
-            autoFocus
-            role={ROLE.dialog}
+            isOpen={isOpen} animate autoFocus role={ROLE.dialog}
         >
             <ModalHeader>评测乱入</ModalHeader>
             <ModalBody $as='div'>
-                <ParagraphXSmall marginTop='0'>慎用！此乱入将会使用一个用户对所选数量的游戏进行评测。当然，会遵循一个用户对一个游戏只能有一个评论的规则。</ParagraphXSmall>
+                <ParagraphXSmall marginTop='0'>慎用！此乱入将会使用一个用户对所选数量的游戏进行评测。当然，会遵循一个用户对一个游戏只能有一个评论的规则。并且，评测将不支持回复。</ParagraphXSmall>
                 <FormControl label={<LabelSmall>用户ID</LabelSmall>}>
                     <Input size='compact' required type='number' min={1} value={form.userId} onChange={e => setForm({ ...form, userId: e.target.value })} />
                 </FormControl>

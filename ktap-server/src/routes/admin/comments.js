@@ -66,12 +66,12 @@ const comments = async function (fastify, opts) {
                 for (let j = 0; j < commentCount; j++) {
                     let data = {
                         content: buzzwords[Math.floor(Math.random() * buzzwords.length)].content,
-                        userId,
+                        userId: Number(userId),
                         reviewId: review.id,
                     };
                     data = await fastify.db.reviewComment.create({ data });
                     // Create timeline
-                    await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'ReviewComment', } });
+                    await fastify.db.timeline.create({ data: { userId: Number(userId), targetId: data.id, target: 'ReviewComment', } });
                 }
             }
         }
