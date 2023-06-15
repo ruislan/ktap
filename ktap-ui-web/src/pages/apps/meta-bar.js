@@ -3,11 +3,13 @@ import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import useScoreRemark from '../../hooks/use-score-remark';
+import { Question } from '../../components/icons';
+import { StatefulTooltip } from "baseui/tooltip";
 
-function MetaItem({ label, value, tips }) {
+function MetaItem({ label, value, tips, title, }) {
     return (
         <Block padding='scale600'>
-            <LabelMedium marginBottom='scale100' color='primary400' overrides={{
+            <LabelMedium display='flex' gridGap='scale0' alignItems='center' marginBottom='scale100' color='primary400' overrides={{
                 Block: {
                     style: {
                         fontSize: '15px',
@@ -18,6 +20,12 @@ function MetaItem({ label, value, tips }) {
                 }
             }}>
                 {label}
+                {title &&
+                    <StatefulTooltip content={title} autoFocus returnFocus accessibilityType='tooltip' placement='top'>
+                        <Block display='flex' justifyContent='center' alignItems='center'>
+                            <Question width='16' height='16' />
+                        </Block>
+                    </StatefulTooltip>}
             </LabelMedium>
             <Block display='flex' alignItems='baseline'>
                 <LabelMedium color='primary100' overrides={{
@@ -84,10 +92,10 @@ function MetaBar({ meta }) {
                     })
                 }
             }}>
-                <MetaItem label='下载数量：' value={meta.downloads} />
-                <MetaItem label='关注数量：' value={meta.follows} />
-                <MetaItem label='评测数量：' value={meta.reviews} />
-                <MetaItem label='多数评价：' value={remark} tips={percent == 0 ? null : percent + '%'} />
+                <MetaItem label='热力指数' value={meta.popular || 0} title='最近一周的(发帖数*10+关注数*2+回复数*1)' />
+                <MetaItem label='关注数量' value={meta.follows || 0} />
+                <MetaItem label='评测数量' value={meta.reviews || 0} />
+                <MetaItem label='多数评价' value={remark} tips={percent == 0 ? null : percent + '%'} />
             </Block>
         </Block>
     );

@@ -5,6 +5,7 @@ import fastifyJWT from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 
+import cachingPlugin from './plugins/caching.js';
 import { Keys } from './constants.js';
 
 import apiRoutes from './api.js';
@@ -40,6 +41,12 @@ export default async function (fastify, opts, next) {
             cookieName: Keys.cookie.token,
             signed: true
         }
+    });
+    await fastify.register(cachingPlugin, {
+        caches: [
+            { name: 'ranks', ttl: 20 * 60 * 1000 },
+            { name: 'apps', ttl: 10 * 60 * 1000 },
+        ]
     });
 
     // schedule

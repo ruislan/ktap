@@ -26,12 +26,13 @@ function AdminPanelDashboard() {
             <HeadingSmall marginTop='0' marginBottom='scale900'>数据概览</HeadingSmall>
             {!isLoading &&
                 <Block display='flex' flexWrap='wrap' justifyContent='stretch' alignItems='center'>
-                    <Statistic title='新用户' subtitle='近7天' text={data?.users} />
-                    <Statistic title='新评测' subtitle='近7天' text={data?.reviews} />
-                    <Statistic title='新回复' subtitle='近7天' text={data?.comments} />
-                    <Statistic title='新礼物' subtitle='近7天' text={data?.gifts} />
-                    <Statistic title='新举报' subtitle='近7天' text={data?.reports} />
-                    <Statistic title='新流水' subtitle='近7天' text={data?.amount} />
+                    <Statistic title='新游戏' subtitle='近7天' text={data?.apps || 0} />
+                    <Statistic title='新用户' subtitle='近7天' text={data?.users || 0} />
+                    <Statistic title='新评测' subtitle='近7天' text={data?.reviews || 0} />
+                    <Statistic title='新回复' subtitle='近7天' text={data?.comments || 0} />
+                    <Statistic title='新礼物' subtitle='近7天' text={data?.gifts || 0} />
+                    <Statistic title='新举报' subtitle='近7天' text={data?.reports || 0} />
+                    <Statistic title='新流水' subtitle='近7天' text={data?.amount || 0} />
                 </Block>
             }
         </Block>

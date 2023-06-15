@@ -1,5 +1,5 @@
 import fp from 'fastify-plugin';
-import jieba from "nodejieba";
+import jieba from 'nodejieba';
 
 /*
 * 结巴分词的Plugin

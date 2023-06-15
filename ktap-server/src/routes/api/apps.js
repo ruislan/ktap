@@ -9,89 +9,85 @@ const apps = async function (fastify, opts) {
     fastify.get('/recommended', async function (req, reply) {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
         const skip = Math.max(0, Number(req.query.skip) || 0);
-        const count = await fastify.db.app.count();
-        const apps = await fastify.db.app.findMany({
-            where: { isVisible: true, },
-            include: {
-                media: {
-                    where: { usage: AppMedia.usage.landscape },
-                    select: { image: true, thumbnail: true, },
+
+        let cachedData = fastify.caching.apps.get(`recommended_${skip}_${limit}`);
+        if (!cachedData) {
+            const count = await fastify.db.app.count();
+            const apps = await fastify.db.app.findMany({
+                where: { isVisible: true, },
+                include: {
+                    media: {
+                        where: { usage: AppMedia.usage.landscape },
+                        select: { image: true, thumbnail: true, },
+                    },
                 },
-            },
-            orderBy: [{ score: 'desc' }, { updatedAt: 'desc' }],
-            take: limit,
-            skip,
-        });
-        // transform data to the form that suite the view
-        const data = [];
-        for await (const item of apps) {
-            const app = {
-                id: item.id,
-                name: item.name,
-                slogan: item.slogan,
-                summary: item.summary,
-                score: item.score,
-                media: {
-                    landscape: item.media.map(m => {
-                        return {
-                            image: m.image,
-                            thumbnail: m.thumbnail,
-                        };
-                    })[0] // 系统硬性规定：landscape至少要有一个
-                }
-            };
-            try {
-                app.tags = await fastify.db.$queryRaw`
+                orderBy: [{ score: 'desc' }, { updatedAt: 'desc' }],
+                take: limit,
+                skip,
+            });
+            // transform data to the form that suite the view
+            const data = [];
+            for await (const item of apps) {
+                const app = {
+                    id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
+                    media: {
+                        landscape: item.media.map(m => {
+                            return {
+                                image: m.image,
+                                thumbnail: m.thumbnail,
+                            };
+                        })[0] // 系统硬性规定：landscape至少要有一个
+                    }
+                };
+                try {
+                    app.tags = await fastify.db.$queryRaw`
                     SELECT id, name, color_hex AS colorHex, count(*) AS count FROM
                     AppUserTagRef, Tag WHERE AppUserTagRef.app_id = ${item.id} AND AppUserTagRef.tag_id = Tag.id
                     GROUP BY id ORDER BY count DESC LIMIT 5
                 `;
-                app.tags.forEach(tag => tag.count = Number(tag.count));
-            } catch {
-                app.tags = [];
+                    app.tags.forEach(tag => tag.count = Number(tag.count));
+                } catch {
+                    app.tags = [];
+                }
+                data.push(app);
             }
-            data.push(app);
+            cachedData = { data, count, skip, limit };
+            fastify.caching.apps.set(`recommended_${skip}_${limit}`, cachedData, 5 * 60 * 1000);
         }
-        return reply.code(200).send({ data, count, skip, limit });
+        return reply.code(200).send(cachedData);
     });
 
     // 最近更新
     // 用于首页侧边展示
     fastify.get('/by-updated', async function (req, reply) {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
-        let data = await fastify.db.app.findMany({
-            where: { isVisible: true, },
-            orderBy: [{ updatedAt: 'desc' }],
-            include: {
-                media: {
-                    where: { usage: AppMedia.usage.landscape },
-                    select: {
-                        image: true,
-                        thumbnail: true,
-                    },
-                }
-            },
-            take: limit,
-        });
-        // transform data to the form that suite the view
-        data = data.map(item => {
-            return {
-                id: item.id,
-                name: item.name,
-                slogan: item.slogan,
-                summary: item.summary,
-                score: item.score,
-                media: {
-                    landscape: item.media.map(m => {
-                        return {
-                            image: m.image,
-                            thumbnail: m.thumbnail,
-                        };
-                    })[0]
-                }
-            };
-        });
-        return reply.code(200).send({ data, limit });
+
+        let cachedData = fastify.caching.apps.get(`by_updated_${limit}`);
+        if (!cachedData) {
+            cachedData = await fastify.db.app.findMany({
+                where: { isVisible: true, },
+                orderBy: [{ updatedAt: 'desc' }],
+                include: {
+                    media: {
+                        where: { usage: AppMedia.usage.landscape },
+                        select: { image: true, thumbnail: true, },
+                    }
+                },
+                take: limit,
+            });
+            // transform data to the form that suite the view
+            cachedData = cachedData.map(item => {
+                return {
+                    id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
+                    media: {
+                        landscape: item.media.map(m => ({ image: m.image, thumbnail: m.thumbnail, }))[0]
+                    }
+                };
+            });
+            fastify.caching.apps.set(`by_updated_${limit}`, cachedData, 5 * 60 * 1000);
+        }
+
+        return reply.code(200).send({ data: cachedData, limit });
     });
 
     // 最多评价
@@ -100,45 +96,38 @@ const apps = async function (fastify, opts) {
     // 优点：无需额外字段和操作，每次都能得到及时数据；缺点：数据量较大时开销较大，必须采用缓存等相关技术来提升性能
     fastify.get('/by-review', async function (req, reply) {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
-        let data = await fastify.db.app.findMany({
-            where: { isVisible: true, },
-            include: {
-                media: {
-                    where: { usage: AppMedia.usage.landscape },
-                    select: {
-                        image: true,
-                        thumbnail: true,
+
+        let cachedData = fastify.caching.apps.get(`by_review_${limit}`);
+        if (!cachedData) {
+            cachedData = await fastify.db.app.findMany({
+                where: { isVisible: true, },
+                include: {
+                    media: {
+                        where: { usage: AppMedia.usage.landscape },
+                        select: { image: true, thumbnail: true, },
                     },
+                    _count: {
+                        select: { reviews: true, }
+                    }
                 },
-                _count: {
-                    select: { reviews: true, }
-                }
-            },
-            orderBy: [{ reviews: { _count: 'desc' } }],
-            take: limit,
-        });
-        // transform data to the form that suite the view
-        data = data.map(item => {
-            return {
-                id: item.id,
-                name: item.name,
-                slogan: item.slogan,
-                summary: item.summary,
-                score: item.score,
-                media: {
-                    landscape: item.media.map(m => {
-                        return {
-                            image: m.image,
-                            thumbnail: m.thumbnail,
-                        };
-                    })[0]
-                },
-                meta: {
-                    reviews: item._count.reviews
-                }
-            };
-        });
-        return reply.code(200).send({ data, limit });
+                orderBy: [{ reviews: { _count: 'desc' } }],
+                take: limit,
+            });
+            // transform data to the form that suite the view
+            cachedData = cachedData.map(item => {
+                return {
+                    id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
+                    media: {
+                        landscape: item.media.map(m => ({ image: m.image, thumbnail: m.thumbnail, }))[0]
+                    },
+                    meta: {
+                        reviews: item._count.reviews
+                    }
+                };
+            });
+            fastify.caching.apps.set(`by_review_${limit}`, cachedData, 5 * 60 * 1000);
+        }
+        return reply.code(200).send({ data: cachedData, limit });
     });
 
     // 热门游戏
@@ -147,130 +136,111 @@ const apps = async function (fastify, opts) {
     // XXX 尽量避免这种靠数据库来计算的方式
     fastify.get('/by-hot', async function (req, reply) {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
-        let data = await fastify.db.$queryRaw`
-            SELECT a.*, am.image, am.thumbnail FROM
-            (SELECT a.*, max(r.updated_at) AS latest_updated FROM App a LEFT JOIN Review r ON a.id = r.app_id GROUP BY a.id LIMIT ${limit}) a
-            LEFT JOIN AppMedia am ON a.id = am.app_id WHERE a.is_visible=${true} AND am.usage = ${AppMedia.usage.landscape}
-            ORDER BY a.latest_updated DESC
-        `;
-        // transform data to the form that suite the view
-        data = data.map(item => {
-            return {
-                id: item.id,
-                name: item.name,
-                slogan: item.slogan,
-                summary: item.summary,
-                score: item.score,
-                media: {
-                    landscape: {
-                        image: item.image,
-                        thumbnail: item.thumbnail,
+
+        let cachedData = fastify.caching.apps.get(`by_hot_${limit}`);
+        if (!cachedData) {
+            cachedData = await fastify.db.$queryRaw`
+                SELECT a.*, am.image, am.thumbnail FROM
+                (SELECT a.*, max(r.updated_at) AS latest_updated FROM App a LEFT JOIN Review r ON a.id = r.app_id GROUP BY a.id LIMIT ${limit}) a
+                LEFT JOIN AppMedia am ON a.id = am.app_id WHERE a.is_visible=${true} AND am.usage = ${AppMedia.usage.landscape}
+                ORDER BY a.latest_updated DESC
+            `;
+            // transform data to the form that suite the view
+            cachedData = cachedData.map(item => {
+                return {
+                    id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
+                    media: {
+                        landscape: { image: item.image, thumbnail: item.thumbnail, }
                     }
-                }
-            };
-        });
-        return reply.code(200).send({ data, limit });
+                };
+            });
+            fastify.caching.apps.set(`by_hot_${limit}`, cachedData, 5 * 60 * 1000);
+        }
+        return reply.code(200).send({ data: cachedData, limit });
     });
 
     // app的信息
+    fastify.get('/:id/basic', async function (req, reply) {
+        const id = Number(req.params.id) || 0;
+        const data = await fastify.db.app.findUnique({
+            where: { id },
+            select: {
+                id: true, name: true, isVisible: true, slogan: true, summary: true, score: true,
+                media: {
+                    where: { usage: AppMedia.usage.head },
+                    select: { image: true, thumbnail: true, },
+                },
+            }
+        });
+        if (!data || !data.isVisible) return reply.code(404).send();
+        data.media = { head: data.media.map(m => ({ image: m.image, thumbnail: m.thumbnail, }))[0] };
+        return reply.code(200).send({ data });
+    });
+
     fastify.get('/:id', async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        const kind = req.query.kind || '';
-        let data = {};
-        let meta = {};
-        // get app
-        if (kind === 'basic') {
-            data = await fastify.db.app.findUnique({
-                where: { id },
-                include: {
-                    media: {
-                        where: { usage: AppMedia.usage.head },
-                        select: {
-                            image: true, thumbnail: true,
+        const data = await fastify.db.app.findUnique({
+            where: { id },
+            include: {
+                media: true,
+                awards: { select: { image: true, url: true } },
+                languages: { select: { text: true, audio: true, caption: true } },
+                socialLinks: { select: { brand: true, name: true, url: true, } },
+                proReviews: { select: { name: true, summary: true, score: true, url: true, } },
+                platforms: true,
+                genres: {
+                    include: {
+                        tag: {
+                            select: { name: true, colorHex: true, }
                         },
                     },
-                }
-            });
-            if (data) {
-                data = {
-                    id: data.id,
-                    name: data.name,
-                    isVisible: data.isVisible,
-                    slogan: data.slogan,
-                    summary: data.summary,
-                    score: data.score,
-                    media: {
-                        head: data.media.map(m => {
-                            return { image: m.image, thumbnail: m.thumbnail, };
-                        })[0]
+                },
+                features: {
+                    include: {
+                        tag: {
+                            select: { name: true, colorHex: true, }
+                        },
+                    },
+                },
+                developers: {
+                    include: {
+                        organization: {
+                            select: { id: true, name: true, }
+                        }
                     }
-                }
+                },
+                publishers: {
+                    include: {
+                        organization: {
+                            select: { id: true, name: true, }
+                        }
+                    }
+                },
             }
-        } else {
-            data = await fastify.db.app.findUnique({
-                where: { id },
-                include: {
-                    media: true,
-                    awards: { select: { image: true, url: true } },
-                    languages: { select: { text: true, audio: true, caption: true } },
-                    socialLinks: { select: { brand: true, name: true, url: true, } },
-                    proReviews: { select: { name: true, summary: true, score: true, url: true, } },
-                    platforms: true,
-                    genres: {
-                        include: {
-                            tag: {
-                                select: { name: true, colorHex: true, }
-                            },
-                        },
-                    },
-                    features: {
-                        include: {
-                            tag: {
-                                select: { name: true, colorHex: true, }
-                            },
-                        },
-                    },
-                    developers: {
-                        include: {
-                            organization: {
-                                select: { id: true, name: true, }
-                            }
-                        }
-                    },
-                    publishers: {
-                        include: {
-                            organization: {
-                                select: { id: true, name: true, }
-                            }
-                        }
-                    },
-                }
-            });
-            if (data) {
-                // clear output
-                data.genres = data.genres.map(ref => ref.tag);
-                data.features = data.features.map(ref => ref.tag);
-                // get hot tags
-                data.tags = await fastify.db.$queryRaw`
+        });
+        if (!data || !data.isVisible) return reply.code(404).send();
+
+        // clear output
+        data.genres = data.genres.map(ref => ref.tag);
+        data.features = data.features.map(ref => ref.tag);
+        // get hot tags
+        data.tags = await fastify.db.$queryRaw`
                     SELECT id, name, color_hex AS colorHex, count(*) AS count FROM
                     AppUserTagRef, Tag WHERE AppUserTagRef.app_id = ${id} AND AppUserTagRef.tag_id = Tag.id
                     GROUP BY id ORDER BY count DESC LIMIT 15
                 `;
-                data.tags.forEach(tag => tag.count = Number(tag.count));
-                data.developers = data.developers.map(ref => ref.organization);
-                data.publishers = data.publishers.map(ref => ref.organization);
+        data.tags.forEach(tag => tag.count = Number(tag.count));
+        data.developers = data.developers.map(ref => ref.organization);
+        data.publishers = data.publishers.map(ref => ref.organization);
 
-                if (data.platforms) {
-                    data.platforms = data.platforms.map(p => {
-                        return {
-                            os: p.os,
-                            requirements: JSON.parse(p.requirements),
-                        };
-                    });
-                }
-            }
+        if (data.platforms) {
+            data.platforms = data.platforms.map(p => {
+                return {
+                    os: p.os,
+                    requirements: JSON.parse(p.requirements),
+                };
+            });
         }
-        if (!data || !data.isVisible) return reply.code(404).send();
 
         // get meta
         // 统计评测中的几个分段和分段占比
@@ -282,6 +252,7 @@ const apps = async function (fastify, opts) {
                     (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 4) AS l4,
                     (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 5) AS l5;
             `)[0];
+        const meta = {};
         meta.ratings = [
             { score: 1, count: Number(lData.l1) || 0 },
             { score: 2, count: Number(lData.l2) || 0 },
@@ -291,8 +262,16 @@ const apps = async function (fastify, opts) {
         ];
         meta.reviews = await fastify.db.review.count({ where: { appId: id, } });
         meta.follows = await fastify.db.followApp.count({ where: { appId: id, } });
-        meta.downloads = data.downloadCount || 0;
 
+        // 当前热力指数计算非常简单，通过加权算法来计算最近 1 周的数值，评测*10 + 关注*2 + 回复*1
+        const limitDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const hotOriginData = (await fastify.db.$queryRaw`
+                SELECT p1.cnt AS p1, p2.cnt AS p2, p3.cnt AS p3 FROM
+                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p1,
+                    (SELECT count(id) AS cnt FROM FollowApp WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p2,
+                    (SELECT count(id) AS cnt FROM ReviewComment WHERE review_id in (SELECT id FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate})) AS p3;
+            `)[0];
+        meta.popular = Number(hotOriginData.p1) * 10 + Number(hotOriginData.p2) * 2 + Number(hotOriginData.p3) * 1;
         return reply.code(200).send({ data, meta });
     });
 

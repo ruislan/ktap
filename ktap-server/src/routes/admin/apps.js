@@ -20,7 +20,7 @@ const apps = async function (fastify, opts) {
         const data = await fastify.db.app.findMany({
             where: whereCondition,
             select: {
-                id: true, name: true, score: true, isVisible: true, downloadCount: true, createdAt: true, updatedAt: true,
+                id: true, name: true, score: true, isVisible: true,  createdAt: true, updatedAt: true,
             },
             orderBy: { createdAt: 'desc' },
             take: limit,
@@ -62,6 +62,7 @@ const apps = async function (fastify, opts) {
         });
         return reply.code(204).send();
     });
+
     fastify.put('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { app } = req.body;
@@ -201,6 +202,7 @@ const apps = async function (fastify, opts) {
         data = data.map(item => item.organization);
         return reply.code(200).send({ data });
     });
+
     fastify.put('/:id/developers', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { developers } = req.body;
@@ -225,6 +227,7 @@ const apps = async function (fastify, opts) {
         data = data.map(item => item.tag);
         return reply.code(200).send({ data });
     });
+
     fastify.put('/:id/features', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { features } = req.body;
@@ -234,6 +237,7 @@ const apps = async function (fastify, opts) {
         }
         return reply.code(204).send();
     });
+
     fastify.delete('/:id/features/:featureId', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const featureId = Number(req.params.featureId) || 0;
@@ -254,6 +258,7 @@ const apps = async function (fastify, opts) {
         data = data.map(item => item.tag);
         return reply.code(200).send({ data });
     });
+
     fastify.put('/:id/genres', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { genres } = req.body;
@@ -263,6 +268,7 @@ const apps = async function (fastify, opts) {
         }
         return reply.code(204).send();
     });
+
     fastify.delete('/:id/genres/:genreId', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const genreId = Number(req.params.genreId) || 0;
@@ -297,6 +303,7 @@ const apps = async function (fastify, opts) {
         data = data.map(item => item.tag);
         return reply.code(200).send({ data, count, skip, limit });
     });
+
     fastify.delete('/:id/tags/:tagId', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const tagId = Number(req.params.tagId) || 0;

@@ -55,20 +55,19 @@ model Trading {
 }
 
 model App {
-  id            Int       @id @default(autoincrement())
-  name          String // 名称 并非唯一，很多游戏的名字可能是一样的
-  slogan        String? // 标语 长度应该不能超过10个字符
-  summary       String? //简短说明 长度应该不能超过200个字符
-  description   String? //详细介绍，支持html 长度应该不能超过5000个字符
-  score         Float     @default(3.0) // 评分，默认3.0，根据评论的打分汇总评分到这里
-  releasedAt    DateTime? @map("released_at") //发布时间
-  legalText     String?   @map("legal_text") //法律声明
-  legalUrl      String?   @map("legal_url") //法律声明链接
-  downloadUrl   String?   @map("download_url") // 下载链接
-  downloadCount Int       @default(0) // 下载次数
-  isVisible     Boolean   @default(false) @map("is_visible")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id          Int       @id @default(autoincrement())
+  name        String // 名称 并非唯一，很多游戏的名字可能是一样的
+  slogan      String? // 标语 长度应该不能超过10个字符
+  summary     String? //简短说明 长度应该不能超过200个字符
+  description String? //详细介绍，支持html 长度应该不能超过5000个字符
+  score       Float     @default(3.0) // 评分，默认3.0，根据评论的打分汇总评分到这里
+  releasedAt  DateTime? @map("released_at") //发布时间
+  legalText   String?   @map("legal_text") //法律声明
+  legalUrl    String?   @map("legal_url") //法律声明链接
+  downloadUrl String?   @map("download_url") // 下载链接
+  isVisible   Boolean   @default(false) @map("is_visible")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   // ref
   languages   AppLanguages? // 支持的语言

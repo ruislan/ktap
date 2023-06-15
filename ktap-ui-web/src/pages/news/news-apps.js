@@ -46,7 +46,7 @@ function NewsAppsBanner({ appId }) {
         (async () => {
             setIsLoading(true);
             try {
-                const res = await fetch(`/api/apps/${appId}?kind=basic`);
+                const res = await fetch(`/api/apps/${appId}/basic`);
                 if (res.ok) {
                     const json = await res.json();
                     setData(json.data);

@@ -7,7 +7,7 @@ import apiSettings from './routes/api/settings.js';
 import apiReviews from './routes/api/reviews.js';
 import apiNews from './routes/api/news.js';
 import apiTags from './routes/api/tags.js';
-import apiRanks from './routes/api/rank.js';
+import apiRanks from './routes/api/ranks.js';
 import apiOrganizations from './routes/api/organizations.js';
 import apiDiscover from './routes/api/discover.js';
 
