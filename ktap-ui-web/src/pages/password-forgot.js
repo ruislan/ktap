@@ -56,10 +56,10 @@ function PasswordForgot() {
                 <Block>
                     <Block marginBottom='scale900'><ParagraphSmall>输入您的注册邮箱地址，我们将发送一串随机验证码给您，用来重置密码。</ParagraphSmall></Block>
                     {errorMessage && <Notification kind='negative' closeable overrides={{
-                        Body: { style: { width: 'auto' } },
+                        Body: { style: { width: 'auto', marginLeft: 0, marginRight: 0, } },
                     }}>{errorMessage}</Notification>}
                     {isSuccess && <Notification kind='positive' closeable overrides={{
-                        Body: { style: { width: 'auto' } },
+                        Body: { style: { width: 'auto', marginLeft: 0, marginRight: 0, } },
                     }}>
                         我们向您的邮箱{email}发送了一封包含有下一步说明的电子邮件，请前往邮箱查看。
                     </Notification>}

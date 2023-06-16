@@ -77,10 +77,10 @@ function PasswordReset() {
                 <Block>
                     <Block marginBottom='scale900'><ParagraphSmall>请输入您的新密码，至少6位以上。</ParagraphSmall></Block>
                     {errorMessage && <Notification kind='negative' closeable overrides={{
-                        Body: { style: { width: 'auto' } },
+                        Body: { style: { width: 'auto', marginLeft: 0, marginRight: 0, } },
                     }}>{errorMessage}</Notification>}
                     {isSuccess && <Notification kind='positive' closeable overrides={{
-                        Body: { style: { width: 'auto' } },
+                        Body: { style: { width: 'auto', marginLeft: 0, marginRight: 0, } },
                     }}>{Messages.reset}</Notification>}
                     <form onSubmit={(e) => {
                         e.preventDefault();

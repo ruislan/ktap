@@ -44,6 +44,13 @@ const user = {
                 enum: '只能在 男/女/保密 中选择一个',
             }
         },
+        birthday: {
+            type: 'string',
+            format: 'date',
+            errorMessage: {
+                format: '请使用正确的生日格式 YYYY-MM-DD',
+            }
+        },
         bio: {
             type: 'string',
             maxLength: 255,

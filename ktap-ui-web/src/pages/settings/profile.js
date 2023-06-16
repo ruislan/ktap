@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -12,6 +13,7 @@ import { Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '../../constants';
 import Notification from '../../components/notification';
 import { useAuth } from '../../hooks/use-auth';
 import AvatarSquare from '../../components/avatar-square';
+import { DatePicker } from 'baseui/datepicker';
 
 function SettingsProfile() {
     const { user, setUser } = useAuth();
@@ -21,6 +23,7 @@ function SettingsProfile() {
         location: user?.location || '',
         bio: user?.bio || '',
         gender: [{ id: user?.gender }],
+        birthday: user?.birthday,
     });
 
     // process avatar upload
@@ -91,7 +94,7 @@ function SettingsProfile() {
                     </Block>
                     <Block paddingTop='scale300' paddingBottom='scale300' display='flex' alignItems='center' justifyContent='flex-start'>
                         <input ref={avatarInput} type='file' hidden accept='image/*' onChange={handleAvatarSelected} />
-                        <Button kind='secondary' size='compact' isLoading={isLoading} onClick={() => avatarInput.current.click()}>
+                        <Button kind='secondary' size='compact' type='button' isLoading={isLoading} onClick={() => avatarInput.current.click()}>
                             上传新头像
                         </Button>
                     </Block>
@@ -101,6 +104,9 @@ function SettingsProfile() {
                         clearable={false} backspaceRemoves={false}
                         onChange={options => setForm({ ...form, gender: options.value })}
                     />
+                </FormControl>
+                <FormControl label={<LabelSmall>生日</LabelSmall>}>
+                    <DatePicker size='compact' value={[new Date(form.birthday)]} clearable onChange={({ date }) => setForm({ ...form, birthday: dayjs(date).format('YYYY-MM-DD') })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
                     <Textarea size='compact' value={form.bio} error={form.bio.length > 255}

@@ -19,7 +19,9 @@ function Settings() {
                 })
             }
         }}>
-            <Block paddingLeft='scale600' paddingRight='scale600' marginBottom='scale900' ><TopBar /></Block>
+            <Block paddingLeft='scale600' paddingRight='scale600' marginBottom='scale900'>
+                <TopBar />
+            </Block>
             <Block overrides={{
                 Block: {
                     style: {
@@ -49,7 +51,7 @@ function Settings() {
                         }
                     }}
                 >
-                    <SideBar/>
+                    <SideBar />
                 </Block>
                 <Block overrides={{
                     Block: {
@@ -60,7 +62,6 @@ function Settings() {
                             minHeight: '50vh',
                             [MOBILE_BREAKPOINT]: {
                                 margin: '0',
-                                padding: $theme.sizing.scale300,
                             }
                         })
                     }

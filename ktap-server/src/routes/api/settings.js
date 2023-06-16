@@ -3,6 +3,7 @@ import { errors, USER_CHANGE_NAME_INTERVAL } from "../../constants.js";
 
 const settings = async (fastify, opts) => {
     fastify.addHook('onRequest', authenticate);
+
     // 用户头像
     fastify.post('/avatar', async function handler(req, reply) {
         try {
@@ -92,17 +93,18 @@ const settings = async (fastify, opts) => {
                     properties: {
                         gender: { $ref: 'user#/properties/gender' },
                         bio: { $ref: 'user#/properties/bio' },
-                        location: { $ref: 'user#/properties/location' }
+                        location: { $ref: 'user#/properties/location' },
+                        birthday: { $ref: 'user#/properties/birthday' }
                     },
                     additionalProperties: false,
                 }
             }
         },
         async function handler(req, reply) {
-            const { gender, bio, location } = req.body;
+            const { gender, bio, location, birthday } = req.body;
             await this.db.user.update({
                 where: { id: req.user.id },
-                data: { gender, bio, location }
+                data: { gender, bio, location, birthday: new Date(birthday) },
             });
             return reply.code(204).send();
         }

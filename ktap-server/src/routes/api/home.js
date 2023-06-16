@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { LIMIT_CAP, errors, Keys } from "../../constants.js";
+import { LIMIT_CAP, errors, Keys, Gender, Trading } from "../../constants.js";
 
 const home = async function (fastify, opts) {
     fastify.get('/', async function (req, reply) { return { version: '1.0.0' }; });
@@ -33,7 +33,12 @@ const home = async function (fastify, opts) {
             if (existsName) throw this.httpErrors.badRequest(errors.message.userNameDuplicated);
 
             const passwordHash = await this.bcrypt.hash(password);
-            await this.db.user.create({ data: { name, email, password: passwordHash, birthday: new Date(), } });
+
+            const amount = 100;
+            const user = await this.db.user.create({ data: { name, email, password: passwordHash, birthday: new Date(), gender: Gender.GENDERLESS, balance: amount } });
+            // 注册成功，赠送 100 余额
+            await fastify.db.trading.create({ data: { userId: 0, target: 'User', targetId: user.id, amount, type: Trading.type.give, }, });
+
             // XXX 给用户发激活email？ V2 or V3
             return reply.code(201).send();
         }

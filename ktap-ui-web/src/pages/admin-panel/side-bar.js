@@ -3,7 +3,6 @@ import { Navigation } from 'baseui/side-navigation';
 import { useNavigate } from 'react-router-dom';
 import useWindowSize from '../../hooks/use-window-size';
 import { MOBILE_BREAKPOINT_PX } from '../../constants';
-import { Block } from 'baseui/block';
 import RoundTab from '../../components/round-tab';
 
 const sideMenus = [
@@ -21,7 +20,6 @@ const sideMenus = [
 ];
 
 function SideBar() {
-    const pathname = new URL(window.location.href).pathname;
     const navigate = useNavigate();
     const windowSize = useWindowSize();
     return (
@@ -35,9 +33,7 @@ function SideBar() {
                         navigate(item.itemId);
                     }}
                 /> :
-                <Block>
-                    <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
-                </Block>
+                <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
             }
 
         </>

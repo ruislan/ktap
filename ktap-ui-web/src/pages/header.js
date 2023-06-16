@@ -6,7 +6,12 @@ import { useStyletron } from 'baseui';
 import { User, Coins } from '../components/icons';
 import { Delete, Menu } from 'baseui/icon';
 
-function NavBar() {
+// 这个AppNav，目前BaseWeb写得不太好。
+// 例如：
+//  1. 在Mobile的情况下，不能直接刷新已经登录的User，需要点击头像按钮，然后返回才可以刷新。
+//  2. 如果在外层不使用样式：contain: 'paint'，会导致边缘留白等情况
+//  3. 在Mobile的情况下，菜单太难看等等
+function Header() {
     const [css, theme] = useStyletron();
     const pathname = new URL(window.location.href).pathname;
     const navigate = useNavigate();
@@ -77,7 +82,7 @@ function NavBar() {
     }, []);
 
     return (
-        <>
+        <header>
             <nav className={css({
                 width: '100%', backgroundColor: 'transparent', top: '0',
                 minHeight: '68px', display: 'flex', alignItems: 'stretch', justifyContent: 'center',
@@ -174,14 +179,12 @@ function NavBar() {
                         display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
                         gap: theme.sizing.scale600,
                     })}>
-                        {user?.balance &&
-                            <div className={css({
-                                display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                                color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
-                            })}>
-                                <Coins width='24px' height='24px' /> <span>{user.balance}</span>
-                            </div>
-                        }
+                        {user && <div className={css({
+                            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+                            color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
+                        })}>
+                            <Coins width='24px' height='24px' /> <span>{user?.balance || 0}</span>
+                        </div>}
                         <div className={css({ position: 'relative', })}>
                             <div className={css({
                                 width: theme.sizing.scale950, height: theme.sizing.scale950,
@@ -240,19 +243,6 @@ function NavBar() {
                     </div>
                 </div>
             </nav>
-        </>
-    );
-}
-
-// 这个AppNav，目前BaseWeb写得不太好。
-// 例如：
-//  1. 在Mobile的情况下，不能直接刷新已经登录的User，需要点击头像按钮，然后返回才可以刷新。
-//  2. 如果在外层不使用样式：contain: 'paint'，会导致边缘留白等情况
-//  3. 在Mobile的情况下，菜单太难看等等
-function Header() {
-    return (
-        <header>
-            <NavBar />
         </header>
     );
 }

@@ -1,23 +1,32 @@
 import React from 'react';
 import { Navigation } from 'baseui/side-navigation';
 import { useNavigate } from 'react-router-dom';
+import useWindowSize from '../../hooks/use-window-size';
+import { MOBILE_BREAKPOINT_PX } from '../../constants';
+import RoundTab from '../../components/round-tab';
+
+const sideMenus = [
+    { title: '基本信息', itemId: '/settings' },
+    { title: '个性化', itemId: '/settings/profile' },
+    { title: '密码', itemId: '/settings/password' },
+];
 
 function SideBar() {
     const navigate = useNavigate();
+    const windowSize = useWindowSize();
     return (
         <>
-            <Navigation
-                items={[
-                    { title: '基本信息', itemId: '/settings' },
-                    { title: '个性化', itemId: '/settings/profile' },
-                    { title: '密码', itemId: '/settings/password' },
-                ]}
-                activeItemId={location.pathname}
-                onChange={({ event, item }) => {
-                    event.preventDefault();
-                    navigate(item.itemId);
-                }}
-            />
+            {windowSize?.width > MOBILE_BREAKPOINT_PX ?
+                <Navigation
+                    items={sideMenus}
+                    activeItemId={location.pathname}
+                    onChange={({ event, item }) => {
+                        event.preventDefault();
+                        navigate(item.itemId);
+                    }}
+                /> :
+                <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
+            }
         </>
     );
 }

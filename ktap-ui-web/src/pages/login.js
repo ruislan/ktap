@@ -69,10 +69,10 @@ function Login() {
                     <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }}>
                         {error &&
                             <Block paddingBottom='scale100' paddingTop='scale100'>
-                                <Notification kind='negative' overrides={{
+                                <Notification kind='negative' closeable overrides={{
                                     Body: {
                                         style: {
-                                            width: 'auto',
+                                            width: 'auto', marginLeft: 0, marginRight: 0,
                                         }
                                     }
                                 }}>
