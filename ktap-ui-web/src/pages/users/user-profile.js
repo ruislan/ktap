@@ -6,6 +6,7 @@ import { HeadingSmall, LabelLarge, LabelMedium, LabelSmall, ParagraphMedium } fr
 import { useAuth } from '../../hooks/use-auth';
 import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
+import { Numbers } from '../../constants';
 
 function UserDataItem({ name, value }) {
     return (
@@ -87,9 +88,9 @@ function UserProfile({ theUser, theUserMeta }) {
                     </Button>
                 </Block>
                 <Block display='flex' justifyContent='space-between' gridGap='scale300' alignItems='center' marginTop='scale600' marginBottom='scale600'>
-                    <UserDataItem name='关注数' value={theUserMeta?.follows?.count} />
-                    <UserDataItem name='评测数' value={theUserMeta?.reviews} />
-                    <UserDataItem name='回复数' value={theUserMeta?.comments} />
+                    <UserDataItem name='关注数' value={Numbers.abbreviate(theUserMeta?.follows?.count || 0)} />
+                    <UserDataItem name='评测数' value={Numbers.abbreviate(theUserMeta?.reviews || 0)} />
+                    <UserDataItem name='回复数' value={Numbers.abbreviate(theUserMeta?.comments || 0)} />
                 </Block>
             </Block>
         </Block>

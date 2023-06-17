@@ -3,6 +3,7 @@ import React from 'react';
 import { Block } from 'baseui/block';
 import { HeadingSmall } from 'baseui/typography';
 import Statistic from '../../components/statistic';
+import { Numbers } from '../../constants';
 
 function AdminPanelDashboard() {
     const [data, setData] = React.useState();
@@ -26,13 +27,13 @@ function AdminPanelDashboard() {
             <HeadingSmall marginTop='0' marginBottom='scale900'>数据概览</HeadingSmall>
             {!isLoading &&
                 <Block display='flex' flexWrap='wrap' justifyContent='stretch' alignItems='center'>
-                    <Statistic title='新游戏' subtitle='近7天' text={data?.apps || 0} />
-                    <Statistic title='新用户' subtitle='近7天' text={data?.users || 0} />
-                    <Statistic title='新评测' subtitle='近7天' text={data?.reviews || 0} />
-                    <Statistic title='新回复' subtitle='近7天' text={data?.comments || 0} />
-                    <Statistic title='新礼物' subtitle='近7天' text={data?.gifts || 0} />
-                    <Statistic title='新举报' subtitle='近7天' text={data?.reports || 0} />
-                    <Statistic title='新流水' subtitle='近7天' text={data?.amount || 0} />
+                    <Statistic title='新游戏' subtitle='近7天' text={Numbers.abbreviate(data?.apps || 0)} />
+                    <Statistic title='新用户' subtitle='近7天' text={Numbers.abbreviate(data?.users || 0)} />
+                    <Statistic title='新评测' subtitle='近7天' text={Numbers.abbreviate(data?.reviews || 0)} />
+                    <Statistic title='新回复' subtitle='近7天' text={Numbers.abbreviate(data?.comments || 0)} />
+                    <Statistic title='新礼物' subtitle='近7天' text={Numbers.abbreviate(data?.gifts || 0)} />
+                    <Statistic title='新举报' subtitle='近7天' text={Numbers.abbreviate(data?.reports || 0)} />
+                    <Statistic title='新流水' subtitle='近7天' text={Numbers.abbreviate(data?.amount || 0)} />
                 </Block>
             }
         </Block>
