@@ -106,7 +106,7 @@ function SettingsProfile() {
                     />
                 </FormControl>
                 <FormControl label={<LabelSmall>生日</LabelSmall>}>
-                    <DatePicker size='compact' value={[new Date(form.birthday)]} clearable onChange={({ date }) => setForm({ ...form, birthday: dayjs(date).format('YYYY-MM-DD') })} />
+                    <DatePicker size='compact' formatString='yyyy-MM-dd' value={new Date(form.birthday)} onChange={({ date }) => setForm({ ...form, birthday: dayjs(date).format('YYYY-MM-DD') })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
                     <Textarea size='compact' value={form.bio} error={form.bio.length > 255}
