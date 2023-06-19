@@ -14,6 +14,7 @@ import { useAuth } from '../../hooks/use-auth';
 import Tag from '../../components/tag';
 import { Linux, Mac, Win } from '../../components/icons';
 import RouterLink from '../../components/router-link';
+import Image from '../../components/image';
 
 function Field({ label, value }) {
     return (<Block
@@ -112,23 +113,17 @@ function Glance({ data }) {
                 overrides={{
                     Block: {
                         style: {
+                            borderRadius: theme.borders.radius300,
                             [MOBILE_BREAKPOINT]: {
                                 width: 'auto',
                                 height: 'auto',
+                                borderRadius: 0,
                             }
                         }
                     }
                 }}
             >
-                <img className={css({
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: theme.borders.radius300,
-                    [MOBILE_BREAKPOINT]: {
-                        borderRadius: 0,
-                    }
-                })}
-                    src={data?.media?.filter(m => m.usage === AppMedia.usage.head)[0].image} />
+                <Image src={data?.media?.filter(m => m.usage === AppMedia.usage.head)[0].image} width='100%' height='100%' skeletonHeight='151px' />
             </Block>
             <Block overrides={{
                 Block: {

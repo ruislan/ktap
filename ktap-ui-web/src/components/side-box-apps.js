@@ -6,6 +6,7 @@ import { useStyletron } from 'baseui';
 import { Skeleton } from 'baseui/skeleton';
 import SideBox from './side-box';
 import { Link } from 'react-router-dom';
+import Image from './image';
 
 function SideBoxApps({ title, apiUrl }) {
     const [css, theme] = useStyletron();
@@ -31,7 +32,7 @@ function SideBoxApps({ title, apiUrl }) {
         <SideBox title={title}>
             <Block display='grid' gridGap='scale100' gridTemplateColumns='1fr 1fr' paddingLeft='scale300' paddingBottom='scale600' paddingRight='scale300'>
                 {isLoading ?
-                    <Skeleton width="100%" height="380px" animation />
+                    <Skeleton width="316px" height="380px" animation />
                     :
                     dataList.map((app, i) => (
                         <Block key={i} width='100%'>
@@ -50,14 +51,10 @@ function SideBoxApps({ title, apiUrl }) {
                                     }
                                 })}
                             >
-                                <Block display='flex' width='100%' height='scale1800'>
-                                    <img
-                                        width='100%' height='100%'
-                                        className={css({
-                                            borderRadius: theme.borders.radius200,
-                                        })}
-                                        src={app.media.landscape.thumbnail}
-                                    />
+                                <Block display='flex' width='100%' overrides={{
+                                    Block: { style: { borderRadius: theme.borders.radius200, } }
+                                }}>
+                                    <Image src={app.media.landscape.thumbnail} width='100%' height='100%' skeletonHeight='156px' />
                                 </Block>
                                 <Block paddingRight='scale300' paddingTop='scale300' paddingBottom='scale300'>
                                     <LabelSmall marginBottom='scale100'>{app.name}</LabelSmall>
