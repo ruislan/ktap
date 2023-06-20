@@ -53,21 +53,23 @@ function NewsDetail() {
                     </Block>
                 </Block> :
                 <>
-                    <Block overrides={{
-                        Block: {
-                            style: {
-                                height: '24vw',
-                                width: '100%',
-                                backgroundImage: `url(${data.banner})`,
-                                backgroundSize: 'cover',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundPosition: 'center 70%',
-                                [MOBILE_BREAKPOINT]: {
-                                    marginTop: 0,
+                    {data.banner &&
+                        <Block overrides={{
+                            Block: {
+                                style: {
+                                    height: '24vw',
+                                    width: '100%',
+                                    backgroundImage: `url(${data.banner})`,
+                                    backgroundSize: 'cover',
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundPosition: 'center 70%',
+                                    [MOBILE_BREAKPOINT]: {
+                                        marginTop: 0,
+                                    }
                                 }
                             }
-                        }
-                    }} />
+                        }} />
+                    }
                     <Block
                         flexDirection='column'
                         backgroundColor='backgroundSecondary'
@@ -76,7 +78,7 @@ function NewsDetail() {
                             Block: {
                                 style: ({ $theme }) => ({
                                     boxShadow: '0 0 15px rgb(0 0 0 / 40%)',
-                                    marginTop: '-5%',
+                                    marginTop: data.banner ? '-5%' : $theme.sizing.scale900,
                                     borderRadius: $theme.borders.radius300,
                                     [MOBILE_BREAKPOINT]: {
                                         marginTop: '0',

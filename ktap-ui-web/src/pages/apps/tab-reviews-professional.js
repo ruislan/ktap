@@ -6,7 +6,7 @@ import { LabelLarge, LabelMedium, ParagraphMedium, } from 'baseui/typography';
 function TabReviewsProfessional({ app }) {
     const [css, theme] = useStyletron();
     return (
-        <>{app.proReviews &&
+        <>{app.proReviews?.length > 0 &&
             <Block paddingTop='scale600' paddingBottom='scale600'>
                 <Block paddingTop='scale300' paddingBottom='scale300' font='font300'>
                     <LabelLarge>权威评测</LabelLarge>

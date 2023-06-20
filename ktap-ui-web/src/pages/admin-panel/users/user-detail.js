@@ -9,7 +9,7 @@ import RouterLink from '../../../components/router-link';
 import UserDetailProfile from './user-detail-profile';
 import UserDetailActions from './user-detail-actions';
 import UserDetailReviews from './user-detail-reviews';
-import UserDetailComments from './user-detail-comments';
+import UserDetailReviewComments from './user-detail-review-comments';
 import UserDetailTradings from './user-detail-tradings';
 import { Styles } from '../../../constants';
 
@@ -58,7 +58,7 @@ function AdminPanelUserDetail() {
                                 <Panel key='p1' title='快速操作' overrides={Styles.Accordion.Panel}><UserDetailActions data={data} onChanged={() => fetchData()} /></Panel>
                                 <Panel key='p2' title='个人信息' overrides={Styles.Accordion.Panel}><UserDetailProfile data={data} onChanged={() => fetchData()} /></Panel>
                                 <Panel key='p3' title='评测列表' overrides={Styles.Accordion.Panel}><UserDetailReviews data={data} /></Panel>
-                                <Panel key='p4' title='回复列表' overrides={Styles.Accordion.Panel}><UserDetailComments data={data} /></Panel>
+                                <Panel key='p4' title='评测回复列表' overrides={Styles.Accordion.Panel}><UserDetailReviewComments data={data} /></Panel>
                                 <Panel key='p5' title='交易记录' overrides={Styles.Accordion.Panel}><UserDetailTradings data={data} /></Panel>
                             </StatelessAccordion>
                         </Block>

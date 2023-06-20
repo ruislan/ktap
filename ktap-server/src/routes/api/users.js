@@ -56,7 +56,7 @@ const users = async (fastify, opts) => {
         return reply.code(200).send({ data, count, skip, limit });
     });
 
-    fastify.get('/:id/comments', async function (req, reply) {
+    fastify.get('/:id/review-comments', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
         const skip = Math.max(0, Number(req.query.skip) || 0);

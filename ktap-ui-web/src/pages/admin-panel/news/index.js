@@ -22,7 +22,7 @@ function AdminPanelNews() {
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
-    const [comments, setComments] = React.useState([]);
+    const [newsList, setNewsList] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [total, setTotal] = React.useState(0);
     const pageInputRef = React.useRef(null);
@@ -42,7 +42,7 @@ function AdminPanelNews() {
             const res = await fetch(`/admin/news?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
-                setComments(json.data);
+                setNewsList(json.data);
                 setTotal(json.count);
                 setHasNext(json.skip + json.limit < json.count);
                 setHasPrev(json.skip + json.limit > json.limit);
@@ -154,7 +154,7 @@ function AdminPanelNews() {
                 ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1400' $borderWidth='scale200' /></Block>
                 :
                 <Block display='flex' flexDirection='column'>
-                    <TableBuilder data={comments} size='compact' emptyMessage='没有数据'
+                    <TableBuilder data={newsList} size='compact' emptyMessage='没有数据'
                         overrides={{
                             TableBodyCell: {
                                 style: {

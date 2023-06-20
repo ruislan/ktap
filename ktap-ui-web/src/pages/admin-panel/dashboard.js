@@ -27,13 +27,12 @@ function AdminPanelDashboard() {
             <HeadingSmall marginTop='0' marginBottom='scale900'>数据概览</HeadingSmall>
             {!isLoading &&
                 <Block display='flex' flexWrap='wrap' justifyContent='stretch' alignItems='center'>
-                    <Statistic title='新游戏' subtitle='近7天' text={Numbers.abbreviate(data?.apps || 0)} />
-                    <Statistic title='新用户' subtitle='近7天' text={Numbers.abbreviate(data?.users || 0)} />
-                    <Statistic title='新评测' subtitle='近7天' text={Numbers.abbreviate(data?.reviews || 0)} />
-                    <Statistic title='新回复' subtitle='近7天' text={Numbers.abbreviate(data?.comments || 0)} />
-                    <Statistic title='新礼物' subtitle='近7天' text={Numbers.abbreviate(data?.gifts || 0)} />
-                    <Statistic title='新举报' subtitle='近7天' text={Numbers.abbreviate(data?.reports || 0)} />
-                    <Statistic title='新流水' subtitle='近7天' text={Numbers.abbreviate(data?.amount || 0)} />
+                    <Statistic title='发布游戏' subtitle='近7天' text={Numbers.abbreviate(data?.apps || 0)} />
+                    <Statistic title='注册用户' subtitle='近7天' text={Numbers.abbreviate(data?.users || 0)} />
+                    <Statistic title='游戏评测' subtitle='近7天' text={Numbers.abbreviate(data?.reviews || 0)} />
+                    <Statistic title='评测回复' subtitle='近7天' text={Numbers.abbreviate(data?.reviewComments || 0)} />
+                    <Statistic title='评测举报' subtitle='近7天' text={Numbers.abbreviate(data?.reports || 0)} />
+                    <Statistic title='交易流水' subtitle='近7天' text={Numbers.abbreviate(data?.amount || 0)} />
                 </Block>
             }
         </Block>

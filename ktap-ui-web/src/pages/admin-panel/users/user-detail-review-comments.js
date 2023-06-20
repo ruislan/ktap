@@ -25,7 +25,7 @@ function UserDetailComments({ data }) {
     const fetchData = React.useCallback(async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`/admin/users/${data.id}/comments?skip=${skip}&limit=${limit}`);
+            const res = await fetch(`/admin/users/${data.id}/review-comments?skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
                 setComments(json.data);
@@ -45,7 +45,7 @@ function UserDetailComments({ data }) {
         if (!selectedId) return;
         try {
             setIsLoading(true);
-            const res = await fetch(`/admin/comments/${selectedId}`, { method: 'DELETE' });
+            const res = await fetch(`/admin/review-comments/${selectedId}`, { method: 'DELETE' });
             if (res.ok) {
                 enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, })
                 fetchData();

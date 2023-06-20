@@ -6,7 +6,7 @@ import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
 import UserProfile from './user-profile';
 import TabActivities from './tab-activities';
 import TabReviews from './tab-reviews';
-import TabComments from './tab-comments';
+import TabReviewComments from './tab-review-comments';
 import TabFollowApps from './tab-follow-apps';
 import TabFollowUsers from './tab-follow-users';
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
@@ -71,11 +71,9 @@ function User() {
                 <Tabs activeKey={activeTab} onChange={({ activeKey }) => setActiveTab(activeKey)} activateOnFocus>
                     <Tab title="活动" key='activities'><TabActivities theUser={theUser} /></Tab>
                     <Tab title="评测" key='reviews'><TabReviews theUser={theUser} /></Tab>
-                    <Tab title="回复" key='comments'><TabComments theUser={theUser} /></Tab>
+                    <Tab title="评测回复" key='review-comments'><TabReviewComments theUser={theUser} /></Tab>
                     <Tab title="关注游戏" key='follow-apps'><TabFollowApps theUser={theUser} /></Tab>
                     <Tab title="关注用户" key='follow-users'><TabFollowUsers theUser={theUser} /></Tab>
-                    {/* TA的粉丝？ */}
-                    {/* 显示TA的截图/视频？ */}
                 </Tabs>
             </Block>
             <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}

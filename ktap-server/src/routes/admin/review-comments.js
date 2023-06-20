@@ -1,6 +1,6 @@
 import { LIMIT_CAP } from "../../constants.js";
 
-const comments = async function (fastify, opts) {
+const reviewComments = async function (fastify, opts) {
     fastify.get('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const data = await fastify.db.reviewComment.findUnique({ where: { id }, });
@@ -79,4 +79,4 @@ const comments = async function (fastify, opts) {
     });
 };
 
-export default comments;
+export default reviewComments;

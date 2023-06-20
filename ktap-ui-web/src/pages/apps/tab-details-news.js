@@ -29,13 +29,13 @@ function TabDetailsNews({ app }) {
     return (
         <Block paddingTop='scale600' paddingBottom='scale600'>
             <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale300'>
-                <LabelLarge>最新资讯</LabelLarge>
+                <LabelLarge>最新新闻</LabelLarge>
                 <RouterLink href={`/news/apps/${appId}`}><LabelSmall>查看全部</LabelSmall></RouterLink>
             </Block>
             {isLoading ?
                 <Skeleton width="100%" height="150px" animation /> :
                 (newsList.length === 0 ?
-                    <LabelMedium color='primary500'>无资讯</LabelMedium> :
+                    <LabelMedium color='primary500'>无新闻</LabelMedium> :
                     newsList.map(({ id, title }, index) => {
                         return (
                             <RouterLink key={index} href={`/news/apps/${appId}/view/${id}`} >

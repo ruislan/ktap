@@ -9,8 +9,7 @@ const home = async function (fastify, opts) {
         data.apps = await fastify.db.app.count({ where: { createdAt: { gte: limitDate, } }, });
         data.users = await fastify.db.user.count({ where: { createdAt: { gte: limitDate, } }, });
         data.reviews = await fastify.db.review.count({ where: { createdAt: { gte: limitDate, } }, });
-        data.comments = await fastify.db.reviewComment.count({ where: { createdAt: { gte: limitDate, } }, });
-        data.gifts = await fastify.db.gift.count({ where: { createdAt: { gte: limitDate, } }, });
+        data.reviewComments = await fastify.db.reviewComment.count({ where: { createdAt: { gte: limitDate, } }, });
         data.reports = await fastify.db.reviewReport.count({ where: { createdAt: { gte: limitDate, } }, });
         const amount = await fastify.db.trading.aggregate({
             where: {

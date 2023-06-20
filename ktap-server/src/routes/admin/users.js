@@ -17,7 +17,7 @@ const users = async function (fastify, opts) {
         if (hasParamIsAdmin) whereCondition.isAdmin = isAdmin;
         if (hasParamIsLocked) whereCondition.isLocked = isLocked;
         if (hasReviews) whereCondition.reviews = { some: {} };
-        if (hasComments) whereCondition.comments = { some: {} };
+        if (hasComments) whereCondition.reviewComments = { some: {} };
 
         const count = await fastify.db.user.count({ where: whereCondition });
         const data = await fastify.db.user.findMany({
@@ -119,7 +119,7 @@ const users = async function (fastify, opts) {
         return reply.code(200).send({ data: data, skip, limit, count });
     });
 
-    fastify.get('/:id/comments', async (req, reply) => {
+    fastify.get('/:id/review-comments', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const skip = Math.max(0, Number(req.query.skip) || 0);
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));

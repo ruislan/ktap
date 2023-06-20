@@ -40,7 +40,7 @@ function AdminPanelUsers() {
     const fetchData = React.useCallback(async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`/admin/comments?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
+            const res = await fetch(`/admin/review-comments?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
                 setComments(json.data);
@@ -61,7 +61,7 @@ function AdminPanelUsers() {
         if (!selectedId) return;
         try {
             setIsLoading(true);
-            const res = await fetch(`/admin/comments/${selectedId}`, { method: 'DELETE' });
+            const res = await fetch(`/admin/review-comments/${selectedId}`, { method: 'DELETE' });
             if (res.ok) {
                 enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, })
                 fetchData();
@@ -78,7 +78,7 @@ function AdminPanelUsers() {
         if (monkeyForm.commentCount < 1 || (monkeyForm.reviewCount < 1 && !monkeyForm.isAll)) return;
         try {
             setIsSubmitting(true);
-            const res = await fetch(`/admin/comments/monkey`, {
+            const res = await fetch(`/admin/review-comments/monkey`, {
                 method: 'POST',
                 body: JSON.stringify({ ...monkeyForm }),
                 headers: { 'Content-Type': 'application/json' }
@@ -98,7 +98,7 @@ function AdminPanelUsers() {
 
     return (
         <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'>
-            <HeadingSmall marginTop='0' marginBottom='scale900'>回复列表</HeadingSmall>
+            <HeadingSmall marginTop='0' marginBottom='scale900'>评测回复列表</HeadingSmall>
             <Block display='flex' alignItems='center' justifyContent='space-between' marginBottom='scale900' overrides={{
                 Block: {
                     style: {

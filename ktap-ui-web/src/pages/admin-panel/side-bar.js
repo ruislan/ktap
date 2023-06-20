@@ -10,7 +10,7 @@ const sideMenus = [
     { title: '用户管理', itemId: '/admin-panel/users' },
     { title: '游戏管理', itemId: '/admin-panel/apps' },
     { title: '评测管理', itemId: '/admin-panel/reviews' },
-    { title: '回复管理', itemId: '/admin-panel/comments' },
+    { title: '评测回复管理', itemId: '/admin-panel/review-comments' },
     { title: '新闻管理', itemId: '/admin-panel/news' },
     { title: '组织管理', itemId: '/admin-panel/organizations' },
     { title: '标签管理', itemId: '/admin-panel/tags' },

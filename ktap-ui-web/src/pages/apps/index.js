@@ -97,10 +97,10 @@ function App() {
                 }}>
                     {isLoading ?
                         <Block>
-                            <Skeleton width="100%" height="343px" animation /><Block height='8px' />
-                            <Skeleton width="100%" height="65px" animation /><Block height='8px' />
-                            <Skeleton width="100%" height="72px" animation /><Block height='24px' />
-                            <Skeleton width="100%" height="36px" animation />
+                            <Skeleton width='100%' height='343px' animation /><Block height='8px' />
+                            <Skeleton width='100%' height='65px' animation /><Block height='8px' />
+                            <Skeleton width='100%' height='72px' animation /><Block height='24px' />
+                            <Skeleton width='100%' height='36px' animation />
                         </Block> :
                         app && <Highlight data={app} />
                     }
@@ -120,10 +120,10 @@ function App() {
                 >
                     {isLoading ?
                         <Block>
-                            <Skeleton width="100%" height="151px" animation /><Block height='16px' />
-                            <Skeleton width="100%" height="68px" animation /><Block height='16px' />
-                            <Skeleton width="100%" height="104px" animation /><Block height='16px' />
-                            <Skeleton width="100%" height="185px" animation />
+                            <Skeleton width='100%' height='151px' animation /><Block height='16px' />
+                            <Skeleton width='100%' height='68px' animation /><Block height='16px' />
+                            <Skeleton width='100%' height='104px' animation /><Block height='16px' />
+                            <Skeleton width='100%' height='185px' animation />
                         </Block> :
                         app && <Glance data={app} />
                     }
@@ -133,7 +133,7 @@ function App() {
             {/* app meta */}
             {isLoading ?
                 <Block marginTop='scale900' marginBottom='scale900'>
-                    <Skeleton width="100%" height="77.5px" animation />
+                    <Skeleton width='100%' height='77.5px' animation />
                 </Block>
                 :
                 meta && <MetaBar meta={meta} />
@@ -168,10 +168,9 @@ function App() {
                         fill='fixed'
                         activateOnFocus
                     >
-                        <Tab title="详情">
-                            {app && <TabDetailsNews app={app} />}
+                        <Tab title='详情'>
                             {isLoading ?
-                                <Skeleton width="100%" height="800px" animation />
+                                <Skeleton width='100%' height='800px' animation />
                                 :
                                 app && <>
                                     <TabDetailsDescription app={app} />
@@ -185,9 +184,16 @@ function App() {
                                 </>
                             }
                         </Tab>
-                        <Tab title="评测">
+                        <Tab title='新闻'>
                             {isLoading ?
-                                <Skeleton width="100%" height="800px" animation />
+                                <Skeleton width='100%' height='800px' animation />
+                                :
+                                app && <TabDetailsNews app={app} />
+                            }
+                        </Tab>
+                        <Tab title='评测'>
+                            {isLoading ?
+                                <Skeleton width='100%' height='800px' animation />
                                 :
                                 app && <>
                                     <TabReviewsProfessional app={app} />
@@ -195,9 +201,18 @@ function App() {
                                 </>
                             }
                         </Tab>
-                        {/* <Tab title="攻略">V2:这里就是把帖子里面标记为攻略的放过来？</Tab>
-                        <Tab title="论坛">V2:这里就是把论坛里面相关的最新的帖子放过来？</Tab>
-                        <Tab title="素材">V2:这里展示一些壁纸，LOGO，图片，视频等等？</Tab> */}
+                        <Tab title='讨论'>
+                            {isLoading ?
+                                <Skeleton width='100%' height='800px' animation />
+                                :
+                                app && <>
+                                    <TabReviewsProfessional app={app} />
+                                    <TabReviewsUsers app={app} />
+                                </>
+                            }
+                        </Tab>
+                        {/* <Tab title='攻略'>V2:这里就是把帖子里面标记为攻略的放过来？</Tab>
+                        <Tab title='素材'>V2:这里展示一些壁纸，LOGO，图片，视频等等？</Tab> */}
                     </Tabs>
                 </Block>
                 <Block width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
@@ -212,7 +227,7 @@ function App() {
                 }}>
                     {isLoading ?
                         <Block marginBottom='scale900'>
-                            <Skeleton width="100%" height="280px" animation />
+                            <Skeleton width='100%' height='280px' animation />
                         </Block>
                         :
                         app && <SideContact socialLinks={app.socialLinks} />

@@ -964,7 +964,7 @@ const reviewImages = [
 ];
 
 // 一个用户一个Review可以回复多次
-const comments = [
+const reviewComments = [
     { id: 1, content: '我不允许还有人没有回复你。', reviewId: 1, userId: 1, },
     { id: 2, content: '我不允许还有人没有回复你。', reviewId: 1, userId: 2, },
     { id: 3, content: '我不允许还有人没有回复你。', reviewId: 1, userId: 1, },
@@ -981,7 +981,7 @@ const comments = [
 // 流行语
 const buzzwords = [
     '我想吃鱼了', '事情开始变得有趣了', '用真心就可以', '真诚永远都是必杀技', '只是平平无奇的评测罢了', '你触碰到了我的逆鳞', '优雅，真优雅呀',
-    '你的评测被我驳回了，记住，这是通知，不是商量', 'NB', 'YYDS', '我看不懂，但是我大受震撼', '你成功的引起了我的注意', '俺也一样',
+    '你的评测被我驳回了，记住，这是通知，不是商量', 'NB', 'YYDS', '我看不懂，但是我大受震撼', '你成功地引起了我的注意', '俺也一样',
     'you can you up, no can no bb', '有钱一起赚，别自己吃独食', '泰酷辣',
 ].map((v, index) => {
     return { id: index + 1, content: v };
@@ -1172,9 +1172,9 @@ async function initForDev() {
         console.log(`Created review with id: ${image.id}`);
     }
     // 回复
-    for (const item of comments) {
-        const comment = await db.reviewComment.upsert({ create: item, update: item, where: { id: item.id } });
-        console.log(`Created review comment with id: ${comment.id}`);
+    for (const item of reviewComments) {
+        const reviewComment = await db.reviewComment.upsert({ create: item, update: item, where: { id: item.id } });
+        console.log(`Created review comment with id: ${reviewComment.id}`);
     }
     // 流行语
     for (const item of buzzwords) {

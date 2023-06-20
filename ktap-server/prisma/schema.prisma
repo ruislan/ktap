@@ -31,12 +31,15 @@ model User {
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
   // ref
-  organizations Organization[]
-  reviews       Review[]
-  comments      ReviewComment[]
-  reviewGifts   ReviewGiftRef[] // review gifts 对评测送的礼物
-  reviewReports ReviewReport[] // 对评测的举报
-  followers     FollowUser[] // 关注的人
+  organizations  Organization[]
+  reviews        Review[]
+  reviewComments ReviewComment[] // 评测回复
+  reviewGifts    ReviewGiftRef[] // review gifts 对评测送的礼物
+  reviewReports  ReviewReport[] // 对评测的举报
+  followers      FollowUser[] // 关注的人
+  topics         Topic[] // 讨论帖子
+  topicComments  TopicComment[] // 讨论帖子的回复
+  topicGifts     TopicGiftRef[] // 对讨论帖送的礼物
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -84,6 +87,7 @@ model App {
   features    AppFeatureRef[] // 游戏功能
   tags        AppUserTagRef[] // 用户标签
   followers   FollowApp[] // 关注的人
+  discussions Discussion[] // 讨论
 }
 
 // 支持的语言
@@ -261,6 +265,8 @@ model ProReview {
   app App @relation(fields: [appId], references: [id])
 }
 
+// 评测 Start
+
 // 评测
 model Review {
   id           Int      @id @default(autoincrement())
@@ -268,6 +274,7 @@ model Review {
   userId       Int?     @map("user_id")
   score        Float // 评分
   content      String
+  ip           String? // ip地址
   allowComment Boolean  @default(true) @map("allow_comment") // 允许回复？
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -324,25 +331,11 @@ model ReviewReport {
 // 赞和踩
 model Thumb {
   id        Int      @id @default(autoincrement())
-  target    String // 赞踩的对象，Review/Comment/News等
+  target    String // 赞踩的对象，Review/Comment/News等 //TODO 去掉在这个，改为直接是Review，领域内聚
   targetId  Int      @map("target_id") // 赞踩对象的Id
   userId    Int      @map("user_id")
   direction String   @default("up") //方向 up赞，down踩
   createdAt DateTime @default(now()) @map("created_at")
-}
-
-// 礼物
-model Gift {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String // 描述
-  price       BigInt // 平台币单价
-  url         String // 礼物的图片地址
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  // ref
-  reviews ReviewGiftRef[] // 有该礼物的评测
 }
 
 // 评测礼物多对多关系，用户可以对同一个review，多次送礼物
@@ -356,6 +349,23 @@ model ReviewGiftRef {
   review Review @relation(fields: [reviewId], references: [id])
   gift   Gift   @relation(fields: [giftId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
+}
+
+// 评测 End
+
+// 礼物
+model Gift {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String // 描述
+  price       BigInt // 平台币单价
+  url         String // 礼物的图片地址
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // ref
+  reviews ReviewGiftRef[] // 有该礼物的评测
+  topics  TopicGiftRef[] // 有该礼物讨论主题
 }
 
 // 应用的新闻
@@ -446,3 +456,84 @@ model TokenBlackList {
   token     String   @id
   createdAt DateTime @default(now()) @map("created_at")
 }
+
+// 讨论 Start
+
+// 讨论板块
+model Discussion {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  appId     Int      @map("app_id") // 所属游戏
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  app    App     @relation(fields: [appId], references: [id])
+  topics Topic[] // 帖子
+}
+
+// 用户讨论板块多对多关系，板块的管理者们
+model UserDiscussionRef {
+  userId       Int @map("user_id")
+  discussionId Int @map("discussion_id")
+
+  @@id([userId, discussionId])
+}
+
+// 帖子
+model Topic {
+  id           Int      @id @default(autoincrement())
+  subject      String //主题，重点
+  content      String //内容
+  ip           String? // ip地址
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  isTop        Boolean  @map("is_top") // 是否置顶
+  discussionId Int      @map("discussion_id") // XXX 帖子是否一定要属于某个讨论？
+  userId       Int      @map("user_id")
+
+  // ref
+  discussion Discussion     @relation(fields: [discussionId], references: [id])
+  user       User           @relation(fields: [userId], references: [id])
+  comments   TopicComment[]
+  gifts      TopicGiftRef[] // 得到的礼物
+}
+
+// 帖子回复
+model TopicComment {
+  id        Int      @id @default(autoincrement())
+  content   String //内容
+  createdAt DateTime @default(now()) @map("created_at")
+  topicId   Int?     @map("topic_id")
+  userId    Int      @map("user_id")
+
+  // ref
+  topic Topic? @relation(fields: [topicId], references: [id])
+  user  User   @relation(fields: [userId], references: [id])
+}
+
+// 帖子的赞和踩
+model TopicThumb {
+  id        Int      @id @default(autoincrement())
+  topicId   Int      @map("topic_id")
+  userId    Int      @map("user_id")
+  direction String   @default("up") //方向 up赞，down踩
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([topicId, userId]) // 一个用户一个帖子只能有一个赞或者踩
+}
+
+// 讨论礼物多对多关系，用户可以对同一个 Topic 多次送礼物
+model TopicGiftRef {
+  id      Int @id @default(autoincrement())
+  giftId  Int @map("gift_id")
+  topicId Int @map("topic_id")
+  userId  Int @map("user_id")
+
+  // ref
+  topic Topic @relation(fields: [topicId], references: [id])
+  gift  Gift  @relation(fields: [giftId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+}
+
+// 讨论 End

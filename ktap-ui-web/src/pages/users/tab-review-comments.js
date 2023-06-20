@@ -5,7 +5,7 @@ import { Button } from 'baseui/button';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import RouterLink from '../../components/router-link';
 
-function TabComments({ theUser }) {
+function TabReviewComments({ theUser }) {
     const limit = 10;
     const [comments, setComments] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -17,7 +17,7 @@ function TabComments({ theUser }) {
             if (theUser) {
                 try {
                     setIsLoading(true);
-                    const res = await fetch(`/api/users/${theUser.id}/comments?skip=${skip}&limit=${limit}`);
+                    const res = await fetch(`/api/users/${theUser.id}/review-comments?skip=${skip}&limit=${limit}`);
                     if (res.ok) {
                         const json = await res.json();
                         setComments(prev => skip === 0 ? json.data : [...prev, ...json.data]);
@@ -75,4 +75,4 @@ function TabComments({ theUser }) {
     );
 }
 
-export default TabComments;
+export default TabReviewComments;
