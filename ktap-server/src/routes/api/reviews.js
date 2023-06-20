@@ -50,8 +50,8 @@ const reviews = async (fastify, opts) => {
         // 获取礼物，礼物分组并统计送的人的总数
         // 获取赞踩数量
         const thumbs = (await fastify.db.$queryRaw`
-            SELECT (SELECT count(*) FROM Thumb WHERE direction = 'up' AND target = 'Review' AND target_id = ${id}) AS ups,
-            (SELECT count(*) FROM Thumb WHERE direction = 'down' AND target = 'Review' AND target_id = ${id}) AS downs
+            SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${id}) AS ups,
+            (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${id}) AS downs
         `)[0];
         data.meta = { ups: thumbs?.ups || 0, downs: thumbs?.downs || 0, comments: data._count.comments, gifts: gifts.count };
 
@@ -83,7 +83,7 @@ const reviews = async (fastify, opts) => {
                 // 删除Review不需要删除其Comments，这是Review作者自己的行为，而非Comment作者行为。
                 await fastify.db.$transaction([
                     fastify.db.reviewReport.deleteMany({ where: { reviewId: id } }), // 删除相关举报，举报需要在Timeline中吗？如果需要，那么就无需在这里删除
-                    fastify.db.thumb.deleteMany({ where: { target: 'Review', targetId: id } }), // 删除关联赞踩，赞踩需要在Timeline中吗？如果需要，那么就无需在这里删除
+                    fastify.db.reviewThumb.deleteMany({ where: { reviewId: id } }), // 删除关联赞踩，赞踩需要在Timeline中吗？如果需要，那么就无需在这里删除
                     fastify.db.reviewGiftRef.deleteMany({ where: { reviewId: id } }), // 删除关联礼物，礼物需要在Timeline中吗？如果需要，那么就无需在这里删除
                     fastify.db.reviewImage.deleteMany({ where: { reviewId: id, } }), // 删除关联图片,
                     fastify.db.review.delete({ where: { id } }), // 删除评测
@@ -250,32 +250,22 @@ const reviews = async (fastify, opts) => {
     fastify.post('/:id/thumb/:direction', {
         preHandler: authenticate,
         handler: async function (req, reply) {
-            const userId = req.user.id;
             const reviewId = Number(req.params.id);
+            const userId = req.user.id;
             let direction = ((req.params.direction || 'up').toLowerCase()) === 'down' ? 'down' : 'up'; // only up or down
 
+            const toDelete = await fastify.db.reviewThumb.findUnique({ where: { reviewId_userId: { reviewId, userId, } } });
             // 直接删除当前的赞或者踩
-            // 如果删除的与其想要操作的相同，则无需处理。
-            // 如果删除的与其想要操作的相反，则创建操作的。
-            const toDelete = await fastify.db.thumb.findMany({
-                where: { userId, target: 'Review', targetId: reviewId }, take: 1, // should be one or none
-            });
-            // delete it
-            if (toDelete[0]?.id) await fastify.db.thumb.delete({ where: { id: toDelete[0].id } });
-            if (!toDelete[0] || toDelete[0].direction !== direction) {
-                await fastify.db.thumb.create({
-                    data: {
-                        userId,
-                        target: 'Review',
-                        targetId: reviewId,
-                        direction
-                    }
-                });
+            // 如果新的点踩或者点赞与删除的不同，则重新创建
+            if (toDelete) await fastify.db.reviewThumb.delete({ where: { reviewId_userId: { reviewId, userId, } } });
+            if (!toDelete || toDelete.direction !== direction) {
+                await fastify.db.reviewThumb.create({ data: { reviewId, userId, direction } });
             }
+
             // 重新取当前review的数据
             const data = (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM Thumb WHERE direction = 'up' AND target = 'Review' AND target_id = ${reviewId}) AS ups,
-                (SELECT count(*) FROM Thumb WHERE direction = 'down' AND target = 'Review' AND target_id = ${reviewId}) AS downs
+                SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${reviewId}) AS ups,
+                (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${reviewId}) AS downs
             `)[0];
             return reply.code(200).send({ data });
         }

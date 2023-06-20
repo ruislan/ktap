@@ -329,13 +329,14 @@ model ReviewReport {
 }
 
 // 赞和踩
-model Thumb {
-  id        Int      @id @default(autoincrement())
-  target    String // 赞踩的对象，Review/Comment/News等 //TODO 去掉在这个，改为直接是Review，领域内聚
-  targetId  Int      @map("target_id") // 赞踩对象的Id
+model ReviewThumb {
+  reviewId  Int      @map("review_id") //
   userId    Int      @map("user_id")
   direction String   @default("up") //方向 up赞，down踩
   createdAt DateTime @default(now()) @map("created_at")
+
+  // ref
+  @@id([reviewId, userId])
 }
 
 // 评测礼物多对多关系，用户可以对同一个review，多次送礼物
@@ -514,13 +515,12 @@ model TopicComment {
 
 // 帖子的赞和踩
 model TopicThumb {
-  id        Int      @id @default(autoincrement())
   topicId   Int      @map("topic_id")
   userId    Int      @map("user_id")
   direction String   @default("up") //方向 up赞，down踩
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([topicId, userId]) // 一个用户一个帖子只能有一个赞或者踩
+  @@id([topicId, userId]) // 一个用户一个帖子只能有一个赞或者踩
 }
 
 // 讨论礼物多对多关系，用户可以对同一个 Topic 多次送礼物

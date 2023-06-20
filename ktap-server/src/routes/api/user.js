@@ -25,12 +25,12 @@ const user = async (fastify, opts) => {
         const reviewIds = (req.query.ids || '').split(',').map(item => Number(item) || 0).filter(item => item > 0);
         let data = {};
         if (reviewIds.length > 0) {
-            const thumbs = await fastify.db.thumb.findMany({
-                where: { userId, target: 'Review', targetId: { in: reviewIds } },
-                select: { targetId: true, direction: true, }
+            const thumbs = await fastify.db.reviewThumb.findMany({
+                where: { userId, reviewId: { in: reviewIds } },
+                select: { reviewId: true, direction: true, }
             });
             thumbs.forEach(thumb => {
-                data[thumb.targetId] = thumb.direction;
+                data[thumb.reviewId] = thumb.direction;
             });
         }
         return reply.code(200).send({ data });
@@ -42,8 +42,8 @@ const user = async (fastify, opts) => {
         const reviewId = Number(req.params.id) || 0;
         const data = {};
         data.reported = (await fastify.db.reviewReport.count({ where: { userId, reviewId } })) > 0;
-        data.thumb = (await fastify.db.thumb.findMany({
-            where: { userId, target: 'Review', targetId: reviewId },
+        data.thumb = (await fastify.db.reviewThumb.findMany({
+            where: { userId, reviewId },
             select: { direction: true, }
         }))[0]?.direction;
         return reply.code(200).send({ data });

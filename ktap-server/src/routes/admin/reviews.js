@@ -17,7 +17,7 @@ const reviews = async function (fastify, opts) {
 
             await fastify.db.$transaction([
                 fastify.db.reviewReport.deleteMany({ where: { reviewId: id } }), // 删除相关举报，举报需要在Timeline中吗？如果需要，那么就无需在这里删除
-                fastify.db.thumb.deleteMany({ where: { target: 'Review', targetId: id } }), // 删除关联赞踩，赞踩需要在Timeline中吗？如果需要，那么就无需在这里删除
+                fastify.db.reviewThumb.deleteMany({ where: { reviewId: id } }), // 删除关联赞踩，赞踩需要在Timeline中吗？如果需要，那么就无需在这里删除
                 fastify.db.reviewGiftRef.deleteMany({ where: { reviewId: id } }), // 删除关联礼物，礼物需要在Timeline中吗？如果需要，那么就无需在这里删除
                 fastify.db.reviewImage.deleteMany({ where: { reviewId: id, } }), // 删除关联图片,
                 fastify.db.review.delete({ where: { id } }), // 删除评测，不需要删除其Comments，这是Review作者自己的行为，而非Comment作者行为。

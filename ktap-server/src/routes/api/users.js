@@ -123,8 +123,8 @@ const users = async (fastify, opts) => {
 
             // 获取赞踩数量
             const thumbs = (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM Thumb WHERE direction = 'up' AND target = 'Review' AND target_id = ${item.id}) AS ups,
-                (SELECT count(*) FROM Thumb WHERE direction = 'down' AND target = 'Review' AND target_id = ${item.id}) AS downs
+                SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${item.id}) AS ups,
+                (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${item.id}) AS downs
             `)[0];
             item.gifts = gifts;
             item.meta = { comments: item._count.comments, gifts: item._count.gifts, ups: thumbs?.ups || 0, downs: thumbs?.downs || 0 };
