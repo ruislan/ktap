@@ -521,3 +521,28 @@ export const Question = ({ width, height, color }) => {
         </svg>
     );
 };
+
+export const Pin = ({ width, height }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={width || '100%'} height={height || '100%'} viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M15.113 3.21l.094 .083l5.5 5.5a1 1 0 0 1 -1.175 1.59l-3.172 3.171l-1.424 3.797a1 1 0 0 1 -.158 .277l-.07 .08l-1.5 1.5a1 1 0 0 1 -1.32 .082l-.095 -.083l-2.793 -2.792l-3.793 3.792a1 1 0 0 1 -1.497 -1.32l.083 -.094l3.792 -3.793l-2.792 -2.793a1 1 0 0 1 -.083 -1.32l.083 -.094l1.5 -1.5a1 1 0 0 1 .258 -.187l.098 -.042l3.796 -1.425l3.171 -3.17a1 1 0 0 1 1.497 -1.26z" strokeWidth="0" fill="currentColor"></path>
+        </svg>
+    );
+};
+
+export const Message4 = ({ width, height, color }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={width || '100%'} height={height || '100%'} fill={color || 'currentColor'} viewBox="0 0 24 24">
+            <path d="M6.45455 19L2 22.5V4C2 3.44772 2.44772 3 3 3H21C21.5523 3 22 3.44772 22 4V18C22 18.5523 21.5523 19 21 19H6.45455ZM7 10V12H9V10H7ZM11 10V12H13V10H11ZM15 10V12H17V10H15Z"></path>
+        </svg>
+    );
+};
+
+export const Reply = ({ width, height, color }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={width || '100%'} height={height || '100%'} fill={color || 'currentColor'} viewBox="0 0 24 24">
+            <path d="M11 20L1 12L11 4V9C16.5228 9 21 13.4772 21 19C21 19.2729 20.9891 19.5433 20.9676 19.8107C19.4605 16.9502 16.458 15 13 15H11V20Z"></path>
+        </svg>
+    );
+};

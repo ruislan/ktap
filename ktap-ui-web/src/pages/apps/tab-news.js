@@ -6,7 +6,7 @@ import { ChevronRight } from 'baseui/icon';
 import { Skeleton } from 'baseui/skeleton';
 import RouterLink from '../../components/router-link';
 
-function TabDetailsNews({ app }) {
+function TabNews({ app }) {
     const appId = app?.id || 0;
     const [isLoading, setIsLoading] = React.useState(false);
     const [newsList, setNewsList] = React.useState([]);
@@ -63,4 +63,4 @@ function TabDetailsNews({ app }) {
         </Block >
     );
 }
-export default TabDetailsNews;
+export default TabNews;

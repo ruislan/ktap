@@ -14,10 +14,11 @@ import SideAward from './side-award';
 import Highlight from './highlight';
 import TabDetailsDescription from './tab-details-description';
 import TabDetailsLanguages from './tab-details-languages';
-import TabDetailsNews from './tab-details-news';
+import TabNews from './tab-news';
 import TabDetailsRequirements from './tab-details-requirements';
 import TabReviewsProfessional from './tab-reviews-professional';
 import TabReviewsUsers from './tab-reviews-users';
+import TabDiscussions from './tab-discussions';
 
 function App() {
     const urlParams = useParams();
@@ -188,7 +189,7 @@ function App() {
                             {isLoading ?
                                 <Skeleton width='100%' height='800px' animation />
                                 :
-                                app && <TabDetailsNews app={app} />
+                                app && <TabNews app={app} />
                             }
                         </Tab>
                         <Tab title='评测'>
@@ -206,13 +207,10 @@ function App() {
                                 <Skeleton width='100%' height='800px' animation />
                                 :
                                 app && <>
-                                    <TabReviewsProfessional app={app} />
-                                    <TabReviewsUsers app={app} />
+                                    <TabDiscussions app={app} />
                                 </>
                             }
                         </Tab>
-                        {/* <Tab title='攻略'>V2:这里就是把帖子里面标记为攻略的放过来？</Tab>
-                        <Tab title='素材'>V2:这里展示一些壁纸，LOGO，图片，视频等等？</Tab> */}
                     </Tabs>
                 </Block>
                 <Block width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{

@@ -336,7 +336,7 @@ model ReviewThumb {
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
-  @@id([reviewId, userId])
+  @@id([reviewId, userId]) // 一个用户一个评测只能有一个赞或者踩
 }
 
 // 评测礼物多对多关系，用户可以对同一个review，多次送礼物
@@ -462,14 +462,17 @@ model TokenBlackList {
 
 // 讨论板块
 model Discussion {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  appId     Int      @map("app_id") // 所属游戏
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id          Int      @id @default(autoincrement())
+  name        String // 名称
+  description String? // 描述
+  banner      String? // 背景图片
+  icon        String? // 可以是游戏 icon，也可以是额外的
+  appId       Int?     @map("app_id") // 所属游戏，不一定都属于游戏
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   // ref
-  app    App     @relation(fields: [appId], references: [id])
+  app    App?    @relation(fields: [appId], references: [id])
   topics Topic[] // 帖子
 }
 
@@ -481,7 +484,7 @@ model UserDiscussionRef {
   @@id([userId, discussionId])
 }
 
-// 帖子
+// 帖子，话题
 model Topic {
   id           Int      @id @default(autoincrement())
   subject      String //主题，重点
@@ -490,6 +493,7 @@ model Topic {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   isTop        Boolean  @map("is_top") // 是否置顶
+  isClosed     Boolean  @default(false) // 是否关闭，关闭之后就不能继续回复了
   discussionId Int      @map("discussion_id") // XXX 帖子是否一定要属于某个讨论？
   userId       Int      @map("user_id")
 

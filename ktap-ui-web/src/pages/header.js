@@ -66,6 +66,7 @@ function Header() {
             { label: '探索', href: '/discover', active: pathname.startsWith('/discover') },
             { label: '榜单', href: '/ranks', active: pathname.startsWith('/ranks') },
             { label: '新闻', href: '/news', active: pathname.startsWith('/news') },
+            { label: '讨论', href: '/discussions', active: pathname.startsWith('/discussions') },
         ]);
     }, [pathname]);
 
