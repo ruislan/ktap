@@ -4,32 +4,30 @@ import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { useStyletron } from 'baseui';
+import { useAuth } from '../../hooks/use-auth';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, LabelXSmall, } from 'baseui/typography';
 import { Search } from 'baseui/icon';
 import { Skeleton } from 'baseui/skeleton';
 import RouterLink from '../../components/router-link';
+import SplitBall from '../../components/split-ball';
 import { Button } from 'baseui/button';
 import { Input } from 'baseui/input';
-import { Message4, Pin, Reply } from '../../components/icons';
+import { Gift2, Message4, Pin, Reply } from '../../components/icons';
+import { useNavigate } from 'react-router-dom';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
 
-function SplitBall({ color = 'inherit', gap = '2px', }) {
-    const [css, theme] = useStyletron();
-    return (
-        <div className={css({
-            borderRadius: '50%', marginLeft: gap, marginRight: gap, backgroundColor: color,
-            width: theme.sizing.scale100, height: theme.sizing.scale100,
-        })}></div>
-    );
-}
-
 function DiscussionTopics({ appId, discussionId, }) {
+    const limit = 1;
     const [css, theme] = useStyletron();
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
     const [topics, setTopics] = React.useState([]);
+    const [skip, setSkip] = React.useState(0);
+    const [hasMore, setHasMore] = React.useState(false);
     React.useEffect(() => {
         if (discussionId > 0) {
             (async () => {
@@ -38,20 +36,24 @@ function DiscussionTopics({ appId, discussionId, }) {
                     // const res = await fetch(`/api/apps/${appId}/discussions/${discussionId}/topics?limit=${limit}&skip=${skip}`);
                     // const data = await res.json();
                     setTopics([
-                        { id: 1, subject: '训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记', content: '训练笔记内定', createdAt: '2023-06-20', isTop: true, ip: '101.101.101.101', meta: { comments: 30, }, user: { id: 1, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/892.svg?width=285', name: '爱吃草鱼的小明明呀' }, last: { user: { id: 2, name: '哎哟喂' }, } },
-                        { id: 2, subject: '训练笔记', content: '训练笔记内定', createdAt: '2023-06-20', isTop: false, ip: '101.101.101.101', meta: { comments: 30, }, user: { id: 2, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285', name: 'admin' } },
+                        { id: 1, subject: '训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记', content: '训练笔记内定', createdAt: '2022-06-20', isTop: true, ip: '101.101.101.101', meta: { comments: 372, gifts: 32, }, user: { id: 1, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/892.svg?width=285', name: '爱吃草鱼的小明明呀' }, last: { user: { id: 2, name: '哎哟喂' }, } },
+                        { id: 2, subject: '训练笔记', content: '训练笔记内定', createdAt: '2023-06-20', isTop: false, ip: '101.101.101.101', meta: { comments: 30, gifts: 0 }, user: { id: 2, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285', name: 'admin' } },
                     ]);
+                    setHasMore(true);
                 } finally {
                     setIsLoading(false);
                 }
             })();
         }
-    }, [appId, discussionId]);
+    }, [appId, discussionId, skip]);
 
     return (
         <Block display='flex' flexDirection='column' width='100%' gridGap='scale300'>
             <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale300'>
-                <Button size='compact' kind='secondary'>发起新讨论</Button>
+                {user ? <Button size='compact' kind='secondary'>发起新讨论</Button> : <Button size='compact' kind='secondary' onClick={e => {
+                    e.preventDefault();
+                    navigate('/login');
+                }}>登录</Button>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input size='compact' placeholder='搜索' />
                     <Button size='compact' kind='secondary'><Search /></Button>
@@ -74,23 +76,36 @@ function DiscussionTopics({ appId, discussionId, }) {
                                 <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={topic?.user?.avatar} width='36px' height='36px' />
                                 <Block display='flex' flexDirection='column' flex='1'>
                                     <LabelMedium marginBottom='scale200'>{topic?.subject}</LabelMedium>
-                                    <Block display='flex' alignItems='center' color='primary300'>
+                                    <Block display='flex' alignItems='center' color='primary300' flexWrap>
                                         {topic.isTop &&
                                             <>
                                                 <Pin width='16px' height='16px' />
-                                                <SplitBall color='rgb(151, 151, 151)' gap='8px' />
+                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>
                                         }
-                                        <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale100'>
+                                        <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
                                             {topic?.last?.user?.name && <Reply width='16px' height='16px' />}
                                             @{topic?.last?.user ? topic?.last?.user.name : topic?.user?.name}
                                         </LabelSmall>
-                                        <SplitBall color='rgb(151, 151, 151)' gap='8px' />
-                                        <Block display='flex' alignItems='center' gridGap='scale100' color='inherit'>
-                                            <Message4 width='16px' height='16px' />
-                                            <LabelSmall color='inherit'>{topic?.meta?.comments || 0}</LabelSmall>
-                                        </Block>
-                                        <SplitBall color='rgb(151, 151, 151)' gap='8px' />
+                                        <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        {topic?.meta?.comments > 0 &&
+                                            <>
+                                                <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
+                                                    <Message4 width='16px' height='16px' />
+                                                    <LabelSmall color='inherit'>{topic?.meta?.comments || 0}</LabelSmall>
+                                                </Block>
+                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                            </>
+                                        }
+                                        {topic?.meta?.gifts > 0 &&
+                                            <>
+                                                <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
+                                                    <Gift2 width='16px' height='16px' />
+                                                    <LabelSmall color='inherit'>{topic?.meta?.gifts || 0}</LabelSmall>
+                                                </Block>
+                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                            </>
+                                        }
                                         <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(topic?.createdAt).fromNow()}</LabelSmall>
                                     </Block>
                                 </Block>
@@ -99,7 +114,13 @@ function DiscussionTopics({ appId, discussionId, }) {
                     );
                 })
             }
-            {isLoading && <Block>loading...</Block>}
+            {hasMore &&
+                <Block marginTop='scale800' display='flex' justifyContent='center'>
+                    <Button size='default' kind='tertiary' isLoading={isLoading} onClick={() => setSkip(prev => prev + limit)}>
+                        查看更多
+                    </Button>
+                </Block>
+            }
         </Block>
     );
 }

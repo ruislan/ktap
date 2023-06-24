@@ -22,7 +22,7 @@
         "@fastify/multipart": "^7.6.0",
         "@fastify/sensible": "^5.2.0",
         "@fastify/static": "^6.10.2",
-        "@prisma/client": "^4.16.0",
+        "@prisma/client": "^4.16.1",
         "ajv-errors": "^3.0.0",
         "bcrypt": "^5.1.0",
         "cheerio": "^1.0.0-rc.12",
@@ -38,6 +38,6 @@
     },
     "devDependencies": {
         "chokidar": "^3.5.3",
-        "prisma": "^4.16.0"
+        "prisma": "^4.16.1"
     }
 }
