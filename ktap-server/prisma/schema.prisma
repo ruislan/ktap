@@ -460,7 +460,7 @@ model TokenBlackList {
 
 // 讨论 Start
 
-// 讨论板块
+// 讨论
 model Discussion {
   id          Int      @id @default(autoincrement())
   name        String // 名称
