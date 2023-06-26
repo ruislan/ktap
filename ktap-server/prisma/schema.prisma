@@ -38,8 +38,8 @@ model User {
   reviewReports  ReviewReport[] // 对评测的举报
   followers      FollowUser[] // 关注的人
   topics         Topic[] // 讨论帖子
-  topicComments  TopicComment[] // 讨论帖子的回复
-  topicGifts     TopicGiftRef[] // 对讨论帖送的礼物
+  posts          TopicPost[] // 讨论帖子的回复
+  postGifts      PostGiftRef[] // 对讨论帖送的礼物
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -366,7 +366,7 @@ model Gift {
 
   // ref
   reviews ReviewGiftRef[] // 有该礼物的评测
-  topics  TopicGiftRef[] // 有该礼物讨论主题
+  posts   PostGiftRef[] // 有该礼物讨论帖子
 }
 
 // 应用的新闻
@@ -459,13 +459,15 @@ model TokenBlackList {
 }
 
 // 讨论 Start
+// 简单的三层关系，板块1 - N话题1 - N帖子， 板块1 - N版主
+//
+//
 
-// 讨论
+// 板块
 model Discussion {
   id          Int      @id @default(autoincrement())
   name        String // 名称
   description String? // 描述
-  banner      String? // 背景图片
   icon        String? // 可以是游戏 icon，也可以是额外的
   appId       Int?     @map("app_id") // 所属游戏，不一定都属于游戏
   createdAt   DateTime @default(now()) @map("created_at")
@@ -476,7 +478,7 @@ model Discussion {
   topics Topic[] // 帖子
 }
 
-// 用户讨论板块多对多关系，板块的管理者们
+// 用户板块多对多关系，板块的管理者们
 model UserDiscussionRef {
   userId       Int @map("user_id")
   discussionId Int @map("discussion_id")
@@ -484,60 +486,59 @@ model UserDiscussionRef {
   @@id([userId, discussionId])
 }
 
-// 帖子，话题
+// 话题
 model Topic {
   id           Int      @id @default(autoincrement())
   subject      String //主题，重点
-  content      String //内容
-  ip           String? // ip地址
+  isSticky     Boolean  @default(false) @map("is_sticky") // 是否置顶
+  isClosed     Boolean  @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
+  discussionId Int      @map("discussion_id") // XXX 帖子是否一定要属于某个板块？
+  userId       Int      @map("user_id")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
-  isTop        Boolean  @map("is_top") // 是否置顶
-  isClosed     Boolean  @default(false) // 是否关闭，关闭之后就不能继续回复了
-  discussionId Int      @map("discussion_id") // XXX 帖子是否一定要属于某个讨论？
-  userId       Int      @map("user_id")
 
   // ref
-  discussion Discussion     @relation(fields: [discussionId], references: [id])
-  user       User           @relation(fields: [userId], references: [id])
-  comments   TopicComment[]
-  gifts      TopicGiftRef[] // 得到的礼物
+  discussion Discussion  @relation(fields: [discussionId], references: [id])
+  user       User        @relation(fields: [userId], references: [id])
+  posts      TopicPost[]
 }
 
-// 帖子回复
-model TopicComment {
+// 话题帖子
+model TopicPost {
   id        Int      @id @default(autoincrement())
   content   String //内容
+  ip        String? // ip地址
   createdAt DateTime @default(now()) @map("created_at")
-  topicId   Int?     @map("topic_id")
+  topicId   Int      @map("topic_id")
   userId    Int      @map("user_id")
 
   // ref
-  topic Topic? @relation(fields: [topicId], references: [id])
-  user  User   @relation(fields: [userId], references: [id])
+  topic Topic         @relation(fields: [topicId], references: [id])
+  user  User          @relation(fields: [userId], references: [id])
+  gifts PostGiftRef[] // 得到的礼物
 }
 
 // 帖子的赞和踩
-model TopicThumb {
-  topicId   Int      @map("topic_id")
+model PostThumb {
+  postId    Int      @map("post_id")
   userId    Int      @map("user_id")
   direction String   @default("up") //方向 up赞，down踩
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@id([topicId, userId]) // 一个用户一个帖子只能有一个赞或者踩
+  @@id([postId, userId]) // 一个用户一个帖子只能有一个赞或者踩
 }
 
-// 讨论礼物多对多关系，用户可以对同一个 Topic 多次送礼物
-model TopicGiftRef {
-  id      Int @id @default(autoincrement())
-  giftId  Int @map("gift_id")
-  topicId Int @map("topic_id")
-  userId  Int @map("user_id")
+// 帖子礼物多对多关系，用户可以对同一个帖子多次送礼物
+model PostGiftRef {
+  id     Int @id @default(autoincrement())
+  giftId Int @map("gift_id")
+  postId Int @map("post_id")
+  userId Int @map("user_id")
 
   // ref
-  topic Topic @relation(fields: [topicId], references: [id])
-  gift  Gift  @relation(fields: [giftId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  post TopicPost @relation(fields: [postId], references: [id])
+  gift Gift      @relation(fields: [giftId], references: [id])
+  user User      @relation(fields: [userId], references: [id])
 }
 
 // 讨论 End
