@@ -2,14 +2,14 @@ import React from 'react';
 
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
-import DiscussionsList from './discussions-list';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Skeleton } from 'baseui/skeleton';
 import { HeadingMedium, HeadingXSmall } from 'baseui/typography';
 import { useAuth } from '../../hooks/use-auth';
 import { Button } from 'baseui/button';
 import { Check } from 'baseui/icon';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
+import DiscussionList from './discussion-list';
 
 function AppBanner({ appId }) {
     const [css, theme] = useStyletron();
@@ -136,7 +136,7 @@ function AppBanner({ appId }) {
     );
 }
 
-function DiscussionsApps() {
+function AppChannels() {
     const { appId } = useParams();
 
     return (
@@ -152,10 +152,10 @@ function DiscussionsApps() {
                     })
                 }
             }}>
-                <DiscussionsList appId={appId} initDiscussionId={1} />
+                <DiscussionList appId={appId} initDiscussionId={1} />
             </Block>
         </Block>
     );
 }
 
-export default DiscussionsApps;
+export default AppChannels;

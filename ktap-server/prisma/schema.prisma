@@ -37,9 +37,9 @@ model User {
   reviewGifts    ReviewGiftRef[] // review gifts 对评测送的礼物
   reviewReports  ReviewReport[] // 对评测的举报
   followers      FollowUser[] // 关注的人
-  topics         Topic[] // 讨论帖子
-  posts          TopicPost[] // 讨论帖子的回复
-  postGifts      PostGiftRef[] // 对讨论帖送的礼物
+  discussions    Discussion[] // 讨论
+  posts          DiscussionPost[] // 讨论帖
+  postGifts      DiscussionPostGiftRef[] // 对讨论帖送的礼物
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -73,21 +73,21 @@ model App {
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
   // ref
-  languages   AppLanguages? // 支持的语言
-  platforms   AppPlatform[] // 平台 win或者os
-  media       AppMedia[] // 媒体资源，图
-  socialLinks AppSocialLink[] // 社交链接
-  developers  AppDeveloperRef[] // 开发商
-  publishers  AppPublisherRef[] // 发行商
-  reviews     Review[] // 评价
-  news        News[] // 新闻
-  awards      AppAward[] // 奖项
-  proReviews  ProReview[] // 专业评测
-  genres      AppGenreRef[] // 游戏类型
-  features    AppFeatureRef[] // 游戏功能
-  tags        AppUserTagRef[] // 用户标签
-  followers   FollowApp[] // 关注的人
-  discussions Discussion[] // 讨论
+  languages          AppLanguages? // 支持的语言
+  platforms          AppPlatform[] // 平台 win或者os
+  media              AppMedia[] // 媒体资源，图
+  socialLinks        AppSocialLink[] // 社交链接
+  developers         AppDeveloperRef[] // 开发商
+  publishers         AppPublisherRef[] // 发行商
+  reviews            Review[] // 评价
+  news               News[] // 新闻
+  awards             AppAward[] // 奖项
+  proReviews         ProReview[] // 专业评测
+  genres             AppGenreRef[] // 游戏类型
+  features           AppFeatureRef[] // 游戏功能
+  tags               AppUserTagRef[] // 用户标签
+  followers          FollowApp[] // 关注的人
+  discussionChannels DiscussionChannel[] // 讨论频道
 }
 
 // 支持的语言
@@ -366,7 +366,7 @@ model Gift {
 
   // ref
   reviews ReviewGiftRef[] // 有该礼物的评测
-  posts   PostGiftRef[] // 有该礼物讨论帖子
+  posts   DiscussionPostGiftRef[] // 有该礼物讨论帖子
 }
 
 // 应用的新闻
@@ -463,8 +463,8 @@ model TokenBlackList {
 //
 //
 
-// 板块
-model Discussion {
+// 讨论频道
+model DiscussionChannel {
   id          Int      @id @default(autoincrement())
   name        String // 名称
   description String? // 描述
@@ -474,52 +474,52 @@ model Discussion {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // ref
-  app    App?    @relation(fields: [appId], references: [id])
-  topics Topic[] // 帖子
+  app         App?         @relation(fields: [appId], references: [id])
+  discussions Discussion[] // 讨论
 }
 
 // 用户板块多对多关系，板块的管理者们
-model UserDiscussionRef {
-  userId       Int @map("user_id")
-  discussionId Int @map("discussion_id")
+model UserDiscussionChannelRef {
+  userId              Int @map("user_id")
+  discussionChannelId Int @map("discussion_channel_id")
 
-  @@id([userId, discussionId])
+  @@id([userId, discussionChannelId])
 }
 
-// 话题
-model Topic {
-  id           Int      @id @default(autoincrement())
-  subject      String //主题，重点
-  isSticky     Boolean  @default(false) @map("is_sticky") // 是否置顶
-  isClosed     Boolean  @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
-  discussionId Int      @map("discussion_id") // XXX 帖子是否一定要属于某个板块？
-  userId       Int      @map("user_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+// 讨论
+model Discussion {
+  id                  Int      @id @default(autoincrement())
+  subject             String //主题，重点
+  isSticky            Boolean  @default(false) @map("is_sticky") // 是否置顶
+  isClosed            Boolean  @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
+  discussionChannelId Int      @map("discussion_channel_id") // XXX 帖子是否一定要属于某个频道？
+  userId              Int      @map("user_id")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   // ref
-  discussion Discussion  @relation(fields: [discussionId], references: [id])
-  user       User        @relation(fields: [userId], references: [id])
-  posts      TopicPost[]
+  channel DiscussionChannel @relation(fields: [discussionChannelId], references: [id]) // 所属频道
+  user    User              @relation(fields: [userId], references: [id]) // 发起人
+  posts   DiscussionPost[] // 帖子
 }
 
 // 话题帖子
-model TopicPost {
-  id        Int      @id @default(autoincrement())
-  content   String //内容
-  ip        String? // ip地址
-  createdAt DateTime @default(now()) @map("created_at")
-  topicId   Int      @map("topic_id")
-  userId    Int      @map("user_id")
+model DiscussionPost {
+  id           Int      @id @default(autoincrement())
+  content      String //内容
+  ip           String? // ip地址
+  createdAt    DateTime @default(now()) @map("created_at")
+  discussionId Int      @map("discussion_id")
+  userId       Int      @map("user_id")
 
   // ref
-  topic Topic         @relation(fields: [topicId], references: [id])
-  user  User          @relation(fields: [userId], references: [id])
-  gifts PostGiftRef[] // 得到的礼物
+  discussion Discussion              @relation(fields: [discussionId], references: [id])
+  user       User                    @relation(fields: [userId], references: [id])
+  gifts      DiscussionPostGiftRef[] // 得到的礼物
 }
 
 // 帖子的赞和踩
-model PostThumb {
+model DiscussionPostThumb {
   postId    Int      @map("post_id")
   userId    Int      @map("user_id")
   direction String   @default("up") //方向 up赞，down踩
@@ -529,16 +529,16 @@ model PostThumb {
 }
 
 // 帖子礼物多对多关系，用户可以对同一个帖子多次送礼物
-model PostGiftRef {
+model DiscussionPostGiftRef {
   id     Int @id @default(autoincrement())
   giftId Int @map("gift_id")
   postId Int @map("post_id")
   userId Int @map("user_id")
 
   // ref
-  post TopicPost @relation(fields: [postId], references: [id])
-  gift Gift      @relation(fields: [giftId], references: [id])
-  user User      @relation(fields: [userId], references: [id])
+  post DiscussionPost @relation(fields: [postId], references: [id])
+  gift Gift           @relation(fields: [giftId], references: [id])
+  user User           @relation(fields: [userId], references: [id])
 }
 
 // 讨论 End

@@ -602,14 +602,14 @@ function Review() {
                                             }
                                         </Block>
                                         {review.meta.gifts > 0 && review.gifts &&
-                                            <>
-                                                <LabelSmall color='primary400' marginTop='scale300' marginBottom='scale300'>收到的礼物：</LabelSmall>
+                                            <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300'>
+                                                <LabelSmall color='primary400'>收到的礼物：</LabelSmall>
                                                 <Block display='grid' gridGap='scale100' gridAutoFlow='column' width='min-content'>
                                                     {review.gifts.map((gift, index) =>
                                                         <GiftType key={index} src={gift.url} name={gift.name} number={gift.count} description={gift.description} price={gift.price} />)
                                                     }
                                                 </Block>
-                                            </>
+                                            </Block>
                                         }
 
                                     </Block>

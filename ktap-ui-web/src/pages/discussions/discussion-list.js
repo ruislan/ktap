@@ -19,23 +19,21 @@ import { useNavigate } from 'react-router-dom';
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
 
-function DiscussionTopics({ appId, discussionId, }) {
+function ChannelDiscussions({ appId, channelId, }) {
     const limit = 1;
     const [css, theme] = useStyletron();
     const { user } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [topics, setTopics] = React.useState([]);
+    const [discussions, setDiscussions] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
     React.useEffect(() => {
-        if (discussionId > 0) {
+        if (channelId > 0) {
             (async () => {
                 setIsLoading(true);
                 try {
-                    // const res = await fetch(`/api/apps/${appId}/discussions/${discussionId}/topics?limit=${limit}&skip=${skip}`);
-                    // const data = await res.json();
-                    setTopics([
+                    setDiscussions([
                         { id: 1, subject: '训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记', content: '训练笔记内定', createdAt: '2022-06-20', isTop: true, ip: '101.101.101.101', meta: { comments: 372, gifts: 32, }, user: { id: 1, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/892.svg?width=285', name: '爱吃草鱼的小明明呀' }, last: { user: { id: 2, name: '哎哟喂' }, } },
                         { id: 2, subject: '训练笔记', content: '训练笔记内定', createdAt: '2023-06-20', isTop: false, ip: '101.101.101.101', meta: { comments: 30, gifts: 0 }, user: { id: 2, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285', name: 'admin' } },
                     ]);
@@ -45,7 +43,7 @@ function DiscussionTopics({ appId, discussionId, }) {
                 }
             })();
         }
-    }, [appId, discussionId, skip]);
+    }, [appId, channelId, skip]);
 
     return (
         <Block display='flex' flexDirection='column' width='100%' gridGap='scale300'>
@@ -59,11 +57,11 @@ function DiscussionTopics({ appId, discussionId, }) {
                     <Button size='compact' kind='secondary'><Search /></Button>
                 </Block>
             </Block>
-            {topics?.length === 0 ?
+            {discussions?.length === 0 ?
                 <LabelSmall marginTop='scale600' alignSelf='center' color='primary500'>无内容</LabelSmall> :
-                topics.map((topic, index) => {
+                discussions.map((discussion, index) => {
                     return (
-                        <RouterLink key={index} href={`/discussions/apps/${appId}/topics/${topic.id}`}>
+                        <RouterLink key={index} href={`/discussions/apps/${appId}/view/${discussion.id}`}>
                             <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale300' paddingBottom='scale300' overrides={{
                                 Block: {
                                     style: {
@@ -73,40 +71,40 @@ function DiscussionTopics({ appId, discussionId, }) {
                                     }
                                 }
                             }}>
-                                <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={topic?.user?.avatar} width='36px' height='36px' />
+                                <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={discussion?.user?.avatar} width='36px' height='36px' />
                                 <Block display='flex' flexDirection='column' flex='1'>
-                                    <LabelMedium marginBottom='scale200'>{topic?.subject}</LabelMedium>
+                                    <LabelMedium marginBottom='scale200'>{discussion?.subject}</LabelMedium>
                                     <Block display='flex' alignItems='center' color='primary300' flexWrap>
-                                        {topic.isTop &&
+                                        {discussion.isTop &&
                                             <>
                                                 <Pin width='16px' height='16px' />
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>
                                         }
                                         <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
-                                            {topic?.last?.user?.name && <Reply width='16px' height='16px' />}
-                                            @{topic?.last?.user ? topic?.last?.user.name : topic?.user?.name}
+                                            {discussion?.last?.user?.name && <Reply width='16px' height='16px' />}
+                                            @{discussion?.last?.user ? discussion?.last?.user.name : discussion?.user?.name}
                                         </LabelSmall>
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                        {topic?.meta?.comments > 0 &&
+                                        {discussion?.meta?.comments > 0 &&
                                             <>
                                                 <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
                                                     <Message4 width='16px' height='16px' />
-                                                    <LabelSmall color='inherit'>{topic?.meta?.comments || 0}</LabelSmall>
+                                                    <LabelSmall color='inherit'>{discussion?.meta?.comments || 0}</LabelSmall>
                                                 </Block>
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>
                                         }
-                                        {topic?.meta?.gifts > 0 &&
+                                        {discussion?.meta?.gifts > 0 &&
                                             <>
                                                 <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
                                                     <Gift2 width='16px' height='16px' />
-                                                    <LabelSmall color='inherit'>{topic?.meta?.gifts || 0}</LabelSmall>
+                                                    <LabelSmall color='inherit'>{discussion?.meta?.gifts || 0}</LabelSmall>
                                                 </Block>
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>
                                         }
-                                        <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(topic?.createdAt).fromNow()}</LabelSmall>
+                                        <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
                                     </Block>
                                 </Block>
                             </Block>
@@ -125,11 +123,11 @@ function DiscussionTopics({ appId, discussionId, }) {
     );
 }
 
-function DiscussionsList({ appId, initDiscussionId = 0, }) {
+function DiscussionList({ appId, initChannelId = 0, }) {
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
     const [discussions, setDiscussions] = React.useState([]);
-    const [discussionId, setDiscussionId] = React.useState(0);
+    const [channelId, setChannelId] = React.useState(0);
     React.useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -143,12 +141,12 @@ function DiscussionsList({ appId, initDiscussionId = 0, }) {
                     { id: 4, name: '无聊灌水', description: 'Welcome to Teyvat, Traveler! This is the place to discuss with others about your favorite game: Genshin Impact!', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
                 ];
                 setDiscussions(data);
-                initDiscussionId > 0 ? setDiscussionId(initDiscussionId) : setDiscussionId(data[0]?.id);
+                initChannelId > 0 ? setChannelId(initChannelId) : setChannelId(data[0]?.id);
             } finally {
                 setIsLoading(false);
             }
         })();
-    }, [appId, initDiscussionId]);
+    }, [appId, initChannelId]);
 
 
     return (
@@ -161,27 +159,27 @@ function DiscussionsList({ appId, initDiscussionId = 0, }) {
                             <div key={index} className={css({
                                 display: 'flex', alignItems: 'center', gap: theme.sizing.scale300, overflow: 'hidden',
                                 cursor: 'pointer', position: 'relative', padding: theme.sizing.scale300, minWidth: '240px',
-                                backgroundColor: discussion.id === discussionId ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary,
+                                backgroundColor: discussion.id === channelId ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary,
                                 borderRadius: theme.borders.radius300, textDecoration: 'none',
-                                boxShadow: discussion.id === discussionId ? theme.lighting.shadow700 : 'unset',
+                                boxShadow: discussion.id === channelId ? theme.lighting.shadow700 : 'unset',
                                 ':hover': {
                                     backgroundColor: theme.colors.backgroundTertiary,
                                     boxShadow: theme.lighting.shadow700,
                                 },
-                            })} onClick={() => setDiscussionId(discussion.id)}>
+                            })} onClick={() => setChannelId(discussion.id)}>
                                 <img src={discussion.icon} className={css({ objectFit: 'cover', borderRadius: theme.borders.radius300, width: theme.sizing.scale1200, height: theme.sizing.scale1200 })} alt={discussion.name} />
                                 <Block display='flex' flexDirection='column' gridGap='scale100' width='calc(100% - 56px)'>
-                                    <LabelSmall color={discussion.id === discussionId ? '' : 'primary100'}>{discussion.name}</LabelSmall>
-                                    <LabelXSmall color={discussion.id === discussionId ? 'primary100' : 'primary300'} width='100%' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{discussion.description}</LabelXSmall>
+                                    <LabelSmall color={discussion.id === channelId ? '' : 'primary100'}>{discussion.name}</LabelSmall>
+                                    <LabelXSmall color={discussion.id === channelId ? 'primary100' : 'primary300'} width='100%' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{discussion.description}</LabelXSmall>
                                 </Block>
                             </div>
                         );
                     })}
                 </Block>
             }
-            {discussionId > 0 && <DiscussionTopics appId={appId} discussionId={discussionId} />}
+            {channelId > 0 && <ChannelDiscussions appId={appId} channelId={channelId} />}
         </Block >
     );
 }
 
-export default DiscussionsList;
+export default DiscussionList;
