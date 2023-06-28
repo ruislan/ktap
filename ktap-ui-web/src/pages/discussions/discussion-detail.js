@@ -201,7 +201,7 @@ function DiscussionPostActions({ discussionId, post }) {
                 {post?.meta?.gifts > 0 && post?.gifts &&
                     <Block display='flex' flexDirection='column' marginTop='scale600' gridGap='scale300'>
                         <LabelSmall color='primary400'>收到的礼物：</LabelSmall>
-                        <Block display='grid' gridGap='scale100' gridAutoFlow='column' width='min-content'>
+                        <Block display='flex' gridGap='scale100' flexWrap width='100%'>
                             {post?.gifts.map((gift, index) =>
                                 <GiftType key={index} src={gift.url} name={gift.name} number={gift.count} description={gift.description} price={gift.price} />)
                             }

@@ -604,7 +604,7 @@ function Review() {
                                         {review.meta.gifts > 0 && review.gifts &&
                                             <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300'>
                                                 <LabelSmall color='primary400'>收到的礼物：</LabelSmall>
-                                                <Block display='grid' gridGap='scale100' gridAutoFlow='column' width='min-content'>
+                                                <Block display='flex' gridGap='scale100' flexWrap width='100%'>
                                                     {review.gifts.map((gift, index) =>
                                                         <GiftType key={index} src={gift.url} name={gift.name} number={gift.count} description={gift.description} price={gift.price} />)
                                                     }

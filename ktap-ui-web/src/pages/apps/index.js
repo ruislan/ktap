@@ -207,7 +207,7 @@ function App() {
                                 <Skeleton width='100%' height='800px' animation />
                                 :
                                 app && <>
-                                    <TabDiscussions app={app} />
+                                    <TabDiscussions appId={app.id} />
                                 </>
                             }
                         </Tab>

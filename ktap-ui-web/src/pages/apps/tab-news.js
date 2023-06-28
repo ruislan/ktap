@@ -47,7 +47,7 @@ function TabNews({ app }) {
                                                 paddingRight: '0px',
                                                 marginLeft: '0px',
                                                 width: '100%',
-                                                borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+                                                borderBottomColor: 'rgba(255, 255, 255, 0.12)',
                                             }
                                         },
                                     }}
