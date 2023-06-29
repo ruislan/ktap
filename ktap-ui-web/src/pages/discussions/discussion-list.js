@@ -15,6 +15,8 @@ import { Button } from 'baseui/button';
 import { Input } from 'baseui/input';
 import { Gift2, Message4, Pin, Reply } from '../../components/icons';
 import { useNavigate } from 'react-router-dom';
+import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
+import Editor from './editor';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -28,6 +30,8 @@ function ChannelDiscussions({ appId, channelId, }) {
     const [discussions, setDiscussions] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
+    const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
+
     React.useEffect(() => {
         if (channelId > 0) {
             (async () => {
@@ -46,9 +50,9 @@ function ChannelDiscussions({ appId, channelId, }) {
     }, [appId, channelId, skip]);
 
     return (
-        <Block display='flex' flexDirection='column' width='100%' gridGap='scale300'>
-            <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale300'>
-                {user ? <Button size='compact' kind='secondary'>发起新话题</Button> : <Button size='compact' kind='secondary' onClick={e => {
+        <Block display='flex' flexDirection='column' width='100%'>
+            <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale600'>
+                {user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新话题</Button> : <Button size='compact' kind='secondary' onClick={e => {
                     e.preventDefault();
                     navigate('/login');
                 }}>登录</Button>}
@@ -56,18 +60,34 @@ function ChannelDiscussions({ appId, channelId, }) {
                     <Input size='compact' placeholder='搜索' />
                     <Button size='compact' kind='secondary'><Search /></Button>
                 </Block>
+                <Modal onClose={() => setIsOpenEditorModal(false)}
+                    closeable={false}
+                    isOpen={isOpenEditorModal}
+                    animate
+                    autoFocus
+                    role={ROLE.alertdialog}
+                >
+                    <ModalHeader>发起新话题</ModalHeader>
+                    <ModalBody>
+                        <Editor />
+                    </ModalBody>
+                    <ModalFooter>
+                        <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
+                        <ModalButton onClick={() => {}} isLoading={isLoading}>发送</ModalButton>
+                    </ModalFooter>
+                </Modal>
             </Block>
             {discussions?.length === 0 ?
                 <LabelSmall marginTop='scale600' alignSelf='center' color='primary500'>无内容</LabelSmall> :
                 discussions.map((discussion, index) => {
                     return (
                         <RouterLink key={index} href={`/discussions/apps/${appId}/view/${discussion.id}`}>
-                            <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale300' paddingBottom='scale300' overrides={{
+                            <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale400' paddingBottom='scale400' overrides={{
                                 Block: {
                                     style: {
-                                        borderBottomColor: theme.borders.border100.borderColor,
-                                        borderBottomWidth: theme.borders.border100.borderWidth,
-                                        borderBottomStyle: theme.borders.border100.borderStyle,
+                                        borderBottomColor: theme.borders.border300.borderColor,
+                                        borderBottomWidth: theme.borders.border300.borderWidth,
+                                        borderBottomStyle: theme.borders.border300.borderStyle,
                                     }
                                 }
                             }}>
@@ -123,11 +143,12 @@ function ChannelDiscussions({ appId, channelId, }) {
     );
 }
 
-function DiscussionList({ appId, initChannelId = 0, }) {
+function DiscussionList({ appId }) {
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
     const [discussions, setDiscussions] = React.useState([]);
     const [channelId, setChannelId] = React.useState(0);
+
     React.useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -141,12 +162,12 @@ function DiscussionList({ appId, initChannelId = 0, }) {
                     { id: 4, name: '无聊灌水', description: 'Welcome to Teyvat, Traveler! This is the place to discuss with others about your favorite game: Genshin Impact!', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
                 ];
                 setDiscussions(data);
-                initChannelId > 0 ? setChannelId(initChannelId) : setChannelId(data[0]?.id);
+                setChannelId(data[0]?.id);
             } finally {
                 setIsLoading(false);
             }
         })();
-    }, [appId, initChannelId]);
+    }, [appId]);
 
 
     return (

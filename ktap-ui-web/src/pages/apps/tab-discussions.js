@@ -46,7 +46,7 @@ function TabDiscussions({ appId }) {
                     discussions.map((discussion, index) => {
                         return (
                             <RouterLink key={index} href={`/discussions/apps/${appId}/view/${discussion.id}`} >
-                                <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale300' paddingBottom='scale300' overrides={{
+                                <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale400' paddingBottom='scale400' overrides={{
                                     Block: {
                                         style: {
                                             borderBottomColor: theme.borders.border300.borderColor,

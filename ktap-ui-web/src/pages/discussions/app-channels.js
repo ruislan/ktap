@@ -152,7 +152,7 @@ function AppChannels() {
                     })
                 }
             }}>
-                <DiscussionList appId={appId} initDiscussionId={1} />
+                <DiscussionList appId={appId} />
             </Block>
         </Block>
     );
