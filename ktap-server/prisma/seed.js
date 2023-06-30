@@ -1027,6 +1027,26 @@ const discoverPageWidgets = [
     return v;
 });
 
+// 讨论频道
+const discussionChannels = [
+    { appId: 1, name: '综合讨论', description: '各种话题都可以谁便说', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+    { appId: 1, name: '游戏攻略', description: '分享你的攻略', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+    { appId: 1, name: '问题反馈', description: '反馈你的问题', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+    { appId: 1, name: '无聊灌水', description: '灌水就是艺术', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+
+    { appId: 2, name: '综合讨论', description: '各种话题都可以谁便说', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+    { appId: 2, name: '游戏攻略', description: '分享你的攻略', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+    { appId: 2, name: '问题反馈', description: '反馈你的问题', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+
+    { appId: 3, name: '综合讨论', description: '各种话题都可以谁便说', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+    { appId: 3, name: '游戏攻略', description: '分享你的攻略', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+
+
+    { appId: 4, name: '无聊灌水', description: '灌水就是艺术', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
+].map((v, index) => { v.id = index + 1; return v; });
+
+
+
 async function initForSteam() {
     console.log(`Start seeding for steam ...`);
     console.log(`初始化用户...`);
@@ -1196,6 +1216,12 @@ async function initForDev() {
         const pageWidget = await db.pageWidget.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created page widget: ${pageWidget.id}`);
     }
+    // 讨论频道
+    for (const item of discussionChannels) {
+        const channel = await db.discussionChannel.upsert({ create: item, update: item, where: { id: item.id } });
+        console.log(`Created discussion channel: ${channel.id}`);
+    }
+
     console.log(`Seeding finished.`);
 }
 

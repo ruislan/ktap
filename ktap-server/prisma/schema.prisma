@@ -88,6 +88,7 @@ model App {
   tags               AppUserTagRef[] // 用户标签
   followers          FollowApp[] // 关注的人
   discussionChannels DiscussionChannel[] // 讨论频道
+  discussions        Discussion[] //
 }
 
 // 支持的语言
@@ -493,13 +494,16 @@ model Discussion {
   isSticky            Boolean  @default(false) @map("is_sticky") // 是否置顶
   isClosed            Boolean  @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
   discussionChannelId Int      @map("discussion_channel_id") // XXX 帖子是否一定要属于某个频道？
-  userId              Int      @map("user_id")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
+
+  userId Int  @map("user_id")
+  appId  Int? @map("app_id")
 
   // ref
   channel DiscussionChannel @relation(fields: [discussionChannelId], references: [id]) // 所属频道
   user    User              @relation(fields: [userId], references: [id]) // 发起人
+  app     App?              @relation(fields: [appId], references: [id]) // 所属 App，非必需
   posts   DiscussionPost[] // 帖子
 }
 

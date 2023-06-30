@@ -10,6 +10,7 @@ import apiTags from './routes/api/tags.js';
 import apiRanks from './routes/api/ranks.js';
 import apiOrganizations from './routes/api/organizations.js';
 import apiDiscover from './routes/api/discover.js';
+import apiDiscussions from './routes/api/discussions.js';
 
 const apiRoutes = async (fastify, opts, next) => {
     // routes
@@ -25,6 +26,7 @@ const apiRoutes = async (fastify, opts, next) => {
     await fastify.register(apiRanks, { prefix: '/ranks' });
     await fastify.register(apiOrganizations, { prefix: '/organizations' });
     await fastify.register(apiDiscover, { prefix: '/discover' });
+    await fastify.register(apiDiscussions, { prefix: '/discussions' });
     next();
 };
 
