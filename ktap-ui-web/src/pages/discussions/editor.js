@@ -44,13 +44,11 @@ function EditorButton({ ref, disabled, onClick, isActive, children }) {
 
 function MenuBar({ editor }) {
     const [css, theme] = useStyletron();
-
     if (!editor) return null;
     return (
         <div className={css({
             display: 'flex', alignItems: 'center', gap: theme.sizing.scale100, flexWrap: 'wrap'
         })}>
-
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -98,10 +96,28 @@ function MenuBar({ editor }) {
             </EditorButton>
             <SplitLine />
             <StatefulPopover
-                content={() => (
-                    <Block display='flex' alignItems='center' flexWrap padding='scale600'>
-                        <button onClick={() => editor.chain().focus().setColor('').run()}>white</button>
-                        <button onClick={() => editor.chain().focus().setColor('#958DF1').run()}>purple</button>
+                content={({ close }) => (
+                    <Block display='grid' gridTemplateColumns='1fr 1fr 1fr 1fr' gridGap='scale200' padding='scale300'>
+                        {
+                            ['', 'rgb(246,76,76)', 'rgb(255, 121, 77)', 'rgb(255, 184, 0)', 'rgb(61, 204, 73)', 'rgb(89, 145, 255)', 'rgb(204, 102, 255)', 'hsla(0,0%,100%,.6)'].map((color, index) =>
+                                <div key={index} className={css({
+                                    cursor: 'pointer', width: theme.sizing.scale850, height: theme.sizing.scale850,
+                                    backgroundColor: color, borderRadius: theme.borders.radius200,
+                                    border: '1px solid ' + theme.borders.border300.borderColor,
+                                    position: 'relative'
+                                })} onClick={() => {
+                                    editor.chain().focus().setColor(color).run();
+                                    close();
+                                }}>
+                                    {(!color || color === 'unset') && (
+                                        <div className={css({
+                                            width: '2px', backgroundColor: 'hsla(0,0%,100%,.7)', height: '100%',
+                                            position: 'absolute', left: '50%', transform: 'rotate(45deg)',
+                                        })}></div>
+                                    )}
+                                </div>
+                            )
+                        }
                     </Block>
                 )}
                 returnFocus
@@ -112,8 +128,7 @@ function MenuBar({ editor }) {
                         borderRadius: '50%', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
                         display: 'flex', justifyContent: 'center', alignItems: 'center', border: 'unset', margin: 0,
                         padding: theme.sizing.scale100, width: theme.sizing.scale900, height: theme.sizing.scale900,
-                        backgroundColor: 'transparent',
-                        color: editor.getAttributes('textStyle').color || theme.colors.contentSecondary,
+                        backgroundColor: 'transparent', color: theme.colors.contentSecondary,
                         ':hover': {
                             backgroundColor: theme.colors.backgroundTertiary,
                         },
@@ -122,7 +137,7 @@ function MenuBar({ editor }) {
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M9 15v-7a3 3 0 0 1 6 0v7"></path>
                         <path d="M9 11h6"></path>
-                        <path d="M5 19h14"></path>
+                        <path d="M5 19h14" stroke={editor.getAttributes('textStyle').color}></path>
                     </svg>
                 </button>
             </StatefulPopover>
@@ -219,10 +234,10 @@ function MenuBar({ editor }) {
             </EditorButton>
             <EditorButton
                 onClick={() => {
-                    const url = window.prompt('URL')
+                    const url = window.prompt('图片链接URL');
 
                     if (url) {
-                        editor.chain().focus().setImage({ src: url }).run()
+                        editor.chain().focus().setImage({ src: url }).run();
                     }
                 }}
             >
@@ -234,6 +249,21 @@ function MenuBar({ editor }) {
                     <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
                 </svg>
             </EditorButton>
+            {/* XXX 后面来处理引用 App 这需要扩展tiptap */}
+            {/* <EditorButton onClick={() => {
+                const appId = window.prompt('游戏ID');
+                if (appId) {
+                    // editor.chain().focus().set({ src: url }).run()
+                }
+            }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M9 3h-4a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2z" stroke-width="0" fill="currentColor"></path>
+                    <path d="M9 13h-4a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2z" stroke-width="0" fill="currentColor"></path>
+                    <path d="M19 13h-4a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2z" stroke-width="0" fill="currentColor"></path>
+                    <path d="M17 3a1 1 0 0 1 .993 .883l.007 .117v2h2a1 1 0 0 1 .117 1.993l-.117 .007h-2v2a1 1 0 0 1 -1.993 .117l-.007 -.117v-2h-2a1 1 0 0 1 -.117 -1.993l.117 -.007h2v-2a1 1 0 0 1 1 -1z" strokeWidth="0" fill="currentColor"></path>
+                </svg>
+            </EditorButton> */}
         </div>
     )
 }
@@ -246,14 +276,8 @@ function Editor() {
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             StarterKit.configure({
-                bulletList: {
-                    keepMarks: true,
-                    keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-                },
-                orderedList: {
-                    keepMarks: true,
-                    keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-                },
+                bulletList: { keepMarks: true, keepAttributes: false, },
+                orderedList: { keepMarks: true, keepAttributes: false, },
             }),
         ],
         content: '',

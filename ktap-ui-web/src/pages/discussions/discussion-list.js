@@ -73,7 +73,7 @@ function ChannelDiscussions({ appId, channelId, }) {
                     </ModalBody>
                     <ModalFooter>
                         <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
-                        <ModalButton onClick={() => {}} isLoading={isLoading}>发送</ModalButton>
+                        <ModalButton onClick={() => { }} isLoading={isLoading}>发送</ModalButton>
                     </ModalFooter>
                 </Modal>
             </Block>

@@ -11,12 +11,13 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'b
 import RouterLink from '../../components/router-link';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
-import { Message4, Star, ThumbUp, ThumbDown, Gift } from '../../components/icons';
+import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote } from '../../components/icons';
 import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, Styles } from '../../constants';
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
 import GiftType from '../../components/gift';
+import Editor from './editor';
 
 import '../../assets/css/post.css';
 
@@ -57,6 +58,8 @@ function AppGlance({ app }) {
 }
 
 function DiscussionMeta({ discussion }) {
+    // const [isLoading, setIsLoading] = React.useState(false);
+    const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
     return (
         <SideBox title='话题信息'>
             <Block display='flex' flexDirection='column' paddingTop='0' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600'>
@@ -68,10 +71,30 @@ function DiscussionMeta({ discussion }) {
                     <LabelSmall color='primary200'>参与人数</LabelSmall>
                     <LabelSmall color='primary'>{43212}</LabelSmall>
                 </Block>
-                <Block display='flex' alignItems='center' width='100%' marginTop='scale600'>
-                    <Button kind='secondary' onClick={() => { }}>回复</Button>
+                <Block display='flex' alignItems='center' width='100%' marginTop='scale600' gridGap='scale300'>
+                    <Button kind='secondary' size='compact' onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>
+                    {!discussion.isTop && <Button kind='secondary' size='compact' onClick={() => { }}>置顶</Button>}
+                    {discussion.isTop && <Button kind='secondary' size='compact' onClick={() => { }}>取消置顶</Button>}
+                    <Button kind='secondary' size='compact' onClick={() => { }}>关闭</Button>
+                    <Button kind='secondary' size='compact' onClick={() => { }}>删除</Button>
                 </Block>
             </Block>
+            <Modal onClose={() => setIsOpenEditorModal(false)}
+                closeable={false}
+                isOpen={isOpenEditorModal}
+                animate
+                autoFocus
+                role={ROLE.alertdialog}
+            >
+                <ModalHeader>回复</ModalHeader>
+                <ModalBody>
+                    <Editor />
+                </ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
+                    <ModalButton onClick={() => { }}>发送</ModalButton>
+                </ModalFooter>
+            </Modal>
         </SideBox>
     );
 }
@@ -187,16 +210,22 @@ function DiscussionPostActions({ discussionId, post }) {
     return (
         <>
             <Block display='flex' flexDirection='column' width='100%' marginTop='scale600'>
-                <Block display='flex' gridGap='scale100'>
-                    <Button kind='secondary' size='mini' onClick={() => handleThumb('up')} startEnhancer={() => <ThumbUp width={16} height={16} />} overrides={Styles.Button.Act} isSelected={isActiveThumbUp} isLoading={isDoingThumbUp}>
-                        赞 {post?.meta?.ups || 0}
-                    </Button>
-                    <Button kind='secondary' size='mini' onClick={() => handleThumb('down')} overrides={Styles.Button.Act} isSelected={isActiveThumbDown} isLoading={isDoingThumbDown} startEnhancer={() => <ThumbDown width={16} height={16} />}>
-                        踩 {post?.meta?.downs || 0}
-                    </Button>
-                    <Button kind='secondary' size='mini' onClick={() => handleGift()} overrides={Styles.Button.Act} startEnhancer={() => <Gift width={16} height={16} />}>
-                        赏 {post?.meta?.gifts || 0}
-                    </Button>
+                <Block display='flex' width='100%' justifyContent='space-between' alignItems='center'>
+                    <Block display='flex' gridGap='scale100'>
+                        <Button kind='secondary' size='mini' onClick={() => handleThumb('up')} startEnhancer={() => <ThumbUp width={16} height={16} />} overrides={Styles.Button.Act} isSelected={isActiveThumbUp} isLoading={isDoingThumbUp}>
+                            赞 {post?.meta?.ups || 0}
+                        </Button>
+                        <Button kind='secondary' size='mini' onClick={() => handleThumb('down')} overrides={Styles.Button.Act} isSelected={isActiveThumbDown} isLoading={isDoingThumbDown} startEnhancer={() => <ThumbDown width={16} height={16} />}>
+                            踩 {post?.meta?.downs || 0}
+                        </Button>
+                        <Button kind='secondary' size='mini' onClick={() => handleGift()} overrides={Styles.Button.Act} startEnhancer={() => <Gift width={16} height={16} />}>
+                            赏 {post?.meta?.gifts || 0}
+                        </Button>
+                    </Block>
+                    <Block display='flex' gridGap='scale100'>
+                        <Button kind='secondary' size='mini' onClick={() => {}} overrides={Styles.Button.Act} title='引用'><Quote width={16} height={16} /></Button>
+                        <Button kind='secondary' size='mini' onClick={() => {}} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
+                    </Block>
                 </Block>
                 {post?.meta?.gifts > 0 && post?.gifts &&
                     <Block display='flex' flexDirection='column' marginTop='scale600' gridGap='scale300'>
@@ -209,6 +238,7 @@ function DiscussionPostActions({ discussionId, post }) {
                     </Block>
                 }
             </Block>
+
             <Modal onClose={() => setIsOpenGiftModal(false)} isOpen={isOpenGiftModal} animate autoFocus role={ROLE.dialog}>
                 <ModalHeader>请选择礼物</ModalHeader>
                 <ModalBody $as='div'>
@@ -398,7 +428,7 @@ function DiscussionDetail() {
                 <RouterLink href={`/discussions/apps/${appId}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
                 <LabelSmall>话题详情</LabelSmall>
             </Block>
-            <Block display='flex' width='100%' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale700' marginBottom='scale800'
+            <Block display='flex' width='100%' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale700' marginBottom='scale600'
                 overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow500, } }
                 }}

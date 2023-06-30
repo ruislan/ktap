@@ -92,7 +92,7 @@ function MetaBar({ meta }) {
                     })
                 }
             }}>
-                <MetaItem label='热力指数' value={meta.popular || 0} title='最近一周的(发帖数*10+关注数*2+回复数*1)' />
+                <MetaItem label='热力指数' value={meta.popular || 0} title='（最近一周的）评测数*10+评测回复数*1+关注数*2' />
                 <MetaItem label='关注数量' value={meta.follows || 0} />
                 <MetaItem label='评测数量' value={meta.reviews || 0} />
                 <MetaItem label='多数评价' value={remark} tips={percent == 0 ? null : percent + '%'} />
