@@ -1,6 +1,8 @@
 import { AppMedia, LIMIT_CAP } from "../../constants.js";
 
 const discussions = async (fastify, opts) => {
+
+    // discussions首页，展示有讨论的 App
     fastify.get('', async function (req, reply) {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
         const skip = Math.max(0, Number(req.query.skip) || 0);
@@ -39,24 +41,14 @@ const discussions = async (fastify, opts) => {
         return reply.code(200).send({ data, count, skip, limit });
     });
 
-    fastify.get('/apps/:appId', async function (req, reply) {
+    // 某个 App 的讨论频道
+    fastify.get('/apps/:appId/channels', async function (req, reply) {
         const appId = Number(req.params.appId) || 0;
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
         const skip = Math.max(0, Number(req.query.skip) || 0);
 
-        const count = await fastify.db.news.count({ where: { appId } });
-        const data = await fastify.db.news.findMany({
-            where: { appId },
-            select: { id: true, title: true, summary: true, head: true, updatedAt: true, createdAt: true, viewCount: true },
-            take: limit,
-            skip,
-            orderBy: { updatedAt: 'desc' }
-        });
-        data.forEach(item => {
-            item.meta = { views: item.viewCount }
-            delete data.viewCount;
-        });
-        return reply.code(200).send({ data, count, skip, limit });
+        const data = await fastify.db.discussionChannel.findMany({ where: { appId }, });
+        return reply.code(200).send({ data });
     });
 
     fastify.get('/:id', async function (req, reply) {

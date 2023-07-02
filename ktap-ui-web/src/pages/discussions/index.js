@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
-import { LabelXSmall, LabelSmall } from 'baseui/typography';
+import { LabelXSmall, LabelSmall, LabelMedium } from 'baseui/typography';
 import { Button } from "baseui/button";
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
 import { Link } from 'react-router-dom';
@@ -42,10 +42,8 @@ function Discussions() {
             Block: {
                 style: {
                     [MOBILE_BREAKPOINT]: {
-                        marginTop: theme.sizing.scale600,
-                        width: '100%',
-                        marginLeft: theme.sizing.scale300,
-                        marginRight: theme.sizing.scale300,
+                        width: '100%', marginTop: theme.sizing.scale600,
+                        marginLeft: theme.sizing.scale300, marginRight: theme.sizing.scale300,
                     }
                 }
             }
@@ -59,7 +57,7 @@ function Discussions() {
                     <Link key={index} to={`/discussions/apps/${app.id}`} className={css({
                         textDecoration: 'none',
                         display: 'flex', flexDirection: 'column', cursor: 'pointer', position: 'relative',
-                        backgroundColor: theme.colors.backgroundSecondary,
+                        backgroundColor: theme.colors.backgroundSecondary, height: '320px',
                         borderRadius: theme.borders.radius300,
                         boxShadow: theme.lighting.shadow700,
                     })}>
@@ -81,18 +79,21 @@ function Discussions() {
                             </div>
                         </div>
                         <div className={css({
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: theme.sizing.scale300,
-                            padding: theme.sizing.scale600, overflow: 'hidden', width: '100%', flex: '1'
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: theme.sizing.scale600,
+                            paddingLeft: theme.sizing.scale600, paddingRight: theme.sizing.scale600, paddingBottom: theme.sizing.scale600,
+                            paddingTop: theme.sizing.scale300, overflow: 'hidden', width: '100%', flex: '1'
                         })}>
-                            <Block display='flex' flexDirection='column' gridGap='scale200' width='100%' flex='1' marginBottom='scale300'>
-                                <LabelSmall>{app.name}</LabelSmall>
-                                <LabelXSmall color='primary300' width='100%' overflow='hidden' textOverflow='ellipsis' overrides={{
+                            <Block display='flex' flexDirection='column' gridGap='scale300' width='100%' flex='1' marginBottom='scale300'>
+                                <LabelMedium>{app.name}</LabelMedium>
+                                <LabelSmall color='primary300' width='100%' overflow='hidden' textOverflow='ellipsis' overrides={{
                                     Block: {
                                         style: {
+                                            display: '-webkit-box',
+                                            '-webkit-box-orient': 'vertical',
                                             '-webkit-line-clamp': 4,
                                         }
                                     }
-                                }}>{app.summary}</LabelXSmall>
+                                }}>{app.summary}</LabelSmall>
                             </Block>
                             <Block display='flex' justifyContent='space-between' alignItems='center' width='100%'>
                                 <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><User width='16px' height='16px' />{app?.meta?.users} 人参与</LabelXSmall>
@@ -102,16 +103,11 @@ function Discussions() {
                     </Link>
                 ))}
             </Block>
-            <Block
-                marginTop='scale600'
-                display='flex'
-                justifyContent='center'
-                alignItems='center'
-            >
-                <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>
-                    {hasMore ? '查看更多' : '没有了'}
-                </Button>
-            </Block>
+            {hasMore &&
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
+                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
+                </Block>
+            }
         </Block >
     );
 }

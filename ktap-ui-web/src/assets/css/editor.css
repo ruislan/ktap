@@ -5,6 +5,8 @@
     border-radius: 8px;
     outline      : none;
     min-height   : 120px;
+    max-height   : 45vh;
+    overflow     : auto;
 }
 
 .ProseMirror p {
