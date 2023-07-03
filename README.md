@@ -12,10 +12,20 @@ KTap是一个游戏为中心的社区平台，我做它的目的就是玩一下R
 * Styling: BaseWeb UI
 * Database: SQLite
 * ORM: Prisma
+* Some useful libs:
+  * dayjs: 处理日期
+  * photoswipe: 图片放大和浏览
+  * swiper: 滚动效果
+  * tiptap: 非常牛的 Editor。
+  * sanitize-html: 清理 Editor 输入的 HTML 标签
+  * nodejieba: 中文分词
+  * nodemailer: 发送邮件
+  * node-cache: 简单缓存
+  * node-cron: 简单定时计划
 
-我对技术栈没有特别的倾向性，选择JS Stack主要原因有两个。第一，写起来方便，快捷，自由度高。第二，和前端语言保持一致。第三，社群资讯等也很丰富。
+我对技术栈没有特别的倾向性，选择JS Stack主要原因有两个。第一，写起来方便，快捷，自由度高。第二，和前端语言保持一致。第三，社群资源等也很丰富。
 
-SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果要运营，推荐使用MySQL或者PostgreSQL（当然，有些代码要做针对性的调整），能力会强很多。
+SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果要运营，推荐使用MySQL或者PostgreSQL（当然，有些代码要做针对性的调整）。
 
 ## 环境和工具
 
@@ -26,13 +36,15 @@ SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果
 ## 功能列表
 
 * 用户：注册、登录、个人中心、动态等。
-* 游戏：评测、回复、关注、礼物、赞踩等
+* 游戏：评测、回复、礼物、赞踩等
+* 讨论：发帖、回帖、礼物、赞踩等。
 * 探索
-* 搜索
 * 新闻
 * 排行榜
+* 搜索
+* 后台管理
 
-等等等等功能，懒得写了，自行探索。
+等等等等功能，自行探索。
 
 ## 截图
 
@@ -54,6 +66,12 @@ SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果
         <td><img src="./docs/screenshots/review.png"/></td>
         <td><img src="./docs/screenshots/gift.png"/></td>
         <td><img src="./docs/screenshots/search.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/screenshots/app-discussion-tab.png"/></td>
+        <td><img src="./docs/screenshots/discussions.png"/></td>
+        <td><img src="./docs/screenshots/app-discussions.png"/></td>
+        <td><img src="./docs/screenshots/discussion-posts.png"/></td>
     </tr>
     <tr>
         <td><img src="./docs/screenshots/login.png"/></td>
