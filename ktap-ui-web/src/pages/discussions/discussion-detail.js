@@ -61,7 +61,7 @@ function DiscussionMeta({ discussion }) {
     // const [isLoading, setIsLoading] = React.useState(false);
     const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
     return (
-        <SideBox title='话题信息'>
+        <SideBox title='讨论信息'>
             <Block display='flex' flexDirection='column' paddingTop='0' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600'>
                 <Block display='grid' gridTemplateColumns='1fr 3fr' gridGap='scale300'>
                     <LabelSmall color='primary200'>发布日期</LabelSmall>
@@ -108,10 +108,10 @@ function OtherDiscussions({ discussionId, appId }) {
             try {
                 setLoading(true);
                 setDiscussions([
-                    { id: 1, subject: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 32 } },
-                    { id: 2, subject: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 152 } },
-                    { id: 3, subject: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 332 } },
-                    { id: 4, subject: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 34 } },
+                    { id: 1, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 32 } },
+                    { id: 2, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 152 } },
+                    { id: 3, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 332 } },
+                    { id: 4, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 34 } },
                 ]);
             } finally {
                 setLoading(false);
@@ -133,7 +133,7 @@ function OtherDiscussions({ discussionId, appId }) {
                                 backgroundColor: 'rgba(109, 109, 109, 0.3)',
                             },
                         })}>
-                            <LabelSmall color='primary100' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{discussion.subject}</LabelSmall>
+                            <LabelSmall color='primary100' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{discussion.title}</LabelSmall>
                             <Block display='flex' alignItems='center' gridGap='scale100'>
                                 <Message4 width='16px' height='16px' />
                                 <LabelSmall color='inherit'>{discussion.meta.posts}</LabelSmall>
@@ -367,7 +367,7 @@ function DiscussionDetail() {
                 try {
                     setIsLoadingDiscussion(true);
                     setDiscussion({
-                        id: 1, subject: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟', isSticky: false, isClosed: false, channel: { id: 1, name: '综合讨论' }, user: { id: 1, name: '小明', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' }, createdAt: '2023-01-01', updatedAt: '2023-01-01',
+                        id: 1, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟', isSticky: false, isClosed: false, channel: { id: 1, name: '综合讨论' }, user: { id: 1, name: '小明', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' }, createdAt: '2023-01-01', updatedAt: '2023-01-01',
                         posts: [
                             {
                                 id: 1, content: '有没有人和我一样呀', ip: '192.168.0.1', createdAt: '2021-01-01', user: { id: 1, name: '小明', gender: 'MAN', title: '普通用户', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' }, gifts: [
@@ -426,14 +426,14 @@ function DiscussionDetail() {
             <Block display='flex' width='100%' alignItems='center' gridGap='scale300' marginBottom='scale800'>
                 <RouterLink href={`/apps/${appId}`} kind='underline'><LabelSmall>{app?.name}</LabelSmall></RouterLink> /
                 <RouterLink href={`/discussions/apps/${appId}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
-                <LabelSmall>话题详情</LabelSmall>
+                <LabelSmall>讨论详情</LabelSmall>
             </Block>
             <Block display='flex' width='100%' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale700' marginBottom='scale600'
                 overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow500, } }
                 }}
             >
-                <HeadingXSmall margin='0'>{discussion.subject}</HeadingXSmall>
+                <HeadingXSmall margin='0'>{discussion.title}</HeadingXSmall>
             </Block>
             <Block display='flex' width='100%' overrides={{
                 Block: { style: { [MOBILE_BREAKPOINT]: { flexDirection: 'column', gap: theme.sizing.scale900 } } }

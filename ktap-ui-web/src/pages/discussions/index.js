@@ -97,7 +97,7 @@ function Discussions() {
                             </Block>
                             <Block display='flex' justifyContent='space-between' alignItems='center' width='100%'>
                                 <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><User width='16px' height='16px' />{app?.meta?.users} 人参与</LabelXSmall>
-                                <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><ChatAlt2 width='16px' height='16px' /> {app?.meta?.discussions} 个话题</LabelXSmall>
+                                <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><ChatAlt2 width='16px' height='16px' /> {app?.meta?.discussions} 个讨论</LabelXSmall>
                             </Block>
                         </div>
                     </Link>

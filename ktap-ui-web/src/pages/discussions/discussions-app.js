@@ -14,9 +14,10 @@ import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } fr
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useAuth } from '../../hooks/use-auth';
 import { ChatAlt2, Gift2, Message4, Pin, Reply } from '../../components/icons';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages } from '../../constants';
 import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
+import Notification from '../../components/notification';
 import Editor from './editor';
 
 dayjs.locale('zh-cn');
@@ -204,62 +205,105 @@ function Channels({ appId }) {
                     })}
                 </Block>
             }
-            <ChannelDiscussions appId={appId} channelId={channelId} />
+            <Discussions appId={appId} channelId={channelId} />
         </Block >
     );
 }
 
-function ChannelDiscussions({ appId, channelId, }) {
-    const limit = 1;
+function Discussions({ appId, channelId, }) {
+    const limit = 20;
     const [css, theme] = useStyletron();
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
     const [discussions, setDiscussions] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
     const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
+    const keywordRef = React.useRef();
+
+    // editor
+    const [editorContent, setEditorContent] = React.useState('');
+    const [editorTitle, setEditorTitle] = React.useState('');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [submitErrorMessage, setSubmitErrorMessage] = React.useState(null);
+    // editor end
+
+    const handleDiscussionSubmit = async () => {
+        setIsSubmitting(true);
+        setSubmitErrorMessage(null);
+        try {
+            const res = await fetch(`/api/discussions`, {
+                method: 'POST',
+                body: JSON.stringify({ title: editorTitle, content: editorContent, appId, channelId, }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                setIsOpenEditorModal(false);
+                if (skip === 0) fetchDiscussions();
+                else setSkip(0);
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setSubmitErrorMessage(json.message);
+                } else {
+                    setSubmitErrorMessage(Messages.unknownError);
+                }
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const fetchDiscussions = React.useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
+            if (res.ok) {
+                const json = await res.json();
+                setDiscussions(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                setHasMore(json.skip + json.limit < json.count);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [appId, channelId, skip]);
 
     React.useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            try {
-                setDiscussions([
-                    { id: 1, subject: '训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记训练笔记', content: '训练笔记内定', createdAt: '2022-06-20', isTop: true, ip: '101.101.101.101', meta: { comments: 372, gifts: 32, }, user: { id: 1, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/892.svg?width=285', name: '爱吃草鱼的小明明呀' }, last: { user: { id: 2, name: '哎哟喂' }, } },
-                    { id: 2, subject: '训练笔记', content: '训练笔记内定', createdAt: '2023-06-20', isTop: false, ip: '101.101.101.101', meta: { comments: 30, gifts: 0 }, user: { id: 2, avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285', name: 'admin' } },
-                ]);
-                setHasMore(true);
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [appId, channelId, skip]);
+        fetchDiscussions();
+    }, [fetchDiscussions]);
+
+    React.useEffect(() => {
+        if (!isOpenEditorModal) {
+            setEditorContent('');
+            setEditorTitle('');
+            setSubmitErrorMessage(null);
+        }
+    }, [isOpenEditorModal]);
 
     return (
         <Block display='flex' flexDirection='column' width='100%'>
             <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale600'>
-                {user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新话题</Button> : <Button size='compact' kind='secondary' onClick={e => {
+                {channelId > 0 ? (user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新讨论</Button> : <Button size='compact' kind='secondary' onClick={e => {
                     e.preventDefault();
                     navigate('/login');
-                }}>登录</Button>}
+                }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
-                    <Input size='compact' placeholder='搜索' />
-                    <Button size='compact' kind='secondary'><Search /></Button>
+                    <Input inputRef={keywordRef} size='compact' placeholder='搜索' onKeyUp={e => e.key === 'Enter' && fetchDiscussions()} />
+                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions()}><Search /></Button>
                 </Block>
-                <Modal onClose={() => setIsOpenEditorModal(false)}
-                    closeable={false}
-                    isOpen={isOpenEditorModal}
-                    animate
-                    autoFocus
-                    role={ROLE.alertdialog}
-                >
-                    <ModalHeader>发起新话题</ModalHeader>
+                <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
+                    <ModalHeader>发起新讨论</ModalHeader>
                     <ModalBody>
-                        <Editor />
+                        <Block display='flex' flexDirection='column'>
+                            {submitErrorMessage && <Block><Notification kind='negative' message={submitErrorMessage} /></Block>}
+                            <Block marginBottom='scale600'><Input size='compact' placeholder='弄个标题吧' value={editorTitle} onChange={e => setEditorTitle(e.target.value)} /></Block>
+                            <Editor onUpdate={({ editor }) => setEditorContent(editor.getHTML())} />
+                        </Block>
                     </ModalBody>
                     <ModalFooter>
                         <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
-                        <ModalButton onClick={() => { }} isLoading={isLoading}>发送</ModalButton>
+                        <ModalButton onClick={() => handleDiscussionSubmit()} isLoading={isSubmitting}>发送</ModalButton>
                     </ModalFooter>
                 </Modal>
             </Block>
@@ -279,9 +323,11 @@ function ChannelDiscussions({ appId, channelId, }) {
                             }}>
                                 <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={discussion?.user?.avatar} width='36px' height='36px' />
                                 <Block display='flex' flexDirection='column' flex='1'>
-                                    <LabelMedium marginBottom='scale200'>{discussion?.subject}</LabelMedium>
+                                    <LabelMedium marginBottom='scale200'>{discussion?.title}</LabelMedium>
                                     <Block display='flex' alignItems='center' color='primary300' flexWrap>
-                                        {discussion.isTop &&
+                                        <LabelSmall whiteSpace='nowrap' color='inherit'>{discussion?.channel?.name}</LabelSmall>
+                                        <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        {discussion.isSticky &&
                                             <>
                                                 <Pin width='16px' height='16px' />
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
@@ -292,7 +338,7 @@ function ChannelDiscussions({ appId, channelId, }) {
                                             @{discussion?.last?.user ? discussion?.last?.user.name : discussion?.user?.name}
                                         </LabelSmall>
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                        {discussion?.meta?.comments > 0 &&
+                                        {discussion?.meta?.posts > 0 &&
                                             <>
                                                 <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
                                                     <Message4 width='16px' height='16px' />
@@ -329,7 +375,7 @@ function ChannelDiscussions({ appId, channelId, }) {
     );
 }
 
-function AppChannels() {
+function DiscussionsApp() {
     const { appId } = useParams();
 
     return (
@@ -351,4 +397,4 @@ function AppChannels() {
     );
 }
 
-export default AppChannels;
+export default DiscussionsApp;

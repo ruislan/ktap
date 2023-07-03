@@ -25,7 +25,7 @@ import News from './pages/news';
 import NewsApps from './pages/news/news-apps';
 import NewsDetail from './pages/news/news-detail';
 import Discussions from './pages/discussions';
-import AppChannels from './pages/discussions/app-channels';
+import DiscussionsApp from './pages/discussions/discussions-app';
 import DiscussionDetail from './pages/discussions/discussion-detail';
 import Login from './pages/login';
 import Register from './pages/register';
@@ -117,7 +117,7 @@ root.render(
                 </Route>
                 <Route path='/discussions'>
                   <Route index element={<Discussions />} />
-                  <Route path='apps/:appId' element={<AppChannels />} />
+                  <Route path='apps/:appId' element={<DiscussionsApp />} />
                   <Route path='apps/:appId/view/:id' element={<DiscussionDetail />} />
                 </Route>
                 <Route path='/search/:keyword' element={<Search />} />

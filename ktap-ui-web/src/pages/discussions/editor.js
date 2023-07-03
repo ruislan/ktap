@@ -269,7 +269,7 @@ function MenuBar({ editor }) {
 }
 
 
-function Editor() {
+function Editor({ onUpdate }) {
     const editor = useEditor({
         extensions: [
             Image, Underline,
@@ -278,9 +278,10 @@ function Editor() {
             StarterKit.configure({
                 bulletList: { keepMarks: true, keepAttributes: false, },
                 orderedList: { keepMarks: true, keepAttributes: false, },
+                heading: { levels: [1, 2, 3,] },
             }),
         ],
-        content: '',
+        onUpdate,
     });
 
     return (

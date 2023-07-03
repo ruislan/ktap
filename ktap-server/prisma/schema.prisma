@@ -460,7 +460,7 @@ model TokenBlackList {
 }
 
 // 讨论 Start
-// 简单的三层关系，板块1 - N话题1 - N帖子， 板块1 - N版主
+// 简单的三层关系，板块1 - N讨论1 - N帖子， 板块1 - N版主
 //
 //
 
@@ -490,7 +490,7 @@ model UserDiscussionChannelRef {
 // 讨论
 model Discussion {
   id                  Int      @id @default(autoincrement())
-  subject             String //主题，重点
+  title               String //主题，重点
   isSticky            Boolean  @default(false) @map("is_sticky") // 是否置顶
   isClosed            Boolean  @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
   discussionChannelId Int      @map("discussion_channel_id") // XXX 帖子是否一定要属于某个频道？
@@ -507,12 +507,13 @@ model Discussion {
   posts   DiscussionPost[] // 帖子
 }
 
-// 话题帖子
+// 讨论帖子
 model DiscussionPost {
   id           Int      @id @default(autoincrement())
   content      String //内容
   ip           String? // ip地址
   createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
   discussionId Int      @map("discussion_id")
   userId       Int      @map("user_id")
 
@@ -534,10 +535,11 @@ model DiscussionPostThumb {
 
 // 帖子礼物多对多关系，用户可以对同一个帖子多次送礼物
 model DiscussionPostGiftRef {
-  id     Int @id @default(autoincrement())
-  giftId Int @map("gift_id")
-  postId Int @map("post_id")
-  userId Int @map("user_id")
+  id        Int      @id @default(autoincrement())
+  giftId    Int      @map("gift_id")
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   // ref
   post DiscussionPost @relation(fields: [postId], references: [id])

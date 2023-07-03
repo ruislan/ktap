@@ -345,13 +345,53 @@ const apps = async function (fastify, opts) {
     // 游戏相关新闻
     fastify.get('/:id/news', async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 2)));
+        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 5)));
         const data = await fastify.db.news.findMany({
             where: { appId: id },
             take: limit,
         })
         return reply.code(200).send({ data, });
     });
+
+    // 游戏相关讨论
+    fastify.get('/:id/discussions', async function (req, reply) {
+        const id = Number(req.params.id) || 0;
+        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 20)));
+        const count = await fastify.db.discussion.count({ where: { appId: id } });
+        const data = await fastify.db.discussion.findMany({
+            where: { appId: id },
+            select: {
+                id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
+                user: {
+                    select: { id: true, name: true, title: true, avatar: true },
+                },
+                channel: {
+                    select: { id: true, name: true, }
+                },
+                _count: { select: { posts: true } },
+            },
+            orderBy: [{ isSticky: 'desc' }, { updatedAt: 'desc' }],
+            take: limit,
+            skip,
+        });
+        for (const item of data) {
+            // 统计礼物数量
+            const gifts = (await fastify.db.$queryRaw`
+                SELECT COUNT(*) AS gifts FROM DiscussionPostGiftRef dpgr
+                JOIN DiscussionPost dp ON dpgr.post_id = dp.id
+                JOIN discussion d ON dp.discussion_id = d.id
+                WHERE d.id = ${item.id};
+            `)[0]?.gifts || 0;
+            item.meta = {
+                posts: item._count.posts,
+                gifts,
+            };
+            delete item._count;
+        }
+        return reply.code(200).send({ data, count, skip, limit });
+    });
+
 
     // 用户给这个游戏应用打的标签
     fastify.get('/:id/tags/by-me', {
@@ -443,7 +483,6 @@ const apps = async function (fastify, opts) {
             const reviews = await fastify.db.review.findMany({ where: { appId, userId }, select: { id: true }, take: 1 });
             if (!reviews[0]?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
-            // XXX 非必要每次评测都更新，定时刷新App的评分或者发出重新评分异步指令即可
             // 更新评分
             await fastify.db.$queryRaw`
                 UPDATE App SET score = avgScore FROM
