@@ -133,33 +133,131 @@ const discussions = async (fastify, opts) => {
             take: limit, skip
         });
         for (const item of data) {
-            // 统计礼物数量
-            const gifts = (await fastify.db.$queryRaw`
-                SELECT COUNT(*) AS gifts FROM DiscussionPostGiftRef dpgr
-                JOIN DiscussionPost dp ON dpgr.post_id = dp.id
-                JOIN discussion d ON dp.discussion_id = d.id
-                WHERE d.id = ${item.id};
-            `)[0]?.gifts || 0;
             item.meta = {
                 posts: item._count.posts,
-                gifts,
+                gifts: await fastify.utils.countDiscussionGifts({ id: item.id }), // 统计礼物数量
             };
             delete item._count;
         }
         return reply.code(200).send({ data, count, limit, skip });
     });
 
-    fastify.get('/apps/:appId/view/:id', async function (req, reply) {
+    fastify.get('/:id', async function (req, reply) {
         const id = Number(req.params.id);
         const data = await fastify.db.discussion.findUnique({
             where: { id },
-            include: {
-                _count: {
-                    select: { posts: true },
-                }
+            select: {
+                id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
+                channel: { select: { id: true, name: true, } },
+                user: { select: { id: true, name: true, title: true, avatar: true, } },
+                app: {
+                    select: {
+                        id: true, name: true, summary: true, score: true,
+                        media: {
+                            where: { usage: { in: [AppMedia.usage.head, AppMedia.usage.logo] } },
+                            select: { usage: true, image: true, thumbnail: true, },
+                        }
+                    },
+                },
+                _count: { select: { posts: true }, }
             }
         });
+        const metaUsers = (await fastify.db.$queryRaw`
+                SELECT COUNT(DISTINCT user_id) AS total FROM DiscussionPost WHERE discussion_id = ${id};
+            `)[0]?.total || 0;
+        data.app.media = {
+            head: data.app.media.find(media => media.usage === AppMedia.usage.head),
+            logo: data.app.media.find(media => media.usage === AppMedia.usage.logo),
+        }
+        data.meta = {
+            posts: data._count.posts,
+            users: metaUsers,
+            gifts: await fastify.utils.countDiscussionGifts({ id }),
+        };
+        delete data._count;
+        delete data.app.media.head.usage;
+        delete data.app.media.logo.usage;
         return reply.code(200).send({ data });
+    });
+
+    fastify.get('/:id/posts', async function (req, reply) {
+        const id = Number(req.params.id);
+        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const count = await fastify.db.discussionPost.count({ where: { discussionId: id } });
+        const data = await fastify.db.discussionPost.findMany({
+            take: limit,
+            skip,
+            orderBy: [{ createdAt: 'asc' }],
+            where: { discussionId: id },
+            select: {
+                id: true, content: true, createdAt: true, ip: true,
+                user: { select: { id: true, name: true, title: true, avatar: true, } },
+            }
+        });
+        for (const post of data) {
+            const giftsData = await fastify.utils.getDiscussionPostGifts({ id: post.id });
+            const thumbs = await fastify.utils.getDiscussionPostThumbs({ id: post.id });
+            post.gifts = giftsData.gifts;
+            post.meta = {
+                ups: thumbs?.ups || 0, downs: thumbs?.downs || 0,
+                gifts: giftsData.count,
+            };
+        }
+        return reply.code(200).send({ data, limit, skip, count });
+    });
+
+    // 取这个帖子日期后面的 Limit 个
+    fastify.get('/:id/others', async (req, res) => {
+        const id = Number(req.params.id);
+        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const discussion = await fastify.db.discussion.findUnique({ where: { id }, select: { channel: { select: { id: true } } } });
+        const findOptions = ({ isPrev }) => {
+            return {
+                take: limit, orderBy: [{ createdAt: isPrev ? 'desc' : 'asc' }],
+                where: {
+                    discussionChannelId: discussion.channel.id,
+                    id: isPrev ? { lt: id } : { gt: id },
+                },
+                select: {
+                    id: true, title: true,
+                    _count: { select: { posts: true }, }
+                }
+            }
+        };
+        let data = await fastify.db.discussion.findMany(findOptions({ isPrev: false }));
+        if (data.length === 0) { // 如果是最新的帖子了，就往前取 Limit 个。
+            data = await fastify.db.discussion.findMany(findOptions({ isPrev: true }));
+            data.reverse();
+        }
+        for (const discussion of data) {
+            discussion.meta = {
+                posts: discussion._count.posts,
+            };
+            delete discussion._count;
+        }
+        return res.code(200).send({ data });
+    });
+
+    // 点赞或点踩
+    fastify.post('/:id/posts/:postId/thumb/:direction', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const postId = Number(req.params.postId);
+            const userId = req.user.id;
+            let direction = ((req.params.direction || 'up').toLowerCase()) === 'down' ? 'down' : 'up'; // only up or down
+
+            const toDelete = await fastify.db.discussionPostThumb.findUnique({ where: { postId_userId: { postId, userId, } } });
+            // 直接删除当前的赞或者踩
+            // 如果新的点踩或者点赞与删除的不同，则重新创建
+            if (toDelete) await fastify.db.discussionPostThumb.delete({ where: { postId_userId: { postId, userId, } } });
+            if (!toDelete || toDelete.direction !== direction) {
+                await fastify.db.discussionPostThumb.create({ data: { postId, userId, direction } });
+            }
+            // 重新取当前赞踩数据
+            const data = await fastify.utils.getDiscussionPostThumbs({ id: postId });
+            return reply.code(200).send({ data });
+        }
     });
 };
 

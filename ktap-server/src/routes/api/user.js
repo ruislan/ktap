@@ -19,6 +19,23 @@ const user = async (fastify, opts) => {
         }
     );
 
+    // 获取用户与posts的赞踩信息
+    fastify.get('/effect/discussion-posts/thumbs', async function (req, reply) {
+        const userId = req.user.id;
+        const postIds = (req.query.ids || '').split(',').map(item => Number(item) || 0).filter(item => item > 0);
+        let data = {};
+        if (postIds.length > 0) {
+            const thumbs = await fastify.db.discussionPostThumb.findMany({
+                where: { userId, postId: { in: postIds } },
+                select: { postId: true, direction: true, }
+            });
+            thumbs.forEach(thumb => {
+                data[thumb.postId] = thumb.direction;
+            });
+        }
+        return reply.code(200).send({ data });
+    });
+
     // 获取用户与reviews的赞踩信息
     fastify.get('/effect/reviews/thumbs', async function (req, reply) {
         const userId = req.user.id;

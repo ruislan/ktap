@@ -38,7 +38,7 @@ function TabNews({ app }) {
                     <LabelMedium color='primary500'>无新闻</LabelMedium> :
                     newsList.map(({ id, title }, index) => {
                         return (
-                            <RouterLink key={index} href={`/news/apps/${appId}/view/${id}`} >
+                            <RouterLink key={index} href={`/news/${id}`} >
                                 <ListItem
                                     overrides={{
                                         Content: {

@@ -1,23 +1,6 @@
 import { AppMedia, LIMIT_CAP, REVIEW_IMAGE_COUNT_LIMIT, Trading } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 
-// params
-//  db: database orm
-//  id: review id
-// return:
-//  gifts: array, grouped
-//  count: total count of gifts
-const getReviewGifts = async ({ db, id }) => {
-    const gifts = await db.$queryRaw`
-            SELECT Gift.id, Gift.name, Gift.description, Gift.url, Gift.price, count(ReviewGiftRef.user_id) AS count FROM ReviewGiftRef, Gift
-            WHERE Gift.id = ReviewGiftRef.gift_id AND review_id = ${id} GROUP BY ReviewGiftRef.gift_id
-        `;
-    let giftCount = 0;
-    gifts.forEach(async (gift) => { gift.count = Number(gift.count) || 0; giftCount += gift.count; });
-    return { gifts, count: giftCount };
-}
-
-
 const reviews = async (fastify, opts) => {
     // 获取评测
     fastify.get('/:id', async function (req, reply) {
@@ -43,16 +26,13 @@ const reviews = async (fastify, opts) => {
         if (!data) return reply.code(404).send(); // maybe no data
 
         // fetch gifts
-        const gifts = await getReviewGifts({ db: fastify.db, id });
+        const gifts = await fastify.utils.getReviewGifts({ id });
         data.gifts = gifts.gifts;
 
         // fetch meta data
         // 获取礼物，礼物分组并统计送的人的总数
         // 获取赞踩数量
-        const thumbs = (await fastify.db.$queryRaw`
-            SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${id}) AS ups,
-            (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${id}) AS downs
-        `)[0];
+        const thumbs = await fastify.utils.getReviewThumbs({ id });
         data.meta = { ups: thumbs?.ups || 0, downs: thumbs?.downs || 0, comments: data._count.comments, gifts: gifts.count };
 
         // transform data for api output
@@ -263,10 +243,7 @@ const reviews = async (fastify, opts) => {
             }
 
             // 重新取当前review的数据
-            const data = (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${reviewId}) AS ups,
-                (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${reviewId}) AS downs
-            `)[0];
+            const data = await fastify.utils.getReviewThumbs({ id: reviewId });
             return reply.code(200).send({ data });
         }
     });
@@ -299,7 +276,7 @@ const reviews = async (fastify, opts) => {
             // XXX 这里没有包裹事务出错的错误，直接扔给框架以500形式抛出了，后续需要更柔性处理
             // 读取最新的礼物情况
             // fetch gifts
-            const gifts = await getReviewGifts({ db: fastify.db, id: reviewId });
+            const gifts = await fastify.utils.getReviewGifts({ id: reviewId });
             return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
         }
     });

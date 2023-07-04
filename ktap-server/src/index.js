@@ -14,6 +14,8 @@ import schedule from './schedule.js';
 
 import userSchema from './json-schema/user.js';
 
+import utils from './utils.js';
+
 export default async function (fastify, opts, next) {
     // config
     await fastify.setSchemaErrorFormatter(function (errors, dataVar) {
@@ -24,7 +26,7 @@ export default async function (fastify, opts, next) {
     // json schema
     await fastify.addSchema(userSchema);
 
-    // api plugins
+    // plugins
     await fastify.register(fastifyCors);
     await fastify.register(fastifySensible, { errorHandler: false });
     await fastify.register(fastifyHelmet);
@@ -48,6 +50,9 @@ export default async function (fastify, opts, next) {
             { name: 'apps', ttl: 10 * 60 * 1000 },
         ]
     });
+
+    // utils
+    await fastify.register(utils);
 
     // schedule
     await fastify.register(schedule);

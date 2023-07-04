@@ -246,6 +246,8 @@ function Discussions({ appId, channelId, }) {
                 if (res.status === 400) {
                     const json = await res.json();
                     setSubmitErrorMessage(json.message);
+                } else if (res.status === 401) {
+                    navigate('/login');
                 } else {
                     setSubmitErrorMessage(Messages.unknownError);
                 }
@@ -311,7 +313,7 @@ function Discussions({ appId, channelId, }) {
                 <LabelSmall marginTop='scale600' alignSelf='center' color='primary500'>无内容</LabelSmall> :
                 discussions.map((discussion, index) => {
                     return (
-                        <RouterLink key={index} href={`/discussions/apps/${appId}/view/${discussion.id}`}>
+                        <RouterLink key={index} href={`/discussions/${discussion.id}`}>
                             <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale400' paddingBottom='scale400' overrides={{
                                 Block: {
                                     style: {
@@ -342,7 +344,7 @@ function Discussions({ appId, channelId, }) {
                                             <>
                                                 <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
                                                     <Message4 width='16px' height='16px' />
-                                                    <LabelSmall color='inherit'>{discussion?.meta?.comments || 0}</LabelSmall>
+                                                    <LabelSmall color='inherit'>{discussion?.meta?.posts || 0}</LabelSmall>
                                                 </Block>
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>

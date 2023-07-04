@@ -376,16 +376,9 @@ const apps = async function (fastify, opts) {
             skip,
         });
         for (const item of data) {
-            // 统计礼物数量
-            const gifts = (await fastify.db.$queryRaw`
-                SELECT COUNT(*) AS gifts FROM DiscussionPostGiftRef dpgr
-                JOIN DiscussionPost dp ON dpgr.post_id = dp.id
-                JOIN discussion d ON dp.discussion_id = d.id
-                WHERE d.id = ${item.id};
-            `)[0]?.gifts || 0;
             item.meta = {
                 posts: item._count.posts,
-                gifts,
+                gifts: await fastify.utils.countDiscussionGifts({ id: item.id }),
             };
             delete item._count;
         }
@@ -532,17 +525,12 @@ const apps = async function (fastify, opts) {
         });
         // XXX 这里读取数据库有点多了，看怎么减少一下
         for await (const item of data) {
-            const gifts = await fastify.db.$queryRaw`
-                SELECT Gift.id, Gift.name, Gift.description, Gift.url, Gift.price, count(ReviewGiftRef.user_id) AS count FROM ReviewGiftRef, Gift
-                WHERE Gift.id = ReviewGiftRef.gift_id AND review_id = ${item.id} GROUP BY ReviewGiftRef.gift_id;
-            `;
-
             // 获取赞踩数量
             const thumbs = (await fastify.db.$queryRaw`
                 SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${item.id}) AS ups,
                 (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${item.id}) AS downs
             `)[0];
-            item.gifts = gifts;
+            item.gifts = (await fastify.utils.getReviewGifts({ id: item.id })).gifts;
             item.meta = { comments: item._count.comments, gifts: item._count.gifts, ups: thumbs?.ups || 0, downs: thumbs?.downs || 0 };
 
             delete item._count;

@@ -59,7 +59,16 @@ function AppGlance({ app }) {
 
 function DiscussionMeta({ discussion }) {
     // const [isLoading, setIsLoading] = React.useState(false);
+    const { user } = useAuth();
+    const [canEdit, setCanEdit] = React.useState(false);
     const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
+
+    React.useEffect(() => {
+        if (user && discussion?.user?.id) {
+            setCanEdit(user.id === discussion.user.id);
+        }
+    }, [user, discussion]);
+
     return (
         <SideBox title='讨论信息'>
             <Block display='flex' flexDirection='column' paddingTop='0' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600'>
@@ -67,16 +76,22 @@ function DiscussionMeta({ discussion }) {
                     <LabelSmall color='primary200'>发布日期</LabelSmall>
                     <LabelSmall color='primary'>{dayjs(discussion.createdAt).format('YYYY-MM-DD HH:ss')}</LabelSmall>
                     <LabelSmall color='primary200'>贴子总数</LabelSmall>
-                    <LabelSmall color='primary'>{12100}</LabelSmall>
+                    <LabelSmall color='primary'>{discussion?.meta?.posts || 0}</LabelSmall>
                     <LabelSmall color='primary200'>参与人数</LabelSmall>
-                    <LabelSmall color='primary'>{43212}</LabelSmall>
+                    <LabelSmall color='primary'>{discussion?.meta?.users || 0}</LabelSmall>
+                    <LabelSmall color='primary200'>礼物总数</LabelSmall>
+                    <LabelSmall color='primary'>{discussion?.meta?.gifts || 0}</LabelSmall>
                 </Block>
                 <Block display='flex' alignItems='center' width='100%' marginTop='scale600' gridGap='scale300'>
-                    <Button kind='secondary' size='compact' onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>
-                    {!discussion.isTop && <Button kind='secondary' size='compact' onClick={() => { }}>置顶</Button>}
-                    {discussion.isTop && <Button kind='secondary' size='compact' onClick={() => { }}>取消置顶</Button>}
-                    <Button kind='secondary' size='compact' onClick={() => { }}>关闭</Button>
-                    <Button kind='secondary' size='compact' onClick={() => { }}>删除</Button>
+                    {!discussion.isClosed && <Button kind='secondary' size='compact' onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>}
+                    {canEdit &&
+                        <>
+                            {!discussion.isSticky && <Button kind='secondary' size='compact' onClick={() => { }}>置顶</Button>}
+                            {discussion.isSticky && <Button kind='secondary' size='compact' onClick={() => { }}>取消置顶</Button>}
+                            <Button kind='secondary' size='compact' onClick={() => { }}>关闭</Button>
+                            <Button kind='secondary' size='compact' onClick={() => { }}>删除</Button>
+                        </>
+                    }
                 </Block>
             </Block>
             <Modal onClose={() => setIsOpenEditorModal(false)}
@@ -99,7 +114,7 @@ function DiscussionMeta({ discussion }) {
     );
 }
 
-function OtherDiscussions({ discussionId, appId }) {
+function OtherDiscussions({ discussionId }) {
     const [css, theme] = useStyletron();
     const [discussions, setDiscussions] = React.useState([]);
     const [isLoading, setLoading] = React.useState(true);
@@ -107,12 +122,11 @@ function OtherDiscussions({ discussionId, appId }) {
         (async () => {
             try {
                 setLoading(true);
-                setDiscussions([
-                    { id: 1, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 32 } },
-                    { id: 2, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 152 } },
-                    { id: 3, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 332 } },
-                    { id: 4, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟', meta: { posts: 34 } },
-                ]);
+                const res = await fetch(`/api/discussions/${discussionId}/others?limit=10`);
+                if (res.ok) {
+                    const json = await res.json();
+                    setDiscussions(json.data);
+                }
             } finally {
                 setLoading(false);
             }
@@ -124,7 +138,7 @@ function OtherDiscussions({ discussionId, appId }) {
                 {isLoading ?
                     [...Array(3)].map((_, index) => (<Skeleton key={index} width='100%' height='32px' animation />)) :
                     discussions.map((discussion, index) => (
-                        <Link key={index} to={`/discussions/apps/${appId}/view/${discussion.id}`} className={css({
+                        <Link key={index} to={`/discussions/${discussion.id}`} className={css({
                             textDecoration: 'none', display: 'flex', gap: theme.sizing.scale300, alignItems: 'center', justifyContent: 'space-between',
                             padding: theme.sizing.scale300, borderRadius: theme.borders.radius200, color: 'inherit',
                             backgroundColor: 'rgba(109, 109, 109, 0.1)',
@@ -223,8 +237,8 @@ function DiscussionPostActions({ discussionId, post }) {
                         </Button>
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        <Button kind='secondary' size='mini' onClick={() => {}} overrides={Styles.Button.Act} title='引用'><Quote width={16} height={16} /></Button>
-                        <Button kind='secondary' size='mini' onClick={() => {}} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
+                        <Button kind='secondary' size='mini' onClick={() => { }} overrides={Styles.Button.Act} title='引用'><Quote width={16} height={16} /></Button>
+                        <Button kind='secondary' size='mini' onClick={() => { }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
                     </Block>
                 </Block>
                 {post?.meta?.gifts > 0 && post?.gifts &&
@@ -318,11 +332,40 @@ function DiscussionPostActions({ discussionId, post }) {
 
 
 function DiscussionPosts({ discussion }) {
+    const limit = 20;
+    const { user } = useAuth();
     const [, theme] = useStyletron();
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [dataList, setDataList] = React.useState([]);
+    const [skip, setSkip] = React.useState(0);
+    const [hasMore, setHasMore] = React.useState(false);
+
+    const fetchDataList = React.useCallback(async () => {
+        try {
+            setIsLoading(true);
+            const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit${limit}`);
+            if (res.ok) {
+                const json = await res.json();
+                if (user && json.data && json.data.length > 0) {
+                    const thumbRes = await fetch(`/api/user/effect/discussion-posts/thumbs?ids=${json.data.map(v => v.id).join(',')}`);
+                    const thumbJson = await thumbRes.json();
+                    json.data.forEach(post => post.viewer = { direction: thumbJson.data[post.id] });
+                }
+                setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                setHasMore(json.skip + json.limit < json.count);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [discussion.id, skip, user]);
+
+    React.useEffect(() => {
+        fetchDataList();
+    }, [fetchDataList]);
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale600'>
-            {discussion?.posts.map((post, index) => {
+            {dataList?.map((post, index) => {
                 return (
                     <Block key={index} display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
                         Block: { style: { borderRadius: theme.borders.radius300 } }
@@ -347,70 +390,38 @@ function DiscussionPosts({ discussion }) {
                     </Block>
                 );
             })}
+            {hasMore &&
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
+                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
+                </Block>
+            }
         </Block>
     );
 }
 
-function DiscussionDetail() {
+function DiscussionsDetail() {
     const { appId, id } = useParams();
     const [, theme] = useStyletron();
-    const navigate = useNavigate();
 
     const [discussion, setDiscussion] = React.useState({});
     const [isLoadingDiscussion, setIsLoadingDiscussion] = React.useState(true);
-    const [app, setApp] = React.useState({});
-    const [isLoadingApp, setIsLoadingApp] = React.useState(true);
 
     React.useEffect(() => {
         if (id > 0) {
             (async () => {
                 try {
                     setIsLoadingDiscussion(true);
-                    setDiscussion({
-                        id: 1, title: 'Mac 有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟有闪退现象哟', isSticky: false, isClosed: false, channel: { id: 1, name: '综合讨论' }, user: { id: 1, name: '小明', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' }, createdAt: '2023-01-01', updatedAt: '2023-01-01',
-                        posts: [
-                            {
-                                id: 1, content: '有没有人和我一样呀', ip: '192.168.0.1', createdAt: '2021-01-01', user: { id: 1, name: '小明', gender: 'MAN', title: '普通用户', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' }, gifts: [
-                                    { "id": 1, "name": "极品好笑", "description": "别的顶多是好笑，这可是极品好笑。", "url": "/public/img/gifts/lovesmile.png", "price": 200, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                    { "id": 3, "name": "心都给你", "description": "你轻易的就俘获了我的心。", "url": "/public/img/gifts/heart.png", "price": 100, "count": 1 },
-                                ], meta: { "gifts": 2, "ups": 0, "downs": 0 }
-                            },
-                            { id: 2, content: '发给我看看嗯', ip: '192.168.0.1', createdAt: '2021-01-01', user: { id: 1, name: '小明', gender: 'WOMAN', title: '普通用户', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' } },
-                            { id: 3, content: '你说是就是呀', ip: '192.168.0.1', createdAt: '2021-01-01', user: { id: 1, name: '小明', gender: 'GENDERLESS', title: '普通用户', avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285' } },
-                        ]
-                    });
+                    const res = await fetch(`/api/discussions/${id}`);
+                    if (res.ok) {
+                        const json = await res.json();
+                        setDiscussion(json.data);
+                    }
                 } finally {
                     setIsLoadingDiscussion(false);
                 }
             })();
         }
     }, [id]);
-
-    React.useEffect(() => {
-        (async () => {
-            setIsLoadingApp(true);
-            try {
-                const res = await fetch(`/api/apps/${appId}/basic`);
-                if (res.ok) {
-                    const json = await res.json();
-                    setApp(json.data);
-                } else {
-                    if (res.status === 404) navigate('/not-found', { replace: true });
-                    if (res.status >= 500) navigate('/panic');
-                }
-            } finally {
-                setIsLoadingApp(false);
-            }
-        })();
-    }, [appId, navigate]);
 
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
@@ -424,8 +435,8 @@ function DiscussionDetail() {
             }
         }}>
             <Block display='flex' width='100%' alignItems='center' gridGap='scale300' marginBottom='scale800'>
-                <RouterLink href={`/apps/${appId}`} kind='underline'><LabelSmall>{app?.name}</LabelSmall></RouterLink> /
-                <RouterLink href={`/discussions/apps/${appId}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
+                <RouterLink href={`/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.app?.name}</LabelSmall></RouterLink> /
+                <RouterLink href={`/discussions/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
                 <LabelSmall>讨论详情</LabelSmall>
             </Block>
             <Block display='flex' width='100%' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale700' marginBottom='scale600'
@@ -447,7 +458,7 @@ function DiscussionDetail() {
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginLeft: 0, } } }
                 }}>
                     {!isLoadingDiscussion && <DiscussionMeta discussion={discussion} />}
-                    {!isLoadingApp && <AppGlance app={app} />}
+                    {!isLoadingDiscussion && <AppGlance app={discussion?.app} />}
                     {!isLoadingDiscussion && <OtherDiscussions appId={appId} discussionId={discussion.id} />}
                 </Block>
             </Block>
@@ -455,4 +466,4 @@ function DiscussionDetail() {
     );
 }
 
-export default DiscussionDetail;
+export default DiscussionsDetail;

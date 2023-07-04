@@ -81,29 +81,6 @@ const news = async (fastify, opts) => {
         delete data.appId;
         return reply.code(200).send({ data });
     });
-
-    fastify.get('/apps/:appId/view/:id', async function (req, reply) {
-        const id = Number(req.params.id);
-        const data = await fastify.db.news.findUnique({
-            where: { id },
-            include: {
-                app: {
-                    select: {
-                        id: true,
-                        name: true,
-                        summary: true,
-                        score: true,
-                        releasedAt: true,
-                    }
-                },
-            }
-        });
-        await fastify.db.news.update({ where: { id }, data: { viewCount: { increment: 1 } } });
-        data.meta = { views: data.viewCount };
-        delete data.viewCount;
-        delete data.appId;
-        return reply.code(200).send({ data });
-    });
 };
 
 export default news;
