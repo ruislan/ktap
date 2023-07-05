@@ -31,15 +31,16 @@ model User {
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
   // ref
-  organizations  Organization[]
-  reviews        Review[]
-  reviewComments ReviewComment[] // 评测回复
-  reviewGifts    ReviewGiftRef[] // review gifts 对评测送的礼物
-  reviewReports  ReviewReport[] // 对评测的举报
-  followers      FollowUser[] // 关注的人
-  discussions    Discussion[] // 讨论
-  posts          DiscussionPost[] // 讨论帖
-  postGifts      DiscussionPostGiftRef[] // 对讨论帖送的礼物
+  organizations         Organization[]
+  reviews               Review[]
+  reviewComments        ReviewComment[] // 评测回复
+  reviewGifts           ReviewGiftRef[] // review gifts 对评测送的礼物
+  reviewReports         ReviewReport[] // 对评测的举报
+  followers             FollowUser[] // 关注的人
+  discussions           Discussion[] // 讨论
+  discussionPosts       DiscussionPost[] // 讨论帖
+  discussionPostGifts   DiscussionPostGiftRef[] // 对讨论帖送的礼物
+  discussionPostReports DiscussionPostReport[] // 讨论贴的举报
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -521,6 +522,7 @@ model DiscussionPost {
   discussion Discussion              @relation(fields: [discussionId], references: [id])
   user       User                    @relation(fields: [userId], references: [id])
   gifts      DiscussionPostGiftRef[] // 得到的礼物
+  reports    DiscussionPostReport[] // 举报数据
 }
 
 // 帖子的赞和踩
@@ -531,6 +533,19 @@ model DiscussionPostThumb {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@id([postId, userId]) // 一个用户一个帖子只能有一个赞或者踩
+}
+
+// 帖子举报
+model DiscussionPostReport {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // ref
+  post DiscussionPost @relation(fields: [postId], references: [id])
+  user User           @relation(fields: [userId], references: [id])
 }
 
 // 帖子礼物多对多关系，用户可以对同一个帖子多次送礼物

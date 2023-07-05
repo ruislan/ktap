@@ -19,8 +19,8 @@ const user = async (fastify, opts) => {
         }
     );
 
-    // 获取用户与posts的赞踩信息
-    fastify.get('/effect/discussion-posts/thumbs', async function (req, reply) {
+    // 获取用户与DiscussionPosts的赞踩信息
+    fastify.get('/effect/discussions/posts/thumbs', async function (req, reply) {
         const userId = req.user.id;
         const postIds = (req.query.ids || '').split(',').map(item => Number(item) || 0).filter(item => item > 0);
         let data = {};
@@ -33,6 +33,15 @@ const user = async (fastify, opts) => {
                 data[thumb.postId] = thumb.direction;
             });
         }
+        return reply.code(200).send({ data });
+    });
+
+    // 获取用户与DiscussionPost的交互信息
+    fastify.get('/effect/discussions/posts/:id/report', async function (req, reply) {
+        const userId = req.user.id;
+        const postId = Number(req.params.id) || 0;
+        const data = {};
+        data.reported = (await fastify.db.discussionPostReport.count({ where: { userId, postId } })) > 0;
         return reply.code(200).send({ data });
     });
 

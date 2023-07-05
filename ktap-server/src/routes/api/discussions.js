@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP } from "../../constants.js";
+import { AppMedia, LIMIT_CAP, Trading } from "../../constants.js";
 import { authenticate } from '../../lib/auth.js';
 import sanitizeHtml from 'sanitize-html';
 
@@ -257,6 +257,45 @@ const discussions = async (fastify, opts) => {
             // 重新取当前赞踩数据
             const data = await fastify.utils.getDiscussionPostThumbs({ id: postId });
             return reply.code(200).send({ data });
+        }
+    });
+
+    fastify.post('/:id/posts/:postId/gifts/:giftId', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const userId = req.user.id;
+            const postId = Number(req.params.postId);
+            const giftId = Number(req.params.giftId);
+
+            const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
+            await fastify.db.$transaction(async (tx) => {
+                // 减去balance
+                const updatedUser = await tx.user.update({
+                    where: { id: userId },
+                    data: { balance: { decrement: gift.price, } }
+                });
+                if (updatedUser.balance < 0) throw new Error('insufficient balance'); // 检查余额， 有问题就回滚事务
+                await tx.trading.create({ data: { userId, target: 'Gift', targetId: giftId, amount: gift.price, type: Trading.type.buy } }); // 生成交易
+                const giftRef = await tx.discussionPostGiftRef.create({ data: { userId, giftId, postId } }); // 创建关系
+                await tx.timeline.create({ data: { userId, target: 'DiscussionPostGiftRef', targetId: giftRef.id } }); // 创建动态
+            });
+            // XXX 这里没有包裹事务出错的错误，直接扔给框架以500形式抛出了，后续需要更柔性处理
+            // 读取最新的礼物情况
+            // fetch gifts
+            const gifts = await fastify.utils.getDiscussionPostGifts({ id: postId });
+            return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
+        }
+    });
+
+    // 举报
+    fastify.post('/:id/posts/:postId/report', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const userId = req.user.id;
+            const postId = Number(req.params.postId);
+            const content = req.body.content;
+            await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
+            return reply.code(200).send();
         }
     });
 };

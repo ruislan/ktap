@@ -571,22 +571,10 @@ function Review() {
                                             </Block>
                                             {user && !isReported && user.id !== review.user?.id &&
                                                 <Block>
-                                                    <Button
-                                                        onClick={() => { setIsOpenReportModal(true); setReportContent(''); }}
-                                                        startEnhancer={() => <Hand width={16} height={16} />}
-                                                        kind='secondary'
-                                                        size='mini'
-                                                        overrides={Styles.Button.Act}
-                                                    >
-                                                        举报
+                                                    <Button title='举报' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} kind='secondary' size='mini' overrides={Styles.Button.Act}>
+                                                        <Hand width={16} height={16} />
                                                     </Button>
-                                                    <Modal onClose={() => setIsOpenReportModal(false)}
-                                                        closeable={false}
-                                                        isOpen={isOpenReportModal}
-                                                        animate
-                                                        autoFocus
-                                                        role={ROLE.alertdialog}
-                                                    >
+                                                    <Modal onClose={() => setIsOpenReportModal(false)} closeable={false} isOpen={isOpenReportModal} animate autoFocus role={ROLE.alertdialog}>
                                                         <ModalHeader>举报评测</ModalHeader>
                                                         <ModalBody>
                                                             <LabelSmall marginBottom='scale600'>请输入您举报该评测的理由，如果理由不够充分，该操作无效。举报操作无法撤消。</LabelSmall>

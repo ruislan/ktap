@@ -60,12 +60,12 @@ function AppGlance({ app }) {
 function DiscussionMeta({ discussion }) {
     // const [isLoading, setIsLoading] = React.useState(false);
     const { user } = useAuth();
-    const [canEdit, setCanEdit] = React.useState(false);
+    const [canAct, setCanAct] = React.useState(false);
     const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
 
     React.useEffect(() => {
         if (user && discussion?.user?.id) {
-            setCanEdit(user.id === discussion.user.id);
+            setCanAct(user.id === discussion.user.id);
         }
     }, [user, discussion]);
 
@@ -84,7 +84,7 @@ function DiscussionMeta({ discussion }) {
                 </Block>
                 <Block display='flex' alignItems='center' width='100%' marginTop='scale600' gridGap='scale300'>
                     {!discussion.isClosed && <Button kind='secondary' size='compact' onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>}
-                    {canEdit &&
+                    {canAct &&
                         <>
                             {!discussion.isSticky && <Button kind='secondary' size='compact' onClick={() => { }}>置顶</Button>}
                             {discussion.isSticky && <Button kind='secondary' size='compact' onClick={() => { }}>取消置顶</Button>}
@@ -94,13 +94,7 @@ function DiscussionMeta({ discussion }) {
                     }
                 </Block>
             </Block>
-            <Modal onClose={() => setIsOpenEditorModal(false)}
-                closeable={false}
-                isOpen={isOpenEditorModal}
-                animate
-                autoFocus
-                role={ROLE.alertdialog}
-            >
+            <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} animate autoFocus role={ROLE.alertdialog}>
                 <ModalHeader>回复</ModalHeader>
                 <ModalBody>
                     <Editor />
@@ -172,6 +166,10 @@ function DiscussionPostActions({ discussionId, post }) {
     const [checkedGift, setCheckedGift] = React.useState(null);
     const [isOpenGiftConfirmModal, setIsOpenGiftConfirmModal] = React.useState(false);
     const [isSendingGift, setIsSendingGift] = React.useState(false);
+    const [reportContent, setReportContent] = React.useState('');
+    const [isOpenReportModal, setIsOpenReportModal] = React.useState(false);
+    const [isReporting, setIsReporting] = React.useState(false);
+    const [isReported, setIsReported] = React.useState(true);
 
     const handleThumb = async (direction) => {
         if (!user) { navigate('/login'); return; }
@@ -221,6 +219,36 @@ function DiscussionPostActions({ discussionId, post }) {
         }
     };
 
+    const handleReport = async () => {
+        if (!user) { navigate('/login'); return; }
+        setIsReporting(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussionId}/posts/${post.id}/report`, {
+                method: 'POST',
+                body: JSON.stringify({ content: reportContent }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                setIsReported(true);
+                setIsOpenReportModal(false);
+            }
+        } finally {
+            setIsReporting(false);
+        }
+    };
+
+    React.useEffect(() => {
+        (async () => {
+            if (user && user.id !== post.user.id) {
+                const res = await fetch(`/api/user/effect/discussions/posts/${post.id}/report`);
+                if (res.ok) {
+                    const json = await res.json();
+                    setIsReported(json.data.reported || false);
+                }
+            }
+        })();
+    }, [user, post]);
+
     return (
         <>
             <Block display='flex' flexDirection='column' width='100%' marginTop='scale600'>
@@ -237,8 +265,24 @@ function DiscussionPostActions({ discussionId, post }) {
                         </Button>
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        <Button kind='secondary' size='mini' onClick={() => { }} overrides={Styles.Button.Act} title='引用'><Quote width={16} height={16} /></Button>
-                        <Button kind='secondary' size='mini' onClick={() => { }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
+                        <Button kind='secondary' size='mini' onClick={() => { }} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>
+                        {user && !isReported && user.id !== post.user?.id &&
+                            <>
+                                <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
+                                <Modal onClose={() => setIsOpenReportModal(false)} closeable={false} isOpen={isOpenReportModal} animate autoFocus role={ROLE.alertdialog}>
+                                    <ModalHeader>举报评测</ModalHeader>
+                                    <ModalBody>
+                                        <LabelSmall marginBottom='scale600'>请输入您举报该帖子的理由，如果理由不够充分，该操作无效。举报操作无法撤消。</LabelSmall>
+                                        <Textarea readOnly={isReporting} placeholder='请注意文明用语，否则视为无效举报'
+                                            rows='3' maxLength='150' value={reportContent} onChange={(e) => setReportContent(e.target.value)} />
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <ModalButton kind='tertiary' onClick={() => setIsOpenReportModal(false)}>取消</ModalButton>
+                                        <Button kind='primary' isLoading={isReporting} onClick={() => handleReport()}>确定</Button>
+                                    </ModalFooter>
+                                </Modal>
+                            </>
+                        }
                     </Block>
                 </Block>
                 {post?.meta?.gifts > 0 && post?.gifts &&
@@ -347,7 +391,7 @@ function DiscussionPosts({ discussion }) {
             if (res.ok) {
                 const json = await res.json();
                 if (user && json.data && json.data.length > 0) {
-                    const thumbRes = await fetch(`/api/user/effect/discussion-posts/thumbs?ids=${json.data.map(v => v.id).join(',')}`);
+                    const thumbRes = await fetch(`/api/user/effect/discussions/posts/thumbs?ids=${json.data.map(v => v.id).join(',')}`);
                     const thumbJson = await thumbRes.json();
                     json.data.forEach(post => post.viewer = { direction: thumbJson.data[post.id] });
                 }
