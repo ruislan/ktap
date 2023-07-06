@@ -18,7 +18,7 @@ import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages } from '../../constants';
 import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
 import Notification from '../../components/notification';
-import Editor from './editor';
+import Editor from '../../components/editor';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);

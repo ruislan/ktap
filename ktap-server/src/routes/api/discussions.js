@@ -3,7 +3,6 @@ import { authenticate } from '../../lib/auth.js';
 import sanitizeHtml from 'sanitize-html';
 
 const discussions = async (fastify, opts) => {
-
     // discussions首页，展示有讨论的 App
     fastify.get('', async function (req, reply) {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
@@ -205,6 +204,66 @@ const discussions = async (fastify, opts) => {
             };
         }
         return reply.code(200).send({ data, limit, skip, count });
+    });
+
+    fastify.put('/:id/sticky', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const id = Number(req.params.id);
+            const isSticky = req.body.sticky === true;
+            await fastify.db.discussion.updateMany({
+                where: {
+                    id,
+                    userId: req.user.id // user必须是 Owner 才可以
+                },
+                data: { isSticky }
+            });
+            return reply.code(204).send();
+        }
+    });
+
+    fastify.put('/:id/close', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const id = Number(req.params.id);
+            const isClosed = req.body.close === true;
+            await fastify.db.discussion.updateMany({
+                where: {
+                    id,
+                    userId: req.user.id // user必须是 Owner 才可以
+                },
+                data: { isClosed }
+            });
+            return reply.code(204).send();
+        }
+    });
+
+    fastify.delete('/:id', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const id = Number(req.params.id);
+
+            // TODO 删除外键其他数据
+            // 注意，posts 可能过多，
+            // await fastify.db.discussion.delete({ where: { id } });
+            // await fastify.db.discussionPost.deleteMany({ where: { discussionId: id } });
+            // ...
+            return reply.code(204).send();
+        }
+    });
+
+    fastify.delete('/:id/posts/:postId', {
+        preHandler: authenticate,
+        handler: async function (req, reply) {
+            const id = Number(req.params.id);
+            const postId = Number(req.params.postId);
+
+            // TODO 删除外键其他数据
+            // await fastify.db.discussion.delete({ where: { id } });
+            // await fastify.db.discussionPost.deleteMany({ where: { discussionId: id } });
+            // ...
+            return reply.code(204).send();
+        }
     });
 
     // 取这个帖子日期后面的 Limit 个

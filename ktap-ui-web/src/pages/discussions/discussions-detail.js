@@ -17,7 +17,7 @@ import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
 import GiftType from '../../components/gift';
-import Editor from './editor';
+import Editor from '../../components/editor';
 
 import '../../assets/css/post.css';
 
@@ -58,16 +58,72 @@ function AppGlance({ app }) {
 }
 
 function DiscussionMeta({ discussion }) {
-    // const [isLoading, setIsLoading] = React.useState(false);
     const { user } = useAuth();
     const [canAct, setCanAct] = React.useState(false);
     const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
+    const [isLoadingSticky, setIsLoadingSticky] = React.useState(false);
+    const [isLoadingClose, setIsLoadingClose] = React.useState(false);
+    const [isSticky, setIsSticky] = React.useState(discussion?.isSticky);
+    const [isClosed, setIsClosed] = React.useState(discussion?.isClosed);
+    // editor
+    const [editorContent, setEditorContent] = React.useState('');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    // editor end
 
     React.useEffect(() => {
         if (user && discussion?.user?.id) {
             setCanAct(user.id === discussion.user.id);
         }
     }, [user, discussion]);
+
+    const handleSticky = async ({ sticky }) => {
+        setIsLoadingSticky(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussion.id}/sticky`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sticky })
+            });
+            if (res.ok) {
+                setIsSticky(sticky);
+            }
+        } finally {
+            setIsLoadingSticky(false);
+        }
+    };
+
+    const handleClose = async ({ close }) => {
+        setIsLoadingClose(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussion.id}/close`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ close })
+            });
+            if (res.ok) {
+                setIsClosed(close);
+            }
+        } finally {
+            setIsLoadingClose(false);
+        }
+    };
+
+    const handlePostSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussion.id}/posts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: editorContent })
+            });
+            if (res.ok) {
+                setEditorContent('');
+                setIsOpenEditorModal(false);
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <SideBox title='讨论信息'>
@@ -83,25 +139,26 @@ function DiscussionMeta({ discussion }) {
                     <LabelSmall color='primary'>{discussion?.meta?.gifts || 0}</LabelSmall>
                 </Block>
                 <Block display='flex' alignItems='center' width='100%' marginTop='scale600' gridGap='scale300'>
-                    {!discussion.isClosed && <Button kind='secondary' size='compact' onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>}
+                    <Button kind='secondary' size='compact' disabled={isClosed} onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>
                     {canAct &&
                         <>
-                            {!discussion.isSticky && <Button kind='secondary' size='compact' onClick={() => { }}>置顶</Button>}
-                            {discussion.isSticky && <Button kind='secondary' size='compact' onClick={() => { }}>取消置顶</Button>}
-                            <Button kind='secondary' size='compact' onClick={() => { }}>关闭</Button>
+                            {!isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: true })}>置顶</Button>}
+                            {isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: false })}>取消置顶</Button>}
+                            {!isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: true })}>关闭</Button>}
+                            {isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: false })}>打开</Button>}
                             <Button kind='secondary' size='compact' onClick={() => { }}>删除</Button>
                         </>
                     }
                 </Block>
             </Block>
-            <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} animate autoFocus role={ROLE.alertdialog}>
+            <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
                 <ModalHeader>回复</ModalHeader>
                 <ModalBody>
-                    <Editor />
+                    <Editor onUpdate={({ editor }) => setEditorContent(editor.getHTML())} />
                 </ModalBody>
                 <ModalFooter>
                     <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
-                    <ModalButton onClick={() => { }}>发送</ModalButton>
+                    <ModalButton onClick={() => handlePostSubmit()} isLoading={isSubmitting}>发送</ModalButton>
                 </ModalFooter>
             </Modal>
         </SideBox>
@@ -443,6 +500,9 @@ function DiscussionPosts({ discussion }) {
     );
 }
 
+// 回复讨论的帖子直接追加到当前最后一贴的后面，如果用户点击“查看更多”，
+// 后续的帖子中如果没有包含新帖，则直接继续追加（也即是说新帖被夹在了中间）。
+// 后续的帖子中如果包含了新帖，则将夹在中间的新帖删除
 function DiscussionsDetail() {
     const { appId, id } = useParams();
     const [, theme] = useStyletron();
