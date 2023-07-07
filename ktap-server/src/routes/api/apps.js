@@ -364,7 +364,7 @@ const apps = async function (fastify, opts) {
             select: {
                 id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
                 user: {
-                    select: { id: true, name: true, title: true, avatar: true },
+                    select: { id: true, name: true, title: true, avatar: true, gender: true },
                 },
                 channel: {
                     select: { id: true, name: true, }

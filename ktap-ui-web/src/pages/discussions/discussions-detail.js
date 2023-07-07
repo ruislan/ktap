@@ -11,7 +11,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'b
 import RouterLink from '../../components/router-link';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
-import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote } from '../../components/icons';
+import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin } from '../../components/icons';
 import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, Styles } from '../../constants';
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
@@ -23,6 +23,23 @@ import '../../assets/css/post.css';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
+
+function UserPanel({ id, name, avatar, gender, title }) {
+    return (
+        <Block display='flex' alignItems='center' gridGap='scale300'>
+            <AvatarSquare size='scale1000' src={avatar} />
+            <Block display='flex' alignItems='center' justifyContent='space-between' flex='1'>
+                <Block display='flex' flexDirection='column'>
+                    <Block display='flex' alignItems='center' marginBottom='scale100'>
+                        <LabelMedium marginRight='scale100'><RouterLink href={`/users/${id}`}>{name}</RouterLink></LabelMedium>
+                        <GenderLabel gender={gender} />
+                    </Block>
+                    <LabelXSmall color='primary100' marginRight='scale100'>{title}</LabelXSmall>
+                </Block>
+            </Block>
+        </Block>
+    );
+}
 
 function AppGlance({ app }) {
     const [css, theme] = useStyletron();
@@ -60,15 +77,10 @@ function AppGlance({ app }) {
 function DiscussionMeta({ discussion }) {
     const { user } = useAuth();
     const [canAct, setCanAct] = React.useState(false);
-    const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
     const [isLoadingSticky, setIsLoadingSticky] = React.useState(false);
     const [isLoadingClose, setIsLoadingClose] = React.useState(false);
     const [isSticky, setIsSticky] = React.useState(discussion?.isSticky);
     const [isClosed, setIsClosed] = React.useState(discussion?.isClosed);
-    // editor
-    const [editorContent, setEditorContent] = React.useState('');
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-    // editor end
 
     React.useEffect(() => {
         if (user && discussion?.user?.id) {
@@ -108,23 +120,6 @@ function DiscussionMeta({ discussion }) {
         }
     };
 
-    const handlePostSubmit = async () => {
-        setIsSubmitting(true);
-        try {
-            const res = await fetch(`/api/discussions/${discussion.id}/posts`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: editorContent })
-            });
-            if (res.ok) {
-                setEditorContent('');
-                setIsOpenEditorModal(false);
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     return (
         <SideBox title='讨论信息'>
             <Block display='flex' flexDirection='column' paddingTop='0' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600'>
@@ -139,7 +134,6 @@ function DiscussionMeta({ discussion }) {
                     <LabelSmall color='primary'>{discussion?.meta?.gifts || 0}</LabelSmall>
                 </Block>
                 <Block display='flex' alignItems='center' width='100%' marginTop='scale600' gridGap='scale300'>
-                    <Button kind='secondary' size='compact' disabled={isClosed} onClick={() => { setIsOpenEditorModal(true); }}>回复</Button>
                     {canAct &&
                         <>
                             {!isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: true })}>置顶</Button>}
@@ -151,16 +145,6 @@ function DiscussionMeta({ discussion }) {
                     }
                 </Block>
             </Block>
-            <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
-                <ModalHeader>回复</ModalHeader>
-                <ModalBody>
-                    <Editor onUpdate={({ editor }) => setEditorContent(editor.getHTML())} />
-                </ModalBody>
-                <ModalFooter>
-                    <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
-                    <ModalButton onClick={() => handlePostSubmit()} isLoading={isSubmitting}>发送</ModalButton>
-                </ModalFooter>
-            </Modal>
         </SideBox>
     );
 }
@@ -211,7 +195,7 @@ function OtherDiscussions({ discussionId }) {
     );
 }
 
-function DiscussionPostActions({ discussionId, post }) {
+function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
@@ -322,7 +306,7 @@ function DiscussionPostActions({ discussionId, post }) {
                         </Button>
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        <Button kind='secondary' size='mini' onClick={() => { }} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>
+                        <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>
                         {user && !isReported && user.id !== post.user?.id &&
                             <>
                                 <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
@@ -339,6 +323,9 @@ function DiscussionPostActions({ discussionId, post }) {
                                     </ModalFooter>
                                 </Modal>
                             </>
+                        }
+                        {user && user.id === post.user?.id &&
+                            <Button kind='secondary' size='mini' title='删除' onClick={() => { }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
                         }
                     </Block>
                 </Block>
@@ -431,20 +418,57 @@ function DiscussionPostActions({ discussionId, post }) {
     );
 }
 
-
+// 回复讨论的帖子直接追加到当前最后一贴的后面，如果用户点击“查看更多”，
+// 后续的帖子中如果没有包含新帖，则保持该贴在最后一贴的后面。
+// 后续的帖子中如果包含了新帖，则将这个保持在最后的帖子取消掉。
+// XXX 新帖子在删除前，最好有个标志来标记它是新放进去的。
 function DiscussionPosts({ discussion }) {
     const limit = 20;
     const { user } = useAuth();
     const [, theme] = useStyletron();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
     const [dataList, setDataList] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
 
+    // editor
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [canSubmit, setCanSubmit] = React.useState(false);
+    const [editor, setEditor] = React.useState();
+    const [newPosts, setNewPosts] = React.useState([]);
+
+    const handlePostSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussion.id}/posts`, {
+                method: 'POST',
+                body: JSON.stringify({ content: editor.getHTML() }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                const json = await res.json();
+                setNewPosts(prev => [...prev, {
+                    ...json.data,
+                    user, gifts: [], meta: { up: 0, downs: 0, gifts: 0 },
+                }]);
+                editor?.chain().focus().clearContent().run();
+            } else {
+                if (res.status === 403) navigate('/login');
+                if (res.status === 404) navigate('/not-found', { replace: true });
+                if (res.status >= 500) navigate('/panic');
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    // editor end
+
+
     const fetchDataList = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit${limit}`);
+            const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
                 if (user && json.data && json.data.length > 0) {
@@ -452,6 +476,7 @@ function DiscussionPosts({ discussion }) {
                     const thumbJson = await thumbRes.json();
                     json.data.forEach(post => post.viewer = { direction: thumbJson.data[post.id] });
                 }
+                setNewPosts(prev => prev.filter(newPost => !json.data.find(v => v.id === newPost.id)));
                 setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
                 setHasMore(json.skip + json.limit < json.count);
             }
@@ -466,28 +491,17 @@ function DiscussionPosts({ discussion }) {
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale600'>
-            {dataList?.map((post, index) => {
+            {[...(dataList || []), ...(newPosts || [])].map((post, index) => {
                 return (
                     <Block key={index} display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
                         Block: { style: { borderRadius: theme.borders.radius300 } }
                     }}>
-                        <Block display='flex' alignItems='center' gridGap='scale300'>
-                            <AvatarSquare size='scale1000' src={post.user.avatar} />
-                            <Block display='flex' alignItems='center' justifyContent='space-between' flex='1'>
-                                <Block display='flex' flexDirection='column'>
-                                    <Block display='flex' alignItems='center' marginBottom='scale100'>
-                                        <LabelMedium marginRight='scale100'><RouterLink href={`/users/${post.user.id}`}>{post.user.name}</RouterLink></LabelMedium>
-                                        <GenderLabel gender={post.user.gender} />
-                                    </Block>
-                                    <LabelXSmall color='primary100' marginRight='scale100'>{post.user.title}</LabelXSmall>
-                                </Block>
-                            </Block>
-                        </Block>
-                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                        <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
+                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:MM')}</LabelSmall>
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                         </Block>
-                        <DiscussionPostActions discussionId={discussion.id} post={post} />
+                        <DiscussionPostActions discussionId={discussion.id} post={post} onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()} />
                     </Block>
                 );
             })}
@@ -496,13 +510,26 @@ function DiscussionPosts({ discussion }) {
                     <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
                 </Block>
             }
+            {user &&
+                <Block marginTop='scale600' display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
+                    Block: { style: { borderRadius: theme.borders.radius300 } }
+                }}>
+                    <LabelMedium marginBottom='scale600'>回复</LabelMedium>
+                    <Block display='flex' marginBottom='scale600'>
+                        <UserPanel id={user.id} name={user.name} avatar={user.avatar} title={user.title} gender={user.gender} />
+                    </Block>
+                    <Block display='flex' flexDirection='column'>
+                        <Editor onCreate={({ editor }) => setEditor(editor)} onUpdate={({ editor }) => setCanSubmit(editor.getText().length > 0)} />
+                        <Block marginTop='scale600' alignSelf='flex-end'>
+                            <Button size='compact' disabled={!canSubmit} isLoading={isSubmitting} kind='secondary' onClick={() => handlePostSubmit()}>提交回复</Button>
+                        </Block>
+                    </Block>
+                </Block>
+            }
         </Block>
     );
 }
 
-// 回复讨论的帖子直接追加到当前最后一贴的后面，如果用户点击“查看更多”，
-// 后续的帖子中如果没有包含新帖，则直接继续追加（也即是说新帖被夹在了中间）。
-// 后续的帖子中如果包含了新帖，则将夹在中间的新帖删除
 function DiscussionsDetail() {
     const { appId, id } = useParams();
     const [, theme] = useStyletron();

@@ -1,7 +1,6 @@
 import { Trading } from '../../constants.js';
 
 const home = async function (fastify, opts) {
-    fastify.get('/', async function (req, reply) { return { version: '1.0.0' }; });
     fastify.get('/stats', async function (req, reply) {
         const days = Math.max(3, Number(req.query.days) || 3);
         const data = {};
@@ -13,14 +12,10 @@ const home = async function (fastify, opts) {
         data.reports = await fastify.db.reviewReport.count({ where: { createdAt: { gte: limitDate, } }, });
         const amount = await fastify.db.trading.aggregate({
             where: {
-                createdAt: {
-                    gte: limitDate,
-                },
+                createdAt: { gte: limitDate, },
                 type: Trading.type.buy,
             },
-            _sum: {
-                amount: true,
-            }
+            _sum: { amount: true, }
         });
         data.amount = amount._sum.amount || 0;
 

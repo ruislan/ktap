@@ -122,7 +122,7 @@ const discussions = async (fastify, opts) => {
             select: {
                 id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
                 user: {
-                    select: { id: true, name: true, title: true, avatar: true },
+                    select: { id: true, name: true, title: true, avatar: true, gender: true },
                 },
                 channel: {
                     select: { id: true, name: true, }
@@ -148,7 +148,7 @@ const discussions = async (fastify, opts) => {
             select: {
                 id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
                 channel: { select: { id: true, name: true, } },
-                user: { select: { id: true, name: true, title: true, avatar: true, } },
+                user: { select: { id: true, name: true, title: true, avatar: true, gender: true } },
                 app: {
                     select: {
                         id: true, name: true, summary: true, score: true,
@@ -191,7 +191,7 @@ const discussions = async (fastify, opts) => {
             where: { discussionId: id },
             select: {
                 id: true, content: true, createdAt: true, ip: true,
-                user: { select: { id: true, name: true, title: true, avatar: true, } },
+                user: { select: { id: true, name: true, title: true, avatar: true, gender: true } },
             }
         });
         for (const post of data) {
@@ -204,6 +204,36 @@ const discussions = async (fastify, opts) => {
             };
         }
         return reply.code(200).send({ data, limit, skip, count });
+    });
+
+    fastify.post('/:id/posts', {
+        preHandler: authenticate,
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    content: {
+                        type: 'string', minLength: 1, maxLength: 5000, errorMessage: {
+                            minLength: '请输入内容',
+                            maxLength: '内容不能大于 5000 个字符',
+                        }
+                    },
+                },
+                required: ['content'],
+                additionalProperties: false,
+            },
+        },
+        handler: async function (req, reply) {
+            const id = Number(req.params.id);
+            const userId = req.user.id;
+            const { content } = req.body;
+            if ((await fastify.db.discussion.count({ where: { id } })) <= 0) reply.code(404).send();
+            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
+            const data = await fastify.db.discussionPost.create({
+                data: { content: cleanContent, discussionId: id, userId, ip: req.ip }
+            });
+            return reply.code(200).send({ data: { id: data.id, content: data.content, createdAt: data.createdAt, ip: data.ip, updatedAt: data.updatedAt } });
+        }
     });
 
     fastify.put('/:id/sticky', {

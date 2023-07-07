@@ -2,10 +2,6 @@ import { v4 as uuid } from 'uuid';
 import { LIMIT_CAP, errors, Keys, Gender, Trading } from "../../constants.js";
 
 const home = async function (fastify, opts) {
-    fastify.get('/', async function (req, reply) { return { version: '1.0.0' }; });
-    fastify.get('/ping', async function (req, reply) { return 'pong'; });
-    fastify.get('/error', async function (req, reply) { throw new Error('man made error'); });
-
     fastify.route({
         method: 'POST',
         url: '/register',

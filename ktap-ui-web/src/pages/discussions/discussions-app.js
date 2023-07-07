@@ -226,6 +226,7 @@ function Discussions({ appId, channelId, }) {
     const [editorContent, setEditorContent] = React.useState('');
     const [editorTitle, setEditorTitle] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [canSubmit, setCanSubmit] = React.useState(false);
     const [submitErrorMessage, setSubmitErrorMessage] = React.useState(null);
     // editor end
 
@@ -300,12 +301,15 @@ function Discussions({ appId, channelId, }) {
                         <Block display='flex' flexDirection='column'>
                             {submitErrorMessage && <Block><Notification kind='negative' message={submitErrorMessage} /></Block>}
                             <Block marginBottom='scale600'><Input size='compact' placeholder='弄个标题吧' value={editorTitle} onChange={e => setEditorTitle(e.target.value)} /></Block>
-                            <Editor onUpdate={({ editor }) => setEditorContent(editor.getHTML())} />
+                            <Editor onUpdate={({ editor }) => {
+                                setEditorContent(editor.getHTML());
+                                setCanSubmit(editor.getText().length > 0 && editorTitle.length > 0);
+                            }} />
                         </Block>
                     </ModalBody>
                     <ModalFooter>
                         <ModalButton kind='tertiary' onClick={() => setIsOpenEditorModal(false)}>关闭</ModalButton>
-                        <ModalButton onClick={() => handleDiscussionSubmit()} isLoading={isSubmitting}>发送</ModalButton>
+                        <ModalButton disabled={!canSubmit} onClick={() => handleDiscussionSubmit()} isLoading={isSubmitting}>发送</ModalButton>
                     </ModalFooter>
                 </Modal>
             </Block>

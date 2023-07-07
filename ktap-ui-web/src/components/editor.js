@@ -11,15 +11,15 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import '../assets/css/editor.css';
 
-function SplitLine() {
-    const [css, theme] = useStyletron();
-    return (
-        <div className={css({
-            width: '1px', height: '16px', backgroundColor: theme.colors.backgroundTertiary,
-            marginLeft: theme.sizing.scale0, marginRight: theme.sizing.scale0,
-        })} />
-    );
-}
+// function SplitLine() {
+//     const [css, theme] = useStyletron();
+//     return (
+//         <div className={css({
+//             width: '1px', height: '16px', backgroundColor: theme.colors.backgroundTertiary,
+//             marginLeft: theme.sizing.scale0, marginRight: theme.sizing.scale0,
+//         })} />
+//     );
+// }
 
 function EditorButton({ ref, disabled, onClick, isActive, children }) {
     const [css, theme] = useStyletron();
@@ -28,11 +28,12 @@ function EditorButton({ ref, disabled, onClick, isActive, children }) {
             onClick={onClick}
             disabled={disabled}
             className={css({
-                borderRadius: '50%', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
+                borderRadius: '8px', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
                 display: 'flex', justifyContent: 'center', alignItems: 'center',
-                border: 'unset', margin: 0, color: isActive ? theme.colors.contentPrimary : theme.colors.contentSecondary,
+                border: 'unset', margin: 0,
                 padding: theme.sizing.scale100, width: theme.sizing.scale900, height: theme.sizing.scale900,
-                backgroundColor: 'transparent',
+                color: isActive ? theme.colors.contentPrimary : theme.colors.contentSecondary,
+                backgroundColor: isActive ? theme.colors.backgroundTertiary : 'transparent',
                 ':hover': {
                     backgroundColor: theme.colors.backgroundTertiary,
                 },
@@ -47,7 +48,10 @@ function MenuBar({ editor }) {
     if (!editor) return null;
     return (
         <div className={css({
-            display: 'flex', alignItems: 'center', gap: theme.sizing.scale100, flexWrap: 'wrap'
+            display: 'flex', alignItems: 'center', gap: theme.sizing.scale100, flexWrap: 'wrap',
+            paddingLeft: theme.sizing.scale100, paddingRight: theme.sizing.scale100,
+            paddingTop: theme.sizing.scale200, paddingBottom: theme.sizing.scale200,
+            borderBottom: '1px solid ' + theme.borders.border400.borderColor
         })}>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
@@ -94,7 +98,6 @@ function MenuBar({ editor }) {
                     <path d="M5 19h14"></path>
                 </svg>
             </EditorButton>
-            <SplitLine />
             <StatefulPopover
                 content={({ close }) => (
                     <Block display='grid' gridTemplateColumns='1fr 1fr 1fr 1fr' gridGap='scale200' padding='scale300'>
@@ -190,7 +193,7 @@ function MenuBar({ editor }) {
                     <path d="M11 6h2"></path>
                 </svg>
             </EditorButton>
-            <SplitLine />
+
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 isActive={editor.isActive('bulletList')}
@@ -269,7 +272,8 @@ function MenuBar({ editor }) {
 }
 
 
-function Editor({ onUpdate }) {
+function Editor({ onCreate = () => { }, onUpdate = () => { }, }) {
+    const [css, theme] = useStyletron();
     const editor = useEditor({
         extensions: [
             Image, Underline,
@@ -281,14 +285,18 @@ function Editor({ onUpdate }) {
                 heading: { levels: [1, 2, 3,] },
             }),
         ],
+        onCreate,
         onUpdate,
     });
-
     return (
-        <>
+        <div className={css({
+            display: 'flex', flexDirection: 'column', padding: 0,
+            border: '2px solid rgb(226, 226, 226)', borderRadius: theme.borders.radius300,
+            color: theme.colors.contentPrimary, fontSize: theme.typography.ParagraphSmall.fontSize,
+        })}>
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
-        </>
+        </div>
     )
 }
 

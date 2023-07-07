@@ -12,9 +12,35 @@
 
 .post img {
     max-width: 100%;
+    height   : auto;
 }
 
 .post a {
     text-decoration: none;
     color          : #ffffff;
+}
+
+.post p {
+    margin-top   : 6px;
+    margin-bottom: 6px;
+}
+
+.post p:first-child {
+    margin-top: 0;
+}
+
+.post ol,
+.post ul {
+    padding-inline-start: 30px;
+}
+
+.post blockquote {
+    border-left: 5px solid lightgray;
+    margin     : 6px 0;
+    padding    : 4px 8px;
+    clear      : both;
+}
+
+.post blockquote p {
+    margin: 0;
 }
