@@ -13,7 +13,7 @@ import { Check, Search } from 'baseui/icon';
 import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useAuth } from '../../hooks/use-auth';
-import { ChatAlt2, Gift2, Message4, Pin, Reply } from '../../components/icons';
+import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply } from '../../components/icons';
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages } from '../../constants';
 import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
@@ -339,11 +339,12 @@ function Discussions({ appId, channelId, }) {
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>
                                         }
-                                        <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
-                                            {discussion?.last?.user?.name && <Reply width='16px' height='16px' />}
-                                            @{discussion?.last?.user ? discussion?.last?.user.name : discussion?.user?.name}
-                                        </LabelSmall>
-                                        <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        {discussion.isClosed &&
+                                            <>
+                                                <Lock width='16px' height='16px' />
+                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                            </>
+                                        }
                                         {discussion?.meta?.posts > 0 &&
                                             <>
                                                 <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
@@ -362,6 +363,11 @@ function Discussions({ appId, channelId, }) {
                                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                             </>
                                         }
+                                        <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
+                                            {discussion?.last?.user?.name && <Reply width='16px' height='16px' />}
+                                            @{discussion?.last?.user ? discussion?.last?.user.name : discussion?.user?.name}
+                                        </LabelSmall>
+                                        <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                         <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
                                     </Block>
                                 </Block>

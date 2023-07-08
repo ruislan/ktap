@@ -11,7 +11,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'b
 import RouterLink from '../../components/router-link';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
-import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin } from '../../components/icons';
+import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock } from '../../components/icons';
 import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, Styles } from '../../constants';
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
@@ -74,7 +74,7 @@ function AppGlance({ app }) {
     );
 }
 
-function DiscussionMeta({ discussion }) {
+function DiscussionMeta({ discussion, onChange = () => { } }) {
     const { user } = useAuth();
     const [canAct, setCanAct] = React.useState(false);
     const [isLoadingSticky, setIsLoadingSticky] = React.useState(false);
@@ -98,6 +98,7 @@ function DiscussionMeta({ discussion }) {
             });
             if (res.ok) {
                 setIsSticky(sticky);
+                onChange({ sticky });
             }
         } finally {
             setIsLoadingSticky(false);
@@ -114,6 +115,7 @@ function DiscussionMeta({ discussion }) {
             });
             if (res.ok) {
                 setIsClosed(close);
+                onChange({ close });
             }
         } finally {
             setIsLoadingClose(false);
@@ -510,7 +512,7 @@ function DiscussionPosts({ discussion }) {
                     <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
                 </Block>
             }
-            {user &&
+            {user && !discussion?.isClosed &&
                 <Block marginTop='scale600' display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300 } }
                 }}>
@@ -570,11 +572,14 @@ function DiscussionsDetail() {
                 <RouterLink href={`/discussions/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
                 <LabelSmall>讨论详情</LabelSmall>
             </Block>
-            <Block display='flex' width='100%' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale700' marginBottom='scale600'
+            <Block display='flex' width='100%' alignItems='center' backgroundColor='backgroundSecondary' padding='scale700'
+                marginBottom='scale600' gridGap='scale100'
                 overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow500, } }
                 }}
             >
+                {discussion.isSticky && (<Pin width='24px' height='24px' />)}
+                {discussion.isClosed && (<Lock width='24px' height='24px' />)}
                 <HeadingXSmall margin='0'>{discussion.title}</HeadingXSmall>
             </Block>
             <Block display='flex' width='100%' overrides={{
@@ -588,7 +593,10 @@ function DiscussionsDetail() {
                 <Block display='flex' flexDirection='column' width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginLeft: 0, } } }
                 }}>
-                    {!isLoadingDiscussion && <DiscussionMeta discussion={discussion} />}
+                    {!isLoadingDiscussion && <DiscussionMeta discussion={discussion} onChange={({ sticky, close }) => {
+                        if (sticky !== undefined) setDiscussion(prev => ({ ...prev, isSticky: sticky }));
+                        if (close !== undefined) setDiscussion(prev => ({ ...prev, isClosed: close }));
+                    }} />}
                     {!isLoadingDiscussion && <AppGlance app={discussion?.app} />}
                     {!isLoadingDiscussion && <OtherDiscussions appId={appId} discussionId={discussion.id} />}
                 </Block>
