@@ -77,16 +77,14 @@ function AppGlance({ app }) {
 function DiscussionMeta({ discussion, onChange = () => { } }) {
     const { user } = useAuth();
     const [canAct, setCanAct] = React.useState(false);
+    const navigate = useNavigate();
     const [isLoadingSticky, setIsLoadingSticky] = React.useState(false);
     const [isLoadingClose, setIsLoadingClose] = React.useState(false);
     const [isSticky, setIsSticky] = React.useState(discussion?.isSticky);
     const [isClosed, setIsClosed] = React.useState(discussion?.isClosed);
 
-    React.useEffect(() => {
-        if (user && discussion?.user?.id) {
-            setCanAct(user.id === discussion.user.id);
-        }
-    }, [user, discussion]);
+    const [isDeleting, setIsDeleting] = React.useState(false);
+    const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
 
     const handleSticky = async ({ sticky }) => {
         setIsLoadingSticky(true);
@@ -122,6 +120,27 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
         }
     };
 
+    const handleDelete = async () => {
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussion.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                // back to channel
+                navigate(`/discussions/apps/${discussion.app.id}/channels/${discussion.channel.id}`);
+            }
+        } finally {
+            setIsDeleting(false);
+            setIsOpenDeleteConfirmModal(false);
+        }
+    };
+
+    console.log(discussion);
+
+    React.useEffect(() => {
+        if (user && discussion?.user?.id) {
+            setCanAct(user.id === discussion.user.id);
+        }
+    }, [user, discussion]);
     return (
         <SideBox title='讨论信息'>
             <Block display='flex' flexDirection='column' paddingTop='0' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600'>
@@ -142,11 +161,25 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
                             {isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: false })}>取消置顶</Button>}
                             {!isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: true })}>关闭</Button>}
                             {isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: false })}>打开</Button>}
-                            <Button kind='secondary' size='compact' onClick={() => { }}>删除</Button>
+                            <Button kind='secondary' size='compact' onClick={() => setIsOpenDeleteConfirmModal(true)}>删除</Button>
                         </>
                     }
                 </Block>
             </Block>
+            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
+                closeable={false}
+                isOpen={isOpenDeleteConfirmModal}
+                animate
+                autoFocus
+                role={ROLE.alertdialog}
+            >
+                <ModalHeader>是否删除讨论？</ModalHeader>
+                <ModalBody>您确定要删除这个讨论吗？相关的帖子，以及帖子和礼物等将会一并删除。该操作<b>不能撤消</b>。</ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenDeleteConfirmModal(false)}>取消</ModalButton>
+                    <ModalButton onClick={() => handleDelete()} isLoading={isDeleting}>确定</ModalButton>
+                </ModalFooter>
+            </Modal>
         </SideBox>
     );
 }
@@ -197,22 +230,30 @@ function OtherDiscussions({ discussionId }) {
     );
 }
 
-function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }) {
+function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { } }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
     const [isDoingThumbDown, setIsDoingThumbDown] = React.useState(false);
-    const [isActiveThumbUp, setIsActiveThumbUp] = React.useState(post.viewer?.direction === 'up');
-    const [isActiveThumbDown, setIsActiveThumbDown] = React.useState(post.viewer?.direction === 'down');
+    const [isActiveThumbUp, setIsActiveThumbUp] = React.useState(false);
+    const [isActiveThumbDown, setIsActiveThumbDown] = React.useState(false);
+    // gift
     const [isOpenGiftModal, setIsOpenGiftModal] = React.useState(false);
     const [gifts, setGifts] = React.useState([]);
     const [checkedGift, setCheckedGift] = React.useState(null);
     const [isOpenGiftConfirmModal, setIsOpenGiftConfirmModal] = React.useState(false);
     const [isSendingGift, setIsSendingGift] = React.useState(false);
+    // end gift
+    // report
     const [reportContent, setReportContent] = React.useState('');
     const [isOpenReportModal, setIsOpenReportModal] = React.useState(false);
     const [isReporting, setIsReporting] = React.useState(false);
     const [isReported, setIsReported] = React.useState(true);
+    // end report
+    // delete post
+    const [isDeleting, setIsDeleting] = React.useState(false);
+    const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
+    // end delete post
 
     const handleThumb = async (direction) => {
         if (!user) { navigate('/login'); return; }
@@ -227,6 +268,8 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }
 
                 direction === 'up' && (setIsActiveThumbDown(false) || setIsActiveThumbUp(prev => !prev));
                 direction === 'down' && (setIsActiveThumbUp(false) || setIsActiveThumbDown(prev => !prev));
+
+                afterThumbed({ direction });
             }
         } finally {
             direction === 'up' && setIsDoingThumbUp(false);
@@ -280,6 +323,17 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }
         }
     };
 
+    const handleDelete = async () => {
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussionId}/posts/${post.id}`, { method: 'DELETE' });
+            if (res.ok) afterDeleted();
+        } finally {
+            setIsDeleting(false);
+            setIsOpenDeleteConfirmModal(false);
+        }
+    };
+
     React.useEffect(() => {
         (async () => {
             if (user && user.id !== post.user.id) {
@@ -290,6 +344,8 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }
                 }
             }
         })();
+        setIsActiveThumbUp(post.viewer?.direction === 'up');
+        setIsActiveThumbDown(post.viewer?.direction === 'down');
     }, [user, post]);
 
     return (
@@ -327,7 +383,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }
                             </>
                         }
                         {user && user.id === post.user?.id &&
-                            <Button kind='secondary' size='mini' title='删除' onClick={() => { }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
+                            <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
                         }
                     </Block>
                 </Block>
@@ -416,6 +472,20 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, }
                     </Block>
                 </ModalFooter>
             </Modal>
+            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
+                closeable={false}
+                isOpen={isOpenDeleteConfirmModal}
+                animate
+                autoFocus
+                role={ROLE.alertdialog}
+            >
+                <ModalHeader>是否删除该贴？</ModalHeader>
+                <ModalBody>您确定要删除这个帖子吗？相关的礼物等将会一并删除。该操作<b>不能撤消</b>。</ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenDeleteConfirmModal(false)}>取消</ModalButton>
+                    <ModalButton onClick={() => handleDelete()} isLoading={isDeleting}>确定</ModalButton>
+                </ModalFooter>
+            </Modal>
         </>
     );
 }
@@ -493,7 +563,7 @@ function DiscussionPosts({ discussion }) {
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale600'>
-            {[...(dataList || []), ...(newPosts || [])].map((post, index) => {
+            {[...dataList, ...newPosts].map((post, index) => {
                 return (
                     <Block key={index} display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
                         Block: { style: { borderRadius: theme.borders.radius300 } }
@@ -503,7 +573,17 @@ function DiscussionPosts({ discussion }) {
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                         </Block>
-                        <DiscussionPostActions discussionId={discussion.id} post={post} onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()} />
+                        <DiscussionPostActions discussionId={discussion.id} post={post}
+                            onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()}
+                            afterThumbed={({ direction }) => {
+                                setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
+                                setDataList(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
+                            }}
+                            afterDeleted={() => {
+                                setNewPosts(prev => prev.filter(v => v.id !== post.id));
+                                setDataList(prev => prev.filter(v => v.id !== post.id));
+                            }}
+                        />
                     </Block>
                 );
             })}

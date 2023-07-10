@@ -118,6 +118,7 @@ root.render(
                   <Route index element={<Discussions />} />
                   <Route path=':id' element={<DiscussionsDetail />} />
                   <Route path='apps/:appId' element={<DiscussionsApp />} />
+                  <Route path='apps/:appId/channels/:channelId' element={<DiscussionsApp />} />
                 </Route>
                 <Route path='/search/:keyword' element={<Search />} />
                 <Route path='/tags/:name' element={<Tags />} />

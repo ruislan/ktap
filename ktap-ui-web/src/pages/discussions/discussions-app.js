@@ -148,11 +148,11 @@ function AppBanner({ appId }) {
     );
 }
 
-function Channels({ appId }) {
+function Channels({ appId, channelId = 0, }) {
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
-    const [channelId, setChannelId] = React.useState(0);
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         (async () => {
@@ -169,7 +169,6 @@ function Channels({ appId }) {
         })();
     }, [appId]);
 
-
     return (
         <Block display='flex' flexDirection='column' gridGap='scale300' paddingTop='scale600' paddingBottom='scale600'>
             {isLoading ?
@@ -180,14 +179,14 @@ function Channels({ appId }) {
                             <div key={index} className={css({
                                 display: 'flex', alignItems: 'center', gap: theme.sizing.scale300, overflow: 'hidden',
                                 cursor: 'pointer', position: 'relative', padding: theme.sizing.scale300, minWidth: '240px',
-                                backgroundColor: channel.id === channelId ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary,
+                                backgroundColor: channel.id == channelId ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary,
                                 borderRadius: theme.borders.radius300, textDecoration: 'none',
-                                boxShadow: channel.id === channelId ? theme.lighting.shadow700 : 'unset',
+                                boxShadow: channel.id == channelId ? theme.lighting.shadow700 : 'unset',
                                 ':hover': {
                                     backgroundColor: theme.colors.backgroundTertiary,
                                     boxShadow: theme.lighting.shadow700,
                                 },
-                            })} onClick={() => setChannelId(channel.id)}>
+                            })} onClick={() => navigate(channel.id > 0 ? `/discussions/apps/${appId}/channels/${channel.id}` : `/discussions/apps/${appId}`)}>
                                 {channel.icon
                                     ? <img src={channel.icon} className={css({ objectFit: 'cover', borderRadius: theme.borders.radius300, width: theme.sizing.scale1200, height: theme.sizing.scale1200 })} alt={channel.name} />
                                     : <div className={css({
@@ -197,8 +196,8 @@ function Channels({ appId }) {
                                     </div>
                                 }
                                 <Block display='flex' flexDirection='column' gridGap='scale100' width='calc(100% - 56px)'>
-                                    <LabelSmall color={channel.id === channelId ? '' : 'primary100'}>{channel.name}</LabelSmall>
-                                    <LabelXSmall color={channel.id === channelId ? 'primary100' : 'primary300'} width='100%' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{channel.description}</LabelXSmall>
+                                    <LabelSmall color={channel.id == channelId ? '' : 'primary100'}>{channel.name}</LabelSmall>
+                                    <LabelXSmall color={channel.id == channelId ? 'primary100' : 'primary300'} width='100%' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{channel.description}</LabelXSmall>
                                 </Block>
                             </div>
                         );
@@ -388,7 +387,7 @@ function Discussions({ appId, channelId, }) {
 }
 
 function DiscussionsApp() {
-    const { appId } = useParams();
+    const { appId, channelId } = useParams();
 
     return (
         <Block display='flex' flexDirection='column' alignItems='center'>
@@ -403,7 +402,7 @@ function DiscussionsApp() {
                     })
                 }
             }}>
-                <Channels appId={appId} />
+                <Channels appId={appId} channelId={channelId} />
             </Block>
         </Block>
     );
