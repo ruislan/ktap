@@ -234,6 +234,7 @@ const discussions = async (fastify, opts) => {
             const data = await fastify.db.discussionPost.create({
                 data: { content: cleanContent, discussionId: id, userId, ip: req.ip }
             });
+            await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
             return reply.code(200).send({ data: { id: data.id, content: data.content, createdAt: data.createdAt, ip: data.ip, updatedAt: data.updatedAt } });
         }
     });

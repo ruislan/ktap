@@ -9,6 +9,8 @@ import TabReviews from './tab-reviews';
 import TabReviewComments from './tab-review-comments';
 import TabFollowApps from './tab-follow-apps';
 import TabFollowUsers from './tab-follow-users';
+import TabDiscussions from './tab-discussions';
+import TabDiscussionPosts from './tab-discussion-posts';
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 
 function User() {
@@ -69,11 +71,13 @@ function User() {
                 }
             }}>
                 <Tabs activeKey={activeTab} onChange={({ activeKey }) => setActiveTab(activeKey)} activateOnFocus>
-                    <Tab title="活动" key='activities'><TabActivities theUser={theUser} /></Tab>
-                    <Tab title="评测" key='reviews'><TabReviews theUser={theUser} /></Tab>
-                    <Tab title="评测回复" key='review-comments'><TabReviewComments theUser={theUser} /></Tab>
-                    <Tab title="关注游戏" key='follow-apps'><TabFollowApps theUser={theUser} /></Tab>
-                    <Tab title="关注用户" key='follow-users'><TabFollowUsers theUser={theUser} /></Tab>
+                    <Tab title="活动" key='activities' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabActivities theUser={theUser} /></Tab>
+                    <Tab title="评测" key='reviews' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabReviews theUser={theUser} /></Tab>
+                    <Tab title="评测回复" key='review-comments' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabReviewComments theUser={theUser} /></Tab>
+                    <Tab title="讨论" key='discussions' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabDiscussions theUser={theUser} /></Tab>
+                    <Tab title="讨论发帖" key='discussion-posts' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabDiscussionPosts theUser={theUser} /></Tab>
+                    <Tab title="关注游戏" key='follow-apps' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabFollowApps theUser={theUser} /></Tab>
+                    <Tab title="关注用户" key='follow-users' overrides={{ Tab: { style: { whiteSpace: 'noWrap' } } }}><TabFollowUsers theUser={theUser} /></Tab>
                 </Tabs>
             </Block>
             <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}

@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { LabelXSmall } from 'baseui/typography';
 import { StatefulPopover } from 'baseui/popover';
 
-function Gift({ src, number, name, description, price, onClick }) {
+function Gift({ src, number, name, description, price, onClick = () => { } }) {
     return (
         <StatefulPopover accessibilityType='tooltip' triggerType='hover' placement='top'
             content={() => (

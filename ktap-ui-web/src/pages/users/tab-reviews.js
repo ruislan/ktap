@@ -336,6 +336,7 @@ function TabReviewsListItem({ review }) {
     );
 }
 
+// XXX 思考一下，这里这么多交互是否合适？是否应该简化，交互则跳转到reviews/:id页面去。
 function TabReviews({ theUser }) {
     const limit = 10;
     const [reviews, setReviews] = React.useState([]);

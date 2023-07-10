@@ -102,8 +102,10 @@ const user = async (fastify, opts) => {
         const id = Number(req.params.id) || 0;
         if (id > 0) {
             if (req.params.type === 'user') {
-                const data = await fastify.db.followUser.create({ data: { followerId, userId: id } });
-                await fastify.db.timeline.create({ data: { userId: followerId, targetId: data.id, target: 'FollowUser', } });
+                if (followerId !== id) { // 自己不能关注自己
+                    const data = await fastify.db.followUser.create({ data: { followerId, userId: id } });
+                    await fastify.db.timeline.create({ data: { userId: followerId, targetId: data.id, target: 'FollowUser', } });
+                }
             } else {
                 const data = await fastify.db.followApp.create({ data: { followerId, appId: id } });
                 await fastify.db.timeline.create({ data: { userId: followerId, targetId: data.id, target: 'FollowApp', } });

@@ -28,10 +28,10 @@ function LeftLine({ type }) {
                     })
                 }
             }}>
-                {type === 'Review' && <Annotation width='18px' height='18px' />}
-                {type === 'ReviewComment' && <ChatAlt2 width='18px' height='18px' />}
+                {(type === 'Review' || type === 'Discussion') && <Annotation width='18px' height='18px' />}
+                {(type === 'ReviewComment' || type === 'DiscussionPost') && <ChatAlt2 width='18px' height='18px' />}
                 {(type === 'FollowApp' || type == 'FollowUser') && <Bookmark width='18px' height='18px' />}
-                {type === 'ReviewGiftRef' && <GiftIcon width='18px' height='18px' />}
+                {(type === 'ReviewGiftRef' || type === 'DiscussionPostGiftRef') && <GiftIcon width='18px' height='18px' />}
             </Block>
             <Block height='100%' marginLeft='auto' marginRight='auto' marginTop='scale200' marginBottom='scale200'>
                 <Block overrides={{
@@ -197,6 +197,101 @@ function ActivityItem({ activity }) {
                                 </>) :
                                 (<LabelSmall padding='scale200' color='primary200'>该游戏暂不可见</LabelSmall>)
                             }
+                        </Block>
+                    </>
+                )}
+                {activity.type === 'Discussion' && (
+                    <>
+                        {activity.data.app ?
+                            (<LabelMedium marginBottom='scale200'>发起了一次关于 <RouterLink href={`/apps/${activity.data.app.id}`} kind='underline'>{activity.data.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${activity.data.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
+                            (<LabelMedium marginBottom='scale200'>发起了 <RouterLink href={`/discussions/${activity.data.id}`} kind='underline'>讨论</RouterLink></LabelMedium>)
+                        }
+                        <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
+                        <Block display='flex' flexDirection='column'>
+                            <ParagraphMedium>{activity.data.title}</ParagraphMedium>
+                            <Block display='flex' alignItems='center' padding='scale100' backgroundColor='backgroundSecondary'
+                                overrides={{
+                                    Block: {
+                                        style: ({ $theme }) => ({
+                                            borderRadius: $theme.borders.radius300,
+                                        })
+                                    }
+                                }}
+                            >
+                                {activity.data.app
+                                    ? (
+                                        <>
+                                            <Block display='flex' maxWidth='154px'>
+                                                <img width='100%' height='auto' className={css({ borderRadius: theme.borders.radius200 })} src={activity.data.app.media.head.thumbnail} />
+                                            </Block>
+                                            <Block paddingLeft='scale400' display='flex' flexDirection='column'>
+                                                <LabelMedium marginBottom='scale100' color='primary100' overrides={{
+                                                    Block: {
+                                                        style: {
+                                                            inlineSize: '168px',
+                                                            whiteSpace: 'break-spaces',
+                                                        }
+                                                    }
+                                                }}>
+                                                    <RouterLink href={`/apps/${activity.data.app.id}`} kind='underline'>{activity.data.app.name}</RouterLink>
+                                                </LabelMedium>
+                                                <Block display='flex' alignItems='center'>
+                                                    <LabelMedium marginRight='scale0' color='primary100'>{activity.data.app.score}</LabelMedium>
+                                                    <Star width='20px' height='20px' />
+                                                </Block>
+                                            </Block>
+                                        </>
+                                    )
+                                    : (<LabelMedium color='primary400'>该游戏暂不可见</LabelMedium>)
+                                }
+                            </Block>
+                        </Block>
+                    </>
+                )}
+                {activity.type === 'DiscussionPost' && (
+                    <>
+                        {activity.data.discussion ?
+                            (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${activity.data.discussion.user.id}`} kind='underline'>{activity.data.discussion.user.name}</RouterLink> 关于 <RouterLink href={`/apps/${activity.data.discussion.app.id}`} kind='underline'>{activity.data.discussion.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${activity.data.discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
+                            (<LabelMedium marginBottom='scale200'>回复了一个讨论</LabelMedium>)
+                        }
+                        <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
+                        <Block display='flex' flexDirection='column'>
+                            <ParagraphMedium marginBottom='0' dangerouslySetInnerHTML={{ __html: activity.data.content }} />
+                            <ParagraphSmall backgroundColor='backgroundSecondary' padding='scale300' color='primary200' marginBottom='0'
+                                overrides={{
+                                    Block: {
+                                        style: ({ $theme }) => ({
+                                            borderRadius: $theme.borders.radius300,
+                                        })
+                                    }
+                                }}
+                            >
+                                {activity.data.discussion ? activity.data.discussion.title : '该讨论已被删除'}
+                            </ParagraphSmall>
+                        </Block>
+                    </>
+                )}
+                {activity.type === 'DiscussionPostGiftRef' && (
+                    <>
+                        {activity.data?.post ?
+                            (<LabelMedium marginBottom='scale200'>
+                                给 <RouterLink href={`/users/${activity.data.post.user.id}`} kind='underline'>{activity.data.post.user.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.post.id}`} kind='underline'>帖子</RouterLink> 赠送了礼物
+                            </LabelMedium>) :
+                            (<LabelMedium marginBottom='scale200'>给帖子赠送了礼物</LabelMedium>)
+                        }
+                        <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
+                        <Block display='flex' flexDirection='column'>
+                            <ParagraphSmall backgroundColor='backgroundSecondary' padding='scale300' color='primary200' marginBottom='0'
+                                overrides={{
+                                    Block: {
+                                        style: ({ $theme }) => ({
+                                            borderRadius: $theme.borders.radius300,
+                                        })
+                                    }
+                                }}
+                                dangerouslySetInnerHTML={{ __html: activity.data?.post ? activity.data.post.content : '该帖子已被删除' }}
+                            />
+                            <Block marginTop='scale300' width='fit-content'><Gift src={activity.data?.gift.url} name={activity.data?.gift.name} description={activity.data?.gift.description} price={activity.data?.gift.price} /></Block>
                         </Block>
                     </>
                 )}

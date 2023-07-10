@@ -39,7 +39,7 @@ function UserProfile({ theUser, theUserMeta }) {
 
     React.useEffect(() => {
         (async () => {
-            if (user) {
+            if (user && user.id !== theUser.id) { // 自己不存在关注自己
                 const res = await fetch(`/api/user/follows/user/${theUser.id}`);
                 if (res.ok) {
                     const json = await res.json();
@@ -87,10 +87,13 @@ function UserProfile({ theUser, theUserMeta }) {
                         {user && user.id === theUser?.id ? '编辑' : (isFollowed ? '取消关注' : '关注')}
                     </Button>
                 </Block>
-                <Block display='flex' justifyContent='space-between' gridGap='scale300' alignItems='center' marginTop='scale600' marginBottom='scale600'>
-                    <UserDataItem name='关注数' value={Numbers.abbreviate(theUserMeta?.follows?.count || 0)} />
-                    <UserDataItem name='评测数' value={Numbers.abbreviate(theUserMeta?.reviews || 0)} />
-                    <UserDataItem name='回复数' value={Numbers.abbreviate(theUserMeta?.comments || 0)} />
+                <Block display='grid' gridGap='scale300' gridTemplateColumns='repeat(3, 1fr)' marginTop='scale600' marginBottom='scale600'>
+                    <UserDataItem name='关注游戏' value={Numbers.abbreviate(theUserMeta?.follows?.apps || 0)} />
+                    <UserDataItem name='发布评测' value={Numbers.abbreviate(theUserMeta?.reviews || 0)} />
+                    <UserDataItem name='回复评测' value={Numbers.abbreviate(theUserMeta?.comments || 0)} />
+                    <UserDataItem name='关注用户' value={Numbers.abbreviate(theUserMeta?.follows?.users || 0)} />
+                    <UserDataItem name='发起讨论' value={Numbers.abbreviate(theUserMeta?.discussions || 0)} />
+                    <UserDataItem name='讨论发帖' value={Numbers.abbreviate(theUserMeta?.posts || 0)} />
                 </Block>
             </Block>
         </Block>

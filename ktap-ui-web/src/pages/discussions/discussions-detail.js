@@ -134,8 +134,6 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
         }
     };
 
-    console.log(discussion);
-
     React.useEffect(() => {
         if (user && discussion?.user?.id) {
             setCanAct(user.id === discussion.user.id);
@@ -648,8 +646,8 @@ function DiscussionsDetail() {
             }
         }}>
             <Block display='flex' width='100%' alignItems='center' gridGap='scale300' marginBottom='scale800'>
-                <RouterLink href={`/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.app?.name}</LabelSmall></RouterLink> /
-                <RouterLink href={`/discussions/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
+                <RouterLink href={`/discussions/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.app?.name}</LabelSmall></RouterLink> /
+                <RouterLink href={`/discussions/apps/${discussion?.app?.id}/channels/${discussion?.channel?.id}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
                 <LabelSmall>讨论详情</LabelSmall>
             </Block>
             <Block display='flex' width='100%' alignItems='center' backgroundColor='backgroundSecondary' padding='scale700'

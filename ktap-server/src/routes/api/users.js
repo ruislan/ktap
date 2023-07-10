@@ -149,6 +149,71 @@ const users = async (fastify, opts) => {
         return reply.code(200).send({ data, count, skip, limit });
     });
 
+    fastify.get('/:id/discussion-posts', async function (req, reply) {
+        const userId = Number(req.params.id) || 0;
+        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const count = await fastify.db.discussionPost.count({ where: { userId, } });
+        const data = await fastify.db.discussionPost.findMany({
+            where: { userId, },
+            select: {
+                id: true, content: true, createdAt: true, updatedAt: true,
+                discussion: {
+                    select: {
+                        id: true, title: true,
+                        app: { select: { id: true, name: true, } },
+                        user: { select: { id: true, name: true, } },
+                    },
+                },
+            },
+            orderBy: { createdAt: 'desc' },
+            take: limit,
+            skip,
+        });
+        return reply.code(200).send({ data, count, skip, limit });
+    });
+
+    fastify.get('/:id/discussions', async function (req, reply) {
+        const userId = Number(req.params.id) || 0;
+        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const count = await fastify.db.discussion.count({ where: { userId, } });
+        const data = await fastify.db.discussion.findMany({
+            where: { userId },
+            select: {
+                id: true, title: true, createdAt: true, updatedAt: true,
+                app: {
+                    select: {
+                        id: true, name: true, score: true, isVisible: true,
+                        media: {
+                            where: { usage: AppMedia.usage.head },
+                            select: { image: true, thumbnail: true, usage: true },
+                        },
+                    }
+                },
+            },
+            orderBy: { updatedAt: 'desc' },
+            take: limit,
+            skip,
+        });
+        for (const item of data) {
+            // app 不可见则无需展示
+            if (item.app.isVisible) {
+                item.app.media = {
+                    head: item.app.media.map(m => {
+                        return {
+                            image: m.image,
+                            thumbnail: m.thumbnail,
+                        };
+                    })[0]
+                };
+            } else {
+                delete item.app;
+            }
+        }
+        return reply.code(200).send({ data, count, skip, limit });
+    });
+
     fastify.get('/:id/timeline', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
@@ -254,6 +319,64 @@ const users = async (fastify, opts) => {
                     }
                     item.target = 'FollowApp';
                     break;
+                case 'Discussion':
+                    item.data = await fastify.db.discussion.findUnique({
+                        where: { id: item.targetId },
+                        select: {
+                            id: true, title: true, createdAt: true,
+                            app: {
+                                select: {
+                                    id: true, name: true, score: true, isVisible: true,
+                                    media: {
+                                        where: { usage: AppMedia.usage.head },
+                                        select: { image: true, thumbnail: true, usage: true },
+                                    },
+                                }
+                            },
+                        }
+                    });
+                    if (item.data.app.isVisible) {
+                        item.data.app.media = {
+                            head: item.data.app.media.map(m => {
+                                return {
+                                    image: m.image,
+                                    thumbnail: m.thumbnail,
+                                };
+                            })[0]
+                        };
+                    } else {
+                        delete item.data.app;
+                    }
+                    break;
+                case 'DiscussionPost':
+                    item.data = await fastify.db.discussionPost.findUnique({
+                        where: { id: item.targetId },
+                        select: {
+                            id: true, content: true, createdAt: true,
+                            discussion: {
+                                select: {
+                                    id: true, title: true,
+                                    user: { select: { id: true, name: true, } },
+                                    app: { select: { id: true, name: true, } },
+                                }
+                            }
+                        }
+                    });
+                    break;
+                case 'DiscussionPostGiftRef':
+                    item.data = await fastify.db.discussionPostGiftRef.findUnique({
+                        where: { id: item.targetId },
+                        select: {
+                            gift: { select: { name: true, description: true, url: true, price: true, } },
+                            post: {
+                                select: {
+                                    id: true, content: true,
+                                    user: { select: { id: true, name: true, } },
+                                }
+                            }
+                        }
+                    });
+                    break;
                 default: break;
             }
             // delete unused fields
@@ -265,44 +388,28 @@ const users = async (fastify, opts) => {
         return reply.code(200).send({ data, count, skip, limit });
     });
 
-    fastify.get('/:id', {
-        schema: {
-            params: {
-                type: 'object',
-                properties: { id: { type: 'string' }, },
-                required: ['id'],
-            },
-            response: {
-                200: {
-                    type: 'object',
-                    properties: {
-                        data: { $ref: 'user#basic' },
-                        meta: { reviews: 'number', follows: 'number', comments: 'number' }
-                    }
-                }
-            }
-        },
-        handler: async function (req, reply) {
-            const id = Number(req.params.id || 0);
-            const user = await fastify.db.user.findUnique({ where: { id } });
-            // 关注数, 评测数, 回复数
-            const meta = (await fastify.db.$queryRaw`
+    fastify.get('/:id', async function (req, reply) {
+        const id = Number(req.params.id || 0);
+        const user = await fastify.db.user.findUnique({ where: { id } });
+        // 关注数, 评测数, 回复数
+        const meta = (await fastify.db.$queryRaw`
                 SELECT
                 (SELECT COUNT(FollowUser.user_id) FROM FollowUser WHERE FollowUser.follower_id=${id}) AS followUsers,
                 (SELECT COUNT(FollowApp.app_id) FROM FollowApp WHERE FollowApp.follower_id=${id}) AS followApps,
                 (SELECT COUNT(Review.id) FROM Review WHERE Review.user_id=${id}) AS reviews,
-                (SELECT COUNT(ReviewComment.id) FROM ReviewComment WHERE ReviewComment.user_id=${id}) AS comments
+                (SELECT COUNT(ReviewComment.id) FROM ReviewComment WHERE ReviewComment.user_id=${id}) AS comments,
+                (SELECT COUNT(Discussion.id) FROM Discussion WHERE Discussion.user_id=${id}) AS discussions,
+                (SELECT COUNT(DiscussionPost.id) FROM DiscussionPost WHERE DiscussionPost.user_id=${id}) AS posts
             `)[0];
-            if (!user) return reply.code(404).send(); // not found
-            meta.follows = {
-                count: meta.followUsers + meta.followApps,
-                users: meta.followUsers,
-                apps: meta.followApps,
-            };
-            delete meta.followUsers;
-            delete meta.followApps;
-            return reply.code(200).send({ data: user, meta });
-        },
+        if (!user) return reply.code(404).send(); // not found
+        meta.follows = {
+            count: meta.followUsers + meta.followApps,
+            users: meta.followUsers,
+            apps: meta.followApps,
+        };
+        delete meta.followUsers;
+        delete meta.followApps;
+        return reply.code(200).send({ data: user, meta });
     });
 };
 

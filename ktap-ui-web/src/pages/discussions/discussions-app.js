@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Skeleton } from 'baseui/skeleton';
 import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
@@ -152,7 +152,7 @@ function Channels({ appId, channelId = 0, }) {
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
-    const navigate = useNavigate();
+    const scrollRef = React.useRef(null);
 
     React.useEffect(() => {
         (async () => {
@@ -169,6 +169,10 @@ function Channels({ appId, channelId = 0, }) {
         })();
     }, [appId]);
 
+    React.useEffect(() => {
+        if (scrollRef.current) scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }, [dataList]); // dataList 存在了，就可以滑动了
+
     return (
         <Block display='flex' flexDirection='column' gridGap='scale300' paddingTop='scale600' paddingBottom='scale600'>
             {isLoading ?
@@ -176,17 +180,17 @@ function Channels({ appId, channelId = 0, }) {
                 <Block paddingBottom='scale600' overflow='scrollX' display='flex' alignItems='center' gridGap='scale300'>
                     {dataList && dataList.map((channel, index) => {
                         return (
-                            <div key={index} className={css({
+                            <Link key={index} ref={channel.id == channelId ? scrollRef : null} className={css({
                                 display: 'flex', alignItems: 'center', gap: theme.sizing.scale300, overflow: 'hidden',
-                                cursor: 'pointer', position: 'relative', padding: theme.sizing.scale300, minWidth: '240px',
+                                cursor: 'pointer', position: 'relative', padding: theme.sizing.scale300, minWidth: '240px', maxWidth: '240px', width: '240px',
                                 backgroundColor: channel.id == channelId ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary,
-                                borderRadius: theme.borders.radius300, textDecoration: 'none',
+                                borderRadius: theme.borders.radius300, textDecoration: 'none', color: 'inherit',
                                 boxShadow: channel.id == channelId ? theme.lighting.shadow700 : 'unset',
                                 ':hover': {
                                     backgroundColor: theme.colors.backgroundTertiary,
                                     boxShadow: theme.lighting.shadow700,
                                 },
-                            })} onClick={() => navigate(channel.id > 0 ? `/discussions/apps/${appId}/channels/${channel.id}` : `/discussions/apps/${appId}`)}>
+                            })} to={channel.id > 0 ? `/discussions/apps/${appId}/channels/${channel.id}` : `/discussions/apps/${appId}`}>
                                 {channel.icon
                                     ? <img src={channel.icon} className={css({ objectFit: 'cover', borderRadius: theme.borders.radius300, width: theme.sizing.scale1200, height: theme.sizing.scale1200 })} alt={channel.name} />
                                     : <div className={css({
@@ -199,7 +203,7 @@ function Channels({ appId, channelId = 0, }) {
                                     <LabelSmall color={channel.id == channelId ? '' : 'primary100'}>{channel.name}</LabelSmall>
                                     <LabelXSmall color={channel.id == channelId ? 'primary100' : 'primary300'} width='100%' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{channel.description}</LabelXSmall>
                                 </Block>
-                            </div>
+                            </Link>
                         );
                     })}
                 </Block>
