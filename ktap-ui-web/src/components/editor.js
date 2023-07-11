@@ -1,8 +1,11 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
-import { useEditor, EditorContent } from '@tiptap/react';
 import { StatefulPopover } from 'baseui/popover';
 import { Block } from 'baseui/block';
+import { Input } from 'baseui/input';
+import { Button } from 'baseui/button';
+import { Check } from 'baseui/icon';
+import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Color } from '@tiptap/extension-color';
 import Image from '@tiptap/extension-image'
@@ -11,22 +14,10 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import '../assets/css/editor.css';
 
-// function SplitLine() {
-//     const [css, theme] = useStyletron();
-//     return (
-//         <div className={css({
-//             width: '1px', height: '16px', backgroundColor: theme.colors.backgroundTertiary,
-//             marginLeft: theme.sizing.scale0, marginRight: theme.sizing.scale0,
-//         })} />
-//     );
-// }
-
-function EditorButton({ ref, disabled, onClick, isActive, children }) {
+function EditorButton({ disabled, onClick, isActive, children }) {
     const [css, theme] = useStyletron();
     return (
-        <button ref={ref}
-            onClick={onClick}
-            disabled={disabled}
+        <button onClick={onClick} disabled={disabled}
             className={css({
                 borderRadius: '8px', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
                 display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -45,6 +36,7 @@ function EditorButton({ ref, disabled, onClick, isActive, children }) {
 
 function MenuBar({ editor }) {
     const [css, theme] = useStyletron();
+    const [imageURL, setImageURL] = React.useState('');
     if (!editor) return null;
     return (
         <div className={css({
@@ -235,23 +227,40 @@ function MenuBar({ editor }) {
                     <path d="M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
                 </svg>
             </EditorButton>
-            <EditorButton
-                onClick={() => {
-                    const url = window.prompt('图片链接URL');
-
-                    if (url) {
-                        editor.chain().focus().setImage({ src: url }).run();
-                    }
-                }}
+            <StatefulPopover
+                content={({ close }) => (
+                    <Block display='flex' gridGap='scale200' padding='scale300'>
+                        <Input size='compact' onChange={e => setImageURL(e.target.value)} placeholder='http(s)://example.com/image.png' />
+                        <Button size='compact' kind='primary' onClick={() => {
+                            if (/https?:\/\//.test(imageURL)) editor.chain().focus().setImage({ src: imageURL }).run();
+                            close();
+                        }}>
+                            <Check />
+                        </Button>
+                    </Block>
+                )}
+                returnFocus
+                autoFocus
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M15 8h.01"></path>
-                    <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"></path>
-                    <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
-                    <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
-                </svg>
-            </EditorButton>
+                <button
+                    className={css({
+                        borderRadius: '8px', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
+                        display: 'flex', justifyContent: 'center', alignItems: 'center', border: 'unset', margin: 0,
+                        padding: theme.sizing.scale100, width: theme.sizing.scale900, height: theme.sizing.scale900,
+                        color: theme.colors.contentSecondary, backgroundColor: 'transparent',
+                        ':hover': {
+                            backgroundColor: theme.colors.backgroundTertiary,
+                        },
+                    })}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 8h.01"></path>
+                        <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"></path>
+                        <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
+                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
+                    </svg>
+                </button>
+            </StatefulPopover>
             {/* XXX 后面来处理引用 App 这需要扩展tiptap */}
             {/* <EditorButton onClick={() => {
                 const appId = window.prompt('游戏ID');

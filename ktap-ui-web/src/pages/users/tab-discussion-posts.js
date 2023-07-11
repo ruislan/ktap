@@ -4,6 +4,7 @@ import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import RouterLink from '../../components/router-link';
+import '../../assets/css/post.css';
 
 function TabDiscussionPosts({ theUser }) {
     const limit = 10;
@@ -49,7 +50,7 @@ function TabDiscussionPosts({ theUser }) {
                     }
                     <LabelSmall color='primary500' marginTop='scale0'>{dayjs(post.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
                     <Block display='flex' flexDirection='column'>
-                        <ParagraphMedium marginBottom='0' dangerouslySetInnerHTML={{ __html: post.content }} />
+                        <ParagraphMedium className='post' marginBottom='0' dangerouslySetInnerHTML={{ __html: post.content }} />
                         <ParagraphSmall backgroundColor='backgroundTertiary' padding='scale300' color='primary200'
                             overrides={{
                                 Block: {

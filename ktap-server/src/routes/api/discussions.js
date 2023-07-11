@@ -79,22 +79,23 @@ const discussions = async (fastify, opts) => {
         handler: async function (req, reply) {
             const userId = req.user.id;
             const { title, content, appId, channelId, } = req.body;
+            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
 
-            const discussion = await fastify.db.discussion.create({
-                data: { title, appId, discussionChannelId: channelId, userId, },
+            await fastify.db.$transaction(async (tx) => {
+                const discussion = await tx.discussion.create({
+                    data: { title, appId, discussionChannelId: channelId, userId, },
+                });
+                const post = await tx.discussionPost.create({
+                    data: {
+                        content: cleanContent,
+                        discussionId: discussion.id, userId, ip: req.ip
+                    }
+                });
+                await tx.discussion.update({ where: { id: discussion.id }, data: { lastPostId: post.id } });
+                // add first post
+                await tx.timeline.create({ data: { userId, targetId: discussion.id, target: 'Discussion', } });
+                await tx.timeline.create({ data: { userId, targetId: post.id, target: 'DiscussionPost', } });
             });
-            const cleanContent = sanitizeHtml(content, {
-                allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
-            });
-            // add first post
-            const post = await fastify.db.discussionPost.create({
-                data: {
-                    content: cleanContent,
-                    discussionId: discussion.id, userId, ip: req.ip
-                }
-            });
-            await fastify.db.timeline.create({ data: { userId, targetId: discussion.id, target: 'Discussion', } });
-            await fastify.db.timeline.create({ data: { userId, targetId: post.id, target: 'DiscussionPost', } });
             return reply.code(200).send();
         }
     });
@@ -125,6 +126,12 @@ const discussions = async (fastify, opts) => {
                 id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
                 user: {
                     select: { id: true, name: true, title: true, avatar: true, gender: true },
+                },
+                lastPost: {
+                    select: {
+                        id: true, content: true, createdAt: true,
+                        user: { select: { id: true, name: true }, },
+                    },
                 },
                 channel: {
                     select: { id: true, name: true, }
@@ -231,10 +238,13 @@ const discussions = async (fastify, opts) => {
             const { content } = req.body;
             if ((await fastify.db.discussion.count({ where: { id, isClosed: false } })) <= 0) reply.code(404).send(); // 如果讨论被关闭，是不能回帖的
             const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
-            const data = await fastify.db.discussionPost.create({
-                data: { content: cleanContent, discussionId: id, userId, ip: req.ip }
+
+            let data = null;
+            await fastify.db.$transaction(async (tx) => {
+                data = await tx.discussionPost.create({ data: { content: cleanContent, discussionId: id, userId, ip: req.ip } });
+                await tx.discussion.update({ where: { id }, data: { lastPostId: data.id } });
+                await tx.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
             });
-            await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
             return reply.code(200).send({ data: { id: data.id, content: data.content, createdAt: data.createdAt, ip: data.ip, updatedAt: data.updatedAt } });
         }
     });
@@ -314,13 +324,15 @@ const discussions = async (fastify, opts) => {
             if (post) {
                 if (post.userId !== userId) return reply.code(403).send();
 
-                fastify.db.$transaction([
-                    fastify.db.discussionPostReport.deleteMany({ where: { postId } }),
-                    fastify.db.discussionPostThumb.deleteMany({ where: { postId } }),
-                    fastify.db.discussionPostGiftRef.deleteMany({ where: { postId } }),
-                    fastify.db.discussionPost.delete({ where: { id: postId } }),
-                    fastify.db.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: postId, userId: post.userId } }),
-                ])
+                await fastify.db.$transaction(async (tx) => {
+                    const lastPost = (await tx.discussionPost.findMany({ where: { discussionId: id, postId: { not: postId } }, orderBy: { createdAt: 'desc' }, take: 1, }))[0];
+                    await tx.discussion.update({ where: { id }, data: { lastPostId: lastPost?.id || null } });
+                    await tx.discussionPostReport.deleteMany({ where: { postId } });
+                    await tx.discussionPostThumb.deleteMany({ where: { postId } });
+                    await tx.discussionPostGiftRef.deleteMany({ where: { postId } });
+                    await tx.discussionPost.delete({ where: { id: postId } });
+                    await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: postId, userId: post.userId } });
+                });
             }
             return reply.code(204).send();
         }

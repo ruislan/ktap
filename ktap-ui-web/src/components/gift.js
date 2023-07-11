@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { LabelXSmall } from 'baseui/typography';
 import { StatefulPopover } from 'baseui/popover';
 
-function Gift({ src, number, name, description, price, onClick = () => { } }) {
+function Gift({ src, number, name, description, price, $size = '16px', onClick = () => { } }) {
     return (
         <StatefulPopover accessibilityType='tooltip' triggerType='hover' placement='top'
             content={() => (
@@ -30,7 +30,7 @@ function Gift({ src, number, name, description, price, onClick = () => { } }) {
                     })
                 }
             }}>
-                <img src={src} width='16px' height='16px' />
+                <img src={src} width={$size} height={$size} />
                 {number && <LabelXSmall marginLeft='scale100' color='primary200'>{number}</LabelXSmall>}
             </Block>
         </StatefulPopover>

@@ -9,6 +9,7 @@ import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui
 import { Annotation, Bookmark, ChatAlt2, Star, Gift as GiftIcon } from '../../components/icons';
 import RouterLink from '../../components/router-link';
 import Gift from '../../components/gift';
+import '../../assets/css/post.css';
 
 function LeftLine({ type }) {
     return (
@@ -256,7 +257,7 @@ function ActivityItem({ activity }) {
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block display='flex' flexDirection='column'>
-                            <ParagraphMedium marginBottom='0' dangerouslySetInnerHTML={{ __html: activity.data.content }} />
+                            <ParagraphMedium className='post' marginBottom='0' dangerouslySetInnerHTML={{ __html: activity.data.content }} />
                             <ParagraphSmall backgroundColor='backgroundSecondary' padding='scale300' color='primary200' marginBottom='0'
                                 overrides={{
                                     Block: {
@@ -275,13 +276,13 @@ function ActivityItem({ activity }) {
                     <>
                         {activity.data?.post ?
                             (<LabelMedium marginBottom='scale200'>
-                                给 <RouterLink href={`/users/${activity.data.post.user.id}`} kind='underline'>{activity.data.post.user.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.post.id}`} kind='underline'>帖子</RouterLink> 赠送了礼物
+                                给 <RouterLink href={`/users/${activity.data.post.user.id}`} kind='underline'>{activity.data.post.user.name}</RouterLink> 在 <RouterLink href={`/discussions/${activity.data.post.discussion.id}`} kind='underline'>讨论</RouterLink> 的 回帖 赠送了礼物
                             </LabelMedium>) :
                             (<LabelMedium marginBottom='scale200'>给帖子赠送了礼物</LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block display='flex' flexDirection='column'>
-                            <ParagraphSmall backgroundColor='backgroundSecondary' padding='scale300' color='primary200' marginBottom='0'
+                            <ParagraphSmall className='post' backgroundColor='backgroundSecondary' padding='scale300' color='primary200' marginBottom='0'
                                 overrides={{
                                     Block: {
                                         style: ({ $theme }) => ({

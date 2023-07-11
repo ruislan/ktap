@@ -497,15 +497,16 @@ model Discussion {
   discussionChannelId Int      @map("discussion_channel_id") // XXX 帖子是否一定要属于某个频道？
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
-
-  userId Int  @map("user_id")
-  appId  Int? @map("app_id")
+  lastPostId          Int?     @unique @map("last_post_id")
+  userId              Int      @map("user_id")
+  appId               Int?     @map("app_id")
 
   // ref
-  channel DiscussionChannel @relation(fields: [discussionChannelId], references: [id]) // 所属频道
-  user    User              @relation(fields: [userId], references: [id]) // 发起人
-  app     App?              @relation(fields: [appId], references: [id]) // 所属 App，非必需
-  posts   DiscussionPost[] // 帖子
+  channel  DiscussionChannel @relation(fields: [discussionChannelId], references: [id]) // 所属频道
+  user     User              @relation(fields: [userId], references: [id]) // 发起人
+  app      App?              @relation(fields: [appId], references: [id]) // 所属 App，非必需
+  lastPost DiscussionPost?   @relation(name: "lastPost", fields: [lastPostId], references: [id]) // 最后一个回帖
+  posts    DiscussionPost[]  @relation(name: "posts") // 帖子
 }
 
 // 讨论帖子
@@ -519,10 +520,11 @@ model DiscussionPost {
   userId       Int      @map("user_id")
 
   // ref
-  discussion Discussion              @relation(fields: [discussionId], references: [id])
-  user       User                    @relation(fields: [userId], references: [id])
-  gifts      DiscussionPostGiftRef[] // 得到的礼物
-  reports    DiscussionPostReport[] // 举报数据
+  lastPostDiscussion Discussion?             @relation(name: "lastPost") // one to one，XXX：有点怪怪的
+  discussion         Discussion              @relation(name: "posts", fields: [discussionId], references: [id])
+  user               User                    @relation(fields: [userId], references: [id])
+  gifts              DiscussionPostGiftRef[] // 得到的礼物
+  reports            DiscussionPostReport[] // 举报数据
 }
 
 // 帖子的赞和踩

@@ -372,6 +372,7 @@ const users = async (fastify, opts) => {
                                 select: {
                                     id: true, content: true,
                                     user: { select: { id: true, name: true, } },
+                                    discussion: { select: { id: true, title: true, } },
                                 }
                             }
                         }

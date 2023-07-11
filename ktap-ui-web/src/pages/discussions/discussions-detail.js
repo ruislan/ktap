@@ -8,6 +8,7 @@ import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Skeleton } from 'baseui/skeleton';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
+import { Textarea } from 'baseui/textarea';
 import RouterLink from '../../components/router-link';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
@@ -228,7 +229,7 @@ function OtherDiscussions({ discussionId }) {
     );
 }
 
-function DiscussionPostActions({ discussion, post, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { } }) {
+function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { } }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
@@ -362,7 +363,7 @@ function DiscussionPostActions({ discussion, post, onQuoteClick = () => { }, aft
                         </Button>
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        <Button kind='secondary' size='mini' disabled={discussion.isClosed} onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>
+                        {!discussion.isClosed && <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>}
                         {user && !isReported && user.id !== post.user?.id &&
                             <>
                                 <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
@@ -380,8 +381,7 @@ function DiscussionPostActions({ discussion, post, onQuoteClick = () => { }, aft
                                 </Modal>
                             </>
                         }
-                        {/* TODO 这里是否要检查discussion是否处于关闭状态 */}
-                        {user && user.id === post.user?.id &&
+                        {user && user.id === post.user?.id && !isFirst && !discussion.isClosed &&
                             <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
                         }
                     </Block>
@@ -572,7 +572,7 @@ function DiscussionPosts({ discussion }) {
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                         </Block>
-                        <DiscussionPostActions discussion={discussion} post={post}
+                        <DiscussionPostActions discussion={discussion} post={post} isFirst={index === 0}
                             onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()}
                             afterThumbed={({ direction }) => {
                                 setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));

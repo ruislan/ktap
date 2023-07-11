@@ -367,8 +367,8 @@ function Discussions({ appId, channelId, }) {
                                             </>
                                         }
                                         <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
-                                            {discussion?.last?.user?.name && <Reply width='16px' height='16px' />}
-                                            @{discussion?.last?.user ? discussion?.last?.user.name : discussion?.user?.name}
+                                            {discussion?.lastPost?.user?.name && <Reply width='16px' height='16px' />}
+                                            @{discussion?.lastPost?.user ? discussion?.lastPost?.user.name : discussion?.user?.name}
                                         </LabelSmall>
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                         <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
