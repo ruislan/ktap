@@ -228,7 +228,7 @@ function OtherDiscussions({ discussionId }) {
     );
 }
 
-function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { } }) {
+function DiscussionPostActions({ discussion, post, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { } }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
@@ -258,7 +258,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, a
         direction === 'up' && setIsDoingThumbUp(true);
         direction === 'down' && setIsDoingThumbDown(true);
         try {
-            const res = await fetch(`/api/discussions/${discussionId}/posts/${post.id}/thumb/${direction}`, { method: 'POST' });
+            const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}/thumb/${direction}`, { method: 'POST' });
             if (res.ok) {
                 const json = await res.json();
                 post.meta.ups = json.data?.ups;
@@ -290,7 +290,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, a
         if (!user) { navigate('/login'); return; }
         try {
             setIsSendingGift(true);
-            const res = await fetch(`/api/discussions/${discussionId}/posts/${post.id}/gifts/${checkedGift.id}`, { method: 'POST' });
+            const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}/gifts/${checkedGift.id}`, { method: 'POST' });
             if (res.ok) {
                 const json = await res.json();
                 setUser({ ...user, balance: user.balance - checkedGift.price });
@@ -307,7 +307,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, a
         if (!user) { navigate('/login'); return; }
         setIsReporting(true);
         try {
-            const res = await fetch(`/api/discussions/${discussionId}/posts/${post.id}/report`, {
+            const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}/report`, {
                 method: 'POST',
                 body: JSON.stringify({ content: reportContent }),
                 headers: { 'Content-Type': 'application/json' }
@@ -324,7 +324,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, a
     const handleDelete = async () => {
         setIsDeleting(true);
         try {
-            const res = await fetch(`/api/discussions/${discussionId}/posts/${post.id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}`, { method: 'DELETE' });
             if (res.ok) afterDeleted();
         } finally {
             setIsDeleting(false);
@@ -362,7 +362,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, a
                         </Button>
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>
+                        <Button kind='secondary' size='mini' disabled={discussion.isClosed} onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>
                         {user && !isReported && user.id !== post.user?.id &&
                             <>
                                 <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
@@ -380,6 +380,7 @@ function DiscussionPostActions({ discussionId, post, onQuoteClick = () => { }, a
                                 </Modal>
                             </>
                         }
+                        {/* TODO 这里是否要检查discussion是否处于关闭状态 */}
                         {user && user.id === post.user?.id &&
                             <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
                         }
@@ -526,7 +527,7 @@ function DiscussionPosts({ discussion }) {
             } else {
                 if (res.status === 403) navigate('/login');
                 if (res.status === 404) navigate('/not-found', { replace: true });
-                if (res.status >= 500) navigate('/panic');
+                if (res.status >= 500) throw new Error();
             }
         } finally {
             setIsSubmitting(false);
@@ -571,7 +572,7 @@ function DiscussionPosts({ discussion }) {
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                         </Block>
-                        <DiscussionPostActions discussionId={discussion.id} post={post}
+                        <DiscussionPostActions discussion={discussion} post={post}
                             onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()}
                             afterThumbed={({ direction }) => {
                                 setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));

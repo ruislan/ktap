@@ -52,7 +52,7 @@ function NewsAppsBanner({ appId }) {
                     setData(json.data);
                 } else {
                     if (res.status === 404) navigate('/not-found', { replace: true });
-                    if (res.status >= 500) navigate('/panic');
+                    if (res.status >= 500) throw new Error();
                 }
             } finally {
                 setIsLoading(false);

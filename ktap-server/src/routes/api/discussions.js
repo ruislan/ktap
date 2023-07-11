@@ -229,7 +229,7 @@ const discussions = async (fastify, opts) => {
             const id = Number(req.params.id);
             const userId = req.user.id;
             const { content } = req.body;
-            if ((await fastify.db.discussion.count({ where: { id } })) <= 0) reply.code(404).send();
+            if ((await fastify.db.discussion.count({ where: { id, isClosed: false } })) <= 0) reply.code(404).send(); // 如果讨论被关闭，是不能回帖的
             const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
             const data = await fastify.db.discussionPost.create({
                 data: { content: cleanContent, discussionId: id, userId, ip: req.ip }

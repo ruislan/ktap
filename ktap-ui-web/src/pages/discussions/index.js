@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { Input } from 'baseui/input';
 import { Search } from 'baseui/icon';
 import { ChatAlt2, User } from '../../components/icons';
+import { Spinner } from 'baseui/spinner';
 
 function Discussions() {
     const limit = 20;
@@ -103,6 +104,11 @@ function Discussions() {
                     </Link>
                 ))}
             </Block>
+            {isLoading &&
+                <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                    <Spinner $size='scale1600' $borderWidth='scale200' />
+                </Block>
+            }
             {hasMore &&
                 <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
                     <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
