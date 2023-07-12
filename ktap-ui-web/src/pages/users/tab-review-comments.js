@@ -50,7 +50,7 @@ function TabReviewComments({ theUser }) {
                     <LabelSmall color='primary500' marginTop='scale0'>{dayjs(comment.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
                     <Block display='flex' flexDirection='column'>
                         <ParagraphMedium marginBottom='0'>{comment.content}</ParagraphMedium>
-                        <ParagraphSmall backgroundColor='backgroundTertiary' padding='scale300' color='primary200'
+                        <ParagraphSmall backgroundColor='backgroundTertiary' marginBottom='0' padding='scale300' color='primary200'
                             overrides={{
                                 Block: {
                                     style: ({ $theme }) => ({

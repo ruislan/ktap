@@ -28,7 +28,8 @@ const discussions = async (fastify, opts) => {
             const mediaHead = app.media.find(media => media.usage === AppMedia.usage.head);
             const mediaLogo = app.media.find(media => media.usage === AppMedia.usage.logo);
             const appMetaUsers = (await fastify.db.$queryRaw`
-                SELECT COUNT(DISTINCT user_id) AS total FROM Discussion WHERE app_id = ${app.id};
+                SELECT COUNT(DISTINCT dp.user_id) AS total FROM DiscussionPost dp WHERE discussion_id IN
+                (SELECT id FROM Discussion WHERE app_id = ${app.id});
             `)[0]?.total;
             app.meta = {
                 discussions: app._count.discussions || 0,

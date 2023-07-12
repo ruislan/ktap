@@ -51,7 +51,7 @@ function TabDiscussionPosts({ theUser }) {
                     <LabelSmall color='primary500' marginTop='scale0'>{dayjs(post.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
                     <Block display='flex' flexDirection='column'>
                         <ParagraphMedium className='post' marginBottom='0' dangerouslySetInnerHTML={{ __html: post.content }} />
-                        <ParagraphSmall backgroundColor='backgroundTertiary' padding='scale300' color='primary200'
+                        <ParagraphSmall backgroundColor='backgroundTertiary' marginBottom='0' padding='scale300' color='primary200'
                             overrides={{
                                 Block: {
                                     style: ({ $theme }) => ({
