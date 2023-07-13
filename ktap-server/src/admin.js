@@ -10,6 +10,7 @@ import adminTags from './routes/admin/tags.js';
 import adminBuzzwords from './routes/admin/buzzwords.js';
 import adminGifts from './routes/admin/gifts.js';
 import adminDiscover from './routes/admin/discover.js';
+import adminDiscussions from './routes/admin/discussions.js';
 
 const adminRoutes = async (fastify, opts, next) => {
     fastify.addHook('onRequest', authenticate);
@@ -27,6 +28,7 @@ const adminRoutes = async (fastify, opts, next) => {
     await fastify.register(adminBuzzwords, { prefix: '/buzzwords' });
     await fastify.register(adminGifts, { prefix: '/gifts' });
     await fastify.register(adminDiscover, { prefix: '/discover' });
+    await fastify.register(adminDiscussions, { prefix: '/discussions' });
 
     next();
 };

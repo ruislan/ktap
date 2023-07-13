@@ -2,10 +2,8 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 import { useSearchParams } from 'react-router-dom';
-import AdminPanelReviews from './reviews';
-import AdminPanelReviewComments from './comments';
 import RoundTab from '../../../components/round-tab';
-
+import AdminPanelDiscussions from './discussions';
 
 export default () => {
     const [searchParams] = useSearchParams();
@@ -18,10 +16,10 @@ export default () => {
     return (
         <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'>
             <Block display='flex' alignItems='center' marginBottom='scale300'>
-                <RoundTab activeKey={activeTab} names={['评测列表', '回复列表']} onChange={(e) => setActiveTab(e.activeKey)} />
+                <RoundTab activeKey={activeTab} names={['评论列表', '回复列表']} onChange={(e) => setActiveTab(e.activeKey)} />
             </Block>
-            {activeTab === 0 && <AdminPanelReviews />}
-            {activeTab === 1 && <AdminPanelReviewComments />}
+            {activeTab === 0 && <AdminPanelDiscussions />}
+            {/* {activeTab === 1 && <AdminPanelReviewComments />} */}
         </Block>
     );
 }

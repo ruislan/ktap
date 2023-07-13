@@ -50,7 +50,7 @@ import AdminPanelDashboard from './pages/admin-panel/dashboard';
 import AdminPanelUsers from './pages/admin-panel/users';
 import AdminPanelUserDetail from './pages/admin-panel/users/user-detail';
 import AdminPanelReviews from './pages/admin-panel/reviews';
-import AdminPanelReviewComments from './pages/admin-panel/review-comments';
+import AdminPanelDiscussions from './pages/admin-panel/discussions';
 import AdminPanelNews from './pages/admin-panel/news';
 import AdminPanelApps from './pages/admin-panel/apps';
 import AdminPanelAppDetail from './pages/admin-panel/apps/app-detail';
@@ -137,7 +137,7 @@ root.render(
                       <Route path=':id' element={<AdminPanelAppDetail />} />
                     </Route>
                     <Route path='reviews' element={<AdminPanelReviews />} />
-                    <Route path='review-comments' element={<AdminPanelReviewComments />} />
+                    <Route path='discussions' element={<AdminPanelDiscussions />} />
                     <Route path='news' element={<AdminPanelNews />} />
                     <Route path='tags' element={<AdminPanelTags />} />
                     <Route path='organizations' element={<AdminPanelOrganizations />} />

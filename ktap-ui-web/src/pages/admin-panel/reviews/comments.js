@@ -17,7 +17,7 @@ import { MOBILE_BREAKPOINT } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 
-function AdminPanelUsers() {
+function AdminPanelReviewComments() {
     const limit = 10;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
@@ -97,8 +97,8 @@ function AdminPanelUsers() {
     }
 
     return (
-        <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'>
-            <HeadingSmall marginTop='0' marginBottom='scale900'>评测回复列表</HeadingSmall>
+        <Block display='flex' flexDirection='column'>
+            <HeadingSmall marginTop='0' marginBottom='scale900'>回复列表</HeadingSmall>
             <Block display='flex' alignItems='center' justifyContent='space-between' marginBottom='scale900' overrides={{
                 Block: {
                     style: {
@@ -247,4 +247,4 @@ function AdminPanelUsers() {
     );
 }
 
-export default AdminPanelUsers;
+export default AdminPanelReviewComments;

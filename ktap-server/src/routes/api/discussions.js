@@ -80,23 +80,7 @@ const discussions = async (fastify, opts) => {
         handler: async function (req, reply) {
             const userId = req.user.id;
             const { title, content, appId, channelId, } = req.body;
-            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
-
-            await fastify.db.$transaction(async (tx) => {
-                const discussion = await tx.discussion.create({
-                    data: { title, appId, discussionChannelId: channelId, userId, },
-                });
-                const post = await tx.discussionPost.create({
-                    data: {
-                        content: cleanContent,
-                        discussionId: discussion.id, userId, ip: req.ip
-                    }
-                });
-                await tx.discussion.update({ where: { id: discussion.id }, data: { lastPostId: post.id } });
-                // add first post
-                await tx.timeline.create({ data: { userId, targetId: discussion.id, target: 'Discussion', } });
-                await tx.timeline.create({ data: { userId, targetId: post.id, target: 'DiscussionPost', } });
-            });
+            await fastify.utils.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
             return reply.code(200).send();
         }
     });
@@ -286,28 +270,7 @@ const discussions = async (fastify, opts) => {
         preHandler: authenticate,
         handler: async function (req, reply) {
             const id = Number(req.params.id);
-            const discussion = await fastify.db.discussion.findUnique({ where: { id } });
-
-            if (discussion) {
-                // 检查是否是 Post 的发布者或者是频道管理员
-                // TODO 检查频道管理员
-                if (discussion.userId !== req.user.id) return reply.code(403).send();
-                await fastify.db.$transaction([
-                    fastify.db.$queryRaw`
-                        DELETE FROM DiscussionPostReport WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
-                    `,
-                    fastify.db.$queryRaw`
-                        DELETE FROM DiscussionPostThumb WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
-                    `,
-                    fastify.db.$queryRaw`
-                        DELETE FROM DiscussionPostGiftRef WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
-                    `,
-                    fastify.db.discussionPost.deleteMany({ where: { discussionId: id } }),
-                    fastify.db.discussion.delete({ where: { id } }),
-                    fastify.db.timeline.deleteMany({ where: { target: 'Discussion', targetId: id, userId: discussion.userId } }), // 只删除 discussion 的时间线，XXX 时间线的业务逻辑还需要重构，目前暂时只用管当前对象
-                ]);
-            }
-
+            await fastify.utils.deleteDiscussion({ id, operator: req.user });
             return reply.code(204).send();
         }
     });
