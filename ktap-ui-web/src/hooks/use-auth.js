@@ -50,10 +50,12 @@ function AuthProvider({ children }) {
                 body: JSON.stringify({ email, password }),
                 headers: { 'Content-Type': 'application/json' }
             });
-            if (res.status === 403) {
-                const json = await res.json();
-                throw new Error(json.message);
-            } else if (!res.ok) throw new Error();
+            if (!res.ok) {
+                if (res.status === 403) {
+                    const json = await res.json();
+                    throw new Error(json.message);
+                } else throw new Error();
+            }
         } catch (e) {
             localLogout();
             throw new Error(e.message || Messages.authFail);

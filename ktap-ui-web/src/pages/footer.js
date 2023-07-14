@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { LabelSmall } from 'baseui/typography';
 import RouterLink from '../components/router-link';
 
-function Footer() {
+export default function Footer() {
     return (
         <footer>
             <Block backgroundColor='backgroundSecondary' color='contentPrimary' marginTop='scale1400'
@@ -33,5 +33,3 @@ function Footer() {
         </footer>
     );
 }
-
-export default Footer;

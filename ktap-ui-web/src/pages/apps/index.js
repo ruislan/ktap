@@ -38,9 +38,11 @@ function App() {
                     setApp(json.data);
                     setMeta(json.meta);
                 } else {
-                    if (res.status === 404) navigate('/not-found', { replace: true });
-                    if (res.status >= 500) throw new Error();
+                    throw new Error({ status: res.status });
                 }
+            } catch (error) {
+                if (error?.status === 404) navigate('/not-found', { replace: true });
+                navigate('/not-work');
             } finally {
                 setIsLoading(false);
             }
@@ -231,9 +233,11 @@ function App() {
                         app && <SideContact socialLinks={app.socialLinks} />
                     }
                     {app?.awards && app.awards.length > 0 && <SideAward app={app} />}
-                    <Block marginBottom='scale900' position='sticky' top='scale800'>
-                        <SideBoxApps title='相关游戏' apiUrl={`/api/apps/${urlParams.id}/related`} />
-                    </Block>
+                    {app &&
+                        <Block marginBottom='scale900' position='sticky' top='scale800'>
+                            <SideBoxApps title='相关游戏' apiUrl={`/api/apps/${urlParams.id}/related`} />
+                        </Block>
+                    }
                 </Block>
             </Block>
         </Block >

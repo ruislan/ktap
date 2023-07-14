@@ -289,7 +289,7 @@ const discussions = async (fastify, opts) => {
                 if (post.userId !== userId) return reply.code(403).send();
 
                 await fastify.db.$transaction(async (tx) => {
-                    const lastPost = (await tx.discussionPost.findMany({ where: { discussionId: id, postId: { not: postId } }, orderBy: { createdAt: 'desc' }, take: 1, }))[0];
+                    const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: id, id: { not: postId } }, orderBy: { createdAt: 'desc' }, });
                     await tx.discussion.update({ where: { id }, data: { lastPostId: lastPost?.id || null } });
                     await tx.discussionPostReport.deleteMany({ where: { postId } });
                     await tx.discussionPostThumb.deleteMany({ where: { postId } });

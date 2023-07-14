@@ -7,7 +7,7 @@ const tags = async (fastify, opts) => {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
         const skip = Math.max(0, Number(req.query.skip) || 0);
 
-        const theTag = (await fastify.db.tag.findMany({ where: { name }, take: 1 }))[0]; // name is unique
+        const theTag = await fastify.db.tag.findUnique({ where: { name } }); // name is unique
 
         let data = [];
         let count = 0;

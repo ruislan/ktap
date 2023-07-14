@@ -34,7 +34,7 @@ const users = async function (fastify, opts) {
 
     fastify.get('/:username', async (req, reply) => {
         const username = req.params.username;
-        const data = await fastify.db.user.findMany({
+        const data = await fastify.db.user.findFirst({
             where: {
                 OR: [
                     { id: Number(username) || 0, },
@@ -43,7 +43,7 @@ const users = async function (fastify, opts) {
             },
         });
         delete data.password;
-        return reply.code(200).send({ data: data[0] });
+        return reply.code(200).send({ data });
     });
 
     fastify.put('/:id/basis', async (req, reply) => {

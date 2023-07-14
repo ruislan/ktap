@@ -16,11 +16,11 @@ import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 function User() {
     const [searchParams] = useSearchParams();
     const { id } = useParams();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = React.useState(null);
     const [theUser, setTheUser] = React.useState(null);
     const [theUserMeta, setTheUserMeta] = React.useState(null);
     const [isLoading, setIsLoading] = React.useState(true);
-    const navigate = useNavigate();
 
     React.useEffect(() => {
         (async () => {
@@ -32,9 +32,11 @@ function User() {
                     setTheUser(json.data);
                     setTheUserMeta(json.meta);
                 } else {
-                    if (res.status === 404) navigate('/not-found', { replace: true });
-                    if (res.status >= 500) throw new Error();
+                    throw new Error({ status: res.status });
                 }
+            } catch (error) {
+                if (error?.status === 404) navigate('/not-found', { replace: true });
+                navigate('/not-work');
             } finally {
                 setIsLoading(false);
             }
@@ -96,7 +98,6 @@ function User() {
                     <Skeleton width="100%" height="410px" animation /> :
                     <UserProfile theUser={theUser} theUserMeta={theUserMeta} />
                 }
-                {/* <UserAchievements /> */}
             </Block>
         </Block>
     );

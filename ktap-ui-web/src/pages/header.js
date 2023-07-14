@@ -6,12 +6,7 @@ import { useStyletron } from 'baseui';
 import { User, Coins } from '../components/icons';
 import { Delete, Menu } from 'baseui/icon';
 
-// 这个AppNav，目前BaseWeb写得不太好。
-// 例如：
-//  1. 在Mobile的情况下，不能直接刷新已经登录的User，需要点击头像按钮，然后返回才可以刷新。
-//  2. 如果在外层不使用样式：contain: 'paint'，会导致边缘留白等情况
-//  3. 在Mobile的情况下，菜单太难看等等
-function Header() {
+export default function Header() {
     const [css, theme] = useStyletron();
     const pathname = new URL(window.location.href).pathname;
     const navigate = useNavigate();
@@ -247,5 +242,3 @@ function Header() {
         </header>
     );
 }
-
-export default Header;

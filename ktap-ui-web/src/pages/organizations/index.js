@@ -11,11 +11,11 @@ import OrganizationContact from './organization-contact';
 
 function Organization() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState(null);
     const [meta, setMeta] = React.useState(null);
     const [activeKey, setActiveKey] = React.useState('developed');
-    const navigate = useNavigate();
 
     React.useEffect(() => {
         (async () => {
@@ -27,14 +27,17 @@ function Organization() {
                     setData(json.data);
                     setMeta(json.meta);
                 } else {
-                    if (res.status === 404) navigate('/not-found', { replace: true });
-                    if (res.status >= 500) throw new Error();
+                    throw new Error({ status: res.status });
                 }
+            } catch (error) {
+                if (error?.status === 404) navigate('/not-found', { replace: true });
+                navigate('/not-work');
             } finally {
                 setIsLoading(false);
             }
         })();
     }, [id, navigate]);
+
     return (
         <Block marginTop='scale900' display='flex' justifyContent='center' overrides={{
             Block: {

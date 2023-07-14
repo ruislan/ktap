@@ -12,9 +12,10 @@ import { Skeleton } from 'baseui/skeleton';
 
 function NewsDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState({});
-    const navigate = useNavigate();
+
     React.useEffect(() => {
         (async () => {
             try {
@@ -24,14 +25,17 @@ function NewsDetail() {
                     const json = await res.json();
                     setData(json.data);
                 } else {
-                    if (res.status === 404) navigate('/not-found', { replace: true });
-                    if (res.status >= 500) throw new Error();
+                    throw new Error({ status: res.status });
                 }
+            } catch (error) {
+                if (error?.status === 404) navigate('/not-found', { replace: true });
+                navigate('/not-work');
             } finally {
                 setIsLoading(false);
             }
         })();
     }, [id, navigate]);
+
     return (
         <Block display='flex' flexDirection='column' alignItems='center' width='100%'>
             {isLoading ?

@@ -390,8 +390,12 @@ const users = async (fastify, opts) => {
     });
 
     fastify.get('/:id', async function (req, reply) {
-        const id = Number(req.params.id || 0);
+        const id = Number(req.params.id) || 0;
+
         const user = await fastify.db.user.findUnique({ where: { id } });
+        if (!user) return reply.code(404).send(); // not found
+        delete user.password;
+
         // 关注数, 评测数, 回复数
         const meta = (await fastify.db.$queryRaw`
                 SELECT
@@ -402,7 +406,7 @@ const users = async (fastify, opts) => {
                 (SELECT COUNT(Discussion.id) FROM Discussion WHERE Discussion.user_id=${id}) AS discussions,
                 (SELECT COUNT(DiscussionPost.id) FROM DiscussionPost WHERE DiscussionPost.user_id=${id}) AS posts
             `)[0];
-        if (!user) return reply.code(404).send(); // not found
+
         meta.follows = {
             count: meta.followUsers + meta.followApps,
             users: meta.followUsers,
@@ -410,6 +414,7 @@ const users = async (fastify, opts) => {
         };
         delete meta.followUsers;
         delete meta.followApps;
+
         return reply.code(200).send({ data: user, meta });
     });
 };

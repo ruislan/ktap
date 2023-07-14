@@ -106,7 +106,7 @@ function ActivityItem({ activity }) {
                 )}
                 {activity.type === 'ReviewComment' && (
                     <>
-                        {activity.data.review ?
+                        {activity.data?.review ?
                             (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${activity.data.review.user.id}`} kind='underline'>{activity.data.review.user.name}</RouterLink> 关于 <RouterLink href={`/apps/${activity.data.review.app.id}`} kind='underline'>{activity.data.review.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.review.id}`} kind='underline'>评测</RouterLink></LabelMedium>) :
                             (<LabelMedium marginBottom='scale200'>回复了一篇评测</LabelMedium>)
                         }
@@ -122,14 +122,14 @@ function ActivityItem({ activity }) {
                                     }
                                 }}
                             >
-                                {activity.data.review ? activity.data.review.content.slice(0, 100) + (activity.data.review.content.length > 100 ? '...' : '') : '该评测已被删除'}
+                                {activity.data?.review ? activity.data.review.content.slice(0, 100) + (activity.data.review.content.length > 100 ? '...' : '') : '该评测已被删除'}
                             </ParagraphSmall>
                         </Block>
                     </>
                 )}
                 {activity.type === 'ReviewGiftRef' && (
                     <>
-                        {activity.data.review ?
+                        {activity.data?.review ?
                             (<LabelMedium marginBottom='scale200'>
                                 给 <RouterLink href={`/users/${activity.data.review.user.id}`} kind='underline'>{activity.data.review.user.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.review.id}`} kind='underline'>评测</RouterLink> 赠送了礼物
                             </LabelMedium>) :
@@ -146,9 +146,9 @@ function ActivityItem({ activity }) {
                                     }
                                 }}
                             >
-                                {activity.data.review ? activity.data.review.content.slice(0, 100) + (activity.data.review.content.length > 100 ? '...' : '') : '该评测已被删除'}
+                                {activity.data?.review ? activity.data.review.content.slice(0, 100) + (activity.data.review.content.length > 100 ? '...' : '') : '该评测已被删除'}
                             </ParagraphSmall>
-                            <Block marginTop='scale300' width='fit-content'><Gift src={activity.data.gift.url} name={activity.data.gift.name} description={activity.data.gift.description} price={activity.data.gift.price} /></Block>
+                            <Block marginTop='scale300' width='fit-content'><Gift src={activity.data?.gift.url} name={activity.data?.gift.name} description={activity.data?.gift.description} price={activity.data?.gift.price} /></Block>
                         </Block>
                     </>
                 )}

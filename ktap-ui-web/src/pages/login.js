@@ -10,11 +10,10 @@ import { useAuth } from '../hooks/use-auth';
 import RouterLink from '../components/router-link';
 
 function Login() {
+    const auth = useAuth();
     const [login, setLogin] = React.useState({ email: '', password: '', });
     const [error, setError] = React.useState(null);
     const [isLoading, setIsLoading] = React.useState(false);
-    const auth = useAuth();
-
     const handleSubmit = async () => {
         setError(null);
         setIsLoading(true);

@@ -343,15 +343,15 @@ model ReviewThumb {
 
 // 评测礼物多对多关系，用户可以对同一个review，多次送礼物
 model ReviewGiftRef {
-  id       Int @id @default(autoincrement())
-  giftId   Int @map("gift_id")
-  reviewId Int @map("review_id")
-  userId   Int @map("user_id")
+  id       Int  @id @default(autoincrement())
+  reviewId Int? @map("review_id")
+  giftId   Int  @map("gift_id")
+  userId   Int  @map("user_id")
 
   // ref
-  review Review @relation(fields: [reviewId], references: [id])
-  gift   Gift   @relation(fields: [giftId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  review Review? @relation(fields: [reviewId], references: [id]) // 为空则表示这个被送过的 Review 被删除了
+  gift   Gift    @relation(fields: [giftId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
 }
 
 // 评测 End
@@ -553,15 +553,15 @@ model DiscussionPostReport {
 // 帖子礼物多对多关系，用户可以对同一个帖子多次送礼物
 model DiscussionPostGiftRef {
   id        Int      @id @default(autoincrement())
+  postId    Int?     @map("post_id")
   giftId    Int      @map("gift_id")
-  postId    Int      @map("post_id")
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
-  post DiscussionPost @relation(fields: [postId], references: [id])
-  gift Gift           @relation(fields: [giftId], references: [id])
-  user User           @relation(fields: [userId], references: [id])
+  post DiscussionPost? @relation(fields: [postId], references: [id]) // 为null则表示post已经被删除了
+  gift Gift            @relation(fields: [giftId], references: [id])
+  user User            @relation(fields: [userId], references: [id])
 }
 
 // 讨论 End

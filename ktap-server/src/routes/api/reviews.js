@@ -61,10 +61,11 @@ const reviews = async (fastify, opts) => {
                 const toDeleteImages = await fastify.db.reviewImage.findMany({ where: { reviewId: id }, select: { url: true } });
 
                 // 删除Review不需要删除其Comments，这是Review作者自己的行为，而非Comment作者行为。
+                // 礼物在Timeline中，赠送礼物的行为是用户行为，而不是 Review 的行为，所以不用在这里删除。
+                // TODO 这里可能涉及重复代码，需要处理
                 await fastify.db.$transaction([
                     fastify.db.reviewReport.deleteMany({ where: { reviewId: id } }), // 删除相关举报，举报需要在Timeline中吗？如果需要，那么就无需在这里删除
                     fastify.db.reviewThumb.deleteMany({ where: { reviewId: id } }), // 删除关联赞踩，赞踩需要在Timeline中吗？如果需要，那么就无需在这里删除
-                    fastify.db.reviewGiftRef.deleteMany({ where: { reviewId: id } }), // 删除关联礼物，礼物需要在Timeline中吗？如果需要，那么就无需在这里删除
                     fastify.db.reviewImage.deleteMany({ where: { reviewId: id, } }), // 删除关联图片,
                     fastify.db.review.delete({ where: { id } }), // 删除评测
                     fastify.db.timeline.deleteMany({ where: { target: 'Review', targetId: id, userId: review.userId } }), // 删除发布者的时间线，ReviewComment的时间线不需要删除
@@ -120,18 +121,8 @@ const reviews = async (fastify, opts) => {
             if (content && content.length > 0) {
                 const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true } });
                 if (review.allowComment) {
-                    data = await fastify.db.reviewComment.create({
-                        data: {
-                            reviewId,
-                            content,
-                            userId,
-                        }
-                    });
-
-                    // Create timeline
-                    await fastify.db.timeline.create({
-                        data: { userId, targetId: data.id, target: 'ReviewComment', }
-                    });
+                    data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, } });
+                    await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'ReviewComment', } });
                 }
             }
             return reply.code(200).send({ data });
@@ -145,9 +136,10 @@ const reviews = async (fastify, opts) => {
             const reviewId = Number(req.params.reviewId);
             const id = Number(req.params.id);
             const userId = req.user.id;
-            // is my review?
-            await fastify.db.reviewComment.deleteMany({ where: { id, reviewId, userId, } });
+
+            await fastify.db.reviewComment.deleteMany({ where: { id, reviewId, userId, } }); // is my review?
             await fastify.db.timeline.deleteMany({ where: { target: 'ReviewComment', targetId: id, userId } });
+
             return reply.code(204).send();
         }
     });

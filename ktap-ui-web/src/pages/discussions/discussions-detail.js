@@ -525,10 +525,12 @@ function DiscussionPosts({ discussion }) {
                 }]);
                 editor?.chain().focus().clearContent().run();
             } else {
-                if (res.status === 403) navigate('/login');
-                if (res.status === 404) navigate('/not-found', { replace: true });
-                if (res.status >= 500) throw new Error();
+                throw new Error({ status: res.status });
             }
+        } catch (error) {
+            if (error?.status === 403) navigate('/login');
+            if (error?.status === 404) navigate('/not-found', { replace: true });
+            navigate('/not-work');
         } finally {
             setIsSubmitting(false);
         }

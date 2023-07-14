@@ -281,30 +281,29 @@ const apps = async function (fastify, opts) {
     fastify.get('/:id/related', async function (req, reply) {
         const id = Number(req.params.id) || 0;
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
-        let data = {};
-        if (id > 0) {
-            const app = await fastify.db.app.findUnique({ where: { id }, select: { name: true } });
-            const extractWords = await fastify.jieba.extract(app.name, 3);
-            data = await fastify.db.app.findMany({
-                where: {
-                    OR: [
-                        ...extractWords.map(item => ({ name: { contains: item.word } })),
-                        ...extractWords.map(item => ({ description: { contains: item.word } })),
-                    ],
-                    AND: { id: { not: id } },
-                },
-                include: {
-                    media: {
-                        where: { usage: AppMedia.usage.landscape },
-                        select: {
-                            image: true,
-                            thumbnail: true,
-                        },
+        const app = await fastify.db.app.findUnique({ where: { id }, select: { name: true } });
+        if (!app) return reply.code(200).send({ data: [] }); // no app, return empty array
+
+        const extractWords = await fastify.jieba.extract(app.name, 3);
+        const data = await fastify.db.app.findMany({
+            where: {
+                OR: [
+                    ...extractWords.map(item => ({ name: { contains: item.word } })),
+                    ...extractWords.map(item => ({ description: { contains: item.word } })),
+                ],
+                AND: { id: { not: id } },
+            },
+            include: {
+                media: {
+                    where: { usage: AppMedia.usage.landscape },
+                    select: {
+                        image: true,
+                        thumbnail: true,
                     },
                 },
-                take: limit,
-            });
-        }
+            },
+            take: limit,
+        });
         if (data.length === 0) { // 如果没有相关的，则直接取最新的几个
             data = await fastify.db.app.findMany({
                 where: { id: { not: id } },
@@ -473,8 +472,8 @@ const apps = async function (fastify, opts) {
                     create: reqBody.images.map(url => { return { url } }),
                 }
             };
-            const reviews = await fastify.db.review.findMany({ where: { appId, userId }, select: { id: true }, take: 1 });
-            if (!reviews[0]?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
+            const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
+            if (!review?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
             // 更新评分
             await fastify.db.$queryRaw`
@@ -484,7 +483,7 @@ const apps = async function (fastify, opts) {
             `;
 
             // Update timeline if it created a new review
-            if (!reviews[0]?.id) {
+            if (!review?.id) {
                 await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } });
             }
             // reconstruct return data structure
@@ -548,15 +547,14 @@ const apps = async function (fastify, opts) {
             const userId = req.user?.id;
             let data = {};
             if (userId) {
-                data = (await fastify.db.review.findMany({
+                data = await fastify.db.review.findFirst({
                     where: { userId: userId, appId: id },
                     include: {
                         images: {
                             select: { id: true, url: true },
                         }
                     },
-                    take: 1
-                }))[0];
+                });
             }
             return reply.code(200).send({ data });
         }
