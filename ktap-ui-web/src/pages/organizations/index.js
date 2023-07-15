@@ -27,11 +27,11 @@ function Organization() {
                     setData(json.data);
                     setMeta(json.meta);
                 } else {
-                    throw new Error({ status: res.status });
+                    throw { status: res.status };
                 }
             } catch (error) {
                 if (error?.status === 404) navigate('/not-found', { replace: true });
-                navigate('/not-work');
+                else navigate('/not-work');
             } finally {
                 setIsLoading(false);
             }

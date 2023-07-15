@@ -63,11 +63,11 @@ function AppBanner({ appId }) {
                     const json = await res.json();
                     setData(json.data);
                 } else {
-                    throw new Error({ status: res.status });
+                    throw { status: res.status };
                 }
             } catch (error) {
-                if (error?.status === 404) navigate('/not-found', { replace: true });
-                navigate('/not-work');
+                if (error?.status === 404) navigate('/', { replace: true });
+                else navigate('/not-work');
             } finally {
                 setIsLoading(false);
             }

@@ -9,37 +9,7 @@ const reviews = async function (fastify, opts) {
 
     fastify.delete('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-
-        const review = await fastify.db.review.findUnique({ where: { id } });
-        // 删除Review不需要删除其Comments，这是Review作者自己的行为，而非Comment作者行为。
-        // 礼物在Timeline中，赠送礼物的行为是用户行为，而不是 Review 的行为，所以不用在这里删除。
-        // TODO 和API的Reviews的删除方法有重复
-        if (review) {
-            const toDeleteImages = await fastify.db.reviewImage.findMany({ where: { reviewId: id }, select: { url: true } });
-
-            await fastify.db.$transaction([
-                fastify.db.reviewReport.deleteMany({ where: { reviewId: id } }), // 删除相关举报
-                fastify.db.reviewThumb.deleteMany({ where: { reviewId: id } }), // 删除关联赞踩
-                // fastify.db.reviewGiftRef.updateMany({ where: { reviewId: id }, data: { reviewId: null } }), // 断掉关联，保留赠送记录
-                fastify.db.reviewImage.deleteMany({ where: { reviewId: id, } }), // 删除关联图片,
-                fastify.db.review.delete({ where: { id } }), // 删除评测，不需要删除其Comments，这是Review作者自己的行为，而非Comment作者行为。
-                fastify.db.timeline.deleteMany({ where: { target: 'Review', targetId: id, userId: review.userId } }), // 删除发布者的时间线，ReviewComment的时间线不需要删除
-                fastify.db.$queryRaw`
-                    UPDATE App SET score = avgScore FROM
-                    (SELECT COALESCE(AVG(score), 4) AS avgScore FROM review WHERE app_id = ${review.appId})
-                    WHERE App.id = ${review.appId};
-                `, // XXX 非必每次评测都更新，定时刷新App的评分或异步请求重新计算App积分
-            ]);
-
-            // 删除上传图片,这里非必要一个事务
-            for (const img of toDeleteImages) {
-                try {
-                    await fastify.storage.delete(img.url);
-                } catch (e) {
-                    fastify.log.warn('delete file error: ' + e);
-                }
-            }
-        }
+        await fastify.utils.deleteReview({ id, isByAdmin: true });
         return reply.code(204).send();
     });
 

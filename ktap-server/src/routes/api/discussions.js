@@ -155,6 +155,8 @@ const discussions = async (fastify, opts) => {
                 _count: { select: { posts: true }, }
             }
         });
+        if (!data) return reply.code(404).send();
+
         const metaUsers = (await fastify.db.$queryRaw`
                 SELECT COUNT(DISTINCT user_id) AS total FROM DiscussionPost WHERE discussion_id = ${id};
             `)[0]?.total || 0;

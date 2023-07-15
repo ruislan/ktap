@@ -525,12 +525,12 @@ function DiscussionPosts({ discussion }) {
                 }]);
                 editor?.chain().focus().clearContent().run();
             } else {
-                throw new Error({ status: res.status });
+                throw { status: res.status };
             }
         } catch (error) {
             if (error?.status === 403) navigate('/login');
-            if (error?.status === 404) navigate('/not-found', { replace: true });
-            navigate('/not-work');
+            else if (error?.status === 404) navigate('/not-found', { replace: true });
+            else navigate('/not-work');
         } finally {
             setIsSubmitting(false);
         }
@@ -616,7 +616,7 @@ function DiscussionPosts({ discussion }) {
 function DiscussionsDetail() {
     const { appId, id } = useParams();
     const [, theme] = useStyletron();
-
+    const navigate = useNavigate();
     const [discussion, setDiscussion] = React.useState({});
     const [isLoadingDiscussion, setIsLoadingDiscussion] = React.useState(true);
 
@@ -629,7 +629,13 @@ function DiscussionsDetail() {
                     if (res.ok) {
                         const json = await res.json();
                         setDiscussion(json.data);
+                    } else {
+                        throw { status: res.status };
                     }
+                } catch (error) {
+                    if (error?.status === 403) navigate('/login');
+                    else if (error?.status === 404) navigate('/discussions', { replace: true });
+                    else navigate('/not-work');
                 } finally {
                     setIsLoadingDiscussion(false);
                 }

@@ -285,7 +285,7 @@ const apps = async function (fastify, opts) {
         if (!app) return reply.code(200).send({ data: [] }); // no app, return empty array
 
         const extractWords = await fastify.jieba.extract(app.name, 3);
-        const data = await fastify.db.app.findMany({
+        let data = await fastify.db.app.findMany({
             where: {
                 OR: [
                     ...extractWords.map(item => ({ name: { contains: item.word } })),
