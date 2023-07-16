@@ -571,6 +571,7 @@ function DiscussionPosts({ discussion }) {
                     }}>
                         <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
                         <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:MM')}</LabelSmall>
+                        <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip}</LabelSmall>
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                         </Block>
@@ -641,7 +642,7 @@ function DiscussionsDetail() {
                 }
             })();
         }
-    }, [id]);
+    }, [id, navigate]);
 
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
