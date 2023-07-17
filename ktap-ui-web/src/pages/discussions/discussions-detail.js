@@ -571,7 +571,7 @@ function DiscussionPosts({ discussion }) {
                     }}>
                         <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
                         <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:MM')}</LabelSmall>
-                        <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip}</LabelSmall>
+                        <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip || '神秘之地'}</LabelSmall>
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                         </Block>

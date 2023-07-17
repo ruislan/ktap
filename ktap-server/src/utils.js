@@ -27,26 +27,30 @@ const utils = async (fastify, opts, next) => {
             });
             return result;
         },
+        // 是否能够删除讨论？
+        // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 讨论所有人
+        // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussion({ id, operator }) {
             const discussion = await fastify.db.discussion.findUnique({ where: { id } });
             if (discussion) {
-                // 检查是否是 Post 的发布者或者是频道管理员
-                // TODO 检查频道管理员
-                if (discussion.userId !== operator.id) return reply.code(403).send();
-                await fastify.db.$transaction([
-                    fastify.db.$queryRaw`
-                        DELETE FROM DiscussionPostReport WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
-                    `,
-                    fastify.db.$queryRaw`
-                        DELETE FROM DiscussionPostThumb WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
-                    `,
-                    fastify.db.$queryRaw`
-                        DELETE FROM DiscussionPostGiftRef WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
-                    `,
-                    fastify.db.discussionPost.deleteMany({ where: { discussionId: id } }),
-                    fastify.db.discussion.delete({ where: { id } }),
-                    fastify.db.timeline.deleteMany({ where: { target: 'Discussion', targetId: id, userId: discussion.userId } }), // 只删除 discussion 的时间线，XXX 时间线的业务逻辑还需要重构，目前暂时只用管当前对象
-                ]);
+                let canDelete = operator.isAdmin ||
+                    (!post.discussion?.isClosed && post.userId === operator.id); // TODO 检查频道管理员
+                if (canDelete) {
+                    await fastify.db.$transaction([
+                        fastify.db.$queryRaw`
+                            DELETE FROM DiscussionPostReport WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
+                        `,
+                        fastify.db.$queryRaw`
+                            DELETE FROM DiscussionPostThumb WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
+                        `,
+                        fastify.db.$queryRaw`
+                            DELETE FROM DiscussionPostGiftRef WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
+                        `,
+                        fastify.db.discussionPost.deleteMany({ where: { discussionId: id } }),
+                        fastify.db.discussion.delete({ where: { id } }),
+                        fastify.db.timeline.deleteMany({ where: { target: 'Discussion', targetId: id, userId: discussion.userId } }), // 只删除 discussion 的时间线，XXX 时间线的业务逻辑还需要重构，目前暂时只用管当前对象
+                    ]);
+                }
             }
             return discussion;
         },
@@ -75,6 +79,43 @@ const utils = async (fastify, opts, next) => {
                 SELECT (SELECT count(*) FROM DiscussionPostThumb WHERE direction = 'up' AND post_id = ${id}) AS ups,
                 (SELECT count(*) FROM DiscussionPostThumb WHERE direction = 'down' AND post_id = ${id}) AS downs
             `)[0];
+        },
+
+        // discussion post
+        // 是否能够删除帖子？
+        // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 发帖人
+        // b: 讨论处于关闭状态：是管理员 或者 频道管理员
+        async deleteDiscussionPost({ id, operator }) {
+            const post = await fastify.db.discussionPost.findUnique({ where: { id }, include: { discussion: true } });
+            if (post) {
+                let canDelete = operator.isAdmin ||
+                    (!post.discussion.isClosed && post.userId === operator.id); // TODO 检查频道管理员
+                console.log('canDelete: ' + canDelete);
+                if (canDelete) {
+                    await fastify.db.$transaction(async (tx) => {
+                        const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: post.discussion.id, id: { not: id } }, orderBy: { createdAt: 'desc' }, });
+                        await tx.discussion.update({ where: { id: post.discussion.id }, data: { lastPostId: lastPost?.id || null } });
+                        await tx.discussionPostReport.deleteMany({ where: { postId: id } });
+                        await tx.discussionPostThumb.deleteMany({ where: { postId: id } });
+                        await tx.discussionPostGiftRef.deleteMany({ where: { postId: id } });
+                        await tx.discussionPost.delete({ where: { id: id } });
+                        await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: id, userId: post.userId } });
+                    });
+                }
+            }
+        },
+
+        async createDiscussionPost({ content, userId, discussionId, ip }) {
+            if ((await fastify.db.discussion.count({ where: { id: discussionId, isClosed: false } })) <= 0) return; // 如果讨论被关闭，是不能回帖的
+
+            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
+            let data = null;
+            await fastify.db.$transaction(async (tx) => {
+                data = await tx.discussionPost.create({ data: { content: cleanContent, discussionId, userId, ip } });
+                await tx.discussion.update({ where: { id: discussionId }, data: { lastPostId: data.id } });
+                await tx.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
+            });
+            return data;
         },
 
         // reviews

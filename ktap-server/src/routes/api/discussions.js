@@ -223,16 +223,8 @@ const discussions = async (fastify, opts) => {
             const id = Number(req.params.id);
             const userId = req.user.id;
             const { content } = req.body;
-            if ((await fastify.db.discussion.count({ where: { id, isClosed: false } })) <= 0) reply.code(404).send(); // 如果讨论被关闭，是不能回帖的
-            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
-
-            let data = null;
-            await fastify.db.$transaction(async (tx) => {
-                data = await tx.discussionPost.create({ data: { content: cleanContent, discussionId: id, userId, ip: req.ip } });
-                await tx.discussion.update({ where: { id }, data: { lastPostId: data.id } });
-                await tx.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
-            });
-            return reply.code(200).send({ data: { id: data.id, content: data.content, createdAt: data.createdAt, ip: data.ip, updatedAt: data.updatedAt } });
+            const data = await fastify.utils.createDiscussionPost({ content, discussionId: id, userId, ip: req.ip });
+            return reply.code(200).send({ data });
         }
     });
 
@@ -280,26 +272,8 @@ const discussions = async (fastify, opts) => {
     fastify.delete('/:id/posts/:postId', {
         preHandler: authenticate,
         handler: async function (req, reply) {
-            const id = Number(req.params.id);
             const postId = Number(req.params.postId);
-            const userId = req.user.id;
-
-            // 检查是否是 Post 的发布者或者是频道管理员
-            // TODO 检查频道管理员
-            const post = await fastify.db.discussionPost.findUnique({ where: { id: postId } });
-            if (post) {
-                if (post.userId !== userId) return reply.code(403).send();
-
-                await fastify.db.$transaction(async (tx) => {
-                    const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: id, id: { not: postId } }, orderBy: { createdAt: 'desc' }, });
-                    await tx.discussion.update({ where: { id }, data: { lastPostId: lastPost?.id || null } });
-                    await tx.discussionPostReport.deleteMany({ where: { postId } });
-                    await tx.discussionPostThumb.deleteMany({ where: { postId } });
-                    await tx.discussionPostGiftRef.deleteMany({ where: { postId } });
-                    await tx.discussionPost.delete({ where: { id: postId } });
-                    await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: postId, userId: post.userId } });
-                });
-            }
+            await fastify.utils.deleteDiscussionPost({ id: postId, operator: req.user });
             return reply.code(204).send();
         }
     });

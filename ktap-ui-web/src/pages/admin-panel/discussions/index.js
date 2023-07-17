@@ -4,6 +4,7 @@ import { Block } from 'baseui/block';
 import { useSearchParams } from 'react-router-dom';
 import RoundTab from '../../../components/round-tab';
 import AdminPanelDiscussions from './discussions';
+import AdminPanelPosts from './posts';
 
 export default () => {
     const [searchParams] = useSearchParams();
@@ -19,7 +20,7 @@ export default () => {
                 <RoundTab activeKey={activeTab} names={['评论列表', '回复列表']} onChange={(e) => setActiveTab(e.activeKey)} />
             </Block>
             {activeTab === 0 && <AdminPanelDiscussions />}
-            {/* {activeTab === 1 && <AdminPanelReviewComments />} */}
+            {activeTab === 1 && <AdminPanelPosts />}
         </Block>
     );
 }
