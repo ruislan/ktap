@@ -280,7 +280,7 @@ function TagsBlock({ data }) {
                     skip > 0 ? setSkip(0) : fetchTags();
                 }}>搜索</Button></Block>
             </Block>
-            <Block marginTop='scale600'>
+            <Block marginTop='scale600' display='flex' flexWrap='wrap' gridGap='scale300'>
                 {tags && tags.map((tag, index) => (
                     <Tag key={index} kind='primary' size='small' closeable variant='solid' onActionClick={(e) => {
                         e.preventDefault();

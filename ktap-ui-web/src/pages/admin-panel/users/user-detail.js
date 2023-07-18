@@ -4,18 +4,17 @@ import { useParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { HeadingSmall, LabelMedium, LabelSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
-import { StatelessAccordion, Panel } from 'baseui/accordion';
 import RouterLink from '../../../components/router-link';
 import UserDetailProfile from './user-detail-profile';
 import UserDetailActions from './user-detail-actions';
 import UserDetailReviews from './user-detail-reviews';
 import UserDetailReviewComments from './user-detail-review-comments';
 import UserDetailTradings from './user-detail-tradings';
-import { Styles } from '../../../constants';
+import RoundTab from '../../../components/round-tab';
 
 function AdminPanelUserDetail() {
     const { id } = useParams();
-    const [expanded, setExpanded] = React.useState(['p1']);
+    const [activeTab, setActiveTab] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(false);
     const [data, setData] = React.useState(null);
     const fetchData = React.useCallback(async () => {
@@ -43,7 +42,7 @@ function AdminPanelUserDetail() {
                 {isLoading
                     ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>
                     : (data &&
-                        <Block display='flex' flexDirection='column' width='100%'>
+                        <Block display='flex' flexDirection='column' width='100%' gridGap='scale300'>
                             <Block display='flex' alignItems='center' marginBottom='scale600' gridGap='scale900' padding='scale600' backgroundColor='backgroundSecondary' overrides={{
                                 Block: {
                                     style: ({ $theme }) => ({
@@ -54,13 +53,15 @@ function AdminPanelUserDetail() {
                                 <LabelMedium>用户名：{data.name}</LabelMedium>
                                 <LabelMedium>邮箱：{data.email}</LabelMedium>
                             </Block>
-                            <StatelessAccordion accordion={false} expanded={expanded} onChange={({ expanded }) => setExpanded(expanded)}>
-                                <Panel key='p1' title='快速操作' overrides={Styles.Accordion.Panel}><UserDetailActions data={data} onChanged={() => fetchData()} /></Panel>
-                                <Panel key='p2' title='个人信息' overrides={Styles.Accordion.Panel}><UserDetailProfile data={data} onChanged={() => fetchData()} /></Panel>
-                                <Panel key='p3' title='评测列表' overrides={Styles.Accordion.Panel}><UserDetailReviews data={data} /></Panel>
-                                <Panel key='p4' title='评测回复列表' overrides={Styles.Accordion.Panel}><UserDetailReviewComments data={data} /></Panel>
-                                <Panel key='p5' title='交易记录' overrides={Styles.Accordion.Panel}><UserDetailTradings data={data} /></Panel>
-                            </StatelessAccordion>
+                            <RoundTab activeKey={activeTab}
+                                onChange={(e) => setActiveTab(e.activeKey)}
+                                names={['快速操作', '个人信息', '评测列表', '评测回复', '交易记录']}
+                            />
+                            {activeTab === 0 && <UserDetailActions data={data} onChanged={() => fetchData()} />}
+                            {activeTab === 1 && <UserDetailProfile data={data} onChanged={() => fetchData()} />}
+                            {activeTab === 2 && <UserDetailReviews data={data} />}
+                            {activeTab === 3 && <UserDetailReviewComments data={data} />}
+                            {activeTab === 4 && <UserDetailTradings data={data} />}
                         </Block>
                     )
                 }

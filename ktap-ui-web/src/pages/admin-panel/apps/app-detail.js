@@ -5,11 +5,9 @@ import { LabelSmall, HeadingSmall } from 'baseui/typography';
 import RouterLink from '../../../components/router-link';
 import { useParams } from 'react-router-dom';
 import { Spinner } from 'baseui/spinner';
-import { StatelessAccordion, Panel } from 'baseui/accordion';
 import AppDetailInfo from './app-detail-info';
 import AppDetailMedia from './app-detail-media';
 import AppDetailContact from './app-detail-contact';
-import { Styles } from '../../../constants';
 import AppDetailTags from './app-detail-tags';
 import AppDetailRequirements from './app-detail-requirements';
 import AppDetailLanguages from './app-detail-languages';
@@ -17,10 +15,12 @@ import AppDetailActions from './app-detail-actions';
 import AppDetailOrganizations from './app-detail-organizations';
 import AppDetailProReviews from './app-detail-pro-reviews';
 import AppDetailAwards from './app-detail-awards';
+import AppDetailDiscussions from './app-detail-discussions';
+import RoundTab from '../../../components/round-tab';
 
 function AdminPanelAppDetail() {
     const { id } = useParams();
-    const [expanded, setExpanded] = React.useState(['p0']);
+    const [activeTab, setActiveTab] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(false);
     const [data, setData] = React.useState(null);
     const fetchData = React.useCallback(async () => {
@@ -48,19 +48,22 @@ function AdminPanelAppDetail() {
                 {isLoading
                     ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>
                     : (data && (
-                        <Block display='flex' flexDirection='column' width='100%'>
-                            <StatelessAccordion accordion={false} expanded={expanded} onChange={({ expanded }) => setExpanded(expanded)}>
-                                <Panel key='p0' title='快速操作' overrides={Styles.Accordion.Panel}><AppDetailActions data={data} onChanged={() => fetchData()} /></Panel>
-                                <Panel key='p1' title='基本信息' overrides={Styles.Accordion.Panel}><AppDetailInfo data={data} onChanged={() => fetchData()} /></Panel>
-                                <Panel key='p2' title='组织信息' overrides={Styles.Accordion.Panel}><AppDetailOrganizations data={data} /></Panel>
-                                <Panel key='p3' title='视觉信息' overrides={Styles.Accordion.Panel}><AppDetailMedia data={data} /></Panel>
-                                <Panel key='p4' title='分类信息' overrides={Styles.Accordion.Panel}><AppDetailTags data={data} /></Panel>
-                                <Panel key='p5' title='联系信息' overrides={Styles.Accordion.Panel}><AppDetailContact data={data} /></Panel>
-                                <Panel key='p6' title='系统需求' overrides={Styles.Accordion.Panel}><AppDetailRequirements data={data} /></Panel>
-                                <Panel key='p7' title='支持语言' overrides={Styles.Accordion.Panel}><AppDetailLanguages data={data} /></Panel>
-                                <Panel key='p8' title='专业评测' overrides={Styles.Accordion.Panel}><AppDetailProReviews data={data} /></Panel>
-                                <Panel key='p9' title='获得荣誉' overrides={Styles.Accordion.Panel}><AppDetailAwards data={data} /></Panel>
-                            </StatelessAccordion>
+                        <Block display='flex' flexDirection='column' width='100%' gridGap='scale600'>
+                            <RoundTab activeKey={activeTab}
+                                onChange={(e) => setActiveTab(e.activeKey)}
+                                names={['快速操作', '论坛频道', '基本信息', '组织信息', '视觉信息', '分类信息', '联系信息', '系统需求', '支持语言', '专业评测', '获得荣誉']}
+                            />
+                            {activeTab === 0 && <AppDetailActions data={data} onChanged={() => fetchData()} />}
+                            {activeTab === 1 && <AppDetailDiscussions data={data} />}
+                            {activeTab === 2 && <AppDetailInfo data={data} onChanged={() => fetchData()} />}
+                            {activeTab === 3 && <AppDetailOrganizations data={data} />}
+                            {activeTab === 4 && <AppDetailMedia data={data} />}
+                            {activeTab === 5 && <AppDetailTags data={data} />}
+                            {activeTab === 6 && <AppDetailContact data={data} />}
+                            {activeTab === 7 && <AppDetailRequirements data={data} />}
+                            {activeTab === 8 && <AppDetailLanguages data={data} />}
+                            {activeTab === 9 && <AppDetailProReviews data={data} />}
+                            {activeTab === 10 && <AppDetailAwards data={data} />}
                         </Block>
                     ))
                 }

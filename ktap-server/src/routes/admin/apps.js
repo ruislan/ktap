@@ -20,7 +20,7 @@ const apps = async function (fastify, opts) {
         const data = await fastify.db.app.findMany({
             where: whereCondition,
             select: {
-                id: true, name: true, score: true, isVisible: true,  createdAt: true, updatedAt: true,
+                id: true, name: true, score: true, isVisible: true, createdAt: true, updatedAt: true,
             },
             orderBy: { createdAt: 'desc' },
             take: limit,
@@ -421,6 +421,74 @@ const apps = async function (fastify, opts) {
         const app = await fastify.db.app.create({ data: newApp });
         return reply.code(201).send({ data: { id: app.id } });
     });
+
+
+    // discussions
+    fastify.get('/:id/discussion-channels', async (req, reply) => {
+        const appId = Number(req.params.id) || 0;
+        const data = await fastify.db.discussionChannel.findMany({ where: { appId } });
+        return reply.code(200).send({ data });
+    });
+
+    fastify.post('/:id/discussion-channels', { schema: channelFormSchema },
+        async function (req, reply) {
+            const appId = Number(req.params.id) || 0;
+            const { name, icon, description } = req.body;
+            await fastify.db.discussionChannel.create({ data: { appId, name, icon, description } });
+            return reply.code(201).send();
+        });
+
+    fastify.put('/:id/discussion-channels/:channelId', { schema: channelFormSchema },
+        async function (req, reply) {
+            const appId = Number(req.params.id) || 0;
+            const channelId = Number(req.params.channelId) || 0;
+            const { name, icon, description } = req.body;
+            await fastify.db.discussionChannel.updateMany({ where: { id: channelId, appId }, data: { name, icon, description } });
+            return reply.code(204).send();
+        });
+
+    // 如果还有多的channel，则删除需要选择一个可以移动的频道才可以
+    // 如果只有这个channel，则该channel下不能有posts才可以删除
+    fastify.delete('/:id/discussion-channels/:channelId', async function (req, reply) {
+        const appId = Number(req.params.id) || 0;
+        const channelId = Number(req.params.channelId) || 0;
+        const toId = Number(req.body?.toId) || 0;
+        if (channelId > 0 && channelId !== toId) {
+            try {
+                await fastify.db.$transaction(async (tx) => {
+                    const channelCount = await fastify.db.discussionChannel.count({ where: { appId, id: { not: channelId } } });
+                    const postCount = await fastify.db.discussion.count({ where: { discussionChannelId: channelId, appId } });
+                    if (channelCount === 0 && postCount > 0) throw new Error(); // 只剩它自己，而且还有posts，不能删除
+                    if (channelCount > 0) { // 还有channel，做一个转移
+                        const toCount = await fastify.db.discussionChannel.count({ where: { id: toId, appId } });
+                        if (toCount === 0) throw new Error(); // 转移的 channel 不存在
+                        await tx.discussion.updateMany({ where: { discussionChannelId: channelId, appId }, data: { discussionChannelId: toId } });
+                    }
+                    await tx.discussionChannel.deleteMany({ where: { id: channelId, appId } });
+                });
+            } catch (e) {
+                fastify.log.error(e);
+                return reply.code(400).send();
+            }
+        }
+        return reply.code(204).send();
+    });
+};
+
+const channelFormSchema = {
+    body: {
+        type: 'object',
+        required: ['name'],
+        properties: {
+            id: { type: 'number' },
+            name: {
+                type: 'string', minLength: 1, maxLength: 50, errorMessage: { minLength: '请输入名称', maxLength: '名称不能大于 50 个字符', }
+            },
+            icon: { type: 'string' },
+            description: { type: 'string' },
+        },
+        additionalProperties: false,
+    }
 };
 
 export default apps;
