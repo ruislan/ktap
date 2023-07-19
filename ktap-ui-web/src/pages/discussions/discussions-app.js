@@ -154,6 +154,7 @@ function Channels({ appId, channelId = 0, }) {
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
+    const [currentChannel, setCurrentChannel] = React.useState(null);
     const scrollRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -172,14 +173,18 @@ function Channels({ appId, channelId = 0, }) {
     }, [appId]);
 
     React.useEffect(() => {
+        setCurrentChannel(dataList.find(channel => channel.id == channelId));
+    }, [dataList, channelId])
+
+    React.useEffect(() => {
         if (scrollRef.current) scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-    }, [dataList]); // dataList 存在了，就可以滑动了
+    }, [dataList, channelId]); // dataList 存在了，就可以滑动了
 
     return (
-        <Block display='flex' flexDirection='column' gridGap='scale300' paddingTop='scale600' paddingBottom='scale600'>
+        <Block display='flex' flexDirection='column' gridGap='scale600' paddingTop='scale600' paddingBottom='scale600'>
             {isLoading ?
                 <Skeleton height='64px' width='100%' /> :
-                <Block paddingBottom='scale600' overflow='scrollX' display='flex' alignItems='center' gridGap='scale300'>
+                <Block paddingBottom='scale600' overflow='scrollX' display='flex' alignItems='center' gridGap='scale300' height='80px'>
                     {dataList && dataList.map((channel, index) => {
                         return (
                             <Link key={index} ref={channel.id == channelId ? scrollRef : null} className={css({
@@ -209,6 +214,23 @@ function Channels({ appId, channelId = 0, }) {
                         );
                     })}
                 </Block>
+            }
+            {channelId > 0 && currentChannel &&
+                <div className={css({
+                    display: 'flex', alignItems: 'center', backgroundColor: theme.colors.backgroundSecondary, padding: theme.sizing.scale300,
+                    borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700, height: '48px', gap: theme.sizing.scale100
+                })}>
+                    <LabelSmall>
+                        {currentChannel?.moderators?.length === 0 ? '暂无版主' : '版主：'}
+                    </LabelSmall>
+                    {currentChannel?.moderators?.slice(0, 5).map((moderator, index) => (
+                        <div key={index} className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', })}>
+                            <img alt={moderator.name}
+                                className={css({ borderRadius: theme.borders.radius300, })}
+                                src={moderator.avatar} width="24px" height="24px" />
+                        </div>
+                    ))}
+                </div>
             }
             <Discussions appId={appId} channelId={channelId} />
         </Block >

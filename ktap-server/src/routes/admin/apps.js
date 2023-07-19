@@ -453,24 +453,81 @@ const apps = async function (fastify, opts) {
         const appId = Number(req.params.id) || 0;
         const channelId = Number(req.params.channelId) || 0;
         const toId = Number(req.body?.toId) || 0;
-        if (channelId > 0 && channelId !== toId) {
-            try {
-                await fastify.db.$transaction(async (tx) => {
-                    const channelCount = await fastify.db.discussionChannel.count({ where: { appId, id: { not: channelId } } });
-                    const postCount = await fastify.db.discussion.count({ where: { discussionChannelId: channelId, appId } });
-                    if (channelCount === 0 && postCount > 0) throw new Error(); // 只剩它自己，而且还有posts，不能删除
-                    if (channelCount > 0) { // 还有channel，做一个转移
-                        const toCount = await fastify.db.discussionChannel.count({ where: { id: toId, appId } });
-                        if (toCount === 0) throw new Error(); // 转移的 channel 不存在
-                        await tx.discussion.updateMany({ where: { discussionChannelId: channelId, appId }, data: { discussionChannelId: toId } });
-                    }
-                    await tx.discussionChannel.deleteMany({ where: { id: channelId, appId } });
-                });
-            } catch (e) {
-                fastify.log.error(e);
-                return reply.code(400).send();
+        try {
+            await fastify.db.$transaction(async (tx) => {
+                const channelCount = await fastify.db.discussionChannel.count({ where: { appId, id: { not: channelId } } });
+                const postCount = await fastify.db.discussion.count({ where: { discussionChannelId: channelId, appId } });
+                if (channelCount === 0 && postCount > 0) throw new Error(); // 只剩它自己，而且还有posts，不能删除
+                if (channelCount > 0) { // 还有channel，做一个转移
+                    const toCount = await fastify.db.discussionChannel.count({ where: { id: toId, appId } });
+                    if (toCount === 0) throw new Error(); // 转移的 channel 不存在
+                    await tx.discussion.updateMany({ where: { discussionChannelId: channelId, appId }, data: { discussionChannelId: toId } });
+                }
+                await tx.discussionChannel.deleteMany({ where: { id: channelId, appId } });
+            });
+        } catch (e) {
+            fastify.log.error(e);
+            return reply.code(400).send();
+        }
+        return reply.code(204).send();
+    });
+
+    fastify.get('/:id/discussion-channels/:channelId/moderators', async function (req, reply) {
+        const channelId = Number(req.params.channelId) || 0;
+        const userRefs = await fastify.db.userDiscussionChannelRef.findMany({
+            where: { discussionChannelId: channelId, },
+            select: {
+                user: {
+                    select: { id: true, name: true, }
+                }
+            }
+        });
+        const data = userRefs.map(ref => ref.user);
+        return reply.code(200).send({ data });
+    });
+
+    fastify.put('/:id/discussion-channels/:channelId/moderators', async function (req, reply) {
+        const channelId = Number(req.params.channelId) || 0;
+        const { ids } = req.body;
+        const failures = [];
+        if (ids) {
+            for (const id of ids) {
+                const userId = Number(id) || 0;
+                try {
+                    await fastify.db.userDiscussionChannelRef.upsert({
+                        create: {
+                            userId,
+                            discussionChannelId: channelId,
+                        },
+                        update: {},
+                        where: {
+                            userId_discussionChannelId: {
+                                userId,
+                                discussionChannelId: channelId,
+                            }
+                        },
+                    });
+                } catch (ignore) {
+                    failures.push(userId);
+                    fastify.log.warn(`update discussion channel[id:${channelId}] moderator[id:${userId}] failed, maybe user not found.`);
+                }
             }
         }
+        if (failures.length > 0) return reply.code(400).send({ failures });
+        return reply.code(204).send();
+    });
+
+    fastify.delete('/:id/discussion-channels/:channelId/moderators/:moderatorId', async function (req, reply) {
+        const channelId = Number(req.params.channelId) || 0;
+        const moderatorId = Number(req.params.moderatorId) || 0;
+        await fastify.db.userDiscussionChannelRef.delete({
+            where: {
+                userId_discussionChannelId: {
+                    userId: moderatorId,
+                    discussionChannelId: channelId,
+                }
+            },
+        });
         return reply.code(204).send();
     });
 };

@@ -41,6 +41,7 @@ model User {
   discussionPosts       DiscussionPost[] // 讨论帖
   discussionPostGifts   DiscussionPostGiftRef[] // 对讨论帖送的礼物
   discussionPostReports DiscussionPostReport[] // 讨论贴的举报
+  discussionChannels    UserDiscussionChannelRef[] // 管理的讨论频道
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -476,14 +477,18 @@ model DiscussionChannel {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // ref
-  app         App?         @relation(fields: [appId], references: [id])
+  app         App?                       @relation(fields: [appId], references: [id])
   discussions Discussion[] // 讨论
+  moderators  UserDiscussionChannelRef[] // 版主们
 }
 
-// 用户板块多对多关系，板块的管理者们
+// 用户频道多对多关系，版主们
 model UserDiscussionChannelRef {
-  userId              Int @map("user_id")
-  discussionChannelId Int @map("discussion_channel_id")
+  userId              Int               @map("user_id")
+  discussionChannelId Int               @map("discussion_channel_id")
+  // ref
+  user                User              @relation(fields: [userId], references: [id])
+  channel             DiscussionChannel @relation(fields: [discussionChannelId], references: [id])
 
   @@id([userId, discussionChannelId])
 }

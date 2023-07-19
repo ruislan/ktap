@@ -88,7 +88,22 @@ const discussions = async (fastify, opts) => {
     // 某个 App 的讨论频道
     fastify.get('/apps/:appId/channels', async function (req, reply) {
         const appId = Number(req.params.appId) || 0;
-        const data = await fastify.db.discussionChannel.findMany({ where: { appId }, });
+        const data = await fastify.db.discussionChannel.findMany({
+            where: { appId },
+            select: {
+                id: true, name: true, description: true, icon: true, createdAt: true, updatedAt: true,
+                moderators: {
+                    select: {
+                        user: {
+                            select: { id: true, name: true, title: true, avatar: true, gender: true, }
+                        }
+                    }
+                }
+            }
+        });
+        data.forEach(item => {
+            item.moderators = item.moderators.map(ref => ref.user);
+        });
         return reply.code(200).send({ data });
     });
 

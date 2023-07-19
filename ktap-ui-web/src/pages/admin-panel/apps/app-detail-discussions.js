@@ -12,19 +12,29 @@ import { Input } from 'baseui/input';
 import { Check, Delete, Plus } from 'baseui/icon';
 import { Button } from 'baseui/button';
 import { Select } from 'baseui/select';
+import Tag from '../../../components/tag';
 
 function AppDetailDiscussions({ data }) {
     const [css, theme] = useStyletron();
     const { enqueue } = useSnackbar();
+
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
-    const [isOpenEditModal, setIsOpenEditModal] = React.useState(false);
+
     const [form, setForm] = React.useState({ id: '', name: '', description: '', icon: '' });
+
+    const [isOpenEditModal, setIsOpenEditModal] = React.useState(false);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState(false);
     const [transferChannel, setTransferChannel] = React.useState([]);
     const [isDeleting, setIsDeleting] = React.useState(false);
+
+    const [isOpenModeratorModal, setIsOpenModeratorModal] = React.useState(false);
+    const [isSavingModerator, setIsSavingModerator] = React.useState(false);
+    const [isLoadingModerator, setIsLoadingModerator] = React.useState(false);
+    const [moderators, setModerators] = React.useState([]);
+    const [moderatorIds, setModeratorIds] = React.useState('');
 
     const fetchData = React.useCallback(async () => {
         try {
@@ -39,6 +49,21 @@ function AppDetailDiscussions({ data }) {
         }
     }, [data]);
 
+    const fetchModerator = React.useCallback(async () => {
+        if (isOpenModeratorModal) {
+            try {
+                setIsLoadingModerator(true);
+                const res = await fetch(`/admin/apps/${data.id}/discussion-channels/${form.id}/moderators`);
+                if (res.ok) {
+                    const json = await res.json();
+                    setModerators(json.data);
+                }
+            } finally {
+                setIsLoadingModerator(false);
+            }
+        }
+    }, [isOpenModeratorModal, data, form]);
+
     const handleSave = async () => {
         try {
             setIsSubmitting(true);
@@ -46,16 +71,16 @@ function AppDetailDiscussions({ data }) {
             const method = form.id ? 'PUT' : 'POST';
             const res = await fetch(url, { method, body: JSON.stringify(form), headers: { 'Content-Type': 'application/json' } });
             if (res.ok) {
-                enqueue({ message: '保存成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, })
+                enqueue({ message: '保存成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, });
                 fetchData();
                 setIsOpenEditModal(false);
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
-                    enqueue({ message: json.message, startEnhancer: ({ size }) => <Delete size={size} color='negative' />, })
+                    enqueue({ message: json.message, startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
                 } else {
                     setIsOpenEditModal(false);
-                    enqueue({ message: '保存失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, })
+                    enqueue({ message: '保存失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
                 }
             }
         } finally {
@@ -73,10 +98,10 @@ function AppDetailDiscussions({ data }) {
                     headers: { 'Content-Type': 'application/json' }
                 });
             if (res.ok) {
-                enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, })
+                enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, });
                 fetchData();
             } else {
-                enqueue({ message: '删除失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, })
+                enqueue({ message: '删除失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
             }
         } finally {
             setIsOpenDeleteModal(false);
@@ -84,9 +109,51 @@ function AppDetailDiscussions({ data }) {
         }
     };
 
+    const handleSaveModerator = async () => {
+        try {
+            setIsSavingModerator(true);
+            if (moderatorIds === '') return;
+            const res = await fetch(`/admin/apps/${data.id}/discussion-channels/${form.id}/moderators`,
+                {
+                    body: JSON.stringify({ ids: moderatorIds.split(',').map(x => x.trim()) }),
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            if (res.ok) {
+                enqueue({ message: '保存成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, });
+                fetchModerator();
+            } else {
+                let message = '保存失败，稍后再试，或者请联系技术人员处理';
+                if (res.status === 400) {
+                    const json = await res.json();
+                    const failureIds = json.failures.join(',');
+                    message = `用户 ID [${failureIds}] 删除失败。请检查是否输入了正确的 ID。`;
+                }
+                enqueue({ message, startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
+            }
+        } finally {
+            setIsSavingModerator(false);
+        }
+    };
+
+    const handleDeleteModerator = async (moderatorId) => {
+        const res = await fetch(`/admin/apps/${data.id}/discussion-channels/${form.id}/moderators/${moderatorId}`, { method: 'DELETE' });
+        if (res.ok) {
+            enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, });
+            fetchModerator();
+        } else {
+            enqueue({ message: '删除失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
+        }
+    };
+
     React.useEffect(() => {
         fetchData();
     }, [fetchData]);
+
+    React.useEffect(() => {
+        fetchModerator();
+    }, [fetchModerator]);
+
     return (
         <Block display='flex' flexDirection='column' gridGap='scale900'>
             {isLoading ?
@@ -116,17 +183,11 @@ function AppDetailDiscussions({ data }) {
                                     <LabelXSmall color='primary300' width='100%' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>{channel.description}</LabelXSmall>
                                 </Block>
                             </Block>
-                            <Block display='grid' width='100%' gridTemplateColumns='1fr 1fr 1fr' gridGap='scale300'>
+                            <Block display='grid' width='100%' gridTemplateColumns='1fr 1fr 1fr 1fr' gridGap='scale300'>
                                 <Button kind='secondary' size='mini' onClick={() => window.open(`/discussions/apps/${data.id}/channels/${channel.id}`)}>查看</Button>
-                                <Button kind='secondary' size='mini' onClick={() => {
-                                    setForm({ ...channel });
-                                    setIsOpenEditModal(true);
-                                }}>修改</Button>
-                                <Button kind='secondary' size='mini' onClick={() => {
-                                    setForm({ ...channel });
-                                    setTransferChannel([dataList.filter(channel => channel.id !== form.id)[0]]);
-                                    setIsOpenDeleteModal(true);
-                                }}>删除</Button>
+                                <Button kind='secondary' size='mini' onClick={() => { setForm({ ...channel }); setModeratorIds(''); setIsOpenModeratorModal(true); }}>版主</Button>
+                                <Button kind='secondary' size='mini' onClick={() => { setForm({ ...channel }); setIsOpenEditModal(true); }}>修改</Button>
+                                <Button kind='secondary' size='mini' onClick={() => { setForm({ ...channel }); setTransferChannel([dataList.filter(channel => channel.id !== form.id)[0]]); setIsOpenDeleteModal(true); }}>删除</Button>
                             </Block>
                         </div>
                     ))}
@@ -146,6 +207,28 @@ function AppDetailDiscussions({ data }) {
                     </div>
                 </Block>
             }
+
+            <Modal onClose={() => setIsOpenModeratorModal(false)} closeable={false} isOpen={isOpenModeratorModal} animate autoFocus role={ROLE.dialog}>
+                <ModalHeader>设置版主</ModalHeader>
+                <ModalBody>
+                    <Block display='flex' flexDirection='column' gridGap='scale300'>
+                        <FormControl label={<LabelSmall>用户ID</LabelSmall>} caption={'用","隔开多个用户ID，例如：1,2,3'}>
+                            <Input size='compact' value={moderatorIds} onChange={e => setModeratorIds(e.target.value)} required></Input>
+                        </FormControl>
+                        <Block display='flex' gridGap='scale300' alignItems='center' flexWrap width='100%'>
+                            {isLoadingModerator && <Spinner $size='scale1200' $borderWidth='scale200' />}
+                            {moderators?.map((moderator, index) => (
+                                <Tag key={index} closeable={true} onCloseClick={() => handleDeleteModerator(moderator.id)}>{moderator.name}</Tag>
+                            ))}
+                        </Block>
+                    </Block>
+                </ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenModeratorModal(false)}>关闭</ModalButton>
+                    <ModalButton onClick={() => handleSaveModerator()} isLoading={isSavingModerator}>确定</ModalButton>
+                </ModalFooter>
+            </Modal>
+
             <Modal onClose={() => setIsOpenEditModal(false)} closeable={false} isOpen={isOpenEditModal} animate autoFocus role={ROLE.dialog}>
                 <ModalHeader>新增</ModalHeader>
                 <ModalBody>
