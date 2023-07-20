@@ -90,7 +90,7 @@ const router = createBrowserRouter(
         <Route path='apps/:appId' element={<DiscussionsApp />} />
         <Route path='apps/:appId/channels/:channelId' element={<DiscussionsApp />} />
       </Route>
-      <Route path='/search/:keyword' element={<Search />} />
+      <Route path='/search' element={<Search />} />
       <Route path='/tags/:name' element={<Tags />} />
       <Route path='/rules' element={<Rules />} />
       <Route path='/admin-panel' element={<RequireAdmin><AdminPanel /></RequireAdmin>}>

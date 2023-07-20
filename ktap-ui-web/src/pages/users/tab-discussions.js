@@ -49,7 +49,7 @@ function TabDiscussions({ theUser }) {
                     }}
                 >
                     {discussion.app ?
-                        (<LabelMedium marginBottom='scale200'>发起了一次关于 <RouterLink href={`/apps/${discussion.app.id}`} kind='underline'>{discussion.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
+                        (<LabelMedium marginBottom='scale200'>发起了对 <RouterLink href={`/apps/${discussion.app.id}`} kind='underline'>{discussion.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
                         (<LabelMedium marginBottom='scale200'>发起了 <RouterLink href={`/discussions/${discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>)
                     }
                     <LabelSmall color='primary300'>{dayjs(discussion.createdAt).fromNow()}</LabelSmall>

@@ -65,8 +65,8 @@ const search = async function (fastify, opts) {
             };
         });
 
-        // 存储查询热词，只存储有效搜索
-        if (data.length > 0) {
+        // 存储查询热词，只存储非空关键词和有效搜索
+        if (data.length > 0 && keyword.length > 0) {
             await fastify.db.hotSearch.upsert({
                 where: { keyword },
                 create: {

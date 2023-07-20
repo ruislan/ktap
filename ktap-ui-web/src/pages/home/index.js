@@ -4,7 +4,6 @@ import { Block } from 'baseui/block';
 import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
 
 import AppListRecommended from './app-list-recommended';
-import Search from './search';
 import SideBoxApps from '../../components/side-box-apps';
 
 function Home() {
@@ -35,7 +34,6 @@ function Home() {
                     })
                 }
             }}>
-                <Search />
                 <AppListRecommended />
             </Block>
 

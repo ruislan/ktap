@@ -66,7 +66,7 @@ function AppBanner({ appId }) {
                     throw { status: res.status };
                 }
             } catch (error) {
-                if (error?.status === 404) navigate('/', { replace: true });
+                if (error?.status === 404) navigate('/discussions', { replace: true });
                 else navigate('/not-work');
             } finally {
                 setIsLoading(false);
@@ -218,7 +218,8 @@ function Channels({ appId, channelId = 0, }) {
             {channelId > 0 && currentChannel &&
                 <div className={css({
                     display: 'flex', alignItems: 'center', backgroundColor: theme.colors.backgroundSecondary, padding: theme.sizing.scale300,
-                    borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700, height: '48px', gap: theme.sizing.scale100
+                    borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700, height: '48px', gap: theme.sizing.scale100,
+                    marginBottom: theme.sizing.scale600,
                 })}>
                     <LabelSmall>
                         {currentChannel?.moderators?.length === 0 ? '暂无版主' : '版主：'}

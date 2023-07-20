@@ -37,7 +37,7 @@ function SideHotKeywords() {
                 }
                 {dataList.map(({ keyword, count }, index) => {
                     return (
-                        <ListItem key={index} href={`/search/${keyword}`} replace={true}>
+                        <ListItem key={index} href={`/search?q=${keyword}`} replace={true}>
                             <LabelMedium>{keyword}</LabelMedium>
                             <Block display='flex' alignItems='center'>
                                 <Fire width='16px' height='16px' />

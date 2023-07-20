@@ -463,6 +463,7 @@ const apps = async function (fastify, opts) {
                     if (toCount === 0) throw new Error(); // 转移的 channel 不存在
                     await tx.discussion.updateMany({ where: { discussionChannelId: channelId, appId }, data: { discussionChannelId: toId } });
                 }
+                await tx.userDiscussionChannelRef.deleteMany({ where: { discussionChannelId: channelId } });
                 await tx.discussionChannel.deleteMany({ where: { id: channelId, appId } });
             });
         } catch (e) {

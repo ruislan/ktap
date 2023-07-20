@@ -44,8 +44,8 @@ function TabReviewComments({ theUser }) {
                     }}
                 >
                     {comment.review
-                        ? (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${comment.review.user.id}`} kind='underline'>{comment.review.user.name}</RouterLink> 关于 <RouterLink href={`/apps/${comment.review.app.id}`} kind='underline'>{comment.review.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${comment.review.id}`} kind='underline'>评测</RouterLink> </LabelMedium>)
-                        : (<LabelMedium marginBottom='scale200'>回复了一篇评测</LabelMedium>)
+                        ? (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${comment.review.user.id}`} kind='underline'>{comment.review.user.name}</RouterLink> 对 <RouterLink href={`/apps/${comment.review.app.id}`} kind='underline'>{comment.review.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${comment.review.id}`} kind='underline'>评测</RouterLink> </LabelMedium>)
+                        : (<LabelMedium marginBottom='scale200'>回复了评测</LabelMedium>)
                     }
                     <LabelSmall color='primary500' marginTop='scale0'>{dayjs(comment.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
                     <Block display='flex' flexDirection='column'>

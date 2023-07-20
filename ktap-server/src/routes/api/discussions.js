@@ -9,6 +9,7 @@ const discussions = async (fastify, opts) => {
         const skip = Math.max(0, Number(req.query.skip) || 0);
         const keyword = req.query.keyword || '';
         const whereCondition = {
+            isVisible: true,
             discussionChannels: { some: { id: { not: undefined } } },
         };
         if (keyword?.length > 0) whereCondition.name = { contains: keyword };
@@ -160,7 +161,7 @@ const discussions = async (fastify, opts) => {
                 user: { select: { id: true, name: true, title: true, avatar: true, gender: true } },
                 app: {
                     select: {
-                        id: true, name: true, summary: true, score: true,
+                        id: true, name: true, summary: true, score: true, isVisible: true,
                         media: {
                             where: { usage: { in: [AppMedia.usage.head, AppMedia.usage.logo] } },
                             select: { usage: true, image: true, thumbnail: true, },
@@ -170,7 +171,7 @@ const discussions = async (fastify, opts) => {
                 _count: { select: { posts: true }, }
             }
         });
-        if (!data) return reply.code(404).send();
+        if (!data || !data.app.isVisible) return reply.code(404).send();
 
         const metaUsers = (await fastify.db.$queryRaw`
                 SELECT COUNT(DISTINCT user_id) AS total FROM DiscussionPost WHERE discussion_id = ${id};

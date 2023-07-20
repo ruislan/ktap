@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '../constants';
 import { useStyletron } from 'baseui';
 import { User, Coins } from '../components/icons';
-import { Delete, Menu } from 'baseui/icon';
+import { Delete, Menu, Search } from 'baseui/icon';
 
 export default function Header() {
     const [css, theme] = useStyletron();
@@ -32,6 +32,13 @@ export default function Header() {
             backgroundColor: 'rgb(31, 31, 31)',
         },
     });
+
+    const [keyword, setKeyword] = React.useState('');
+    const doSearch = () => {
+        if (keyword && keyword.length > 0) {
+            navigate(`/search?q=${keyword}`);
+        }
+    };
 
     React.useEffect(() => {
         if (isAuthenticated()) {
@@ -90,7 +97,7 @@ export default function Header() {
             })}>
                 <div className={css({
                     display: 'flex', alignItems: 'center', width: '100%', paddingLeft: theme.sizing.scale600, paddingRight: theme.sizing.scale600,
-                    maxWidth: MOBILE_BREAKPOINT_PX + 32 + 'px', flexWrap: 'nowrap',
+                    maxWidth: MOBILE_BREAKPOINT_PX + 32 + 176 + 'px', flexWrap: 'nowrap',
                     [MOBILE_BREAKPOINT]: {
                         paddingLeft: theme.sizing.scale500, paddingRight: theme.sizing.scale500,
                         paddingTop: theme.sizing.scale0, paddingBottom: theme.sizing.scale0,
@@ -113,6 +120,7 @@ export default function Header() {
                         }}>{showMainItems ? <Delete size='scale900' /> : <Menu size='scale900' />}</div>
                     </div>
 
+                    {/* Brand */}
                     <div className={css({
                         fontFamily: 'system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif', fontWeight: 700,
                         lineHeight: theme.sizing.scale900, fontSize: theme.sizing.scale700,
@@ -129,6 +137,7 @@ export default function Header() {
                         <span>Tap</span>
                     </div>
 
+                    {/* Menu  */}
                     <div className={css({
                         display: 'flex', flex: '1', alignItems: 'center', height: '100%',
                         [MOBILE_BREAKPOINT]: {
@@ -143,7 +152,7 @@ export default function Header() {
                         },
                     })}>
                         <ul className={css({
-                            display: 'flex', flexDirection: 'row', listStyle: 'none', margin: '0', padding: '0', height: '100%',
+                            display: 'flex', listStyle: 'none', margin: '0', padding: '0', height: '100%',
                             fontFamily: 'system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif',
                             [MOBILE_BREAKPOINT]: {
                                 flexDirection: 'column',
@@ -171,12 +180,54 @@ export default function Header() {
                             ))}
                         </ul>
                     </div>
+
+                    {/* Action & User */}
                     <div className={css({
-                        display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
                         gap: theme.sizing.scale600,
                     })}>
+                        {/* Search */}
+                        {!pathname.startsWith('/search') &&
+                            <div className={css({
+                                display: 'flex', alignItems: 'center', color: theme.colors.primary100,
+                                height: theme.sizing.scale1000, backgroundColor: 'rgb(41, 41, 41)',
+                                userSelect: 'none', borderRadius: theme.borders.radius300,
+                                [MOBILE_BREAKPOINT]: { backgroundColor: 'unset' },
+                            })}>
+                                <div
+                                    className={css({
+                                        pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        width: theme.sizing.scale1000, height: theme.sizing.scale1000, userSelect: 'none',
+                                        minWidth: theme.sizing.scale1000, padding: theme.sizing.scale200,
+                                        [MOBILE_BREAKPOINT]: { pointerEvents: 'unset', }
+                                    })}
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        navigate('/search');
+                                    }}>
+                                    <Search size='scale800' />
+                                </div>
+                                <input
+                                    className={css({
+                                        outline: 'none', border: 0, background: 'none', margin: 0, padding: 0,
+                                        paddingLeft: 0, paddingRight: theme.sizing.scale550,
+                                        paddingTop: theme.sizing.scale200, paddingBottom: theme.sizing.scale200,
+                                        color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit', lineHeight: 'inherit',
+                                        caretColor: 'inherit', cursor: 'text', appearance: 'none',
+                                        height: '100%', width: '100%', minWidth: '0px', maxWidth: '100%',
+                                        [MOBILE_BREAKPOINT]: { display: 'none', },
+                                    })}
+                                    placeholder='搜索...' onChange={e => setKeyword(e.target.value)} value={keyword}
+                                    onKeyDown={e => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            doSearch();
+                                        }
+                                    }} />
+                            </div>
+                        }
                         {user && <div className={css({
-                            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
                             color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
                         })}>
                             <Coins width='24px' height='24px' /> <span>{user?.balance || 0}</span>

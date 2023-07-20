@@ -1,20 +1,21 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { Input } from 'baseui/input';
-import { Search as SearchIcon } from 'baseui/icon';
-import { Button } from 'baseui/button';
+import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { LabelXSmall, LabelMedium } from 'baseui/typography';
 import Tag from '../../components/tag';
 import { Spinner } from "baseui/spinner";
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
-import { useNavigate, useParams } from 'react-router-dom';
+
 
 function SearchPanel() {
     const limit = 10;
-    const { keyword } = useParams();
+    const [searchParams] = useSearchParams();
+
     const navigate = useNavigate();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(false);
@@ -26,6 +27,7 @@ function SearchPanel() {
 
     React.useEffect(() => {
         (async () => {
+            const keyword = searchParams.get('q') || '';
             setIsLoading(true);
             setWord(keyword);
             try {
@@ -38,7 +40,7 @@ function SearchPanel() {
                 setIsLoading(false);
             }
         })();
-    }, [skip, keyword]);
+    }, [skip, searchParams]);
 
     React.useEffect(() => {
         if (isLoading || !hasMore) return;
@@ -62,7 +64,7 @@ function SearchPanel() {
                         }
                     }
                 }}>
-                    <Input value={word} size='compact' clearable placeholder='搜一搜'
+                    <Input value={word} size='default' clearable placeholder='搜一搜'
                         overrides={{
                             StartEnhancer: {
                                 style: () => ({
@@ -70,20 +72,16 @@ function SearchPanel() {
                                 })
                             }
                         }}
-                        startEnhancer={<SearchIcon size='18px' />}
+                        startEnhancer={<SearchIcon size='scale800' />}
+                        endEnhancer={<ArrowRight cursor='pointer' onClick={() => { navigate(`/search?q=${word}`, { replace: true }); }} size='scale800' />}
                         onChange={e => setWord(e.target.value)}
                         onKeyDown={e => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                if (word.length > 0) navigate(`/search/${word}`, { replace: true });
+                                if (word.length > 0) navigate(`/search?q=${word}`, { replace: true });
                             }
                         }}
                     />
-                </Block>
-                <Block marginLeft='scale300'>
-                    <Button kind='secondary' size='compact' disabled={word.length === 0} isLoading={isLoading} onClick={() => { navigate(`/search/${word}`, { replace: true }); }}>
-                        搜索
-                    </Button>
                 </Block>
             </Block>
 

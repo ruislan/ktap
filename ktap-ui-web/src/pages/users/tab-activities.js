@@ -18,7 +18,7 @@ function LeftLine({ type }) {
                 Block: {
                     style: ({ $theme }) => ({
                         backgroundColor: $theme.colors.backgroundTertiary,
-                        borderRadius: '50%',
+                        borderRadius: $theme.borders.radius300,
                         width: $theme.sizing.scale900,
                         minWidth: $theme.sizing.scale900,
                         height: $theme.sizing.scale900,
@@ -59,8 +59,8 @@ function ActivityItem({ activity }) {
                 {activity.type === 'Review' && (
                     <>
                         {activity.data.app ?
-                            (<LabelMedium marginBottom='scale200'>发表了一篇关于 <RouterLink href={`/apps/${activity.data.app.id}`} kind='underline'>{activity.data.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.id}`} kind='underline'>评测</RouterLink> ，评分为{activity.data.score}分</LabelMedium>) :
-                            (<LabelMedium marginBottom='scale200'>发表了一篇 <RouterLink href={`/reviews/${activity.data.id}`} kind='underline'>评测</RouterLink> ，评分为{activity.data.score}分</LabelMedium>)
+                            (<LabelMedium marginBottom='scale200'>发表了对 <RouterLink href={`/apps/${activity.data.app.id}`} kind='underline'>{activity.data.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.id}`} kind='underline'>评测</RouterLink> ，评分为{activity.data.score}分</LabelMedium>) :
+                            (<LabelMedium marginBottom='scale200'>发表了 <RouterLink href={`/reviews/${activity.data.id}`} kind='underline'>评测</RouterLink> ，评分为{activity.data.score}分</LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block display='flex' flexDirection='column'>
@@ -98,7 +98,7 @@ function ActivityItem({ activity }) {
                                             </Block>
                                         </>
                                     )
-                                    : (<LabelMedium color='primary400'>该游戏暂不可见</LabelMedium>)
+                                    : (<LabelSmall color='primary400' padding='scale100'>该游戏暂不可见</LabelSmall>)
                                 }
                             </Block>
                         </Block>
@@ -107,8 +107,8 @@ function ActivityItem({ activity }) {
                 {activity.type === 'ReviewComment' && (
                     <>
                         {activity.data?.review ?
-                            (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${activity.data.review.user.id}`} kind='underline'>{activity.data.review.user.name}</RouterLink> 关于 <RouterLink href={`/apps/${activity.data.review.app.id}`} kind='underline'>{activity.data.review.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.review.id}`} kind='underline'>评测</RouterLink></LabelMedium>) :
-                            (<LabelMedium marginBottom='scale200'>回复了一篇评测</LabelMedium>)
+                            (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${activity.data.review.user.id}`} kind='underline'>{activity.data.review.user.name}</RouterLink> 对 <RouterLink href={`/apps/${activity.data.review.app.id}`} kind='underline'>{activity.data.review.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.review.id}`} kind='underline'>评测</RouterLink></LabelMedium>) :
+                            (<LabelMedium marginBottom='scale200'>回复了评测</LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block display='flex' flexDirection='column'>
@@ -133,7 +133,7 @@ function ActivityItem({ activity }) {
                             (<LabelMedium marginBottom='scale200'>
                                 给 <RouterLink href={`/users/${activity.data.review.user.id}`} kind='underline'>{activity.data.review.user.name}</RouterLink> 的 <RouterLink href={`/reviews/${activity.data.review.id}`} kind='underline'>评测</RouterLink> 赠送了礼物
                             </LabelMedium>) :
-                            (<LabelMedium marginBottom='scale200'>给一篇评测赠送了礼物</LabelMedium>)
+                            (<LabelMedium marginBottom='scale200'>给评测赠送了礼物</LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block display='flex' flexDirection='column'>
@@ -162,7 +162,7 @@ function ActivityItem({ activity }) {
                     <>
                         {activity.data ?
                             (<LabelMedium marginBottom='scale200'>关注了 <RouterLink href={`/apps/${activity.data.id}`} kind='underline'>{activity.data.name}</RouterLink> </LabelMedium>) :
-                            (<LabelMedium marginBottom='scale200'>关注了一款游戏</LabelMedium>)
+                            (<LabelMedium marginBottom='scale200'>关注了游戏</LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block marginTop='scale600' display='flex' alignItems='center' padding='scale100' backgroundColor='backgroundSecondary'
@@ -196,7 +196,7 @@ function ActivityItem({ activity }) {
                                         </Block>
                                     </Block>
                                 </>) :
-                                (<LabelSmall padding='scale200' color='primary200'>该游戏暂不可见</LabelSmall>)
+                                (<LabelSmall padding='scale100' color='primary200'>该游戏暂不可见</LabelSmall>)
                             }
                         </Block>
                     </>
@@ -204,7 +204,7 @@ function ActivityItem({ activity }) {
                 {activity.type === 'Discussion' && (
                     <>
                         {activity.data.app ?
-                            (<LabelMedium marginBottom='scale200'>发起了一次关于 <RouterLink href={`/apps/${activity.data.app.id}`} kind='underline'>{activity.data.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${activity.data.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
+                            (<LabelMedium marginBottom='scale200'>发起了对 <RouterLink href={`/apps/${activity.data.app.id}`} kind='underline'>{activity.data.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${activity.data.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
                             (<LabelMedium marginBottom='scale200'>发起了 <RouterLink href={`/discussions/${activity.data.id}`} kind='underline'>讨论</RouterLink></LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
@@ -243,7 +243,7 @@ function ActivityItem({ activity }) {
                                             </Block>
                                         </>
                                     )
-                                    : (<LabelMedium color='primary400'>该游戏暂不可见</LabelMedium>)
+                                    : (<LabelSmall padding='scale100' color='primary400'>该游戏暂不可见</LabelSmall>)
                                 }
                             </Block>
                         </Block>
@@ -252,8 +252,13 @@ function ActivityItem({ activity }) {
                 {activity.type === 'DiscussionPost' && (
                     <>
                         {activity.data.discussion ?
-                            (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${activity.data.discussion.user.id}`} kind='underline'>{activity.data.discussion.user.name}</RouterLink> 关于 <RouterLink href={`/apps/${activity.data.discussion.app.id}`} kind='underline'>{activity.data.discussion.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${activity.data.discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
-                            (<LabelMedium marginBottom='scale200'>回复了一个讨论</LabelMedium>)
+                            (
+                                <LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${activity.data.discussion.user.id}`} kind='underline'>{activity.data.discussion.user.name}</RouterLink>
+                                    {activity.data.discussion.app &&
+                                        <>&nbsp; 对&nbsp;<RouterLink href={`/apps/${activity.data.discussion.app.id}`} kind='underline'>{activity.data.discussion.app.name}</RouterLink></>
+                                    } 的 <RouterLink href={`/discussions/${activity.data.discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>
+                            ) :
+                            (<LabelMedium marginBottom='scale200'>回复了讨论</LabelMedium>)
                         }
                         <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                         <Block display='flex' flexDirection='column'>

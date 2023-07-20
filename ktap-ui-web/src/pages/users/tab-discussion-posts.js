@@ -45,8 +45,8 @@ function TabDiscussionPosts({ theUser }) {
                     }}
                 >
                     {post.discussion
-                        ? (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${post.discussion.user.id}`} kind='underline'>{post.discussion.user.name}</RouterLink> 关于 <RouterLink href={`/apps/${post.discussion.app.id}`} kind='underline'>{post.discussion.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${post.discussion.id}`} kind='underline'>讨论</RouterLink> </LabelMedium>)
-                        : (<LabelMedium marginBottom='scale200'>回复了一个讨论</LabelMedium>)
+                        ? (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${post.discussion.user.id}`} kind='underline'>{post.discussion.user.name}</RouterLink> 对 <RouterLink href={`/apps/${post.discussion.app.id}`} kind='underline'>{post.discussion.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${post.discussion.id}`} kind='underline'>讨论</RouterLink> </LabelMedium>)
+                        : (<LabelMedium marginBottom='scale200'>回复了讨论</LabelMedium>)
                     }
                     <LabelSmall color='primary500' marginTop='scale0'>{dayjs(post.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
                     <Block display='flex' flexDirection='column'>

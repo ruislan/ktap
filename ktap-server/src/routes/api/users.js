@@ -265,11 +265,12 @@ const users = async (fastify, opts) => {
                                 select: {
                                     id: true, score: true, content: true,
                                     user: { select: { id: true, name: true, } },
-                                    app: { select: { id: true, name: true, } },
+                                    app: { select: { id: true, name: true, isVisible: true } },
                                 }
                             }
                         }
                     });
+                    if (!item.data.review?.app?.isVisible) delete item.data.review.app;
                     break;
                 case 'ReviewGiftRef':
                     item.data = await fastify.db.reviewGiftRef.findUnique({
@@ -357,11 +358,12 @@ const users = async (fastify, opts) => {
                                 select: {
                                     id: true, title: true,
                                     user: { select: { id: true, name: true, } },
-                                    app: { select: { id: true, name: true, } },
+                                    app: { select: { id: true, name: true, isVisible: true } },
                                 }
                             }
                         }
                     });
+                    if (!item.data.discussion?.app?.isVisible) delete item.data.discussion.app;
                     break;
                 case 'DiscussionPostGiftRef':
                     item.data = await fastify.db.discussionPostGiftRef.findUnique({
