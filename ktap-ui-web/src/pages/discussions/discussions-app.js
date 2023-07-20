@@ -164,7 +164,8 @@ function Channels({ appId, channelId = 0, }) {
                 const res = await fetch(`/api/discussions/apps/${appId}/channels`);
                 if (res.ok) {
                     const json = await res.json();
-                    setDataList([{ id: 0, name: '全部讨论', description: '最近发布或有回复的讨论' }, ...json.data]);
+                    const allDiscussionCount = json?.data?.reduce((count, channel) => count + channel.meta.discussions, 0);
+                    setDataList([{ id: 0, name: '全部讨论', description: '最近发布或有回复的讨论', meta: { discussions: allDiscussionCount } }, ...json.data]);
                 }
             } finally {
                 setIsLoading(false);
@@ -203,7 +204,7 @@ function Channels({ appId, channelId = 0, }) {
                                     : <div className={css({
                                         borderRadius: theme.borders.radius300, width: theme.sizing.scale1200, height: theme.sizing.scale1200,
                                     })} title={channel.name}>
-                                        <ChatAlt2 />
+                                        <ChatAlt2 solid />
                                     </div>
                                 }
                                 <Block display='flex' flexDirection='column' gridGap='scale100' width='calc(100% - 56px)'>
@@ -215,22 +216,32 @@ function Channels({ appId, channelId = 0, }) {
                     })}
                 </Block>
             }
-            {channelId > 0 && currentChannel &&
+            {currentChannel &&
                 <div className={css({
                     display: 'flex', alignItems: 'center', backgroundColor: theme.colors.backgroundSecondary, padding: theme.sizing.scale300,
-                    borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700, height: '48px', gap: theme.sizing.scale100,
-                    marginBottom: theme.sizing.scale600,
+                    borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700, height: '48px', marginBottom: theme.sizing.scale600,
+                    overflow: 'hidden',
                 })}>
-                    <LabelSmall>
-                        {currentChannel?.moderators?.length === 0 ? '暂无版主' : '版主：'}
-                    </LabelSmall>
-                    {currentChannel?.moderators?.slice(0, 5).map((moderator, index) => (
-                        <div key={index} className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', })}>
-                            <img alt={moderator.name}
-                                className={css({ borderRadius: theme.borders.radius300, })}
-                                src={moderator.avatar} width="24px" height="24px" />
-                        </div>
-                    ))}
+                    <Block display='flex' alignItems='center' gridGap='scale100' marginRight='scale900'>
+                        <ChatAlt2 width='24px' height='24px' solid />
+                        <LabelSmall color='primary300' marginLeft='scale100'>
+                            {currentChannel.meta?.discussions || 0} 个讨论
+                        </LabelSmall>
+                    </Block>
+                    {channelId > 0 &&
+                        <Block display='flex' alignItems='center' gridGap='scale100'>
+                            {currentChannel?.moderators?.slice(0, 5).map((moderator, index) => (
+                                <Link key={index} className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', })} to={`/users/${moderator.id}`} title={moderator.name}>
+                                    <img alt={moderator.name}
+                                        className={css({ borderRadius: theme.borders.radius300, })}
+                                        src={moderator.avatar} width="24px" height="24px" />
+                                </Link>
+                            ))}
+                            <LabelSmall color='primary300' marginLeft='scale100'>
+                                {currentChannel?.moderators?.length === 0 ? '暂无版主' : `${currentChannel?.moderators?.length}位版主`}
+                            </LabelSmall>
+                        </Block>
+                    }
                 </div>
             }
             <Discussions appId={appId} channelId={channelId} />

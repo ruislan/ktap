@@ -78,7 +78,7 @@ function SearchPanel() {
                         onKeyDown={e => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                if (word.length > 0) navigate(`/search?q=${word}`, { replace: true });
+                                navigate(`/search?q=${word}`, { replace: true });
                             }
                         }}
                     />

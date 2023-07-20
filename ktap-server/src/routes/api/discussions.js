@@ -99,11 +99,16 @@ const discussions = async (fastify, opts) => {
                             select: { id: true, name: true, title: true, avatar: true, gender: true, }
                         }
                     }
-                }
+                },
+                _count: { select: { discussions: true } }
             }
         });
         data.forEach(item => {
             item.moderators = item.moderators.map(ref => ref.user);
+            item.meta = {
+                discussions: item._count.discussions || 0,
+            };
+            delete item._count;
         });
         return reply.code(200).send({ data });
     });
