@@ -14,8 +14,7 @@ async function authenticate(req, reply) {
 };
 
 async function requireAdmin(req, reply) {
-    if (!req.user?.isAdmin) throw this.httpErrors.forbidden();
+    if (!req.user?.isAdmin) return reply.code(403).send();
 };
-
 
 export { authenticate, requireAdmin };

@@ -1,11 +1,56 @@
 import fp from 'fastify-plugin';
 import sanitizeHtml from 'sanitize-html';
+import { errors } from './constants.js';
 
-// XXX 临时的一个避免重复代码的归并处
+// XXX 临时的一个避免重复代码的归并处，后续应该还是要根据业务对象来进行划分开
 // TODO 重构：把所有重复代码都统一到这个地方来
 const utils = async (fastify, opts, next) => {
     fastify.decorate('utils', {
+        // 检查操作权限
+        // obj是操作对象，objType是操作对象的type, operation是操作名称
+        // 注意，不同的obj，需要的obj的级联数据不同，尽量在检查之前就级联查询出来
+        async canOperate({ obj, objType, operator, operation }) {
+            if (!operator || !obj) return false;
+            if (operator.isAdmin) return true; // Admin 可以操作一切,
+            if (objType === 'Discussion' || objType === 'Post') {
+                console.log(obj);
+                const discussion = objType === 'Discussion' ? obj : obj.discussion;
+                if (!discussion) return false;
+                const isModerator = discussion.channel.moderators?.some(moderator => moderator.userId === operator.id);
+                const isOwner = obj.userId === operator.id;
+                console.log('isOwner: ' + isOwner + ', isModerator: ' + isModerator);
+                if (operation === 'sticky') return isModerator;
+                if (operation === 'close') return isModerator || isOwner;
+                if (operation === 'delete') return isModerator || isOwner;
+                if (operation === 'update') return isModerator || isOwner;
+            }
+            return false;
+        },
         // discussion
+        async getDiscussionOrPostWithChannelModerators({ id, isPost = false }) {
+            const discussionInclude = {
+                channel: {
+                    include: {
+                        moderators: {
+                            select: { userId: true, }
+                        }
+                    }
+                }
+            };
+            let obj = null;
+            if (isPost) {
+                obj = await fastify.db.discussionPost.findUnique({
+                    where: { id },
+                    include: { discussion: { include: discussionInclude } },
+                });
+            } else {
+                obj = await fastify.db.discussion.findUnique({
+                    where: { id: id },
+                    include: discussionInclude,
+                });
+            }
+            return obj;
+        },
         async createDiscussion({ title, content, appId, channelId, userId, ip }) {
             const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
 
@@ -31,28 +76,41 @@ const utils = async (fastify, opts, next) => {
         // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 讨论所有人
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussion({ id, operator }) {
-            const discussion = await fastify.db.discussion.findUnique({ where: { id } });
-            if (discussion) {
-                let canDelete = operator.isAdmin ||
-                    (!post.discussion?.isClosed && post.userId === operator.id); // TODO 检查频道管理员
-                if (canDelete) {
-                    await fastify.db.$transaction([
-                        fastify.db.$queryRaw`
+            const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
+            if (!discussion) throw errors.notFound();
+
+            let canDelete = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'delete' });
+            if (!canDelete) throw errors.forbidden();
+
+            await fastify.db.$transaction([
+                fastify.db.$queryRaw`
                             DELETE FROM DiscussionPostReport WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
                         `,
-                        fastify.db.$queryRaw`
+                fastify.db.$queryRaw`
                             DELETE FROM DiscussionPostThumb WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
                         `,
-                        fastify.db.$queryRaw`
+                fastify.db.$queryRaw`
                             DELETE FROM DiscussionPostGiftRef WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
                         `,
-                        fastify.db.discussionPost.deleteMany({ where: { discussionId: id } }),
-                        fastify.db.discussion.delete({ where: { id } }),
-                        fastify.db.timeline.deleteMany({ where: { target: 'Discussion', targetId: id, userId: discussion.userId } }), // 只删除 discussion 的时间线，XXX 时间线的业务逻辑还需要重构，目前暂时只用管当前对象
-                    ]);
-                }
-            }
-            return discussion;
+                fastify.db.discussionPost.deleteMany({ where: { discussionId: id } }),
+                fastify.db.discussion.delete({ where: { id } }),
+                fastify.db.timeline.deleteMany({ where: { target: 'Discussion', targetId: id, userId: discussion.userId } }), // 只删除 discussion 的时间线，XXX 时间线的业务逻辑还需要重构，目前暂时只用管当前对象
+            ]);
+
+        },
+        async stickyDiscussion({ id, operator, isSticky = false }) {
+            const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
+            if (!discussion) throw errors.notFound();
+            let canSticky = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'sticky' });
+            if (!canSticky) throw errors.forbidden();
+            await fastify.db.discussion.updateMany({ where: { id, }, data: { isSticky } });
+        },
+        async closeDiscussion({ id, operator, isClosed = false }) {
+            const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
+            if (!discussion) throw errors.notFound();
+            let canSticky = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'close' });
+            if (!canSticky) throw errors.forbidden();
+            await fastify.db.discussion.updateMany({ where: { id, }, data: { isClosed } });
         },
         // 统计某个讨论的礼物数量
         async countDiscussionGifts({ id }) {
@@ -86,23 +144,21 @@ const utils = async (fastify, opts, next) => {
         // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 发帖人
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussionPost({ id, operator }) {
-            const post = await fastify.db.discussionPost.findUnique({ where: { id }, include: { discussion: true } });
-            if (post) {
-                let canDelete = operator.isAdmin ||
-                    (!post.discussion.isClosed && post.userId === operator.id); // TODO 检查频道管理员
-                console.log('canDelete: ' + canDelete);
-                if (canDelete) {
-                    await fastify.db.$transaction(async (tx) => {
-                        const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: post.discussion.id, id: { not: id } }, orderBy: { createdAt: 'desc' }, });
-                        await tx.discussion.update({ where: { id: post.discussion.id }, data: { lastPostId: lastPost?.id || null } });
-                        await tx.discussionPostReport.deleteMany({ where: { postId: id } });
-                        await tx.discussionPostThumb.deleteMany({ where: { postId: id } });
-                        await tx.discussionPostGiftRef.deleteMany({ where: { postId: id } });
-                        await tx.discussionPost.delete({ where: { id: id } });
-                        await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: id, userId: post.userId } });
-                    });
-                }
-            }
+            const post = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
+            if (!post) throw errors.notFound();
+
+            let canDelete = await fastify.utils.canOperate({ obj: post, objType: 'Post', operator, operation: 'delete' });
+            if (!canDelete) throw errors.forbidden();
+
+            await fastify.db.$transaction(async (tx) => {
+                const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: post.discussion.id, id: { not: id } }, orderBy: { createdAt: 'desc' }, });
+                await tx.discussion.update({ where: { id: post.discussion.id }, data: { lastPostId: lastPost?.id || null } });
+                await tx.discussionPostReport.deleteMany({ where: { postId: id } });
+                await tx.discussionPostThumb.deleteMany({ where: { postId: id } });
+                await tx.discussionPostGiftRef.deleteMany({ where: { postId: id } });
+                await tx.discussionPost.delete({ where: { id: id } });
+                await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: id, userId: post.userId } });
+            });
         },
 
         async createDiscussionPost({ content, userId, discussionId, ip }) {

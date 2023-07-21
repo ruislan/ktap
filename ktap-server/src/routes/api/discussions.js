@@ -1,7 +1,18 @@
 import { AppMedia, LIMIT_CAP, Trading } from "../../constants.js";
 import { authenticate } from '../../lib/auth.js';
-import sanitizeHtml from 'sanitize-html';
 
+const bizErrorHandler = async function (error, request, reply) {
+    if (error.code == 403) return reply.code(403).send();
+    throw error;
+};
+
+/**
+ * 通常有 4 个角色会使用discussion相关功能，网站 Admin ，版主， 拥有人（讨论或帖子）， 普通用户。
+ * Admin 默认拥有所有权限。
+ * 版主 拥有频道内所有权限。除了正常的用户行为以外。包括频道的编辑权限（没有删除权限）、讨论的关闭，编辑等、帖子的关闭、编辑删除等。
+ * 拥有人拥有该讨论所有权限或者帖子所有权限。
+ * 普通用户拥有一般权限，例如查看，举报，点赞，送礼等等。
+ */
 const discussions = async (fastify, opts) => {
     // discussions首页，展示有讨论的 App
     fastify.get('', async function (req, reply) {
@@ -162,7 +173,14 @@ const discussions = async (fastify, opts) => {
             where: { id },
             select: {
                 id: true, title: true, isSticky: true, isClosed: true, createdAt: true, updatedAt: true,
-                channel: { select: { id: true, name: true, } },
+                channel: {
+                    select: {
+                        id: true, name: true,
+                        moderators: {
+                            select: { userId: true },
+                        }
+                    },
+                },
                 user: { select: { id: true, name: true, title: true, avatar: true, gender: true } },
                 app: {
                     select: {
@@ -185,6 +203,7 @@ const discussions = async (fastify, opts) => {
             head: data.app.media.find(media => media.usage === AppMedia.usage.head),
             logo: data.app.media.find(media => media.usage === AppMedia.usage.logo),
         }
+        data.channel.moderators = data.channel.moderators.map(ref => ref.userId);
         data.meta = {
             posts: data._count.posts,
             users: metaUsers,
@@ -249,40 +268,32 @@ const discussions = async (fastify, opts) => {
         }
     });
 
+    // 置顶或者取消置顶
     fastify.put('/:id/sticky', {
         preHandler: authenticate,
+        errorHandler: bizErrorHandler,
         handler: async function (req, reply) {
             const id = Number(req.params.id);
             const isSticky = req.body.sticky === true;
-            await fastify.db.discussion.updateMany({
-                where: {
-                    id,
-                    userId: req.user.id // user必须是 Owner 才可以
-                },
-                data: { isSticky }
-            });
+            await fastify.utils.stickyDiscussion({ id, operator: req.user, isSticky });
             return reply.code(204).send();
         }
     });
 
     fastify.put('/:id/close', {
         preHandler: authenticate,
+        errorHandler: bizErrorHandler,
         handler: async function (req, reply) {
             const id = Number(req.params.id);
             const isClosed = req.body.close === true;
-            await fastify.db.discussion.updateMany({
-                where: {
-                    id,
-                    userId: req.user.id // user必须是 Owner 才可以
-                },
-                data: { isClosed }
-            });
+            await fastify.utils.closeDiscussion({ id, operator: req.user, isClosed });
             return reply.code(204).send();
         }
     });
 
     fastify.delete('/:id', {
         preHandler: authenticate,
+        errorHandler: bizErrorHandler,
         handler: async function (req, reply) {
             const id = Number(req.params.id);
             await fastify.utils.deleteDiscussion({ id, operator: req.user });
@@ -292,6 +303,7 @@ const discussions = async (fastify, opts) => {
 
     fastify.delete('/:id/posts/:postId', {
         preHandler: authenticate,
+        errorHandler: bizErrorHandler,
         handler: async function (req, reply) {
             const postId = Number(req.params.postId);
             await fastify.utils.deleteDiscussionPost({ id: postId, operator: req.user });

@@ -1,4 +1,6 @@
 export const errors = {
+    forbidden(message = '') { return { code: 403, message } },
+    notFound(message = '') { return { code: 404, message } },
     code: {
         validation: 400,
         authentication: 401,

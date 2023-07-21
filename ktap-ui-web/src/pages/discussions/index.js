@@ -53,7 +53,7 @@ function Discussions() {
                 <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏讨论...' onKeyUp={e => e.key === 'Enter' && fetchData()} />
                 <Button size='default' kind='secondary' onClick={() => fetchData()}><Search /></Button>
             </Block>
-            <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale300'>
+            <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
                 {dataList && dataList.map((app, index) => (
                     <Link key={index} to={`/discussions/apps/${app.id}`} className={css({
                         textDecoration: 'none',

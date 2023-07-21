@@ -77,7 +77,6 @@ function AppGlance({ app }) {
 
 function DiscussionMeta({ discussion, onChange = () => { } }) {
     const { user } = useAuth();
-    const [canAct, setCanAct] = React.useState(false);
     const navigate = useNavigate();
     const [isLoadingSticky, setIsLoadingSticky] = React.useState(false);
     const [isLoadingClose, setIsLoadingClose] = React.useState(false);
@@ -86,6 +85,8 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
 
     const [isDeleting, setIsDeleting] = React.useState(false);
     const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
+
+    const [operations, setOperations] = React.useState({ sticky: false, close: false, delete: false, update: false });
 
     const handleSticky = async ({ sticky }) => {
         setIsLoadingSticky(true);
@@ -136,9 +137,15 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
     };
 
     React.useEffect(() => {
-        if (user && discussion?.user?.id) {
-            setCanAct(user.id === discussion.user.id);
-        }
+        const isModerator = discussion.channel.moderators.some(mId => mId == user?.id);
+        const isAdmin = user && user.isAdmin;
+        const isOwner = user && discussion?.user && user.id === discussion.user.id;
+        setOperations({
+            sticky: isAdmin || isModerator,
+            close: isAdmin || isModerator || isOwner,
+            delete: isAdmin || isModerator || isOwner,
+            update: isAdmin || isModerator || isOwner,
+        });
     }, [user, discussion]);
     return (
         <SideBox title='讨论信息'>
@@ -154,15 +161,11 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
                     <LabelSmall color='primary'>{discussion?.meta?.gifts || 0}</LabelSmall>
                 </Block>
                 <Block display='flex' alignItems='center' width='100%' marginTop='scale600' gridGap='scale300'>
-                    {canAct &&
-                        <>
-                            {!isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: true })}>置顶</Button>}
-                            {isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: false })}>取消置顶</Button>}
-                            {!isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: true })}>关闭</Button>}
-                            {isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: false })}>打开</Button>}
-                            <Button kind='secondary' size='compact' onClick={() => setIsOpenDeleteConfirmModal(true)}>删除</Button>
-                        </>
-                    }
+                    {operations.sticky && !isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: true })}>置顶</Button>}
+                    {operations.sticky && isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: false })}>取消置顶</Button>}
+                    {operations.close && !isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: true })}>关闭</Button>}
+                    {operations.close && isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: false })}>打开</Button>}
+                    {operations.delete && <Button kind='secondary' size='compact' onClick={() => setIsOpenDeleteConfirmModal(true)}>删除</Button>}
                 </Block>
             </Block>
             <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
@@ -253,6 +256,8 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     const [isDeleting, setIsDeleting] = React.useState(false);
     const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
     // end delete post
+
+    const [operations, setOperations] = React.useState({ update: false, delete: false });
 
     const handleThumb = async (direction) => {
         if (!user) { navigate('/login'); return; }
@@ -347,6 +352,17 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
         setIsActiveThumbDown(post.viewer?.direction === 'down');
     }, [user, post]);
 
+
+    React.useEffect(() => {
+        const isModerator = discussion.channel.moderators.some(mId => mId == user?.id);
+        const isAdmin = user && user.isAdmin;
+        const isOwner = user && post?.user && user.id === post.user.id;
+        setOperations({
+            delete: isAdmin || isModerator || isOwner,
+            update: isAdmin || isModerator || isOwner,
+        });
+    }, [user, discussion, post]);
+
     return (
         <>
             <Block display='flex' flexDirection='column' width='100%' marginTop='scale600'>
@@ -381,7 +397,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
                                 </Modal>
                             </>
                         }
-                        {user && user.id === post.user?.id && !isFirst && !discussion.isClosed &&
+                        {operations.delete && !isFirst && !discussion.isClosed &&
                             <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
                         }
                     </Block>
