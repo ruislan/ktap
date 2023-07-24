@@ -2,6 +2,15 @@ import fp from 'fastify-plugin';
 import sanitizeHtml from 'sanitize-html';
 import { errors } from './constants.js';
 
+const cleanContent = (content) => {
+    return sanitizeHtml(content, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+        allowedAttributes: {
+            'span': ['style'],
+        }
+    });
+};
+
 // XXX 临时的一个避免重复代码的归并处，后续应该还是要根据业务对象来进行划分开
 // TODO 重构：把所有重复代码都统一到这个地方来
 const utils = async (fastify, opts, next) => {
@@ -60,15 +69,13 @@ const utils = async (fastify, opts, next) => {
             await fastify.db.discussionChannel.update({ where: { id }, data: { name, icon, description, appId }, });
         },
         async createDiscussion({ title, content, appId, channelId, userId, ip }) {
-            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
-
             const result = await fastify.db.$transaction(async (tx) => {
                 const discussion = await tx.discussion.create({
                     data: { title, appId, discussionChannelId: channelId, userId, },
                 });
                 const post = await tx.discussionPost.create({
                     data: {
-                        content: cleanContent,
+                        content: cleanContent(content),
                         discussionId: discussion.id, userId, ip,
                     }
                 });
@@ -158,6 +165,29 @@ const utils = async (fastify, opts, next) => {
         },
 
         // discussion post
+        async createDiscussionPost({ content, userId, discussionId, ip }) {
+            if ((await fastify.db.discussion.count({ where: { id: discussionId, isClosed: false } })) <= 0) return; // 如果讨论被关闭，是不能回帖的
+            let data = null;
+            await fastify.db.$transaction(async (tx) => {
+                data = await tx.discussionPost.create({ data: { content: cleanContent(content), discussionId, userId, ip } });
+                await tx.discussion.update({ where: { id: discussionId }, data: { lastPostId: data.id } });
+                await tx.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
+            });
+            return data;
+        },
+
+        // 修改帖子,修改只能改内容
+        async updateDiscussionPost({ id, content, ip, operator }) {
+            const post = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
+            // 讨论如果处于关闭状态，则不能修改
+            if (!post || !post.discussion || post.discussion.isClosed) throw errors.notFound();
+
+            let canUpdate = await fastify.utils.canOperate({ obj: post, objType: 'Post', operator, operation: 'update' });
+            if (!canUpdate) throw errors.forbidden();
+
+            await fastify.db.discussionPost.update({ where: { id }, data: { content: cleanContent(content), ip } });
+        },
+
         // 是否能够删除帖子？
         // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 发帖人
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
@@ -177,19 +207,6 @@ const utils = async (fastify, opts, next) => {
                 await tx.discussionPost.delete({ where: { id: id } });
                 await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: id, userId: post.userId } });
             });
-        },
-
-        async createDiscussionPost({ content, userId, discussionId, ip }) {
-            if ((await fastify.db.discussion.count({ where: { id: discussionId, isClosed: false } })) <= 0) return; // 如果讨论被关闭，是不能回帖的
-
-            const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });
-            let data = null;
-            await fastify.db.$transaction(async (tx) => {
-                data = await tx.discussionPost.create({ data: { content: cleanContent, discussionId, userId, ip } });
-                await tx.discussion.update({ where: { id: discussionId }, data: { lastPostId: data.id } });
-                await tx.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
-            });
-            return data;
         },
         // reviews
         // 获得某个评测的礼物情况

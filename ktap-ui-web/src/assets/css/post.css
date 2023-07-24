@@ -1,5 +1,8 @@
 .post {
-    font-size: 14px;
+    font-size    : 14px;
+    max-width    : 100%;
+    overflow-wrap: break-word;
+    overflow     : auto;
 }
 
 .post h1 {

@@ -14,7 +14,7 @@ import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
 import RouterLink from '../../components/router-link';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
-import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock } from '../../components/icons';
+import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock, Update as UpdateIcon } from '../../components/icons';
 import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, Styles } from '../../constants';
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
@@ -266,7 +266,7 @@ function OtherDiscussions({ discussionId }) {
     );
 }
 
-function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { } }) {
+function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { }, onUpdateClick = () => { } }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
@@ -431,8 +431,11 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
                                 </Modal>
                             </>
                         }
+                        {operations.update && !discussion.isClosed &&
+                            <Button kind='secondary' size='mini' title='编辑' onClick={() => onUpdateClick()}><UpdateIcon width={16} height={16} /></Button>
+                        }
                         {operations.delete && !isFirst && !discussion.isClosed &&
-                            <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }} overrides={Styles.Button.Act} ><TrashBin width={16} height={16} /></Button>
+                            <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }}><TrashBin width={16} height={16} /></Button>
                         }
                     </Block>
                 </Block>
@@ -539,6 +542,47 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     );
 }
 
+
+function DiscussionPostUpdater({ discussion, post, afterUpdate = () => { }, onCancelClick = () => { } }) {
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [canSubmit, setCanSubmit] = React.useState(false);
+    const [editor, setEditor] = React.useState();
+
+    const handlePostSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            const content = editor.getHTML();
+            const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ content }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                afterUpdate({ content });
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    return (
+        <Block paddingTop='scale600' paddingBottom='scale600'>
+            {post.isEditing ? (
+                <Block display='flex' flexDirection='column' gridGap='scale600'>
+                    <Block>
+                        <Editor initContent={post.content} onCreate={({ editor }) => setEditor(editor)} onUpdate={({ editor }) => setCanSubmit(editor.getText().length > 0)} />
+                    </Block>
+                    <Block display='flex' justifyContent='flex-end' alignItems='center' gridGap='scale300'>
+                        <Button size='compact' kind='tertiary' onClick={() => onCancelClick()}>取消</Button>
+                        <Button size='compact' kind='primary' disabled={!canSubmit} isLoading={isSubmitting} onClick={() => handlePostSubmit()}>保存</Button>
+                    </Block>
+                </Block>
+            ) : (
+                <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
+            )}
+        </Block>
+    );
+}
+
 // 回复讨论的帖子直接追加到当前最后一贴的后面，如果用户点击“查看更多”，
 // 后续的帖子中如果没有包含新帖，则保持该贴在最后一贴的后面。
 // 后续的帖子中如果包含了新帖，则将这个保持在最后的帖子取消掉。
@@ -552,6 +596,7 @@ function DiscussionPosts({ discussion }) {
     const [dataList, setDataList] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
+
 
     // editor
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -586,7 +631,6 @@ function DiscussionPosts({ discussion }) {
         }
     };
     // editor end
-
 
     const fetchDataList = React.useCallback(async () => {
         try {
@@ -623,19 +667,38 @@ function DiscussionPosts({ discussion }) {
                         <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:MM')}</LabelSmall>
                         <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip || '神秘之地'}</LabelSmall>
                         <Block paddingTop='scale600' paddingBottom='scale600'>
-                            <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
+                            {post.isEditing ? (
+                                <DiscussionPostUpdater discussion={discussion} post={post}
+                                    onCancelClick={() => {
+                                        setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: false } : v));
+                                        setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: false } : v));
+                                    }}
+                                    afterUpdate={({ content }) => {
+                                        setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, content, isEditing: false } : v));
+                                        setDataList(prev => prev.map(v => v.id === post.id ? { ...v, content, isEditing: false } : v));
+                                    }}
+                                />
+                            ) : (
+                                <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
+                            )}
                         </Block>
-                        <DiscussionPostActions discussion={discussion} post={post} isFirst={index === 0}
-                            onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()}
-                            afterThumbed={({ direction }) => {
-                                setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
-                                setDataList(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
-                            }}
-                            afterDeleted={() => {
-                                setNewPosts(prev => prev.filter(v => v.id !== post.id));
-                                setDataList(prev => prev.filter(v => v.id !== post.id));
-                            }}
-                        />
+                        {!post.isEditing &&
+                            <DiscussionPostActions discussion={discussion} post={post} isFirst={index === 0}
+                                onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()}
+                                onUpdateClick={() => {
+                                    setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: true } : v));
+                                    setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: true } : v));
+                                }}
+                                afterThumbed={({ direction }) => {
+                                    setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
+                                    setDataList(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
+                                }}
+                                afterDeleted={() => {
+                                    setNewPosts(prev => prev.filter(v => v.id !== post.id));
+                                    setDataList(prev => prev.filter(v => v.id !== post.id));
+                                }}
+                            />
+                        }
                     </Block>
                 );
             })}
@@ -655,7 +718,7 @@ function DiscussionPosts({ discussion }) {
                     <Block display='flex' flexDirection='column'>
                         <Editor onCreate={({ editor }) => setEditor(editor)} onUpdate={({ editor }) => setCanSubmit(editor.getText().length > 0)} />
                         <Block marginTop='scale600' alignSelf='flex-end'>
-                            <Button size='compact' disabled={!canSubmit} isLoading={isSubmitting} kind='secondary' onClick={() => handlePostSubmit()}>提交回复</Button>
+                            <Button size='compact' disabled={!canSubmit} isLoading={isSubmitting} kind='secondary' onClick={() => handlePostSubmit()}>提交</Button>
                         </Block>
                     </Block>
                 </Block>

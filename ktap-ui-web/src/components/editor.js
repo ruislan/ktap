@@ -281,7 +281,7 @@ function MenuBar({ editor }) {
 }
 
 
-function Editor({ onCreate = () => { }, onUpdate = () => { }, }) {
+function Editor({ initContent = '', onCreate = () => { }, onUpdate = () => { }, }) {
     const [css, theme] = useStyletron();
     const editor = useEditor({
         extensions: [
@@ -294,6 +294,7 @@ function Editor({ onCreate = () => { }, onUpdate = () => { }, }) {
                 heading: { levels: [1, 2, 3,] },
             }),
         ],
+        content: initContent,
         onCreate,
         onUpdate,
     });

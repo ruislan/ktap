@@ -69,9 +69,9 @@ const discussions = async (fastify, opts) => {
                         }
                     },
                     content: {
-                        type: 'string', minLength: 1, maxLength: 5000, errorMessage: {
+                        type: 'string', minLength: 1, maxLength: 10000, errorMessage: {
                             minLength: '请输入内容',
-                            maxLength: '内容不能大于 5000 个字符',
+                            maxLength: '内容不能大于 10000 个字符',
                         }
                     },
                     channelId: {
@@ -267,13 +267,12 @@ const discussions = async (fastify, opts) => {
                 type: 'object',
                 properties: {
                     content: {
-                        type: 'string', minLength: 1, maxLength: 5000, errorMessage: {
+                        type: 'string', minLength: 1, maxLength: 10000, errorMessage: {
                             minLength: '请输入内容',
-                            maxLength: '内容不能大于 5000 个字符',
+                            maxLength: '内容不能大于 10000 个字符',
                         }
                     },
                 },
-                required: ['content'],
                 additionalProperties: false,
             },
         },
@@ -316,8 +315,14 @@ const discussions = async (fastify, opts) => {
             body: {
                 type: 'object',
                 properties: {
-                    title: { type: 'string', minLength: 1, maxLength: 100, errorMessage: { minLength: '讨论主题不要太长哟' } },
-                }
+                    title: {
+                        type: 'string', minLength: 1, maxLength: 255, errorMessage: {
+                            minLength: '请输入标题',
+                            maxLength: '标题不能大于 255 个字符',
+                        }
+                    },
+                },
+                additionalProperties: false,
             }
         },
         handler: async function (req, reply) {
@@ -334,6 +339,27 @@ const discussions = async (fastify, opts) => {
         handler: async function (req, reply) {
             const id = Number(req.params.id) || 0;
             await fastify.utils.deleteDiscussion({ id, operator: req.user });
+            return reply.code(204).send();
+        }
+    });
+
+    fastify.put('/:id/posts/:postId', {
+        preHandler: authenticate,
+        errorHandler: bizErrorHandler,
+        schema: {
+            body: {
+                content: {
+                    type: 'string', minLength: 1, maxLength: 10000, errorMessage: {
+                        minLength: '请输入内容',
+                        maxLength: '内容不能大于 10000 个字符',
+                    }
+                },
+            }
+        },
+        handler: async function (req, reply) {
+            const postId = Number(req.params.postId);
+            const { content } = req.body;
+            await fastify.utils.updateDiscussionPost({ id: postId, content, ip: req.ip, operator: req.user });
             return reply.code(204).send();
         }
     });
