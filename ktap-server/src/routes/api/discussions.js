@@ -302,9 +302,28 @@ const discussions = async (fastify, opts) => {
         preHandler: authenticate,
         errorHandler: bizErrorHandler,
         handler: async function (req, reply) {
-            const id = Number(req.params.id);
+            const id = Number(req.params.id) || 0;
             const isClosed = req.body.close === true;
             await fastify.utils.closeDiscussion({ id, operator: req.user, isClosed });
+            return reply.code(204).send();
+        }
+    });
+
+    fastify.put('/:id', {
+        preHandler: authenticate,
+        errorHandler: bizErrorHandler,
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    title: { type: 'string', minLength: 1, maxLength: 100, errorMessage: { minLength: '讨论主题不要太长哟' } },
+                }
+            }
+        },
+        handler: async function (req, reply) {
+            const id = Number(req.params.id) || 0;
+            const { title } = req.body;
+            await fastify.utils.updateDiscussion({ id, title, operator: req.user });
             return reply.code(204).send();
         }
     });
@@ -313,7 +332,7 @@ const discussions = async (fastify, opts) => {
         preHandler: authenticate,
         errorHandler: bizErrorHandler,
         handler: async function (req, reply) {
-            const id = Number(req.params.id);
+            const id = Number(req.params.id) || 0;
             await fastify.utils.deleteDiscussion({ id, operator: req.user });
             return reply.code(204).send();
         }

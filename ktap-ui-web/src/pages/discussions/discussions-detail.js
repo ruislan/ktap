@@ -2,15 +2,17 @@ import React from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useAuth } from '../../hooks/use-auth';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useStyletron } from 'baseui';
+import { useAuth } from '../../hooks/use-auth';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Skeleton } from 'baseui/skeleton';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
 import { Textarea } from 'baseui/textarea';
+import { FormControl } from 'baseui/form-control';
+import { Input } from 'baseui/input';
 import RouterLink from '../../components/router-link';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
 import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock } from '../../components/icons';
 import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, Styles } from '../../constants';
@@ -86,6 +88,10 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
     const [isDeleting, setIsDeleting] = React.useState(false);
     const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = React.useState(false);
 
+    const [isUpdating, setIsUpdating] = React.useState(false);
+    const [isOpenUpdateModal, setIsOpenUpdateModal] = React.useState(false);
+    const [title, setTitle] = React.useState(discussion?.title);
+
     const [operations, setOperations] = React.useState({ sticky: false, close: false, delete: false, update: false });
 
     const handleSticky = async ({ sticky }) => {
@@ -136,6 +142,23 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
         }
     };
 
+    const handleUpdate = async () => {
+        setIsUpdating(true);
+        try {
+            const res = await fetch(`/api/discussions/${discussion.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title })
+            });
+            if (res.ok) {
+                onChange({ title });
+            }
+        } finally {
+            setIsUpdating(false);
+            setIsOpenUpdateModal(false);
+        }
+    };
+
     React.useEffect(() => {
         const isModerator = discussion.channel.moderators.some(mId => mId == user?.id);
         const isAdmin = user && user.isAdmin;
@@ -165,21 +188,32 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
                     {operations.sticky && isSticky && <Button kind='secondary' size='compact' isLoading={isLoadingSticky} onClick={() => handleSticky({ sticky: false })}>取消置顶</Button>}
                     {operations.close && !isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: true })}>关闭</Button>}
                     {operations.close && isClosed && <Button kind='secondary' size='compact' isLoading={isLoadingClose} onClick={() => handleClose({ close: false })}>打开</Button>}
+                    {operations.update && !isClosed && <Button kind='secondary' size='compact' onClick={() => { setIsOpenUpdateModal(true); setTitle(discussion.title); }}>编辑</Button>}
                     {operations.delete && <Button kind='secondary' size='compact' onClick={() => setIsOpenDeleteConfirmModal(true)}>删除</Button>}
                 </Block>
             </Block>
-            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
-                closeable={false}
-                isOpen={isOpenDeleteConfirmModal}
-                animate
-                autoFocus
-                role={ROLE.alertdialog}
+            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)} closeable={false} isOpen={isOpenDeleteConfirmModal}
+                animate autoFocus role={ROLE.alertdialog}
             >
                 <ModalHeader>是否删除讨论？</ModalHeader>
                 <ModalBody>您确定要删除这个讨论吗？相关的帖子，以及帖子和礼物等将会一并删除。该操作<b>不能撤消</b>。</ModalBody>
                 <ModalFooter>
                     <ModalButton kind='tertiary' onClick={() => setIsOpenDeleteConfirmModal(false)}>取消</ModalButton>
                     <ModalButton onClick={() => handleDelete()} isLoading={isDeleting}>确定</ModalButton>
+                </ModalFooter>
+            </Modal>
+            <Modal onClose={() => setIsOpenUpdateModal(false)} closeable={false} isOpen={isOpenUpdateModal}
+                animate autoFocus role={ROLE.alertdialog}
+            >
+                <ModalHeader>编辑讨论主题</ModalHeader>
+                <ModalBody>
+                    <FormControl label='主题'>
+                        <Input value={title} onChange={e => setTitle(e.target.value)} />
+                    </FormControl>
+                </ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenUpdateModal(false)}>取消</ModalButton>
+                    <ModalButton disabled={title.length === 0} onClick={() => handleUpdate()} isLoading={isUpdating}>确定</ModalButton>
                 </ModalFooter>
             </Modal>
         </SideBox>
@@ -697,9 +731,10 @@ function DiscussionsDetail() {
                 <Block display='flex' flexDirection='column' width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginLeft: 0, } } }
                 }}>
-                    {!isLoadingDiscussion && <DiscussionMeta discussion={discussion} onChange={({ sticky, close }) => {
+                    {!isLoadingDiscussion && <DiscussionMeta discussion={discussion} onChange={({ sticky, close, title }) => {
                         if (sticky !== undefined) setDiscussion(prev => ({ ...prev, isSticky: sticky }));
                         if (close !== undefined) setDiscussion(prev => ({ ...prev, isClosed: close }));
+                        if (title !== undefined) setDiscussion(prev => ({ ...prev, title }));
                     }} />}
                     {!isLoadingDiscussion && <AppGlance app={discussion?.app} />}
                     {!isLoadingDiscussion && <OtherDiscussions appId={appId} discussionId={discussion.id} />}

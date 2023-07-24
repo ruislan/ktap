@@ -80,6 +80,16 @@ const utils = async (fastify, opts, next) => {
             });
             return result;
         },
+        async updateDiscussion({ id, title, operator }) {
+            const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
+            // 主题锁定的情况下，都不能编辑
+            if (!discussion || discussion.isClosed) throw errors.notFound();
+
+            let canUpdate = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'update' });
+            if (!canUpdate) throw errors.forbidden();
+
+            await fastify.db.discussion.update({ where: { id: discussion.id }, data: { title } });
+        },
         // 是否能够删除讨论？
         // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 讨论所有人
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
@@ -181,7 +191,6 @@ const utils = async (fastify, opts, next) => {
             });
             return data;
         },
-
         // reviews
         // 获得某个评测的礼物情况
         async deleteReview({ id, userId, isByAdmin = false, }) {
