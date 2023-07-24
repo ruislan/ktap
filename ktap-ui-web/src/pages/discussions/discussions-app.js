@@ -13,12 +13,13 @@ import { Check, Search } from 'baseui/icon';
 import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useAuth } from '../../hooks/use-auth';
-import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply } from '../../components/icons';
+import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply, Settings } from '../../components/icons';
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages } from '../../constants';
 import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
 import Notification from '../../components/notification';
 import Editor from '../../components/editor';
+import { FormControl } from 'baseui/form-control';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -150,12 +151,43 @@ function AppBanner({ appId }) {
     );
 }
 
-function Channels({ appId, channelId = 0, }) {
+function Channels({ appId, channelId = 0 }) {
     const [css, theme] = useStyletron();
+
+    const { user } = useAuth();
+
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
     const [currentChannel, setCurrentChannel] = React.useState(null);
     const scrollRef = React.useRef(null);
+
+    const [canSettingChannel, setCanSettingChannel] = React.useState(false);
+    const [isOpenChannelSettingModal, setIsOpenChannelSettingModal] = React.useState(false);
+    const [settingForm, setSettingForm] = React.useState(null);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    const handleChannelSettingSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            const res = await fetch(`/api/discussions/apps/${appId}/channels/${currentChannel.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(settingForm),
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (res.ok) {
+                setCurrentChannel({ ...currentChannel, ...settingForm });
+                setDataList(prev => {
+                    const index = prev.findIndex(channel => channel.id == currentChannel.id);
+                    prev[index] = { ...prev[index], ...settingForm };
+                    return [...prev];
+                });
+                setIsOpenChannelSettingModal(false);
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
 
     React.useEffect(() => {
         (async () => {
@@ -180,6 +212,12 @@ function Channels({ appId, channelId = 0, }) {
     React.useEffect(() => {
         if (scrollRef.current) scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     }, [dataList, channelId]); // dataList 存在了，就可以滑动了
+
+    React.useEffect(() => {
+        const isAdmin = user?.isAdmin;
+        const isModerator = currentChannel?.moderators?.some(moderator => moderator.id == user.id);
+        setCanSettingChannel(isAdmin || isModerator);
+    }, [currentChannel, user]);
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale600' paddingTop='scale600' paddingBottom='scale600'>
@@ -217,34 +255,73 @@ function Channels({ appId, channelId = 0, }) {
                 </Block>
             }
             {currentChannel &&
-                <div className={css({
-                    display: 'flex', alignItems: 'center', backgroundColor: theme.colors.backgroundSecondary, padding: theme.sizing.scale300,
-                    borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700, height: '48px', marginBottom: theme.sizing.scale600,
-                    overflow: 'hidden',
-                })}>
-                    <Block display='flex' alignItems='center' gridGap='scale100' marginRight='scale900'>
-                        <ChatAlt2 width='24px' height='24px' solid />
-                        <LabelSmall color='primary300' marginLeft='scale100'>
-                            {currentChannel.meta?.discussions || 0} 个讨论
-                        </LabelSmall>
-                    </Block>
-                    {channelId > 0 &&
-                        <Block display='flex' alignItems='center' gridGap='scale100'>
-                            {currentChannel?.moderators?.slice(0, 5).map((moderator, index) => (
-                                <Link key={index} className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', })} to={`/users/${moderator.id}`} title={moderator.name}>
-                                    <img alt={moderator.name}
-                                        className={css({ borderRadius: theme.borders.radius300, })}
-                                        src={moderator.avatar} width="24px" height="24px" />
-                                </Link>
-                            ))}
+                <Block display='flex' alignItems='center' paddingTop='scale300' paddingBottom='scale300' paddingLeft='scale600' paddingRight='scale600'
+                    justifyContent='space-between' backgroundColor='backgroundSecondary' marginBottom='scale600' overflow='hidden' overrides={{
+                        Block: {
+                            style: {
+                                borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow700
+                            }
+                        }
+                    }}>
+                    <Block display='flex' alignItems='center'>
+                        <Block display='flex' alignItems='center' gridGap='scale100' marginRight='scale900'>
+                            <ChatAlt2 width='24px' height='24px' solid />
                             <LabelSmall color='primary300' marginLeft='scale100'>
-                                {currentChannel?.moderators?.length === 0 ? '暂无版主' : `${currentChannel?.moderators?.length}位版主`}
+                                {currentChannel.meta?.discussions || 0} 个讨论
                             </LabelSmall>
                         </Block>
+                        {channelId > 0 &&
+                            <Block display='flex' alignItems='center' gridGap='scale100'>
+                                {currentChannel?.moderators?.slice(0, 5).map((moderator, index) => (
+                                    <Link key={index} className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', })} to={`/users/${moderator.id}`} title={moderator.name}>
+                                        <img alt={moderator.name}
+                                            className={css({ borderRadius: theme.borders.radius300, })}
+                                            src={moderator.avatar} width="24px" height="24px" />
+                                    </Link>
+                                ))}
+                                <LabelSmall color='primary300' marginLeft='scale100'>
+                                    {currentChannel?.moderators?.length === 0 ? '暂无版主' : `${currentChannel?.moderators?.length}位版主`}
+                                </LabelSmall>
+                            </Block>
+                        }
+                    </Block>
+                    {channelId > 0 && canSettingChannel &&
+                        <Block display='flex' alignItems='center' title='设置频道' overrides={{
+                            Block: {
+                                style: {
+                                    cursor: 'pointer',
+                                }
+                            }
+                        }} onClick={() => {
+                            setIsOpenChannelSettingModal(true);
+                            setSettingForm({ id: currentChannel.id, name: currentChannel.name, icon: currentChannel.icon, description: currentChannel.description });
+                        }}>
+                            <Settings width='24px' height='24px' />
+                        </Block>
                     }
-                </div>
+                </Block>
             }
             <Discussions appId={appId} channelId={channelId} />
+            <Modal onClose={() => setIsOpenChannelSettingModal(false)} closeable={false} isOpen={isOpenChannelSettingModal} role={ROLE.alertdialog} animate autoFocus>
+                <ModalHeader>设置频道</ModalHeader>
+                <ModalBody>
+                    <Block display='flex' flexDirection='column'>
+                        <FormControl label={<LabelSmall>名称</LabelSmall>} caption={'最少一个字'}>
+                            <Input size='compact' required value={settingForm?.name} onChange={e => setSettingForm({ ...settingForm, name: e.target.value })}></Input>
+                        </FormControl>
+                        <FormControl label={<LabelSmall>图标</LabelSmall>} caption={'非必需'}>
+                            <Input size='compact' value={settingForm?.icon} onChange={e => setSettingForm({ ...settingForm, icon: e.target.value })}></Input>
+                        </FormControl>
+                        <FormControl label={<LabelSmall>描述</LabelSmall>} caption={'非必需'}>
+                            <Input size='compact' value={settingForm?.description} onChange={e => setSettingForm({ ...settingForm, description: e.target.value })}></Input>
+                        </FormControl>
+                    </Block>
+                </ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenChannelSettingModal(false)}>关闭</ModalButton>
+                    <ModalButton isLoading={isSubmitting} onClick={() => handleChannelSettingSubmit()}>保存</ModalButton>
+                </ModalFooter>
+            </Modal>
         </Block >
     );
 }

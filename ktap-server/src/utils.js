@@ -13,16 +13,17 @@ const utils = async (fastify, opts, next) => {
             if (!operator || !obj) return false;
             if (operator.isAdmin) return true; // Admin 可以操作一切,
             if (objType === 'Discussion' || objType === 'Post') {
-                console.log(obj);
                 const discussion = objType === 'Discussion' ? obj : obj.discussion;
                 if (!discussion) return false;
                 const isModerator = discussion.channel.moderators?.some(moderator => moderator.userId === operator.id);
                 const isOwner = obj.userId === operator.id;
-                console.log('isOwner: ' + isOwner + ', isModerator: ' + isModerator);
                 if (operation === 'sticky') return isModerator;
                 if (operation === 'close') return isModerator || isOwner;
                 if (operation === 'delete') return isModerator || isOwner;
                 if (operation === 'update') return isModerator || isOwner;
+            } else if (objType === 'DiscussionChannel') {
+                const isModerator = obj.moderators?.some(moderator => moderator.userId === operator.id);
+                if (operation === 'update') return isModerator;
             }
             return false;
         },
@@ -50,6 +51,13 @@ const utils = async (fastify, opts, next) => {
                 });
             }
             return obj;
+        },
+        async updateDiscussionChannel({ id, name, icon, description, appId, operator }) {
+            const channel = await fastify.db.discussionChannel.findUnique({ where: { id }, include: { moderators: { select: { userId: true, } } } });
+            if (!channel) throw errors.notFound();
+            let canUpdate = await fastify.utils.canOperate({ obj: channel, objType: 'DiscussionChannel', operator, operation: 'update' });
+            if (!canUpdate) throw errors.forbidden();
+            await fastify.db.discussionChannel.update({ where: { id }, data: { name, icon, description, appId }, });
         },
         async createDiscussion({ title, content, appId, channelId, userId, ip }) {
             const cleanContent = sanitizeHtml(content, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']) });

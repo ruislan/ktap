@@ -3,6 +3,7 @@ import { authenticate } from '../../lib/auth.js';
 
 const bizErrorHandler = async function (error, request, reply) {
     if (error.code == 403) return reply.code(403).send();
+    if (error.code == 404) return reply.code(404).send();
     throw error;
 };
 
@@ -165,6 +166,23 @@ const discussions = async (fastify, opts) => {
             delete item._count;
         }
         return reply.code(200).send({ data, count, limit, skip });
+    });
+
+    // 更新某个 APP 的频道
+    fastify.put('/apps/:appId/channels/:channelId', {
+        preHandler: authenticate,
+        errorHandler: bizErrorHandler,
+        handler: async function (req, reply) {
+            const appId = Number(req.params.appId) || 0;
+            const channelId = Number(req.params.channelId) || 0;
+            const { name, icon, description } = req.body;
+            if (channelId > 0) {
+                await fastify.utils.updateDiscussionChannel({
+                    id: channelId, name, icon, description, appId, operator: req.user,
+                });
+            }
+            return reply.code(204).send();
+        }
     });
 
     fastify.get('/:id', async function (req, reply) {
