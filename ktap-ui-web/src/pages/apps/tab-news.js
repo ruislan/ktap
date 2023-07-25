@@ -33,7 +33,7 @@ function TabNews({ app }) {
                 <RouterLink href={`/news/apps/${appId}`}><LabelSmall>查看全部</LabelSmall></RouterLink>
             </Block>
             {isLoading ?
-                <Skeleton width="100%" height="150px" animation /> :
+                <Skeleton width="100%" height="60px" animation /> :
                 (newsList.length === 0 ?
                     <LabelMedium color='primary500'>无新闻</LabelMedium> :
                     newsList.map(({ id, title }, index) => {

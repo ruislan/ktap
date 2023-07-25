@@ -6,6 +6,7 @@ import { Button } from 'baseui/button';
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
 import { MOBILE_BREAKPOINT } from '../../constants';
+import { Skeleton } from 'baseui/skeleton';
 
 function TabFollowUsers({ theUser }) {
     const limit = 10;
@@ -62,9 +63,14 @@ function TabFollowUsers({ theUser }) {
                     </Block>
                 </Capsule>
             ))}
-            {hasMore &&
+            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='68px' width='100%' />
+                <Skeleton animation height='68px' width='100%' />
+                <Skeleton animation height='68px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' isLoading={isLoading} onClick={() => setSkip(prev => prev + limit)}>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
                         查看更多
                     </Button>
                 </Block>

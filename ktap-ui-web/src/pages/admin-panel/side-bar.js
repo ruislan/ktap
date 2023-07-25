@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useWindowSize from '../../hooks/use-window-size';
 import { MOBILE_BREAKPOINT_PX } from '../../constants';
 import RoundTab from '../../components/round-tab';
+import { Block } from 'baseui/block';
 
 const sideMenus = [
     { title: '概览', itemId: '/admin-panel' },
@@ -33,7 +34,9 @@ function SideBar() {
                         navigate(item.itemId);
                     }}
                 /> :
-                <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
+                <Block display='flex' alignItems='center' marginBottom='scale600'>
+                    <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
+                </Block>
             }
 
         </>

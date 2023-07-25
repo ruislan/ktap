@@ -3,11 +3,11 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { Button } from 'baseui/button';
-import { Spinner } from 'baseui/spinner';
 import { LabelMedium, LabelLarge } from 'baseui/typography';
 import { Star } from '../../components/icons';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import Capsule from '../../components/capsule';
+import { Skeleton } from 'baseui/skeleton';
 
 function RankAppsList({ url }) {
     const limit = 10;
@@ -75,12 +75,18 @@ function RankAppsList({ url }) {
                     </Capsule>
                 );
             })}
-            {isLoading && <Block display='flex' justifyContent='center' marginTop='scale900' marginBottom='scale900'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>}
-            <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)} isLoading={isLoading} disabled={!hasMore}>
-                    {hasMore ? '查看更多' : '没有了'}
-                </Button>
-            </Block>
+            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='76px' width='100%' />
+                <Skeleton animation height='76px' width='100%' />
+                <Skeleton animation height='76px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                        查看更多
+                    </Button>
+                </Block>
+            }
         </>
     );
 }

@@ -39,7 +39,7 @@ function UserProfile({ theUser, theUserMeta }) {
 
     React.useEffect(() => {
         (async () => {
-            if (user && user.id !== theUser.id) { // 自己不存在关注自己
+            if (user && theUser && user.id !== theUser.id) { // 自己不存在关注自己
                 const res = await fetch(`/api/user/follows/user/${theUser.id}`);
                 if (res.ok) {
                     const json = await res.json();

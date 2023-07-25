@@ -14,9 +14,10 @@ import { TrashBin } from '../../components/icons';
 import Buzzword from '../../components/buzzword';
 import { useNavigate } from 'react-router-dom';
 import RouterLink from '../../components/router-link';
+import { Skeleton } from 'baseui/skeleton';
 
 function ReviewComments({ review }) {
-    const limit = 10;
+    const limit = 2;
     const navigate = useNavigate();
     const { user } = useAuth();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -171,17 +172,18 @@ function ReviewComments({ review }) {
                         }
                     </Block>
                 ))}
-                <Block marginTop='scale800' overrides={{
-                    Block: {
-                        style: {
-                            textAlign: 'center',
-                        }
-                    }
-                }}>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)} isLoading={isLoading} disabled={!hasMore}>
-                        {hasMore ? '查看更多' : '没有了'}
-                    </Button>
-                </Block>
+                {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                    <Skeleton animation height='58px' width='100%' />
+                    <Skeleton animation height='58px' width='100%' />
+                    <Skeleton animation height='58px' width='100%' />
+                </Block>}
+                {hasMore && !isLoading &&
+                    <Block marginTop='scale800' display='flex' justifyContent='center'>
+                        <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                            查看更多
+                        </Button>
+                    </Block>
+                }
             </Block>
         </>
     );

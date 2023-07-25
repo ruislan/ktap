@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { useStyletron } from 'baseui';
 import RouterLink from '../../components/router-link';
 import { Star } from '../../components/icons';
+import { Skeleton } from 'baseui/skeleton';
 
 function TabDiscussions({ theUser }) {
     const limit = 10;
@@ -38,7 +39,7 @@ function TabDiscussions({ theUser }) {
     return (
         <Block display='flex' flexDirection='column'>
             {dataList?.map((discussion, index) => (
-                <Block key={index} display='flex' flexDirection='column' padding='scale600' marginBottom='scale600' backgroundColor='backgroundSecondary'
+                <Block key={index} display='flex' flexDirection='column' padding='scale600' marginBottom='scale300' backgroundColor='backgroundSecondary'
                     overrides={{
                         Block: {
                             style: ({ $theme }) => ({
@@ -94,9 +95,14 @@ function TabDiscussions({ theUser }) {
                     </Block>
                 </Block>
             ))}
-            {hasMore &&
+            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='186px' width='100%' />
+                <Skeleton animation height='186px' width='100%' />
+                <Skeleton animation height='186px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' isLoading={isLoading} onClick={() => setSkip(prev => prev + limit)}>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
                         查看更多
                     </Button>
                 </Block>

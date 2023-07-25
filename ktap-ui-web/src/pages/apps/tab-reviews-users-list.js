@@ -16,6 +16,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { useNavigate } from 'react-router-dom';
 import RouterLink from '../../components/router-link';
 import GenderLabel from '../../components/gender-label';
+import { Skeleton } from 'baseui/skeleton';
 
 function TabReviewsUsersListItem({ review }) {
     const navigate = useNavigate();
@@ -365,9 +366,14 @@ function TabReviewsUsersList({ app }) {
             {reviews?.map((review, index) => (
                 <TabReviewsUsersListItem key={index} review={review} />
             ))}
-            {hasMore &&
+            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='400px' width='100%' />
+                <Skeleton animation height='400px' width='100%' />
+                <Skeleton animation height='400px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' isLoading={isLoading} onClick={() => setSkip(prev => prev + limit)}>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
                         查看更多
                     </Button>
                 </Block>

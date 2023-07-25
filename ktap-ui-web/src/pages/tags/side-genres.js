@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { Spinner } from 'baseui/spinner';
 import { Button } from 'baseui/button';
 import { LabelMedium, MonoLabelMedium } from 'baseui/typography';
+import { Skeleton } from 'baseui/skeleton';
 import SideBox from '../../components/side-box';
 import ListItem from '../../components/list-item';
 
@@ -35,12 +35,11 @@ function SideGenres() {
 
     return (
         <SideBox title='游戏类型'>
-            {
-                isLoading &&
-                (<Block display='flex' justifyContent='center' marginTop='scale600'>
-                    <Spinner $size='scale1600' $borderWidth='scale200' />
-                </Block>)
-            }
+            {isLoading && <Block display='flex' flexDirection='column' paddingLeft='scale300' paddingRight='scale300' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='40px' width='100%' />
+                <Skeleton animation height='40px' width='100%' />
+                <Skeleton animation height='40px' width='100%' />
+            </Block>}
             <Block overflow='hidden' maxHeight={isHide ? '300px' : 'auto'} paddingLeft='scale300' paddingBottom='scale600' paddingRight='scale300'>
                 <Block ref={expendRef}>
                     {dataList && dataList.map(({ name }, index) => {

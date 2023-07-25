@@ -7,6 +7,7 @@ import { Star } from '../../components/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Image from '../../components/image';
 import Tag from '../../components/tag';
+import { Skeleton } from 'baseui/skeleton';
 
 const tips = ['查看更多', '我还要', '再看看', '再来', 'More, More', '再查，再探', '接着奏乐，接着舞'];
 
@@ -75,7 +76,7 @@ function AppCard({ app }) {
 }
 
 function AppListRecommend() {
-    const limit = 10;
+    const limit = 20;
     const [dataList, setDataList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -105,12 +106,20 @@ function AppListRecommend() {
                     <AppCard key={index} app={app} />
                 ))}
             </Block>
-
-            <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                <Button size='default' kind='tertiary' isLoading={isLoading} disabled={!hasMore} onClick={() => setSkip(prev => prev + limit)}>
-                    {hasMore ? tips[Math.floor(Math.random() * tips.length) | 0] : '没有了'}
-                </Button>
-            </Block>
+            {isLoading &&
+                <Block display='flex' flexDirection='column' justifyContent='center' gridGap='scale600' marginTop='scale900' marginBottom='scale900'>
+                    <Skeleton width='100%' height='450px' marginTop='scale300' animation/>
+                    <Skeleton width='100%' height='450px' marginTop='scale300' animation />
+                    <Skeleton width='100%' height='450px' marginTop='scale300' animation />
+                </Block>
+            }
+            {hasMore && !isLoading &&
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                        {tips[Math.floor(Math.random() * tips.length) | 0]}
+                    </Button>
+                </Block>
+            }
         </Block >
     );
 }

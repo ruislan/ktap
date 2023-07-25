@@ -6,6 +6,7 @@ import { HeadingXSmall, MonoLabelMedium, LabelXSmall, ParagraphSmall } from 'bas
 import { Button } from "baseui/button";
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
 import { Link, useNavigate } from 'react-router-dom';
+import { Skeleton } from 'baseui/skeleton';
 
 function News() {
     const limit = 20;
@@ -139,16 +140,18 @@ function News() {
                     </Block>
                 </Link>
             ))}
-            <Block
-                marginTop='scale600'
-                display='flex'
-                justifyContent='center'
-                alignItems='center'
-            >
-                <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>
-                    {hasMore ? '查看更多' : '没有了'}
-                </Button>
-            </Block>
+            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale600' justifyContent='center'>
+                <Skeleton animation height='212px' width='100%' />
+                <Skeleton animation height='212px' width='100%' />
+                <Skeleton animation height='212px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
+                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary'>
+                        查看更多
+                    </Button>
+                </Block>
+            }
         </Block >
     );
 }

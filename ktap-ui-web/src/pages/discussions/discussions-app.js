@@ -327,7 +327,7 @@ function Channels({ appId, channelId = 0 }) {
 }
 
 function Discussions({ appId, channelId, }) {
-    const limit = 20;
+    const limit = 5;
     const [css, theme] = useStyletron();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -375,8 +375,9 @@ function Discussions({ appId, channelId, }) {
     };
 
     const fetchDiscussions = React.useCallback(async () => {
-        setIsLoading(true);
         try {
+            // TODO BUG 这里如果点击查看更多之后，就会出现切换channel无法重新获取的情况
+            setIsLoading(true);
             const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
@@ -429,72 +430,75 @@ function Discussions({ appId, channelId, }) {
                     </ModalFooter>
                 </Modal>
             </Block>
-            {discussions?.length === 0 ?
-                <LabelSmall marginTop='scale600' alignSelf='center' color='primary500'>无内容</LabelSmall> :
-                discussions.map((discussion, index) => {
-                    return (
-                        <RouterLink key={index} href={`/discussions/${discussion.id}`}>
-                            <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale400' paddingBottom='scale400' overrides={{
-                                Block: {
-                                    style: {
-                                        borderBottomColor: theme.borders.border300.borderColor,
-                                        borderBottomWidth: theme.borders.border300.borderWidth,
-                                        borderBottomStyle: theme.borders.border300.borderStyle,
-                                    }
+            {discussions?.map((discussion, index) => {
+                return (
+                    <RouterLink key={index} href={`/discussions/${discussion.id}`}>
+                        <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale400' paddingBottom='scale400' overrides={{
+                            Block: {
+                                style: {
+                                    borderBottomColor: theme.borders.border300.borderColor,
+                                    borderBottomWidth: theme.borders.border300.borderWidth,
+                                    borderBottomStyle: theme.borders.border300.borderStyle,
                                 }
-                            }}>
-                                <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={discussion?.user?.avatar} width='36px' height='36px' />
-                                <Block display='flex' flexDirection='column' flex='1'>
-                                    <LabelMedium marginBottom='scale200'>{discussion?.title}</LabelMedium>
-                                    <Block display='flex' alignItems='center' color='primary300' flexWrap>
-                                        <LabelSmall whiteSpace='nowrap' color='inherit'>{discussion?.channel?.name}</LabelSmall>
-                                        <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                        {discussion.isSticky &&
-                                            <>
-                                                <Pin width='16px' height='16px' />
-                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                            </>
-                                        }
-                                        {discussion.isClosed &&
-                                            <>
-                                                <Lock width='16px' height='16px' />
-                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                            </>
-                                        }
-                                        {discussion?.meta?.posts > 0 &&
-                                            <>
-                                                <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
-                                                    <Message4 width='16px' height='16px' />
-                                                    <LabelSmall color='inherit'>{discussion?.meta?.posts || 0}</LabelSmall>
-                                                </Block>
-                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                            </>
-                                        }
-                                        {discussion?.meta?.gifts > 0 &&
-                                            <>
-                                                <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
-                                                    <Gift2 width='16px' height='16px' />
-                                                    <LabelSmall color='inherit'>{discussion?.meta?.gifts || 0}</LabelSmall>
-                                                </Block>
-                                                <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                            </>
-                                        }
-                                        <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
-                                            {discussion?.lastPost?.user?.name && <Reply width='16px' height='16px' />}
-                                            @{discussion?.lastPost?.user ? discussion?.lastPost?.user.name : discussion?.user?.name}
-                                        </LabelSmall>
-                                        <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                        <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
-                                    </Block>
+                            }
+                        }}>
+                            <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={discussion?.user?.avatar} width='36px' height='36px' />
+                            <Block display='flex' flexDirection='column' flex='1'>
+                                <LabelMedium marginBottom='scale200'>{discussion?.title}</LabelMedium>
+                                <Block display='flex' alignItems='center' color='primary300' flexWrap>
+                                    <LabelSmall whiteSpace='nowrap' color='inherit'>{discussion?.channel?.name}</LabelSmall>
+                                    <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                    {discussion.isSticky &&
+                                        <>
+                                            <Pin width='16px' height='16px' />
+                                            <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        </>
+                                    }
+                                    {discussion.isClosed &&
+                                        <>
+                                            <Lock width='16px' height='16px' />
+                                            <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        </>
+                                    }
+                                    {discussion?.meta?.posts > 0 &&
+                                        <>
+                                            <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
+                                                <Message4 width='16px' height='16px' />
+                                                <LabelSmall color='inherit'>{discussion?.meta?.posts || 0}</LabelSmall>
+                                            </Block>
+                                            <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        </>
+                                    }
+                                    {discussion?.meta?.gifts > 0 &&
+                                        <>
+                                            <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
+                                                <Gift2 width='16px' height='16px' />
+                                                <LabelSmall color='inherit'>{discussion?.meta?.gifts || 0}</LabelSmall>
+                                            </Block>
+                                            <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                        </>
+                                    }
+                                    <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
+                                        {discussion?.lastPost?.user?.name && <Reply width='16px' height='16px' />}
+                                        @{discussion?.lastPost?.user ? discussion?.lastPost?.user.name : discussion?.user?.name}
+                                    </LabelSmall>
+                                    <SplitBall color='rgb(151, 151, 151)' gap='6px' />
+                                    <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
                                 </Block>
                             </Block>
-                        </RouterLink>
-                    );
-                })
+                        </Block>
+                    </RouterLink>
+                );
+            })
             }
-            {hasMore &&
+            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='56px' width='100%' />
+                <Skeleton animation height='56px' width='100%' />
+                <Skeleton animation height='56px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' isLoading={isLoading} onClick={() => setSkip(prev => prev + limit)}>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
                         查看更多
                     </Button>
                 </Block>

@@ -7,9 +7,9 @@ import { Button } from "baseui/button";
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
 import { Link } from 'react-router-dom';
 import { Input } from 'baseui/input';
-import { Search } from 'baseui/icon';
+import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
 import { ChatAlt2, User } from '../../components/icons';
-import { Spinner } from 'baseui/spinner';
+import { Skeleton } from 'baseui/skeleton';
 
 function Discussions() {
     const limit = 20;
@@ -49,9 +49,13 @@ function Discussions() {
                 }
             }
         }}>
+            {/* TODO 这里加个大背景？ */}
             <Block display='flex' justifyContent='center' alignItems='center' marginBottom='scale900' gridGap='scale300'>
-                <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏讨论...' onKeyUp={e => e.key === 'Enter' && fetchData()} />
-                <Button size='default' kind='secondary' onClick={() => fetchData()}><Search /></Button>
+                <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏讨论...'
+                    onKeyUp={e => e.key === 'Enter' && fetchData()}
+                    startEnhancer={<SearchIcon size='scale800' />}
+                    endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
+                />
             </Block>
             <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
                 {dataList && dataList.map((app, index) => (
@@ -104,14 +108,14 @@ function Discussions() {
                     </Link>
                 ))}
             </Block>
-            {isLoading &&
-                <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
-                    <Spinner $size='scale1600' $borderWidth='scale200' />
-                </Block>
-            }
-            {hasMore &&
+            {isLoading && <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
+                <Skeleton animation height='320px' width='100%' />
+                <Skeleton animation height='320px' width='100%' />
+                <Skeleton animation height='320px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
+                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary'>查看更多</Button>
                 </Block>
             }
         </Block >

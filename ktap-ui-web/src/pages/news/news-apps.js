@@ -240,13 +240,18 @@ function NewsAppsNewsList({ appId }) {
                     </Block>
                 </Link>
             ))}
-            <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                {dataList.length > 0 &&
-                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>
-                        {hasMore ? '查看更多' : '没有了'}
+            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale600' justifyContent='center'>
+                <Skeleton animation height='212px' width='100%' />
+                <Skeleton animation height='212px' width='100%' />
+                <Skeleton animation height='212px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
+                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary'>
+                        查看更多
                     </Button>
-                }
-            </Block>
+                </Block>
+            }
         </Block >
     );
 }

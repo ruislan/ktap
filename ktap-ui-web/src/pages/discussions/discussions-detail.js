@@ -664,7 +664,7 @@ function DiscussionPosts({ discussion }) {
                         Block: { style: { borderRadius: theme.borders.radius300 } }
                     }}>
                         <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
-                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:MM')}</LabelSmall>
+                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:mm')}</LabelSmall>
                         <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip || '神秘之地'}</LabelSmall>
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             {post.isEditing ? (
@@ -674,8 +674,9 @@ function DiscussionPosts({ discussion }) {
                                         setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: false } : v));
                                     }}
                                     afterUpdate={({ content }) => {
-                                        setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, content, isEditing: false } : v));
-                                        setDataList(prev => prev.map(v => v.id === post.id ? { ...v, content, isEditing: false } : v));
+                                        const now = dayjs().format('YYYY-MM-DDTHH:mm:ssZ');
+                                        setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, content, updatedAt: now, isEditing: false } : v));
+                                        setDataList(prev => prev.map(v => v.id === post.id ? { ...v, content, updatedAt: now, isEditing: false } : v));
                                     }}
                                 />
                             ) : (
@@ -702,7 +703,12 @@ function DiscussionPosts({ discussion }) {
                     </Block>
                 );
             })}
-            {hasMore &&
+            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center' marginBottom='scale600' marginTop='scale600'>
+                <Skeleton animation height='220px' width='100%' />
+                <Skeleton animation height='220px' width='100%' />
+                <Skeleton animation height='220px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
                     <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
                 </Block>

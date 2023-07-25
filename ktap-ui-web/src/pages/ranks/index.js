@@ -22,7 +22,7 @@ function Rank() {
                 })
             }
         }}>
-            <Block display='flex' marginBottom='scale300' overrides={{
+            <Block display='flex' marginBottom='scale600' overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {

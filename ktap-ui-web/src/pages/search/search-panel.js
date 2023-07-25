@@ -7,9 +7,9 @@ import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { LabelXSmall, LabelMedium } from 'baseui/typography';
 import Tag from '../../components/tag';
-import { Spinner } from "baseui/spinner";
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
+import { Skeleton } from 'baseui/skeleton';
 
 
 function SearchPanel() {
@@ -149,13 +149,11 @@ function SearchPanel() {
                         </Block>
                     </Capsule>
                 ))}
-
-                {
-                    isLoading &&
-                    <Block display='flex' justifyContent='center' marginTop='scale600'>
-                        <Spinner $size='scale1600' $borderWidth='scale200' />
-                    </Block>
-                }
+                {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                    <Skeleton animation height='86px' width='100%' />
+                    <Skeleton animation height='86px' width='100%' />
+                    <Skeleton animation height='86px' width='100%' />
+                </Block>}
             </Block>
         </>
     );

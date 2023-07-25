@@ -17,7 +17,7 @@ export default () => {
 
     return (
         <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'>
-            <Block display='flex' alignItems='center' marginBottom='scale300'>
+            <Block display='flex' alignItems='center' marginBottom='scale600'>
                 <RoundTab activeKey={activeTab} names={['评测列表', '回复列表']} onChange={(e) => setActiveTab(e.activeKey)} />
             </Block>
             {activeTab === 0 && <AdminPanelReviews />}

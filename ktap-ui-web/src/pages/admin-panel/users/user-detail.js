@@ -53,10 +53,12 @@ function AdminPanelUserDetail() {
                                 <LabelMedium>用户名：{data.name}</LabelMedium>
                                 <LabelMedium>邮箱：{data.email}</LabelMedium>
                             </Block>
-                            <RoundTab activeKey={activeTab}
-                                onChange={(e) => setActiveTab(e.activeKey)}
-                                names={['快速操作', '个人信息', '评测列表', '评测回复', '交易记录']}
-                            />
+                            <Block display='flex' alignItems='center' marginBottom='scale600'>
+                                <RoundTab activeKey={activeTab}
+                                    onChange={(e) => setActiveTab(e.activeKey)}
+                                    names={['快速操作', '个人信息', '评测列表', '评测回复', '交易记录']}
+                                />
+                            </Block>
                             {activeTab === 0 && <UserDetailActions data={data} onChanged={() => fetchData()} />}
                             {activeTab === 1 && <UserDetailProfile data={data} onChanged={() => fetchData()} />}
                             {activeTab === 2 && <UserDetailReviews data={data} />}

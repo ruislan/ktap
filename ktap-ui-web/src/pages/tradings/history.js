@@ -2,9 +2,9 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { Block } from "baseui/block";
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
-import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Button } from 'baseui/button';
+import { Skeleton } from 'baseui/skeleton';
 import { LAYOUT_MAIN, Trading } from '../../constants';
 
 function TradingHistory() {
@@ -53,10 +53,14 @@ function TradingHistory() {
                     {row => <LabelSmall>{Trading.type.getDirectionLabel(row.type)} {row.amount}</LabelSmall>}
                 </TableBuilderColumn>
             </TableBuilder>
-            {isLoading && <Block display='flex' justifyContent='center' marginTop='scale900' marginBottom='scale900'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>}
-            {hasMore &&
+            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                <Skeleton animation height='40px' width='100%' />
+                <Skeleton animation height='40px' width='100%' />
+                <Skeleton animation height='40px' width='100%' />
+            </Block>}
+            {hasMore && !isLoading &&
                 <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)} isLoading={isLoading} disabled={!hasMore}>
+                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
                         查看更多
                     </Button>
                 </Block>

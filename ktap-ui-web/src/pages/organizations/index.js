@@ -1,25 +1,22 @@
-import React from 'react';
-
+import React, { Suspense } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from "baseui/block";
 import { Skeleton } from 'baseui/skeleton';
-import { useNavigate, useParams } from 'react-router-dom';
 import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '../../constants';
-import { Tabs, Tab } from 'baseui/tabs-motion';
-import OrganizationProfile from './organization-profile';
+import RoundTab from '../../components/round-tab';
 import TabAppsList from './tab-apps-list';
-import OrganizationContact from './organization-contact';
+const OrganizationProfile = React.lazy(() => import('./organization-profile'));
+const OrganizationContact = React.lazy(() => import('./organization-contact'));
 
 function Organization() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState(null);
     const [meta, setMeta] = React.useState(null);
-    const [activeKey, setActiveKey] = React.useState('developed');
+    const [activeTab, setActiveTab] = React.useState(0);
 
     React.useEffect(() => {
         (async () => {
-            setIsLoading(true);
             try {
                 const res = await fetch(`/api/organizations/${id}`);
                 if (res.ok) {
@@ -32,8 +29,6 @@ function Organization() {
             } catch (error) {
                 if (error?.status === 404) navigate('/not-found', { replace: true });
                 else navigate('/not-work');
-            } finally {
-                setIsLoading(false);
             }
         })();
     }, [id, navigate]);
@@ -63,10 +58,16 @@ function Organization() {
                 }
             }}>
                 {/* 新闻/开发/发行 */}
-                <Tabs activeKey={activeKey} onChange={({ activeKey }) => setActiveKey(activeKey)} activateOnFocus>
-                    <Tab title="开发" key='developed'><TabAppsList url={`/api/organizations/${id}/apps/developed`} /></Tab>
-                    <Tab title="发行" key='published'><TabAppsList url={`/api/organizations/${id}/apps/published`} /></Tab>
-                </Tabs>
+                <Block display='flex' alignItems='center' marginBottom='scale600'>
+                    <RoundTab activeKey={activeTab}
+                        onChange={(e) => setActiveTab(e.activeKey)}
+                        names={['开发', '发行']}
+                    />
+                </Block>
+                <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
+                    {activeTab === 0 && <TabAppsList url={`/api/organizations/${id}/apps/developed`} />}
+                    {activeTab === 1 && <TabAppsList url={`/api/organizations/${id}/apps/published`} />}
+                </Block>
             </Block>
             <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}
                 overrides={{
@@ -81,13 +82,8 @@ function Organization() {
                     }
                 }}
             >
-                {isLoading ?
-                    <Skeleton width="100%" height="410px" animation /> :
-                    <>
-                        <OrganizationProfile data={data} meta={meta} />
-                        <OrganizationContact data={data} />
-                    </>
-                }
+                <Suspense fallback={<Skeleton width="100%" height="364px" animation />}><OrganizationProfile data={data} meta={meta} /></Suspense>
+                <Suspense fallback={<Block marginTop='scale900'><Skeleton width="100%" height="80px" animation /></Block>}><OrganizationContact data={data} /></Suspense>
             </Block>
         </Block>
     );

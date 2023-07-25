@@ -219,7 +219,7 @@ const users = async (fastify, opts) => {
         const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
         const skip = Math.max(0, Number(req.query.skip) || 0);
         const count = await fastify.db.timeline.count({ where: { userId, } });
-        const data = await fastify.db.timeline.findMany({
+        let data = await fastify.db.timeline.findMany({
             where: { userId },
             orderBy: { createdAt: 'desc' },
             skip,
@@ -270,7 +270,7 @@ const users = async (fastify, opts) => {
                             }
                         }
                     });
-                    if (!item.data.review?.app?.isVisible) delete item.data.review.app;
+                    if (!item.data.review?.app?.isVisible) delete item.data.review?.app;
                     break;
                 case 'ReviewGiftRef':
                     item.data = await fastify.db.reviewGiftRef.findUnique({
@@ -363,7 +363,7 @@ const users = async (fastify, opts) => {
                             }
                         }
                     });
-                    if (!item.data.discussion?.app?.isVisible) delete item.data.discussion.app;
+                    if (!item.data?.discussion?.app?.isVisible) delete item.data?.discussion?.app;
                     break;
                 case 'DiscussionPostGiftRef':
                     item.data = await fastify.db.discussionPostGiftRef.findUnique({

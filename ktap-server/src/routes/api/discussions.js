@@ -244,7 +244,7 @@ const discussions = async (fastify, opts) => {
             orderBy: [{ createdAt: 'asc' }],
             where: { discussionId: id },
             select: {
-                id: true, content: true, createdAt: true, ip: true,
+                id: true, content: true, createdAt: true, ip: true, updatedAt: true,
                 user: { select: { id: true, name: true, title: true, avatar: true, gender: true } },
             }
         });
