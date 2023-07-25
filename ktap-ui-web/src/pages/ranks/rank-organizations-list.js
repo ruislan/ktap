@@ -9,7 +9,7 @@ import Capsule from '../../components/capsule';
 import { Skeleton } from 'baseui/skeleton';
 
 function RankOrganizationsList({ url }) {
-    const limit = 10;
+    const limit = 20;
     const [css, theme] = useStyletron();
     const [skip, setSkip] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(false);

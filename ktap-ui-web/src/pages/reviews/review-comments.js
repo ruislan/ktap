@@ -17,7 +17,7 @@ import RouterLink from '../../components/router-link';
 import { Skeleton } from 'baseui/skeleton';
 
 function ReviewComments({ review }) {
-    const limit = 2;
+    const limit = 20;
     const navigate = useNavigate();
     const { user } = useAuth();
     const [isLoading, setIsLoading] = React.useState(true);

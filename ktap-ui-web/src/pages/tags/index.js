@@ -30,7 +30,7 @@ function TagItem({ name }) {
 }
 
 function Tags() {
-    const limit = 10;
+    const limit = 20;
     const [css, theme] = useStyletron();
     const { name } = useParams();
     const [flavor, setFlavor] = React.useState(0);
@@ -38,6 +38,11 @@ function Tags() {
     const [isLoading, setIsLoading] = React.useState(false);
     const [appList, setAppList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
+
+    React.useEffect(() => {
+        setSkip(0);
+        setAppList([]);
+    }, [name, flavor]);
 
     React.useEffect(() => {
         (async () => {
@@ -55,6 +60,7 @@ function Tags() {
             }
         })();
     }, [name, flavor, skip]);
+
     return (
         <Block display='flex' marginTop='scale900' overrides={{
             Block: {

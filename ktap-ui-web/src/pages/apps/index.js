@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { HeadingMedium, ParagraphSmall } from 'baseui/typography';
-import { Tabs, Tab } from 'baseui/tabs-motion';
 import { Skeleton } from 'baseui/skeleton';
 import { StyledLink } from 'baseui/link';
 import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
@@ -19,6 +18,7 @@ import TabDetailsRequirements from './tab-details-requirements';
 import TabReviewsProfessional from './tab-reviews-professional';
 import TabReviewsUsers from './tab-reviews-users';
 import TabDiscussions from './tab-discussions';
+import RoundTab from '../../components/round-tab';
 
 function App() {
     const urlParams = useParams();
@@ -165,55 +165,50 @@ function App() {
                         }
                     }
                 }} >
-                    <Tabs
-                        activeKey={activeTab}
-                        onChange={({ activeKey }) => setActiveTab(activeKey)}
-                        fill='fixed'
-                        activateOnFocus
-                    >
-                        <Tab title='详情'>
-                            {isLoading ?
-                                <Skeleton width='100%' height='800px' animation />
-                                :
-                                app && <>
-                                    <TabDetailsDescription app={app} />
-                                    <TabDetailsRequirements app={app} />
-                                    <TabDetailsLanguages app={app} />
-                                    {app?.legalText && <ParagraphSmall color='primary300' marginTop='scale1200'>
-                                        {app?.legalUrl ? <StyledLink href={app.legalUrl || '#'} target='_blank'>
-                                            {app.legalText}
-                                        </StyledLink> : app.legalText}
-                                    </ParagraphSmall>}
-                                </>
-                            }
-                        </Tab>
-                        <Tab title='新闻'>
-                            {isLoading ?
-                                <Skeleton width='100%' height='800px' animation />
-                                :
-                                app && <TabNews app={app} />
-                            }
-                        </Tab>
-                        <Tab title='评测'>
-                            {isLoading ?
-                                <Skeleton width='100%' height='800px' animation />
-                                :
-                                app && <>
-                                    <TabReviewsProfessional app={app} />
-                                    <TabReviewsUsers app={app} />
-                                </>
-                            }
-                        </Tab>
-                        <Tab title='讨论'>
-                            {isLoading ?
-                                <Skeleton width='100%' height='800px' animation />
-                                :
-                                app && <>
-                                    <TabDiscussions appId={app.id} />
-                                </>
-                            }
-                        </Tab>
-                    </Tabs>
+                    <Block overrides={{
+                        Block: {
+                            style: ({ $theme }) => ({
+                                [MOBILE_BREAKPOINT]: {
+                                    marginLeft: $theme.sizing.scale300, marginRight: $theme.sizing.scale300,
+                                }
+                            })
+                        }
+                    }}>
+                        <RoundTab activeKey={activeTab} names={['详情', '新闻', '评测', '讨论']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
+                    </Block>
+                    <Block padding='scale300' overrides={{
+                        Block: {
+                            style: ({ $theme }) => ({
+                                [MOBILE_BREAKPOINT]: {
+                                    paddingLeft: $theme.sizing.scale600, paddingRight: $theme.sizing.scale600,
+                                }
+                            })
+                        }
+                    }}>
+                        {activeTab === 0 &&
+                            (
+                                isLoading ?
+                                    <Skeleton width='100%' height='800px' animation />
+                                    :
+                                    app && <>
+                                        <TabDetailsDescription app={app} />
+                                        <TabDetailsRequirements app={app} />
+                                        <TabDetailsLanguages app={app} />
+                                        {app?.legalText && <ParagraphSmall color='primary300' marginTop='scale1200'>
+                                            {app?.legalUrl ? <StyledLink href={app.legalUrl || '#'} target='_blank'>
+                                                {app.legalText}
+                                            </StyledLink> : app.legalText}
+                                        </ParagraphSmall>}
+                                    </>
+                            )
+                        }
+                        {activeTab === 1 && app && <TabNews app={app} />}
+                        {activeTab === 2 && app && <>
+                            <TabReviewsProfessional app={app} />
+                            <TabReviewsUsers app={app} />
+                        </>}
+                        {activeTab === 3 && app && <TabDiscussions appId={app.id} />}
+                    </Block>
                 </Block>
                 <Block width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
                     Block: {

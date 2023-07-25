@@ -153,7 +153,6 @@ function AppBanner({ appId }) {
 
 function Channels({ appId, channelId = 0 }) {
     const [css, theme] = useStyletron();
-
     const { user } = useAuth();
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -188,7 +187,6 @@ function Channels({ appId, channelId = 0 }) {
         }
     };
 
-
     React.useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -206,8 +204,10 @@ function Channels({ appId, channelId = 0 }) {
     }, [appId]);
 
     React.useEffect(() => {
-        setCurrentChannel(dataList.find(channel => channel.id == channelId));
-    }, [dataList, channelId])
+        if (dataList.length > 0) {
+            setCurrentChannel(dataList.find(channel => channel.id == channelId));
+        }
+    }, [dataList, channelId]);
 
     React.useEffect(() => {
         if (scrollRef.current) scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
@@ -327,7 +327,7 @@ function Channels({ appId, channelId = 0 }) {
 }
 
 function Discussions({ appId, channelId, }) {
-    const limit = 5;
+    const limit = 20;
     const [css, theme] = useStyletron();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -376,7 +376,6 @@ function Discussions({ appId, channelId, }) {
 
     const fetchDiscussions = React.useCallback(async () => {
         try {
-            // TODO BUG 这里如果点击查看更多之后，就会出现切换channel无法重新获取的情况
             setIsLoading(true);
             const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
@@ -388,6 +387,11 @@ function Discussions({ appId, channelId, }) {
             setIsLoading(false);
         }
     }, [appId, channelId, skip]);
+
+    React.useEffect(() => {
+        setSkip(0);
+        setDiscussions([]);
+    }, [appId, channelId]);
 
     React.useEffect(() => {
         fetchDiscussions();

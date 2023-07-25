@@ -11,14 +11,14 @@ function RoundTab({ activeKey, names, onChange }) {
             const { offsetLeft, offsetWidth, offsetHeight } = btnRefs.current[activeKey];
             bgRef.current.style.width = `${offsetWidth}px`;
             bgRef.current.style.height = `${offsetHeight}px`;
-            bgRef.current.style.transform = `translateX(${offsetLeft - 4}px)`;
+            bgRef.current.style.transform = `translateX(${offsetLeft - 6}px)`;
         }
     }, [activeKey]);
 
     return (
         <div className={css({
             display: 'flex', alignItems: 'center', width: '100%',
-            borderRadius: theme.borders.radius300, padding: theme.sizing.scale100,
+            borderRadius: theme.borders.radius300, padding: theme.sizing.scale200,
             overflow: 'auto', backgroundColor: 'rgb(41,41,41)',
             whiteSpace: 'nowrap', position: 'relative',
         })}>
@@ -45,9 +45,9 @@ function RoundTab({ activeKey, names, onChange }) {
             ))}
             <div ref={bgRef} className={css({
                 backgroundColor: theme.colors.backgroundPrimary, borderRadius: theme.borders.radius300, position: 'absolute',
-                transitionTimingFunction: theme.animation.easeInOutCurve, transitionDuration: theme.animation.timing300,
+                transitionTimingFunction: theme.animation.easeInOutCurve, transitionDuration: theme.animation.timing200,
                 zIndex: 1,
-            })}></div>
+            })} />
         </div>
     );
 }

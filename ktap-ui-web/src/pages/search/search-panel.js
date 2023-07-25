@@ -10,10 +10,11 @@ import Tag from '../../components/tag';
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
 import { Skeleton } from 'baseui/skeleton';
+import { Button } from 'baseui/button';
 
 
 function SearchPanel() {
-    const limit = 10;
+    const limit = 20;
     const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
@@ -24,12 +25,18 @@ function SearchPanel() {
     const [hasMore, setHasMore] = React.useState(false);
     const [count, setCount] = React.useState(0);
     const [word, setWord] = React.useState('');
+    const ref = React.useRef(null);
+
+    React.useEffect(() => {
+        setSkip(0);
+        setDataList([]);
+    }, [searchParams])
 
     React.useEffect(() => {
         (async () => {
             const keyword = searchParams.get('q') || '';
-            setIsLoading(true);
             setWord(keyword);
+            setIsLoading(true);
             try {
                 const result = await fetch(`/api/search/apps?keyword=${keyword}&skip=${skip}&limit=${limit}`);
                 const json = await result.json();
@@ -42,17 +49,34 @@ function SearchPanel() {
         })();
     }, [skip, searchParams]);
 
-    React.useEffect(() => {
-        if (isLoading || !hasMore) return;
-        const handleScroll = () => {
-            if (window.innerHeight + document.documentElement.scrollTop + 100 < document.documentElement.offsetHeight) {
-                return;
-            }
-            setSkip(prev => prev + limit);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [dataList, isLoading, hasMore]);
+    // React.useEffect(() => {
+    //     if (isLoading || !hasMore) return;
+    //     // const handleScroll = () => {
+    //     //     if (window.innerHeight + document.documentElement.scrollTop + 100 < document.documentElement.offsetHeight) {
+    //     //         return;
+    //     //     }
+    //     //     setSkip(prev => prev + limit);
+    //     // };
+    //     // window.addEventListener("scroll", handleScroll);
+    //     // return () => window.removeEventListener("scroll", handleScroll);
+    //     const observer = new IntersectionObserver((entries) => {
+    //         // 如果 intersectionRatio 为 0，则目标在视野外，
+    //         // 我们不需要做任何事情。
+    //         if (entries[0].intersectionRatio <= 0) return;
+    //         setSkip(prev => prev + limit);
+    //         console.log('Loaded new items');
+    //     });
+
+    //     let el = null;
+    //     if (ref.current) {
+    //         el = ref.current;
+    //         observer.observe(el);
+    //     }
+
+    //     return () => {
+    //         if (el) observer.unobserve(el);
+    //     }
+    // }, [dataList, isLoading, hasMore]);
 
     return (
         <>
@@ -101,7 +125,7 @@ function SearchPanel() {
                 <LabelXSmall color='primary300'>{count}个匹配的搜索结果。</LabelXSmall>
             </Block>
 
-            <Block display='flex' flexDirection='column' marginTop='scale300'>
+            <Block ref={ref} display='flex' flexDirection='column' marginTop='scale300'>
                 {dataList.map((app, index) => (
                     <Capsule key={index} href={`/apps/${app.id}`}>
                         <Block width='154px' height='86.5px'>
@@ -154,6 +178,13 @@ function SearchPanel() {
                     <Skeleton animation height='86px' width='100%' />
                     <Skeleton animation height='86px' width='100%' />
                 </Block>}
+                {hasMore && !isLoading &&
+                    <Block marginTop='scale800' display='flex' justifyContent='center'>
+                        <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                            查看更多
+                        </Button>
+                    </Block>
+                }
             </Block>
         </>
     );

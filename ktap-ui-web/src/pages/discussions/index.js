@@ -12,7 +12,7 @@ import { ChatAlt2, User } from '../../components/icons';
 import { Skeleton } from 'baseui/skeleton';
 
 function Discussions() {
-    const limit = 20;
+    const limit = 12;
     const [css, theme] = useStyletron();
     const [dataList, setDataList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
@@ -38,6 +38,11 @@ function Discussions() {
         fetchData();
     }, [fetchData]);
 
+    const doSearch = async () => {
+        if (skip > 0) setSkip(0);
+        else fetchData();
+    };
+
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
             Block: {
@@ -52,9 +57,9 @@ function Discussions() {
             {/* TODO 这里加个大背景？ */}
             <Block display='flex' justifyContent='center' alignItems='center' marginBottom='scale900' gridGap='scale300'>
                 <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏讨论...'
-                    onKeyUp={e => e.key === 'Enter' && fetchData()}
+                    onKeyUp={e => e.key === 'Enter' && doSearch()}
                     startEnhancer={<SearchIcon size='scale800' />}
-                    endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
+                    endEnhancer={<ArrowRight cursor='pointer' onClick={() => doSearch()} size='scale800' />}
                 />
             </Block>
             <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
