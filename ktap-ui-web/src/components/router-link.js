@@ -3,13 +3,7 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useStyletron } from 'baseui';
 
-// 封装了Router的Link和NavLink
-/**
- * @param kind none or underline, default is none,
- * @param role Link/NavLink/a, default is Link,Link 和 NavLink 只能站内导航，a可以站外导航
- * @returns
- */
-function RouterLink({ href, target, kind = 'none', role = 'Link', children }) {
+export default function RouterLink({ href, target, kind = 'none', role = 'Link', children }) {
     const [css, theme] = useStyletron();
     const style = { color: 'inherit' };
     if (kind === 'none') style.textDecoration = 'none';
@@ -24,8 +18,6 @@ function RouterLink({ href, target, kind = 'none', role = 'Link', children }) {
         default: return <></>;
     }
 }
-
-export default RouterLink;
 
 
 

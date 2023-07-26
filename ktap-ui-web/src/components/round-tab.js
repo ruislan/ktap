@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 
-function RoundTab({ activeKey, names, onChange }) {
+export default function RoundTab({ activeKey, names, onChange }) {
     const [css, theme] = useStyletron();
     const btnRefs = React.useRef([]);
     const bgRef = React.useRef(null);
@@ -51,11 +51,3 @@ function RoundTab({ activeKey, names, onChange }) {
         </div>
     );
 }
-
-export default RoundTab;
-
-
-
-
-
-

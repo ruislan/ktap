@@ -5,7 +5,7 @@ import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Button } from 'baseui/button';
 import { Skeleton } from 'baseui/skeleton';
-import { LAYOUT_MAIN, Trading } from '../../constants';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Trading } from '../../constants';
 
 function TradingHistory() {
     const limit = 20;
@@ -13,6 +13,7 @@ function TradingHistory() {
     const [data, setData] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
+
     React.useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -27,15 +28,29 @@ function TradingHistory() {
                 setIsLoading(false);
             }
         })();
-    }, [limit, skip]);
+    }, [skip]);
+
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN}>
+        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} maxWidth='100%' overrides={{
+            Block: {
+                style: ({ $theme }) => ({
+                    [MOBILE_BREAKPOINT]: {
+                        paddingLeft: $theme.sizing.scale600, paddingRight: $theme.sizing.scale600,
+                    }
+                })
+            }
+        }}>
             <HeadingSmall>交易历史</HeadingSmall>
             <TableBuilder data={data} size='default' emptyMessage='没有数据'
                 overrides={{
+                    Root: {
+                        style: {
+                            borderRadius: '8px'
+                        }
+                    },
                     TableBodyCell: {
                         style: {
-                            verticalAlign: 'middle',
+                            verticalAlign: 'middle', whiteSpace: 'nowrap'
                         }
                     }
                 }}

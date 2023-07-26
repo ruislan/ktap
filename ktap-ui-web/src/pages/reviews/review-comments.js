@@ -64,6 +64,7 @@ function ReviewComments({ review }) {
     };
 
     const fetchComments = React.useCallback(async () => {
+        if (!review?.id) return;
         try {
             setIsLoading(true);
             const res = await fetch(`/api/reviews/${review.id}/comments?skip=${skip}&limit=${limit}`);
@@ -82,14 +83,13 @@ function ReviewComments({ review }) {
         dayjs.locale('zh-cn');
         dayjs.extend(relativeTime);
 
-        const fetchBuzzwords = async () => {
+        (async () => {
             const res = await fetch('/api/buzzwords?limit=15');
             if (res.ok) {
                 const json = await res.json();
                 setBuzzwords(json.data);
             }
-        };
-        fetchBuzzwords();
+        })();
     }, []);
 
     React.useEffect(() => {

@@ -50,16 +50,8 @@ function App() {
     }, [urlParams.id, navigate]);
 
     return (
-        <Block padding='0' marginTop='scale900' overrides={{
-            Block: {
-                style: {
-                    [MOBILE_BREAKPOINT]: {
-                        width: '100%',
-                    },
-                }
-            }
-        }}>
-            <HeadingMedium marginTop='0' marginBottom='scale850' overrides={{
+        <Block marginTop='scale600'>
+            <HeadingMedium marginTop='scale600' marginBottom='scale850' overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
@@ -68,7 +60,7 @@ function App() {
                             paddingLeft: $theme.sizing.scale300,
                             paddingRight: $theme.sizing.scale300,
                             marginBottom: $theme.sizing.scale600,
-                            marginTop: $theme.sizing.scale600,
+                            marginTop: $theme.sizing.scale300,
                         }
                     })
                 }
@@ -192,13 +184,16 @@ function App() {
                                     :
                                     app && <>
                                         <TabDetailsDescription app={app} />
-                                        <TabDetailsRequirements app={app} />
-                                        <TabDetailsLanguages app={app} />
-                                        {app?.legalText && <ParagraphSmall color='primary300' marginTop='scale1200'>
-                                            {app?.legalUrl ? <StyledLink href={app.legalUrl || '#'} target='_blank'>
-                                                {app.legalText}
-                                            </StyledLink> : app.legalText}
-                                        </ParagraphSmall>}
+                                        <Block>
+                                            <TabDetailsRequirements app={app} />
+                                            <TabDetailsLanguages app={app} />
+                                            {app?.legalText && <ParagraphSmall color='primary300' marginTop='scale1200'>
+                                                {app?.legalUrl ? <StyledLink href={app.legalUrl || '#'} target='_blank'>
+                                                    {app.legalText}
+                                                </StyledLink> : app.legalText}
+                                            </ParagraphSmall>
+                                            }
+                                        </Block>
                                     </>
                             )
                         }

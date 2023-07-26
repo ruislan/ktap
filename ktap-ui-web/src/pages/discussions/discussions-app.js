@@ -10,6 +10,7 @@ import { Skeleton } from 'baseui/skeleton';
 import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
 import { Check, Search } from 'baseui/icon';
+import { FormControl } from 'baseui/form-control';
 import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useAuth } from '../../hooks/use-auth';
@@ -19,7 +20,6 @@ import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
 import Notification from '../../components/notification';
 import Editor from '../../components/editor';
-import { FormControl } from 'baseui/form-control';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -121,7 +121,7 @@ function AppBanner({ appId }) {
                         </Block>
                         <Block display='flex' flexDirection='column' margin='scale300' gridGap='scale100' justifyContent='space-between'>
                             <Block>
-                                <HeadingMedium marginTop='0' marginBottom='0' >{data.name}</HeadingMedium>
+                                <HeadingMedium marginTop='0' marginBottom='0'>{data.name}</HeadingMedium>
                                 <HeadingXSmall marginTop='0' marginBottom='0' color='primary100' overrides={{
                                     Block: {
                                         style: {
@@ -129,7 +129,6 @@ function AppBanner({ appId }) {
                                             letterSpacing: '1px',
                                             lineHeight: '25px',
                                             whiteSpace: 'normal',
-                                            wordBreak: 'break-word',
                                             textShadow: '1px 1px 0px rgb(0 0 0 / 50%)',
                                             [MOBILE_BREAKPOINT]: {
                                                 marginBottom: theme.sizing.scale600,
@@ -154,6 +153,7 @@ function AppBanner({ appId }) {
 function Channels({ appId, channelId = 0 }) {
     const [css, theme] = useStyletron();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
@@ -164,9 +164,11 @@ function Channels({ appId, channelId = 0 }) {
     const [isOpenChannelSettingModal, setIsOpenChannelSettingModal] = React.useState(false);
     const [settingForm, setSettingForm] = React.useState(null);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [submitErrorMessage, setSubmitErrorMessage] = React.useState(null);
 
     const handleChannelSettingSubmit = async () => {
         setIsSubmitting(true);
+        setSubmitErrorMessage(null);
         try {
             const res = await fetch(`/api/discussions/apps/${appId}/channels/${currentChannel.id}`, {
                 method: 'PUT',
@@ -181,6 +183,15 @@ function Channels({ appId, channelId = 0 }) {
                     return [...prev];
                 });
                 setIsOpenChannelSettingModal(false);
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setSubmitErrorMessage(json.message);
+                } else if (res.status === 401) {
+                    navigate('/login');
+                } else {
+                    setSubmitErrorMessage(Messages.unknownError);
+                }
             }
         } finally {
             setIsSubmitting(false);
@@ -306,6 +317,7 @@ function Channels({ appId, channelId = 0 }) {
                 <ModalHeader>设置频道</ModalHeader>
                 <ModalBody>
                     <Block display='flex' flexDirection='column'>
+                        {submitErrorMessage && <Block><Notification kind='negative' message={submitErrorMessage} /></Block>}
                         <FormControl label={<LabelSmall>名称</LabelSmall>} caption={'最少一个字'}>
                             <Input size='compact' required value={settingForm?.name} onChange={e => setSettingForm({ ...settingForm, name: e.target.value })}></Input>
                         </FormControl>
@@ -336,7 +348,7 @@ function Discussions({ appId, channelId, }) {
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
     const [isOpenEditorModal, setIsOpenEditorModal] = React.useState(false);
-    const keywordRef = React.useRef();
+    const [keyword, setKeyword] = React.useState('');
 
     // editor
     const [editorContent, setEditorContent] = React.useState('');
@@ -357,8 +369,7 @@ function Discussions({ appId, channelId, }) {
             });
             if (res.ok) {
                 setIsOpenEditorModal(false);
-                if (skip === 0) fetchDiscussions();
-                else setSkip(0);
+                fetchDiscussions();
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -374,10 +385,12 @@ function Discussions({ appId, channelId, }) {
         }
     };
 
-    const fetchDiscussions = React.useCallback(async () => {
+    const fetchDiscussions = React.useCallback(async (keyword = '', skip = 0) => {
         try {
             setIsLoading(true);
-            const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keywordRef.current.value || ''}&skip=${skip}&limit=${limit}`);
+            setSkip(skip);
+            setKeyword(keyword);
+            const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keyword}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
                 setDiscussions(prev => skip === 0 ? json.data : [...prev, ...json.data]);
@@ -386,11 +399,6 @@ function Discussions({ appId, channelId, }) {
         } finally {
             setIsLoading(false);
         }
-    }, [appId, channelId, skip]);
-
-    React.useEffect(() => {
-        setSkip(0);
-        setDiscussions([]);
     }, [appId, channelId]);
 
     React.useEffect(() => {
@@ -413,8 +421,8 @@ function Discussions({ appId, channelId, }) {
                     navigate('/login');
                 }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
-                    <Input inputRef={keywordRef} size='compact' placeholder='搜索' onKeyUp={e => e.key === 'Enter' && fetchDiscussions()} />
-                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions()}><Search /></Button>
+                    <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />
+                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions({ keyword })}><Search /></Button>
                 </Block>
                 <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
                     <ModalHeader>发起新讨论</ModalHeader>
@@ -447,7 +455,7 @@ function Discussions({ appId, channelId, }) {
                             }
                         }}>
                             <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={discussion?.user?.avatar} width='36px' height='36px' />
-                            <Block display='flex' flexDirection='column' flex='1'>
+                            <Block display='flex' flexDirection='column' overflow='hidden'>
                                 <LabelMedium marginBottom='scale200'>{discussion?.title}</LabelMedium>
                                 <Block display='flex' alignItems='center' color='primary300' flexWrap>
                                     <LabelSmall whiteSpace='nowrap' color='inherit'>{discussion?.channel?.name}</LabelSmall>
@@ -502,7 +510,9 @@ function Discussions({ appId, channelId, }) {
             </Block>}
             {hasMore && !isLoading &&
                 <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                    <Button size='default' kind='tertiary' onClick={() => {
+                        fetchDiscussions(keyword, skip + limit);
+                    }}>
                         查看更多
                     </Button>
                 </Block>

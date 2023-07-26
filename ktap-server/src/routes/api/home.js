@@ -146,13 +146,24 @@ const home = async function (fastify, opts) {
     });
 
     // 忘记密码发送邮件
-    fastify.post('/password/forgot', async function (req, reply) {
+    fastify.post('/password/forgot', {
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    email: { $ref: 'user#/properties/email' },
+                },
+                additionalProperties: false,
+                required: ['email'],
+            }
+        },
+    }, async function (req, reply) {
         const { email } = req.body;
         const user = (await fastify.db.user.findMany({
             where: { email },
             select: { id: true, name: true, email: true, pwdResetCode: true, pwdResetExpireAt: true },
         }))[0];
-        if (!user) return reply.code(400).send();
+        if (!user) return reply.code(404).send();
         const code = uuid().replace(/-/g, '');
         const expireAt = new Date(Date.now() + 3600000); // 1 hour later
         await fastify.db.user.update({ where: { id: user.id }, data: { pwdResetCode: code, pwdResetExpireAt: expireAt } });

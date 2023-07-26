@@ -12,7 +12,7 @@ import { ChatAlt2, User } from '../../components/icons';
 import { Skeleton } from 'baseui/skeleton';
 
 function Discussions() {
-    const limit = 12;
+    const limit = 18;
     const [css, theme] = useStyletron();
     const [dataList, setDataList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
@@ -20,8 +20,9 @@ function Discussions() {
     const [skip, setSkip] = React.useState(0);
     const keywordRef = React.useRef();
 
-    const fetchData = React.useCallback(async () => {
+    const fetchData = React.useCallback(async (skip = 0) => {
         setIsLoading(true);
+        setSkip(skip);
         try {
             const res = await fetch(`/api/discussions?keyword=${keywordRef.current.value || ''}&limit=${limit}&skip=${skip}`);
             if (res.ok) {
@@ -32,16 +33,11 @@ function Discussions() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, []);
 
     React.useEffect(() => {
         fetchData();
     }, [fetchData]);
-
-    const doSearch = async () => {
-        if (skip > 0) setSkip(0);
-        else fetchData();
-    };
 
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
@@ -57,9 +53,9 @@ function Discussions() {
             {/* TODO 这里加个大背景？ */}
             <Block display='flex' justifyContent='center' alignItems='center' marginBottom='scale900' gridGap='scale300'>
                 <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏讨论...'
-                    onKeyUp={e => e.key === 'Enter' && doSearch()}
+                    onKeyUp={e => e.key === 'Enter' && fetchData()}
                     startEnhancer={<SearchIcon size='scale800' />}
-                    endEnhancer={<ArrowRight cursor='pointer' onClick={() => doSearch()} size='scale800' />}
+                    endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
                 />
             </Block>
             <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
@@ -120,7 +116,7 @@ function Discussions() {
             </Block>}
             {hasMore && !isLoading &&
                 <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary'>查看更多</Button>
+                    <Button onClick={() => fetchData(skip + limit)} kind='tertiary'>查看更多</Button>
                 </Block>
             }
         </Block >

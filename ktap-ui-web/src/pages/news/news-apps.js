@@ -114,8 +114,6 @@ function NewsAppsBanner({ appId }) {
                                             textTransform: 'uppercase',
                                             letterSpacing: '1px',
                                             lineHeight: '25px',
-                                            whiteSpace: 'normal',
-                                            wordBreak: 'break-word',
                                             textShadow: '1px 1px 0px rgb(0 0 0 / 50%)',
                                             [MOBILE_BREAKPOINT]: {
                                                 marginBottom: theme.sizing.scale600,
@@ -185,8 +183,8 @@ function NewsAppsNewsList({ appId }) {
                         display: 'flex',
                         justifyContent: 'space-between',
                         backgroundColor: theme.colors.backgroundSecondary,
-                        marginTop: theme.sizing.scale600,
-                        marginBottom: theme.sizing.scale600,
+                        marginTop: theme.sizing.scale300,
+                        marginBottom: theme.sizing.scale300,
                         textDecoration: 'none',
                         borderRadius: theme.borders.radius300,
                         boxShadow: '2px 2px 12px 2px rgb(0 0 0 / 0%)',
@@ -200,8 +198,8 @@ function NewsAppsNewsList({ appId }) {
                         }
                     })}
                 >
-                    <Block display='flex' flexDirection='column' padding='scale500'>
-                        <HeadingXSmall marginTop='0' marginBottom='scale100'>{news.title}</HeadingXSmall>
+                    <Block display='flex' flexDirection='column' overflow='hidden' padding='scale500'>
+                        <HeadingXSmall overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' marginTop='0' marginBottom='scale100'>{news.title}</HeadingXSmall>
                         <LabelXSmall marginTop='scale100' color='primary300'>日期：{dayjs(news.updatedAt).format('YYYY 年 M 月 D 日')}</LabelXSmall>
                         <ParagraphSmall color='primary100' overrides={{
                             Block: {
@@ -214,19 +212,16 @@ function NewsAppsNewsList({ appId }) {
                             }
                         }}>{news.summary}</ParagraphSmall>
                     </Block>
-                    <Block
-                        padding='scale500'
-                        width='350px'
-                        minWidth='350px'
+                    <Block padding='scale500' width='350px' minWidth='350px'
                         overrides={{
                             Block: {
-                                style: () => ({
+                                style: {
                                     [MOBILE_BREAKPOINT]: {
                                         width: '100%',
                                         padding: '0',
                                         gridArea: '1 / 1',
                                     }
-                                })
+                                }
                             }
                         }}
                     >

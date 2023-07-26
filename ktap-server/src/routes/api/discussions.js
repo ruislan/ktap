@@ -62,40 +62,20 @@ const discussions = async (fastify, opts) => {
             body: {
                 type: 'object',
                 properties: {
-                    title: {
-                        type: 'string', minLength: 1, maxLength: 255, errorMessage: {
-                            minLength: '请输入标题',
-                            maxLength: '标题不能大于 255 个字符',
-                        }
-                    },
-                    content: {
-                        type: 'string', minLength: 1, maxLength: 10000, errorMessage: {
-                            minLength: '请输入内容',
-                            maxLength: '内容不能大于 10000 个字符',
-                        }
-                    },
-                    channelId: {
-                        type: 'number', minimum: 1, errorMessage: {
-                            type: '讨论频道 ID 只能是数字',
-                            minimum: '缺少讨论频道',
-                        }
-                    },
-                    appId: {
-                        type: 'number', errorMessage: {
-                            type: 'App ID 只能是数字',
-                        }
-                    },
+                    title: { $ref: 'discussion#/properties/title' },
+                    content: { $ref: 'post#/properties/content' },
+                    channelId: { $ref: 'common#/properties/id' },
+                    appId: { $ref: 'common#/properties/id' },
                 },
                 required: ['title', 'content', 'channelId'],
                 additionalProperties: false,
             },
         },
-        handler: async function (req, reply) {
-            const userId = req.user.id;
-            const { title, content, appId, channelId, } = req.body;
-            await fastify.utils.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
-            return reply.code(200).send();
-        }
+    }, async function (req, reply) {
+        const userId = req.user.id;
+        const { title, content, appId, channelId, } = req.body;
+        await fastify.utils.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
+        return reply.code(200).send();
     });
 
     // 某个 App 的讨论频道
@@ -171,18 +151,29 @@ const discussions = async (fastify, opts) => {
     // 更新某个 APP 的频道
     fastify.put('/apps/:appId/channels/:channelId', {
         preHandler: authenticate,
-        errorHandler: bizErrorHandler,
-        handler: async function (req, reply) {
-            const appId = Number(req.params.appId) || 0;
-            const channelId = Number(req.params.channelId) || 0;
-            const { name, icon, description } = req.body;
-            if (channelId > 0) {
-                await fastify.utils.updateDiscussionChannel({
-                    id: channelId, name, icon, description, appId, operator: req.user,
-                });
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    name: { $ref: 'channel#/properties/name' },
+                    icon: { $ref: 'channel#/properties/icon' },
+                    description: { $ref: 'channel#/properties/description' },
+                },
+                required: ['name'],
+                additionalProperties: false,
             }
-            return reply.code(204).send();
+        },
+        errorHandler: bizErrorHandler,
+    }, async function (req, reply) {
+        const appId = Number(req.params.appId) || 0;
+        const channelId = Number(req.params.channelId) || 0;
+        const { name, icon, description } = req.body;
+        if (channelId > 0) {
+            await fastify.utils.updateDiscussionChannel({
+                id: channelId, name, icon, description, appId, operator: req.user,
+            });
         }
+        return reply.code(204).send();
     });
 
     fastify.get('/:id', async function (req, reply) {
@@ -266,12 +257,7 @@ const discussions = async (fastify, opts) => {
             body: {
                 type: 'object',
                 properties: {
-                    content: {
-                        type: 'string', minLength: 1, maxLength: 10000, errorMessage: {
-                            minLength: '请输入内容',
-                            maxLength: '内容不能大于 10000 个字符',
-                        }
-                    },
+                    content: { $ref: 'post#/properties/content' },
                 },
                 additionalProperties: false,
             },
@@ -315,12 +301,7 @@ const discussions = async (fastify, opts) => {
             body: {
                 type: 'object',
                 properties: {
-                    title: {
-                        type: 'string', minLength: 1, maxLength: 255, errorMessage: {
-                            minLength: '请输入标题',
-                            maxLength: '标题不能大于 255 个字符',
-                        }
-                    },
+                    title: { $ref: 'discussion#/properties/title' },
                 },
                 additionalProperties: false,
             }
@@ -348,12 +329,7 @@ const discussions = async (fastify, opts) => {
         errorHandler: bizErrorHandler,
         schema: {
             body: {
-                content: {
-                    type: 'string', minLength: 1, maxLength: 10000, errorMessage: {
-                        minLength: '请输入内容',
-                        maxLength: '内容不能大于 10000 个字符',
-                    }
-                },
+                content: { $ref: 'post#/properties/content' },
             }
         },
         handler: async function (req, reply) {

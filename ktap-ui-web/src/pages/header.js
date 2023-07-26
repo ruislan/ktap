@@ -218,7 +218,7 @@ export default function Header() {
                                         [MOBILE_BREAKPOINT]: { display: 'none', },
                                     })}
                                     placeholder='搜索...' onChange={e => setKeyword(e.target.value)} value={keyword}
-                                    onKeyDown={e => {
+                                    onKeyUp={e => {
                                         if (e.key === 'Enter') {
                                             e.preventDefault();
                                             doSearch();

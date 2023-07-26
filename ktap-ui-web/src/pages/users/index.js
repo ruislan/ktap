@@ -40,7 +40,6 @@ function User() {
     }, [id, navigate]);
 
     return (
-
         <Block overrides={{
             Block: {
                 style: ({ $theme }) => ({

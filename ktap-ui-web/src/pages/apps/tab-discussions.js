@@ -37,7 +37,7 @@ function TabDiscussions({ appId }) {
                 setIsLoading(false);
             }
         })();
-    }, [appId, limit, skip]);
+    }, [appId, skip]);
 
     return (
         <Block paddingTop='scale600' paddingBottom='scale600'>
@@ -58,7 +58,7 @@ function TabDiscussions({ appId }) {
                             }
                         }}>
                             <img className={css({ borderRadius: theme.borders.radius300, marginTop: theme.sizing.scale0 })} src={discussion?.user?.avatar} width='36px' height='36px' />
-                            <Block display='flex' flexDirection='column' flex='1'>
+                            <Block display='flex' flexDirection='column' overflow='hidden'>
                                 <LabelMedium marginBottom='scale200'>{discussion?.title}</LabelMedium>
                                 <Block display='flex' alignItems='center' color='primary300' flexWrap>
                                     <LabelSmall whiteSpace='nowrap' color='inherit'>{discussion?.channel?.name}</LabelSmall>

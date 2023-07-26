@@ -12,7 +12,7 @@ import apiRoutes from './api.js';
 import adminRoutes from './admin.js'
 import schedule from './schedule.js';
 
-import userSchema from './json-schema/user.js';
+import jsonSchema from './json-schema.js';
 
 import utils from './utils.js';
 
@@ -24,7 +24,7 @@ export default async function (fastify, opts, next) {
     });
 
     // json schema
-    await fastify.addSchema(userSchema);
+    await jsonSchema(fastify);
 
     // plugins
     await fastify.register(fastifyCors);

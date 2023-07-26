@@ -32,8 +32,6 @@ class LocalStorage {
 }
 
 const storagePlugin = async (fastify, opts, next) => {
-    // if (opts.storage === 'local') new LocalStorage(opts)...
-    // else if (opts.storage === 'qiniu') new QiniuStorage(opts)...
     const storage = new LocalStorage(opts);
     fastify.decorate('storage', storage);
     next();

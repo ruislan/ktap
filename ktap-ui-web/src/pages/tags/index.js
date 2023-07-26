@@ -39,27 +39,27 @@ function Tags() {
     const [appList, setAppList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
 
-    React.useEffect(() => {
-        setSkip(0);
-        setAppList([]);
-    }, [name, flavor]);
+    const fetchData = React.useCallback(async (flavor = 0, skip = 0) => {
+        setIsLoading(true);
+        setSkip(skip);
+        setFlavor(flavor);
+        try {
+            const byWhat = flavor === 1 ? 'by-new' : (flavor === 2 ? 'by-score' : 'by-hot');
+            const res = await fetch(`/api/tags/${name}?flavor=${byWhat}&skip=${skip}&limit=${limit}`);
+            if (res.ok) {
+                const json = await res.json();
+                setAppList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                setHasMore(json.skip + json.limit < json.count);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [name])
+
 
     React.useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            try {
-                const byWhat = flavor === 1 ? 'by-new' : (flavor === 2 ? 'by-score' : 'by-hot');
-                const res = await fetch(`/api/tags/${name}?flavor=${byWhat}&skip=${skip}&limit=${limit}`);
-                if (res.ok) {
-                    const json = await res.json();
-                    setAppList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                    setHasMore(json.skip + json.limit < json.count);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [name, flavor, skip]);
+        fetchData();
+    }, [fetchData]);
 
     return (
         <Block display='flex' marginTop='scale900' overrides={{
@@ -86,7 +86,7 @@ function Tags() {
                 }
             }}>
                 <Block display='flex' alignItems='center' marginBottom='scale600'>
-                    <RoundTab activeKey={flavor} names={['按最热', '按最新', '按评分']} onChange={(e) => { setFlavor(e.activeKey); setSkip(0); }} />
+                    <RoundTab activeKey={flavor} names={['按最热', '按最新', '按评分']} onChange={(e) => fetchData(e.activeKey, 0)} />
                 </Block>
                 <Block display='flex' flexDirection='column'>
                     {appList && appList.map((app, index) => (
@@ -134,7 +134,7 @@ function Tags() {
                 </Block>}
                 {hasMore && !isLoading &&
                     <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                        <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                        <Button size='default' kind='tertiary' onClick={() => fetchData(flavor, skip + limit)}>
                             查看更多
                         </Button>
                     </Block>

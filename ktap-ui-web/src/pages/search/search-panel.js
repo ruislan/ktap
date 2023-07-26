@@ -27,27 +27,25 @@ function SearchPanel() {
     const [word, setWord] = React.useState('');
     const ref = React.useRef(null);
 
-    React.useEffect(() => {
-        setSkip(0);
-        setDataList([]);
-    }, [searchParams])
+    const fetchData = React.useCallback(async (skip = 0) => {
+        const keyword = searchParams.get('q') || '';
+        setWord(keyword);
+        setSkip(skip);
+        setIsLoading(true);
+        try {
+            const result = await fetch(`/api/search/apps?keyword=${keyword}&skip=${skip}&limit=${limit}`);
+            const json = await result.json();
+            setCount(json.count);
+            setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+            setHasMore(json.skip + json.limit < json.count);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [searchParams]);
 
     React.useEffect(() => {
-        (async () => {
-            const keyword = searchParams.get('q') || '';
-            setWord(keyword);
-            setIsLoading(true);
-            try {
-                const result = await fetch(`/api/search/apps?keyword=${keyword}&skip=${skip}&limit=${limit}`);
-                const json = await result.json();
-                setCount(json.count);
-                setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                setHasMore(json.skip + json.limit < json.count);
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [skip, searchParams]);
+        fetchData();
+    }, [fetchData]);
 
     // React.useEffect(() => {
     //     if (isLoading || !hasMore) return;
@@ -180,7 +178,7 @@ function SearchPanel() {
                 </Block>}
                 {hasMore && !isLoading &&
                     <Block marginTop='scale800' display='flex' justifyContent='center'>
-                        <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
+                        <Button size='default' kind='tertiary' onClick={() => fetchData(skip + limit)}>
                             查看更多
                         </Button>
                     </Block>

@@ -59,7 +59,7 @@ function ActivityItem({ activity }) {
                 (
                     <>
                         <LeftLine type={activity.type} />
-                        <Block display='flex' width='100%' overflow='hidden' paddingTop='scale100' paddingBottom='scale900' marginLeft='scale300' flexDirection='column'>
+                    <Block display='flex' width='100%' overflow='hidden' paddingTop='scale100' paddingBottom='scale900' marginLeft='scale300' flexDirection='column'>
                             {activity.type === 'Review' && (
                                 <>
                                     {activity.data.app ?
@@ -213,7 +213,7 @@ function ActivityItem({ activity }) {
                                     }
                                     <LabelSmall color='primary300'>{dayjs(activity.createdAt).fromNow()}</LabelSmall>
                                     <Block display='flex' flexDirection='column'>
-                                        <ParagraphMedium>{activity.data.title}</ParagraphMedium>
+                                        <ParagraphMedium >{activity.data.title}</ParagraphMedium>
                                         <Block display='flex' alignItems='center' padding='scale100' backgroundColor='backgroundSecondary'
                                             overrides={{
                                                 Block: {

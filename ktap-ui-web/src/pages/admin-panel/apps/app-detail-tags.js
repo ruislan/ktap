@@ -262,7 +262,7 @@ function TagsBlock({ data }) {
         } finally {
             setIsLoading(false);
         }
-    }, [data, skip, limit]);
+    }, [data, skip]);
 
     React.useEffect(() => {
         fetchTags();
@@ -289,7 +289,7 @@ function TagsBlock({ data }) {
                 ))}
                 {hasMore && <Button kind='tertiary' size='compact' shape='circle' isLoading={isLoading} onClick={(e) => {
                     e.preventDefault();
-                    setSkip(skip + limit);
+                    setSkip(prev => prev + limit);
                 }}>...</Button>}
             </Block>
         </Block>

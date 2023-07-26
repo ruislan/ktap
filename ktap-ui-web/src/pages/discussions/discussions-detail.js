@@ -735,7 +735,7 @@ function DiscussionPosts({ discussion }) {
 
 function DiscussionsDetail() {
     const { appId, id } = useParams();
-    const [, theme] = useStyletron();
+    const [css, theme] = useStyletron();
     const navigate = useNavigate();
     const [discussion, setDiscussion] = React.useState({});
     const [isLoadingDiscussion, setIsLoadingDiscussion] = React.useState(true);
@@ -764,30 +764,32 @@ function DiscussionsDetail() {
     }, [id, navigate]);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
-            Block: {
-                style: {
-                    [MOBILE_BREAKPOINT]: {
-                        width: '100%',
-                        marginTop: theme.sizing.scale600, paddingLeft: theme.sizing.scale300, paddingRight: theme.sizing.scale300,
+        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' maxWidth='100%' overflow='hidden'
+            overrides={{
+                Block: {
+                    style: {
+                        [MOBILE_BREAKPOINT]: {
+                            marginTop: theme.sizing.scale600, paddingLeft: theme.sizing.scale300, paddingRight: theme.sizing.scale300,
+                        }
                     }
                 }
-            }
-        }}>
+            }}>
             <Block display='flex' width='100%' alignItems='center' gridGap='scale300' marginBottom='scale800'>
                 <RouterLink href={`/discussions/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.app?.name}</LabelSmall></RouterLink> /
                 <RouterLink href={`/discussions/apps/${discussion?.app?.id}/channels/${discussion?.channel?.id}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
                 <LabelSmall>讨论详情</LabelSmall>
             </Block>
-            <Block display='flex' width='100%' alignItems='center' backgroundColor='backgroundSecondary' padding='scale700'
-                marginBottom='scale600' gridGap='scale100'
+            <Block display='flex' width='100%' backgroundColor='backgroundSecondary' padding='scale700'
+                marginBottom='scale600'
                 overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow500, } }
                 }}
             >
-                {discussion.isSticky && (<Pin width='24px' height='24px' />)}
-                {discussion.isClosed && (<Lock width='24px' height='24px' />)}
-                <HeadingXSmall margin='0'>{discussion.title}</HeadingXSmall>
+                <HeadingXSmall margin='0' maxWidth='100%'>
+                    {discussion.isClosed && (<div className={css({ display: 'inline-flex', float: 'left', marginTop: theme.sizing.scale0, marginRight: theme.sizing.scale0, color: theme.colors.primary200 })}><Lock width='24px' height='24px' /></div>)}
+                    {discussion.isSticky && (<div className={css({ display: 'inline-flex', float: 'left', marginTop: theme.sizing.scale0, marginRight: theme.sizing.scale100, color: theme.colors.primary200 })}><Pin width='24px' height='24px' /></div>)}
+                    {discussion.title}
+                </HeadingXSmall>
             </Block>
             <Block display='flex' width='100%' overrides={{
                 Block: { style: { [MOBILE_BREAKPOINT]: { flexDirection: 'column', gap: theme.sizing.scale900 } } }

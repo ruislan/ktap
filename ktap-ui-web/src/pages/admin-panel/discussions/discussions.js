@@ -97,7 +97,7 @@ export default () => {
 
     return (
         <Block display='flex' flexDirection='column'>
-            <HeadingSmall marginTop='0' marginBottom='scale900'>评论列表</HeadingSmall>
+            <HeadingSmall marginTop='0' marginBottom='scale900'>讨论列表</HeadingSmall>
             <Block display='flex' alignItems='center' justifyContent='space-between' marginBottom='scale900' overrides={{
                 Block: {
                     style: {
@@ -203,8 +203,8 @@ export default () => {
                 autoFocus
                 role={ROLE.alertdialog}
             >
-                <ModalHeader>是否删除评论？</ModalHeader>
-                <ModalBody>您确定要删除这篇评论吗？评论及其相关联发帖等将全部删除。该操作<b>不能撤消</b>。</ModalBody>
+                <ModalHeader>是否删除讨论？</ModalHeader>
+                <ModalBody>您确定要删除这篇讨论吗？讨论及其相关联发帖等将全部删除。该操作<b>不能撤消</b>。</ModalBody>
                 <ModalFooter>
                     <ModalButton kind='tertiary' onClick={() => setIsOpenDeleteConfirmModal(false)}>取消</ModalButton>
                     <ModalButton onClick={() => handleDelete()} isLoading={isLoading}>确定</ModalButton>
