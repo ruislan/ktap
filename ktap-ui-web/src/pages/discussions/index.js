@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
-import { LabelXSmall, LabelSmall, LabelMedium } from 'baseui/typography';
+import { LabelXSmall, LabelSmall, LabelMedium, HeadingXLarge, ParagraphMedium } from 'baseui/typography';
 import { Button } from "baseui/button";
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { Link } from 'react-router-dom';
@@ -51,12 +51,36 @@ function Discussions() {
             }
         }}>
             {/* TODO 这里加个大背景？ */}
-            <Block display='flex' justifyContent='center' alignItems='center' marginBottom='scale900' gridGap='scale300'>
-                <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏讨论...'
-                    onKeyUp={e => e.key === 'Enter' && fetchData()}
-                    startEnhancer={<SearchIcon size='scale800' />}
-                    endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
-                />
+            <Block marginBottom='scale1600' display='flex' alignItems='center' gridGap='scale900' overrides={{
+                Block: {
+                    style: {
+                        [MOBILE_BREAKPOINT]: {
+                            flexDirection: 'column',
+                        }
+                    }
+                }
+            }}>
+                <div className={css({
+                    minWidth: '42%', maxWidth: '42%', height: '240px',
+                    backgroundImage: `url('/public/img/fight.jpeg')`, backgroundPosition: 'center left',
+                    backgroundSize: 'cover', borderRadius: theme.borders.radius300,
+                    boxShadow: theme.lighting.shadow700,
+                    [MOBILE_BREAKPOINT]: {
+                        minWidth: '100%', maxWidth: '100%',
+                    }
+                })} />
+                <Block display='flex' flexDirection='column' flex='1'>
+                    <HeadingXLarge marginTop='0'>年轻，就是要畅聊</HeadingXLarge>
+                    <ParagraphMedium marginBottom='scale900'>在这里您可以加入任何讨论并舒服地聊天、询问和解答问题、吐槽游戏、发表意见和攻略，尽情地享受乐趣，战个痛快。</ParagraphMedium>
+                    <Block paddingRight='scale600'>
+                        <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏...'
+                            onKeyUp={e => e.key === 'Enter' && fetchData()}
+                            startEnhancer={<SearchIcon size='scale800' />}
+                            endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
+                        />
+                    </Block>
+                </Block>
+                {/* XXX 感觉这个位置应该再加个什么东西 */}
             </Block>
             <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
                 {dataList && dataList.map((app, index) => (
