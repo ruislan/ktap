@@ -1,9 +1,9 @@
-import { AppMedia, LIMIT_CAP } from "../../constants.js";
+import { AppMedia, Pagination } from "../../constants.js";
 
 const news = async (fastify, opts) => {
     fastify.get('', async function (req, reply) {
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.news.count();
         const data = await fastify.db.news.findMany({
             take: limit,
@@ -40,8 +40,7 @@ const news = async (fastify, opts) => {
 
     fastify.get('/apps/:appId', async function (req, reply) {
         const appId = Number(req.params.appId) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
         const count = await fastify.db.news.count({ where: { appId } });
         const data = await fastify.db.news.findMany({

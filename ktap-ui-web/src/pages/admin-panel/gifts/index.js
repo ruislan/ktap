@@ -13,11 +13,11 @@ import { FormControl } from 'baseui/form-control';
 import { StatefulPopover } from 'baseui/popover';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 import { EditLine, TrashBin, ExternalLink } from '../../../components/icons';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { StyledLink } from 'baseui/link';
 
 function AdminPanelGifts() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -49,7 +49,7 @@ function AdminPanelGifts() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, [skip, limit]);
 
     React.useEffect(() => {
         fetchData();
@@ -239,7 +239,7 @@ function AdminPanelGifts() {
                         <Input size='compact' value={gift.url} onChange={e => setGift({ ...gift, url: e.target.value })} />
                     </FormControl>
                     <Block marginTop='scale300'>
-                        <img src={gift.url} style={{ width: '128px' }}/>
+                        <img src={gift.url} style={{ width: '128px' }} />
                     </Block>
                 </ModalBody>
                 <ModalFooter>

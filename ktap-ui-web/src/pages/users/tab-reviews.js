@@ -6,7 +6,7 @@ import { LabelSmall, LabelMedium, ParagraphMedium, ParagraphSmall, LabelXSmall, 
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
 import { Button } from 'baseui/button';
 import { ThumbUp, ThumbDown, Gift, ChevronRight, Star } from '../../components/icons';
-import { Styles } from '../../constants';
+import { PAGE_LIMIT_NORMAL, Styles } from '../../constants';
 import { useAuth } from '../../hooks/use-auth';
 import ImageBoxGallery from '../../components/image-box-gallery';
 import GiftType from '../../components/gift';
@@ -337,9 +337,8 @@ function TabReviewsListItem({ review }) {
     );
 }
 
-// XXX 思考一下，这里这么多交互是否合适？是否应该简化，交互则跳转到reviews/:id页面去。
 function TabReviews({ theUser }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [reviews, setReviews] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
@@ -369,7 +368,7 @@ function TabReviews({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip, user]);
+    }, [theUser, skip, limit, user]);
 
     return (
         <Block display='flex' flexDirection='column'>

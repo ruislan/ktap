@@ -6,7 +6,7 @@ import { LabelLarge, LabelMedium, LabelSmall, LabelXSmall, ParagraphMedium, Para
 import { Button } from 'baseui/button';
 import { StatefulPopover } from 'baseui/popover';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
-import { Styles } from '../../constants';
+import { PAGE_LIMIT_NORMAL, Styles } from '../../constants';
 import { ThumbUp, ThumbDown, Gift, ChevronRight, Star } from '../../components/icons';
 import ImageBoxGallery from '../../components/image-box-gallery';
 import GiftType from '../../components/gift';
@@ -332,7 +332,7 @@ function TabReviewsUsersListItem({ review }) {
 }
 
 function TabReviewsUsersList({ app }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [reviews, setReviews] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
@@ -359,7 +359,7 @@ function TabReviewsUsersList({ app }) {
                 setIsLoading(false);
             }
         })();
-    }, [app.id, skip, user]);
+    }, [app.id, skip, limit, user]);
 
     return (
         <>

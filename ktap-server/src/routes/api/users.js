@@ -1,10 +1,10 @@
-import { AppMedia, LIMIT_CAP } from "../../constants.js";
+import { AppMedia, Pagination } from "../../constants.js";
 
 const users = async (fastify, opts) => {
     fastify.get('/:id/follows/apps', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.followApp.count({ where: { followerId: userId, app: { isVisible: true } } });
         let data = [];
         if (count > 0) {
@@ -36,8 +36,8 @@ const users = async (fastify, opts) => {
 
     fastify.get('/:id/follows/users', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.followUser.count({ where: { followerId: userId } });
         let data = [];
         if (count > 0) {
@@ -58,8 +58,8 @@ const users = async (fastify, opts) => {
 
     fastify.get('/:id/review-comments', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.reviewComment.count({ where: { userId, } });
         const data = await fastify.db.reviewComment.findMany({
             where: { userId, },
@@ -82,8 +82,8 @@ const users = async (fastify, opts) => {
 
     fastify.get('/:id/reviews', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.review.count({ where: { userId, } });
         const data = await fastify.db.review.findMany({
             where: { userId },
@@ -151,8 +151,8 @@ const users = async (fastify, opts) => {
 
     fastify.get('/:id/discussion-posts', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.discussionPost.count({ where: { userId, } });
         const data = await fastify.db.discussionPost.findMany({
             where: { userId, },
@@ -175,8 +175,8 @@ const users = async (fastify, opts) => {
 
     fastify.get('/:id/discussions', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.discussion.count({ where: { userId, } });
         const data = await fastify.db.discussion.findMany({
             where: { userId },
@@ -216,8 +216,8 @@ const users = async (fastify, opts) => {
 
     fastify.get('/:id/timeline', async function (req, reply) {
         const userId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.timeline.count({ where: { userId, } });
         let data = await fastify.db.timeline.findMany({
             where: { userId },

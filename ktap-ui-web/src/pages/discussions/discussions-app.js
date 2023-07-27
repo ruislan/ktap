@@ -15,7 +15,7 @@ import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } fr
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useAuth } from '../../hooks/use-auth';
 import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply, Settings } from '../../components/icons';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages } from '../../constants';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL } from '../../constants';
 import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
 import Notification from '../../components/notification';
@@ -339,7 +339,7 @@ function Channels({ appId, channelId = 0 }) {
 }
 
 function Discussions({ appId, channelId, }) {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -399,7 +399,7 @@ function Discussions({ appId, channelId, }) {
         } finally {
             setIsLoading(false);
         }
-    }, [appId, channelId]);
+    }, [appId, channelId, limit]);
 
     React.useEffect(() => {
         fetchDiscussions();
@@ -422,7 +422,7 @@ function Discussions({ appId, channelId, }) {
                 }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />
-                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions({ keyword })}><Search /></Button>
+                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><Search /></Button>
                 </Block>
                 <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
                     <ModalHeader>发起新讨论</ModalHeader>

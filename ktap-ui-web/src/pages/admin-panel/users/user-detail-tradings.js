@@ -7,10 +7,10 @@ import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { LabelSmall } from 'baseui/typography';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
-import { Trading } from '../../../constants';
+import { PAGE_LIMIT_SMALL, Trading } from '../../../constants';
 
 function UserDetailTradings({ data }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const [isLoading, setIsLoading] = React.useState(true);
     const [comments, setComments] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
@@ -33,7 +33,7 @@ function UserDetailTradings({ data }) {
             }
         };
         fetchData();
-    }, [data, skip]);
+    }, [data, skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column'>

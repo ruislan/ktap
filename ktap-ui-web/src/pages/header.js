@@ -147,7 +147,7 @@ export default function Header() {
                             backgroundColor: 'rgb(41,41,41)',
                             top: '58px', left: 0, right: 0,
                             padding: theme.sizing.scale600, zIndex: 9996,
-                            transition: 'all 0.3s ease-in-out',
+                            transition: 'all 0.2s ease-in-out',
                             transform: showMainItems ? 'translateX(0)' : 'translateX(-100%)',
                         },
                     })}>
@@ -203,6 +203,7 @@ export default function Header() {
                                     })}
                                     onClick={e => {
                                         e.preventDefault();
+                                        showMainItems && setShowMainItems(false);
                                         navigate('/search');
                                     }}>
                                     <Search size='scale800' />

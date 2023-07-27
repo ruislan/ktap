@@ -10,7 +10,7 @@ import { HeadingSmall, LabelSmall, ParagraphXSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { ArrowLeft, ArrowRight, Filter, Overflow, Check, Delete } from 'baseui/icon';
 import { Eye, Rocket } from '../../../components/icons';
 import { StatefulPopover } from 'baseui/popover';
@@ -19,7 +19,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 
 function AdminPanelUsers() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const [css, theme] = useStyletron();
     const { enqueue } = useSnackbar();
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ function AdminPanelUsers() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip, isAdmin, isLocked, hasReviews, hasComments]);
+    }, [skip, limit, isAdmin, isLocked, hasReviews, hasComments]);
 
     React.useEffect(() => {
         fetchData();

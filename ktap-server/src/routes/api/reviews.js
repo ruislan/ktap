@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP, REVIEW_IMAGE_COUNT_LIMIT, Trading } from '../../constants.js';
+import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, Trading } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 
 const reviews = async (fastify, opts) => {
@@ -64,8 +64,8 @@ const reviews = async (fastify, opts) => {
     // 获取评测回复
     fastify.get('/:id/comments', async function (req, reply) {
         const id = Number(req.params.id);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const downstream = (req.query.downstream || 'false').toLowerCase() === 'true';
 
         const count = await fastify.db.reviewComment.count({ where: { reviewId: id } });

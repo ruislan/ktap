@@ -1,11 +1,11 @@
-import { AppMedia, LIMIT_CAP, AppPlatform, SocialLinkBrands, TagCategory, AppLanguages } from '../../constants.js';
+import { AppMedia, Pagination } from '../../constants.js';
 import steam from '../../lib/steam.js';
 
 // 暂不支持删除App，这个操作的Ref太多了，影响太大了，设置为isVisible=false即可
 const apps = async function (fastify, opts) {
     fastify.get('', async (req, reply) => {
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const keyword = req.query.keyword || '';
         const hasParamIsVisible = !!req.query.isVisible;
         const isVisible = (req.query.isVisible || 'false').toLowerCase() === 'true';
@@ -278,8 +278,8 @@ const apps = async function (fastify, opts) {
 
     fastify.get('/:id/tags', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const keyword = req.query.keyword || '';
         // 注意这里有多个用户会使用相同的标签
         const count = (await fastify.db.$queryRaw`

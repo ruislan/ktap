@@ -1,3 +1,5 @@
+import { TagCategory } from "./constants.js";
+
 const user = {
     $id: 'user',
     type: 'object',
@@ -102,6 +104,21 @@ const discussionPost = {
     },
 };
 
+const tag = {
+    $id: 'tag',
+    type: 'object',
+    properties: {
+        name: {
+            type: 'string', minLength: 1, maxLength: 15,
+            errorMessage: { minLength: '标签不能为空字符', maxLength: '标签太长了', }
+        },
+        category: {
+            enum: [TagCategory.feature, TagCategory.genre, TagCategory.normal],
+            errorMessage: { enum: '无法识别的 Tag 分类', }
+        },
+    },
+}
+
 const common = {
     $id: 'common',
     type: 'object',
@@ -110,10 +127,12 @@ const common = {
     }
 };
 
+// XXX 添加schema首先以前端有 Post 和 Put 的对象为主，其他部分慢慢来即可
 export default async function (fastify) {
     await fastify.addSchema(common);
     await fastify.addSchema(user);
     await fastify.addSchema(discussion);
     await fastify.addSchema(discussionPost);
     await fastify.addSchema(discussionChannel);
+    await fastify.addSchema(tag);
 };

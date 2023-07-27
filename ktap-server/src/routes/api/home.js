@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { LIMIT_CAP, errors, Keys, Gender, Trading } from "../../constants.js";
+import { errors, Keys, Gender, Trading, Pagination } from "../../constants.js";
 
 const home = async function (fastify, opts) {
     fastify.route({
@@ -91,7 +91,7 @@ const home = async function (fastify, opts) {
     });
 
     fastify.get('/buzzwords', async function (req, reply) {
-        const limit = Math.min(LIMIT_CAP, (Number(req.query.limit) || 15));
+        const { limit } = Pagination.parse(req.query.skip, req.query.limit);
         const data = await fastify.db.buzzword.findMany({
             select: { content: true, },
             orderBy: { weight: 'desc' },

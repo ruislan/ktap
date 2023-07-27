@@ -15,9 +15,10 @@ import Buzzword from '../../components/buzzword';
 import { useNavigate } from 'react-router-dom';
 import RouterLink from '../../components/router-link';
 import { Skeleton } from 'baseui/skeleton';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 function ReviewComments({ review }) {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const navigate = useNavigate();
     const { user } = useAuth();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -77,7 +78,7 @@ function ReviewComments({ review }) {
         } finally {
             setIsLoading(false);
         }
-    }, [review?.id, skip]);
+    }, [review, skip, limit]);
 
     React.useEffect(() => {
         dayjs.locale('zh-cn');

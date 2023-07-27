@@ -13,10 +13,10 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 import { EditLine, TrashBin } from '../../../components/icons';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 
 function AdminPanelBuzzwords() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -48,7 +48,7 @@ function AdminPanelBuzzwords() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, [skip, limit]);
 
     React.useEffect(() => {
         fetchData();

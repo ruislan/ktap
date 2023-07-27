@@ -5,10 +5,10 @@ import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Button } from 'baseui/button';
 import { Skeleton } from 'baseui/skeleton';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Trading } from '../../constants';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '../../constants';
 
 function TradingHistory() {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [isLoading, setIsLoading] = React.useState(false);
     const [data, setData] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
@@ -28,7 +28,7 @@ function TradingHistory() {
                 setIsLoading(false);
             }
         })();
-    }, [skip]);
+    }, [skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} maxWidth='100%' overrides={{

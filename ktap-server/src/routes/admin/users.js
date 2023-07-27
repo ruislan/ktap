@@ -1,9 +1,8 @@
-import { LIMIT_CAP, Trading } from '../../constants.js';
+import { Pagination, Trading } from '../../constants.js';
 
 const users = async function (fastify, opts) {
     fastify.get('', async (req, reply) => {
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const keyword = req.query.keyword || '';
         const hasParamIsAdmin = !!req.query.isAdmin;
         const hasParamIsLocked = !!req.query.isLocked;
@@ -106,8 +105,7 @@ const users = async function (fastify, opts) {
 
     fastify.get('/:id/reviews', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const count = await fastify.db.review.count({ where: { userId: id } });
         const data = await fastify.db.review.findMany({
             where: { userId: id, },
@@ -121,8 +119,7 @@ const users = async function (fastify, opts) {
 
     fastify.get('/:id/review-comments', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const count = await fastify.db.reviewComment.count({ where: { userId: id } });
         const data = await fastify.db.reviewComment.findMany({
             where: { userId: id, },
@@ -136,8 +133,7 @@ const users = async function (fastify, opts) {
 
     fastify.get('/:id/tradings', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const whereCondition = {
             OR: [
                 { userId: id, },

@@ -11,6 +11,7 @@ import RouterLink from '../../components/router-link';
 import Gift from '../../components/gift';
 import '../../assets/css/post.css';
 import { Skeleton } from 'baseui/skeleton';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 function LeftLine({ type }) {
     return (
@@ -314,7 +315,7 @@ function ActivityItem({ activity }) {
 }
 
 function TabActivities({ theUser }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [activities, setActivities] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
@@ -341,7 +342,7 @@ function TabActivities({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip]);
+    }, [theUser, skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column'>

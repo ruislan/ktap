@@ -1,4 +1,4 @@
-import { LIMIT_CAP } from "../../constants.js";
+import { Pagination } from "../../constants.js";
 
 const reviews = async function (fastify, opts) {
     fastify.get('/:id', async (req, reply) => {
@@ -14,8 +14,8 @@ const reviews = async function (fastify, opts) {
     });
 
     fastify.get('', async (req, reply) => {
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const keyword = req.query.keyword || '';
         const isReported = (req.query.isReported || 'false').toLowerCase() === 'true';
         const hasGifts = (req.query.hasGifts || 'false').toLowerCase() === 'true';
@@ -49,8 +49,8 @@ const reviews = async function (fastify, opts) {
 
     fastify.get('/:id/reports', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.reviewReport.count({ where: { reviewId: id } });
         const data = await fastify.db.reviewReport.findMany({
             where: { reviewId: id, },

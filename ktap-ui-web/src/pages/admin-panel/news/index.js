@@ -12,13 +12,13 @@ import { Textarea } from 'baseui/textarea';
 import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 
 function AdminPanelNews() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -50,7 +50,7 @@ function AdminPanelNews() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, [skip, limit]);
 
     React.useEffect(() => {
         fetchData();

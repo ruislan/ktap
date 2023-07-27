@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
+import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
 import { authenticate } from "../../lib/auth.js";
 
 const apps = async function (fastify, opts) {
@@ -7,8 +7,7 @@ const apps = async function (fastify, opts) {
     // 根据首页元素，只会展示有限的App的信息
     // XXX 推荐算法，目前最简单的算法就是按照打分排序，后续会有更多个性化以及更多因子影响的推荐算法。
     fastify.get('/recommended', async function (req, reply) {
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
         let cachedData = fastify.caching.apps.get(`recommended_${skip}_${limit}`);
         if (!cachedData) {
@@ -60,7 +59,7 @@ const apps = async function (fastify, opts) {
     // 最近更新
     // 用于首页侧边展示
     fastify.get('/by-updated', async function (req, reply) {
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
+        const { limit } = Pagination.parse(0, req.query.limit);
 
         let cachedData = fastify.caching.apps.get(`by_updated_${limit}`);
         if (!cachedData) {
@@ -95,7 +94,7 @@ const apps = async function (fastify, opts) {
     // 通过聚合SQL直接查询，最后取前limit个，直接展示
     // 优点：无需额外字段和操作，每次都能得到及时数据；缺点：数据量较大时开销较大，必须采用缓存等相关技术来提升性能
     fastify.get('/by-review', async function (req, reply) {
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
+        const { limit } = Pagination.parse(0, req.query.limit);
 
         let cachedData = fastify.caching.apps.get(`by_review_${limit}`);
         if (!cachedData) {
@@ -135,7 +134,7 @@ const apps = async function (fastify, opts) {
     // XXX 热度算法，目前采用最简单的办法，最近一次的评价的时间和当前时间的越近，热度越高，后续会有更多因子影响的算法。
     // XXX 尽量避免这种靠数据库来计算的方式
     fastify.get('/by-hot', async function (req, reply) {
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
+        const { limit } = Pagination.parse(0, req.query.limit);
 
         let cachedData = fastify.caching.apps.get(`by_hot_${limit}`);
         if (!cachedData) {
@@ -263,24 +262,27 @@ const apps = async function (fastify, opts) {
         meta.reviews = await fastify.db.review.count({ where: { appId: id, } });
         meta.follows = await fastify.db.followApp.count({ where: { appId: id, } });
 
-        // 当前热力指数计算非常简单，通过加权算法来计算最近 1 周的数值，评测*10 + 关注*2 + 回复*1
+        // 当前热力指数计算非常简单，通过加权算法来计算最近 1 周的数值，关注*2 + 评测*10 + 评测回复*1 + 讨论*5 + 讨论回复*1
+        // XXX 减少读取计算量，变成每日同一时间统一刷新，
         const limitDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         const hotOriginData = (await fastify.db.$queryRaw`
-                SELECT p1.cnt AS p1, p2.cnt AS p2, p3.cnt AS p3 FROM
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p1,
-                    (SELECT count(id) AS cnt FROM FollowApp WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p2,
-                    (SELECT count(id) AS cnt FROM ReviewComment WHERE review_id in (SELECT id FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate})) AS p3;
+                SELECT p1.cnt AS p1, p2.cnt AS p2, p3.cnt AS p3, p4.cnt AS p4, p5.cnt AS p5 FROM
+                    (SELECT count(id) AS cnt FROM FollowApp WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p1,
+                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p2,
+                    (SELECT count(id) AS cnt FROM ReviewComment WHERE review_id in (SELECT id FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate})) AS p3,
+                    (SELECT count(id) AS cnt FROM Discussion WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p4,
+                    (SELECT count(id) AS cnt FROM DiscussionPost WHERE discussion_id in (SELECT id FROM Discussion WHERE app_id = ${id} AND created_at >= ${limitDate})) AS p5;
             `)[0];
-        meta.popular = Number(hotOriginData.p1) * 10 + Number(hotOriginData.p2) * 2 + Number(hotOriginData.p3) * 1;
+        meta.popular = Number(hotOriginData.p1) * 2 + Number(hotOriginData.p2) * 10 + Number(hotOriginData.p3) * 1 + Number(hotOriginData.p4) * 5 + Number(hotOriginData.p5) * 1;
         return reply.code(200).send({ data, meta });
     });
 
     // 相关联的游戏
-    // XXX v1（已经弃用）采用简单的算法，通过该游戏的标签，返回同标签的游戏
-    // XXX v1.2 采用简单的算法，通过查询游戏的名称，将名称分词，取前三个，然后将这三个用于SQL进行查询，如果没有找到，则查询最近更新的
+    // 算法v1（已经弃用）采用简单的算法，通过该游戏的标签，返回同标签的游戏
+    // 算法v1.2 采用简单的算法，通过查询游戏的名称，将名称分词，取前三个，然后将这三个用于SQL进行查询，如果没有找到，则查询最近更新的
     fastify.get('/:id/related', async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 8)));
+        const { limit } = Pagination.parse(0, req.query.limit);
         const app = await fastify.db.app.findUnique({ where: { id }, select: { name: true } });
         if (!app) return reply.code(200).send({ data: [] }); // no app, return empty array
 
@@ -344,7 +346,7 @@ const apps = async function (fastify, opts) {
     // 游戏相关新闻
     fastify.get('/:id/news', async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 5)));
+        const { limit } = Pagination.parse(0, req.query.limit);
         const data = await fastify.db.news.findMany({
             where: { appId: id },
             take: limit,
@@ -355,8 +357,8 @@ const apps = async function (fastify, opts) {
     // 游戏相关讨论
     fastify.get('/:id/discussions', async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 20)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit, Pagination.limit.default);
+
         const count = await fastify.db.discussion.count({ where: { appId: id } });
         const data = await fastify.db.discussion.findMany({
             where: { appId: id },
@@ -420,17 +422,24 @@ const apps = async function (fastify, opts) {
 
     fastify.post('/:id/tags', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const appId = Number(req.params.id) || 0;
-            const userId = req.user.id;
-            const { name } = req.body;
-            let theTag = await fastify.db.tag.findUnique({ where: { name } });
-            if (!theTag) theTag = await fastify.db.tag.create({ data: { name } });
-            // 用户可能输入了类型或者功能相同的词，要排除掉，这些词是不需要标记的
-            // XXX 这个地方带来了思考，genre和features是否都算在Tag中？还是将它们拆分出来？
-            if (theTag.category === TagCategory.normal) await fastify.db.appUserTagRef.upsert({ create: { appId, userId, tagId: theTag.id }, update: {}, where: { appId_userId_tagId: { userId, appId, tagId: theTag.id } } });
-            return reply.code(200).send({ id: theTag.id });
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    name: { $ref: 'tag#/properties/name' },
+                },
+                required: ['name'],
+                additionalProperties: false,
+            }
         }
+    }, async function (req, reply) {
+        const appId = Number(req.params.id) || 0;
+        const userId = req.user.id;
+        const { name } = req.body;
+        const theTag = await fastify.db.tag.upsert({ create: { name, category: TagCategory.normal }, update: {}, where: { name } });
+        // 用户可能输入了类型或者功能相同的词，要排除掉，这些词是不需要标记的
+        if (theTag.category === TagCategory.normal) await fastify.db.appUserTagRef.upsert({ create: { appId, userId, tagId: theTag.id }, update: {}, where: { appId_userId_tagId: { userId, appId, tagId: theTag.id } } });
+        return reply.code(200).send();
     });
 
     fastify.delete('/:id/tags/:name', {
@@ -498,8 +507,7 @@ const apps = async function (fastify, opts) {
     // 简单算法：热门评测是回复最多的
     fastify.get('/:id/reviews', async function (req, reply) {
         const appId = Number(req.params.id) || 0;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
         const count = await fastify.db.review.count({ where: { appId, } });
         const data = await fastify.db.review.findMany({

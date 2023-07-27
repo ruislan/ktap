@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP, TagCategory } from '../../constants.js';
+import { AppMedia, Pagination } from '../../constants.js';
 
 const ranks = async (fastify, opts) => {
     const CACHE_EXPIRE = 20 * 60 * 1000;
@@ -32,8 +32,7 @@ const ranks = async (fastify, opts) => {
     };
 
     const parseQuery = (query) => {
-        const limit = Math.max(1, Number(query.limit) || 10);
-        const skip = Math.max(0, Number(query.skip) || 0);
+        const { skip, limit } = Pagination.parse(query.skip, query.limit);
         let take = skip + limit >= TOP_LIMIT ? TOP_LIMIT - skip : limit;
         return { limit, skip, take };
     }

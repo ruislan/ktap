@@ -11,12 +11,13 @@ import SplitBall from '../../components/split-ball';
 import { Gift2, Message4, Pin, Reply } from '../../components/icons';
 import RouterLink from '../../components/router-link';
 import { Skeleton } from 'baseui/skeleton';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
 
 function TabDiscussions({ appId }) {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
     const [discussions, setDiscussions] = React.useState([]);
@@ -37,7 +38,7 @@ function TabDiscussions({ appId }) {
                 setIsLoading(false);
             }
         })();
-    }, [appId, skip]);
+    }, [appId, skip, limit]);
 
     return (
         <Block paddingTop='scale600' paddingBottom='scale600'>

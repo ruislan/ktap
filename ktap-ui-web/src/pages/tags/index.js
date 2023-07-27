@@ -6,7 +6,7 @@ import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import Tag from '../../components/tag';
 import { Button } from 'baseui/button';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, PAGE_LIMIT_NORMAL } from '../../constants';
 import RoundTab from '../../components/round-tab';
 import Capsule from '../../components/capsule';
 import { Star } from '../../components/icons';
@@ -30,7 +30,7 @@ function TagItem({ name }) {
 }
 
 function Tags() {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const { name } = useParams();
     const [flavor, setFlavor] = React.useState(0);
@@ -54,7 +54,7 @@ function Tags() {
         } finally {
             setIsLoading(false);
         }
-    }, [name])
+    }, [name, limit]);
 
 
     React.useEffect(() => {

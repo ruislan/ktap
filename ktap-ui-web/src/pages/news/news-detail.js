@@ -1,14 +1,14 @@
 import React from 'react';
 import dayjs from 'dayjs';
 
+import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from "baseui/block";
 import { Button } from 'baseui/button';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
+import { Skeleton } from 'baseui/skeleton';
 import { Eye } from '../../components/icons';
-import { useNavigate, useParams } from 'react-router-dom';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import '../../assets/css/post.css';
-import { Skeleton } from 'baseui/skeleton';
 
 function NewsDetail() {
     const { id } = useParams();

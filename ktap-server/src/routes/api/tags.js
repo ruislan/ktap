@@ -1,11 +1,10 @@
-import { AppMedia, LIMIT_CAP, TagCategory } from "../../constants.js";
+import { AppMedia, Pagination, TagCategory } from "../../constants.js";
 
 const tags = async (fastify, opts) => {
     fastify.get('/:name', async function (req, reply) {
         const name = req.params.name;
         const flavor = req.query.flavor;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
         const theTag = await fastify.db.tag.findUnique({ where: { name } }); // name is unique
 

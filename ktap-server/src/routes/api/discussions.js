@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP, Trading } from "../../constants.js";
+import { AppMedia, Pagination, Trading } from "../../constants.js";
 import { authenticate } from '../../lib/auth.js';
 
 const bizErrorHandler = async function (error, request, reply) {
@@ -17,8 +17,7 @@ const bizErrorHandler = async function (error, request, reply) {
 const discussions = async (fastify, opts) => {
     // discussions首页，展示有讨论的 App
     fastify.get('', async function (req, reply) {
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const keyword = req.query.keyword || '';
         const whereCondition = {
             isVisible: true,
@@ -110,8 +109,7 @@ const discussions = async (fastify, opts) => {
         const appId = Number(req.params.appId) || 0;
         const channelId = Number(req.params.channelId) || 0;
         const keyword = req.query.keyword || '';
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
         const whereCondition = { appId };
         if (channelId > 0) whereCondition.discussionChannelId = channelId;
@@ -226,8 +224,7 @@ const discussions = async (fastify, opts) => {
 
     fastify.get('/:id/posts', async function (req, reply) {
         const id = Number(req.params.id);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const count = await fastify.db.discussionPost.count({ where: { discussionId: id } });
         const data = await fastify.db.discussionPost.findMany({
             take: limit,
@@ -353,7 +350,7 @@ const discussions = async (fastify, opts) => {
     // 取这个帖子日期后面的 Limit 个
     fastify.get('/:id/others', async (req, res) => {
         const id = Number(req.params.id);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { limit } = Pagination.parse(0, req.query.limit);
         const discussion = await fastify.db.discussion.findUnique({ where: { id }, select: { channel: { select: { id: true } } } });
         const findOptions = ({ isPrev }) => {
             return {

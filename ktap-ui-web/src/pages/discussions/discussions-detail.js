@@ -15,7 +15,7 @@ import { Input } from 'baseui/input';
 import RouterLink from '../../components/router-link';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
 import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock, Update as UpdateIcon } from '../../components/icons';
-import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, Styles } from '../../constants';
+import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../../constants';
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
@@ -588,7 +588,7 @@ function DiscussionPostUpdater({ discussion, post, afterUpdate = () => { }, onCa
 // 后续的帖子中如果包含了新帖，则将这个保持在最后的帖子取消掉。
 // XXX 新帖子在删除前，最好有个标志来标记它是新放进去的。
 function DiscussionPosts({ discussion }) {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const { user } = useAuth();
     const [, theme] = useStyletron();
     const navigate = useNavigate();
@@ -650,7 +650,7 @@ function DiscussionPosts({ discussion }) {
         } finally {
             setIsLoading(false);
         }
-    }, [discussion.id, skip, user]);
+    }, [discussion.id, skip, limit, user]);
 
     React.useEffect(() => {
         fetchDataList();

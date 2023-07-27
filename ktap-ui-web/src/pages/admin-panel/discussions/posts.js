@@ -12,7 +12,7 @@ import { Eye, Rocket, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Filter, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { Hand } from '../../../components/icons';
@@ -22,7 +22,7 @@ import { Textarea } from 'baseui/textarea';
 import { Checkbox } from 'baseui/checkbox';
 
 function ReportsBlock({ postId }) {
-    const limit = 5;
+    const limit = PAGE_LIMIT_MINI;
     const [reports, setReports] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
@@ -81,9 +81,9 @@ function ReportsBlock({ postId }) {
 }
 
 function AdminPanelPosts() {
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
-    const limit = 10;
     const [isLoading, setIsLoading] = React.useState(true);
     const [reviews, setReviews] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
@@ -117,7 +117,7 @@ function AdminPanelPosts() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip, isReported, hasGifts]);
+    }, [skip, limit, isReported, hasGifts]);
 
     const handleDelete = async () => {
         if (!selectedRow?.id) return;

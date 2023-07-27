@@ -1,7 +1,7 @@
 import { BiliBili, Discord, Earth, Facebook, Instagram, QQ, Steam, Twitch, Twitter, WeChat, YouTube } from "./components/icons";
 
-export const MOBILE_BREAKPOINT = '@media only screen and (max-width: 992px)';
 export const MOBILE_BREAKPOINT_PX = 992;
+export const MOBILE_BREAKPOINT = `@media only screen and (max-width: ${MOBILE_BREAKPOINT_PX}px)`;
 
 export const LAYOUT_MAIN = '950px';
 export const LAYOUT_LEFT = '616px';
@@ -12,6 +12,10 @@ export const LAYOUT_ADMIN_LEFT = '256px';
 export const LAYOUT_ADMIN_RIGHT = '880px';
 
 export const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
+
+export const PAGE_LIMIT_NORMAL = 20;
+export const PAGE_LIMIT_SMALL = 10;
+export const PAGE_LIMIT_MINI = 5;
 
 export const Styles = {
     Button: {

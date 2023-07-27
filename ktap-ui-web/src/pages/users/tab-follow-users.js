@@ -6,9 +6,10 @@ import AvatarSquare from '../../components/avatar-square';
 import Capsule from '../../components/capsule';
 import GenderLabel from '../../components/gender-label';
 import { Skeleton } from 'baseui/skeleton';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 function TabFollowUsers({ theUser }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [follows, setFollows] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
@@ -30,7 +31,7 @@ function TabFollowUsers({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip]);
+    }, [theUser, skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column'>

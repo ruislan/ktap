@@ -17,24 +17,21 @@ import RouterLink from '../../components/router-link';
 import Image from '../../components/image';
 
 function Field({ label, value }) {
-    return (<Block
-        display='flex'
-        justifyContent='space-between'
-        alignItems='center'
-        paddingTop='scale300'
-        gridGap='scale200'
-        paddingBottom='scale300' overrides={{
-            Block: {
-                style: () => ({
-                    borderBottomWidth: '1px',
-                    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-                    borderBottomStyle: 'solid',
-                })
-            }
-        }}>
-        <Block color='primary400' whiteSpace='nowrap'>{label}</Block>
-        <Block display='flex' alignItems='center' justifyContent='flex-end' gridGap='scale200' flexWrap>{value}</Block>
-    </Block>);
+    return (
+        <Block display='flex' justifyContent='space-between' alignItems='center' paddingTop='scale300'
+            gridGap='scale200' paddingBottom='scale300' overrides={{
+                Block: {
+                    style: () => ({
+                        borderBottomWidth: '1px',
+                        borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+                        borderBottomStyle: 'solid',
+                    })
+                }
+            }}>
+            <Block color='primary400' whiteSpace='nowrap'>{label}</Block>
+            <Block display='flex' alignItems='center' justifyContent='flex-end' gridGap='scale200' flexWrap>{value}</Block>
+        </Block>
+    );
 }
 
 function Glance({ data }) {
@@ -54,6 +51,8 @@ function Glance({ data }) {
         await fetch(`/api/user/follows/apps/${data.id}`, { method: isFollowed ? 'DELETE' : 'POST', });
         setIsFollowed(prev => !prev);
     };
+
+
     React.useEffect(() => {
         const fetchFollow = async () => {
             if (user) {
@@ -72,7 +71,7 @@ function Glance({ data }) {
     }, [user, data.id]);
 
 
-    const fetchTags = React.useCallback(async () => {
+    const fetchUserTags = React.useCallback(async () => {
         try {
             const res = await fetch(`/api/apps/${data.id}/tags/by-me`);
             if (res.ok) {
@@ -91,7 +90,7 @@ function Glance({ data }) {
         if (userTags.length < USER_TAG_LIMIT && tagName && tagName.length > 0) {
             const res = await fetch(`/api/apps/${data.id}/tags`, { method: 'POST', body: JSON.stringify({ name: tagName }), headers: { 'Content-Type': 'application/json' } });
             if (res.ok) {
-                await fetchTags();
+                await fetchUserTags();
                 setNewTag('');
             }
         }
@@ -100,12 +99,12 @@ function Glance({ data }) {
     const handleDeleteTag = async (name) => {
         if (!user) { navigate('/login'); return; }
         const res = await fetch(`/api/apps/${data.id}/tags/${name}`, { method: 'DELETE' });
-        if (res.ok) await fetchTags();
+        if (res.ok) await fetchUserTags();
     };
 
     React.useEffect(() => {
-        if (isOpenTagModal) fetchTags();
-    }, [isOpenTagModal, fetchTags]);
+        if (isOpenTagModal) fetchUserTags();
+    }, [isOpenTagModal, fetchUserTags]);
 
     return (
         <>
@@ -149,24 +148,15 @@ function Glance({ data }) {
                                 <ModalHeader>{data?.name} 的标签</ModalHeader>
                                 <ModalBody>
                                     <Block display='flex' flexDirection='column'>
-                                        <Block display='grid' gridTemplateColumns='1fr 1fr' gridGap='scale300'>
-                                            <Block display='flex' flexDirection='column' marginTop='scale600'>
-                                                <LabelSmall>热门标签</LabelSmall>
-                                                <Block display='flex' flexWrap gridGap='scale300' marginTop='scale300'>
-                                                    {data.tags.map((tag, index) => (
-                                                        <Tag key={index} endEnhancer={() => {
-                                                            return userTags.length < USER_TAG_LIMIT && !userTags.find(ut => ut.name === tag.name) ?
-                                                                <Plus className={css({ cursor: 'pointer' })} onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleSaveTag(tag.name);
-                                                                }} /> :
-                                                                null;
-                                                        }}>
-                                                            {tag.name}({tag.count})
-                                                        </Tag>
-                                                    ))}
-                                                </Block>
-                                            </Block>
+                                        <Block display='grid' gridTemplateColumns='1fr 1fr' gridGap='scale300' overrides={{
+                                            Block: {
+                                                style: {
+                                                    [MOBILE_BREAKPOINT]: {
+                                                        gridTemplateColumns: '1fr',
+                                                    }
+                                                }
+                                            }
+                                        }}>
                                             <Block display='flex' flexDirection='column'>
                                                 {userTags.length > 0 &&
                                                     <Block display='flex' flexDirection='column' marginTop='scale600'>
@@ -191,8 +181,8 @@ function Glance({ data }) {
                                                             value={newTag}
                                                             onChange={e => setNewTag(e.target.value)}
                                                             readOnly={userTags.length >= USER_TAG_LIMIT}
-                                                            maxLength={10} size='mini'
-                                                            placeholder={userTags.length < USER_TAG_LIMIT ? '最长10字' : '最多只能添加5个标签'}
+                                                            maxLength={15} size='mini'
+                                                            placeholder={userTags.length < USER_TAG_LIMIT ? '最长15字' : '最多只能添加5个标签'}
                                                             onKeyUp={e => {
                                                                 if (e.key === 'Enter') {
                                                                     e.preventDefault();
@@ -226,6 +216,23 @@ function Glance({ data }) {
                                                         </Block>
                                                     </Block>
                                                 }
+                                            </Block>
+                                            <Block display='flex' flexDirection='column' marginTop='scale600'>
+                                                <LabelSmall>此游戏的热门标签</LabelSmall>
+                                                <Block display='flex' flexWrap gridGap='scale300' marginTop='scale300'>
+                                                    {data.tags.map((tag, index) => (
+                                                        <Tag key={index} endEnhancer={() => {
+                                                            return userTags.length < USER_TAG_LIMIT && !userTags.find(ut => ut.name === tag.name) ?
+                                                                <Plus className={css({ cursor: 'pointer' })} onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleSaveTag(tag.name);
+                                                                }} /> :
+                                                                null;
+                                                        }}>
+                                                            {tag.name}({tag.count})
+                                                        </Tag>
+                                                    ))}
+                                                </Block>
                                             </Block>
                                         </Block>
 

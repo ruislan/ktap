@@ -14,10 +14,10 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
-import { MOBILE_BREAKPOINT, Organization } from '../../../constants';
+import { MOBILE_BREAKPOINT, Organization, PAGE_LIMIT_SMALL } from '../../../constants';
 
 function AdminPanelOrganizations() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -48,7 +48,7 @@ function AdminPanelOrganizations() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, [skip, limit]);
 
     React.useEffect(() => {
         fetchData();

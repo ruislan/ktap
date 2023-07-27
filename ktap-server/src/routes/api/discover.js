@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP, Pages } from "../../constants.js";
+import { AppMedia, Pages } from "../../constants.js";
 
 const discover = async (fastify, opts) => {
     // 编辑推荐

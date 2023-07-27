@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Image from '../../components/image';
 import Tag from '../../components/tag';
 import { Skeleton } from 'baseui/skeleton';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 const tips = ['查看更多', '我还要', '再看看', '再来', 'More, More', '再查，再探', '接着奏乐，接着舞'];
 
@@ -76,7 +77,7 @@ function AppCard({ app }) {
 }
 
 function AppListRecommend() {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [dataList, setDataList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -97,7 +98,7 @@ function AppListRecommend() {
             }
         };
         fetchApps();
-    }, [skip]);
+    }, [skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column' width='100%'>
@@ -108,7 +109,7 @@ function AppListRecommend() {
             </Block>
             {isLoading &&
                 <Block display='flex' flexDirection='column' justifyContent='center' gridGap='scale600' marginTop='scale900' marginBottom='scale900'>
-                    <Skeleton width='100%' height='450px' marginTop='scale300' animation/>
+                    <Skeleton width='100%' height='450px' marginTop='scale300' animation />
                     <Skeleton width='100%' height='450px' marginTop='scale300' animation />
                     <Skeleton width='100%' height='450px' marginTop='scale300' animation />
                 </Block>

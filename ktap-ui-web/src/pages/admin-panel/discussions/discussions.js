@@ -11,7 +11,7 @@ import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Eye, Rocket, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
@@ -19,9 +19,9 @@ import { Checkbox } from 'baseui/checkbox';
 import { Textarea } from 'baseui/textarea';
 
 export default () => {
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
-    const limit = 10;
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
@@ -51,7 +51,7 @@ export default () => {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, [skip, limit]);
 
     const handleDelete = async () => {
         if (!selectedRow?.id) return;

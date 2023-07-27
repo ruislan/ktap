@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP } from "../../constants.js";
+import { AppMedia, Pagination } from "../../constants.js";
 
 const search = async function (fastify, opts) {
     // 获取App热词
@@ -13,8 +13,7 @@ const search = async function (fastify, opts) {
     // 搜索App
     fastify.get('/apps', async function (req, reply) {
         let { keyword } = req.query;
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         let whereClause = {
             isVisible: true,
         };

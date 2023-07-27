@@ -1,9 +1,8 @@
-import { LIMIT_CAP } from "../../constants.js";
+import { Pagination } from "../../constants.js";
 
 const users = async function (fastify, opts) {
     fastify.get('', async (req, reply) => {
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const keyword = req.query.keyword || '';
         const isFeature = (req.query.isFeature || 'true').toLowerCase() === 'true';
         const isGenre = (req.query.isGenre || 'true').toLowerCase() === 'true';

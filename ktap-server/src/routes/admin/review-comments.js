@@ -1,4 +1,4 @@
-import { LIMIT_CAP } from "../../constants.js";
+import { Pagination } from "../../constants.js";
 
 const reviewComments = async function (fastify, opts) {
     fastify.get('/:id', async (req, reply) => {
@@ -14,8 +14,7 @@ const reviewComments = async function (fastify, opts) {
     });
 
     fastify.get('', async (req, reply) => {
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const keyword = req.query.keyword || '';
         const count = await fastify.db.reviewComment.count({ where: { content: { contains: keyword } } });
         const data = await fastify.db.reviewComment.findMany({
@@ -33,8 +32,7 @@ const reviewComments = async function (fastify, opts) {
 
     fastify.get('/:id/comments', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const skip = Math.max(0, Number(req.query.skip) || 0);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         const count = await fastify.db.reviewComment.count({ where: { reviewId: id } });
         const data = await fastify.db.reviewComment.findMany({
             where: { reviewId: id, },

@@ -5,12 +5,12 @@ import { Block } from "baseui/block";
 import { Button } from 'baseui/button';
 import { LabelMedium, LabelLarge } from 'baseui/typography';
 import { Star } from '../../components/icons';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import Capsule from '../../components/capsule';
 import { Skeleton } from 'baseui/skeleton';
 
 function RankAppsList({ url }) {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const [skip, setSkip] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -32,7 +32,7 @@ function RankAppsList({ url }) {
                 }
             }
         })();
-    }, [url, skip]);
+    }, [url, skip, limit]);
     return (
         <>
             {appList && appList.map((app, index) => {

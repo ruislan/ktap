@@ -4,7 +4,7 @@ import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { LabelXSmall, LabelSmall, LabelMedium } from 'baseui/typography';
 import { Button } from "baseui/button";
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { Link } from 'react-router-dom';
 import { Input } from 'baseui/input';
 import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
@@ -12,7 +12,7 @@ import { ChatAlt2, User } from '../../components/icons';
 import { Skeleton } from 'baseui/skeleton';
 
 function Discussions() {
-    const limit = 18;
+    const limit = PAGE_LIMIT_NORMAL + 1;
     const [css, theme] = useStyletron();
     const [dataList, setDataList] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
@@ -33,7 +33,7 @@ function Discussions() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [limit]);
 
     React.useEffect(() => {
         fetchData();

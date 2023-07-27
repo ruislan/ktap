@@ -5,11 +5,11 @@ import { LabelMedium } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { Skeleton } from 'baseui/skeleton';
 
 function TabFollowUsers({ theUser }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const [follows, setFollows] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -32,7 +32,7 @@ function TabFollowUsers({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip]);
+    }, [theUser, skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column'>

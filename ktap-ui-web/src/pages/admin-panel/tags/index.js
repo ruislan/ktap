@@ -14,12 +14,12 @@ import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Filter, Plus, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { MOBILE_BREAKPOINT, Tag } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL, Tag } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 
 function AdminPanelTags() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -54,7 +54,7 @@ function AdminPanelTags() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip, isGenre, isFeature, isNormal]);
+    }, [skip, limit, isGenre, isFeature, isNormal]);
 
     React.useEffect(() => {
         fetchData();
@@ -240,13 +240,7 @@ function AdminPanelTags() {
                     </TableBuilder>
                 </Block>
             }
-            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
-                closeable={false}
-                isOpen={isOpenDeleteConfirmModal}
-                animate
-                autoFocus
-                role={ROLE.alertdialog}
-            >
+            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)} closeable={false} isOpen={isOpenDeleteConfirmModal} animate autoFocus role={ROLE.alertdialog}>
                 <ModalHeader>是否删除标签？</ModalHeader>
                 <ModalBody>您确定要删除这个标签吗？所有游戏将不再拥有该标签。该操作<b>不能撤消</b>。</ModalBody>
                 <ModalFooter>
@@ -254,13 +248,7 @@ function AdminPanelTags() {
                     <ModalButton onClick={() => handleDelete()} isLoading={isLoading}>确定</ModalButton>
                 </ModalFooter>
             </Modal>
-            <Modal onClose={() => setIsOpenEditModal(false)}
-                closeable={false}
-                isOpen={isOpenEditModal}
-                animate
-                autoFocus
-                role={ROLE.dialog}
-            >
+            <Modal onClose={() => setIsOpenEditModal(false)} closeable={false} isOpen={isOpenEditModal} animate autoFocus role={ROLE.dialog}>
                 <ModalHeader>{tag?.id ? '编辑' : '新增'}</ModalHeader>
                 <ModalBody $as='div'>
                     <FormControl label={<LabelSmall>名称</LabelSmall>}>

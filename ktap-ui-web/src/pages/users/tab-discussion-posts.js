@@ -6,9 +6,10 @@ import { Skeleton } from 'baseui/skeleton';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import RouterLink from '../../components/router-link';
 import '../../assets/css/post.css';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 function TabDiscussionPosts({ theUser }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [dataList, setDataList] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
@@ -30,7 +31,7 @@ function TabDiscussionPosts({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip]);
+    }, [theUser, skip, limit]);
 
     return (
         <Block display='flex' flexDirection='column'>

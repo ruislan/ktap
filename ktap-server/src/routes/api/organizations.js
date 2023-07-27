@@ -1,4 +1,4 @@
-import { AppMedia, LIMIT_CAP } from "../../constants.js";
+import { AppMedia, Pagination } from "../../constants.js";
 
 const news = async (fastify, opts) => {
     fastify.get('/:id', async function (req, reply) {
@@ -22,8 +22,8 @@ const news = async (fastify, opts) => {
 
     fastify.get('/:id/apps/published', async function (req, reply) {
         const id = Number(req.params.id);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.appPublisherRef.count({ where: { organizationId: id } });
         const refs = await fastify.db.appPublisherRef.findMany({
             where: { organizationId: id },
@@ -58,8 +58,8 @@ const news = async (fastify, opts) => {
 
     fastify.get('/:id/apps/developed', async function (req, reply) {
         const id = Number(req.params.id);
-        const limit = Math.max(1, Math.min(LIMIT_CAP, (Number(req.query.limit) || 10)));
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+
         const count = await fastify.db.appDeveloperRef.count({ where: { organizationId: id } });
         const refs = await fastify.db.appDeveloperRef.findMany({
             where: { organizationId: id },

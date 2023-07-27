@@ -9,6 +9,7 @@ import { Select } from 'baseui/select';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete, } from 'baseui/icon';
 import { StatefulInput } from 'baseui/input';
+import { PAGE_LIMIT_NORMAL } from '../../../constants';
 
 function GenresBlock({ data }) {
     const { enqueue } = useSnackbar();
@@ -231,7 +232,7 @@ function FeaturesBlock({ data }) {
 }
 
 function TagsBlock({ data }) {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [isLoading, setIsLoading] = React.useState(true);
     const [tags, setTags] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
@@ -262,7 +263,7 @@ function TagsBlock({ data }) {
         } finally {
             setIsLoading(false);
         }
-    }, [data, skip]);
+    }, [data, skip, limit]);
 
     React.useEffect(() => {
         fetchTags();

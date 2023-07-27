@@ -16,11 +16,11 @@ import { FormControl } from 'baseui/form-control';
 import { useSnackbar } from 'baseui/snackbar';
 import { RadioGroup, Radio } from "baseui/radio";
 import { Textarea } from 'baseui/textarea';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Rocket, Eye } from '../../../components/icons';
 
 function AdminPanelApps() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const navigate = useNavigate();
     const [css, theme] = useStyletron();
@@ -84,7 +84,7 @@ function AdminPanelApps() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip, hasReviews]);
+    }, [limit, skip, hasReviews]);
 
     const handleNew = async () => {
         if (!name || name.length < 0) return;

@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { Input } from 'baseui/input';
 import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { LabelXSmall, LabelMedium } from 'baseui/typography';
 import Tag from '../../components/tag';
 import { Star } from '../../components/icons';
@@ -14,7 +14,7 @@ import { Button } from 'baseui/button';
 
 
 function SearchPanel() {
-    const limit = 20;
+    const limit = PAGE_LIMIT_NORMAL;
     const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ function SearchPanel() {
         } finally {
             setIsLoading(false);
         }
-    }, [searchParams]);
+    }, [searchParams, limit]);
 
     React.useEffect(() => {
         fetchData();

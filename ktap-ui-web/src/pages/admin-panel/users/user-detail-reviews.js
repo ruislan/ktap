@@ -10,9 +10,10 @@ import { Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Delete } from 'baseui/icon';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
+import { PAGE_LIMIT_SMALL } from '../../../constants';
 
 function UserDetailReviews({ data }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [isLoading, setIsLoading] = React.useState(true);
     const [reviews, setReviews] = React.useState([]);
@@ -35,7 +36,7 @@ function UserDetailReviews({ data }) {
         } finally {
             setIsLoading(false);
         }
-    }, [data, skip]);
+    }, [data, skip, limit]);
 
     React.useEffect(() => {
         fetchData();

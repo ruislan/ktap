@@ -13,12 +13,12 @@ import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Eye, Rocket, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
-import { MOBILE_BREAKPOINT } from '../../../constants';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 
 function AdminPanelReviewComments() {
-    const limit = 10;
+    const limit = PAGE_LIMIT_SMALL;
     const { enqueue } = useSnackbar();
     const [css, theme] = useStyletron();
     const [isLoading, setIsLoading] = React.useState(true);
@@ -51,7 +51,7 @@ function AdminPanelReviewComments() {
         } finally {
             setIsLoading(false);
         }
-    }, [skip]);
+    }, [skip, limit]);
 
     React.useEffect(() => {
         fetchData();

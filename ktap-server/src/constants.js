@@ -20,7 +20,22 @@ export const errors = {
 
 export const USER_CHANGE_NAME_INTERVAL = 1000 * 60 * 60 * 24 * 30; // 30 days
 export const REVIEW_IMAGE_COUNT_LIMIT = 3; // 3 images
-export const LIMIT_CAP = 50; // 取数据最大的数量
+
+export const Pagination = {
+    limit: {
+        min: 1,
+        mini: 5,
+        small: 10,
+        default: 20,
+        large: 50,
+    },
+    parse(initSkip, initLimit, defaultLimit) {
+        defaultLimit = defaultLimit || Pagination.limit.small;
+        const skip = Math.max(0, Number(initSkip) || 0);
+        const limit = Math.max(Pagination.limit.min, Math.min(Pagination.limit.large, (Number(initLimit) || defaultLimit)));
+        return { skip, limit };
+    },
+};
 
 export const Pages = {
     discover: 'discover',

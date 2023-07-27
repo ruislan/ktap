@@ -1,3 +1,4 @@
+import { Pagination } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 
 // 处理已经登陆用户自己相关业务
@@ -133,8 +134,7 @@ const user = async (fastify, opts) => {
     // 消费记录
     fastify.get('/tradings/history', async function (req, reply) {
         const userId = req.user.id;
-        const limit = Math.max(1, Number(req.query.limit) || 10);
-        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
         let take = skip + limit >= 100 ? 100 - skip : limit;
         let data = [];
         let count = 0;

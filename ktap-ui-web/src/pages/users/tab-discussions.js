@@ -8,9 +8,10 @@ import { useStyletron } from 'baseui';
 import RouterLink from '../../components/router-link';
 import { Star } from '../../components/icons';
 import { Skeleton } from 'baseui/skeleton';
+import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 function TabDiscussions({ theUser }) {
-    const limit = 10;
+    const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const [dataList, setDataList] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -34,7 +35,7 @@ function TabDiscussions({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip, user]);
+    }, [theUser, skip, limit, user]);
 
     return (
         <Block display='flex' flexDirection='column'>
