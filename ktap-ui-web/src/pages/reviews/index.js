@@ -13,6 +13,7 @@ import { Checkbox } from 'baseui/checkbox';
 import { LabelSmall, LabelXSmall, LabelLarge, LabelMedium, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
 import { ThumbUp, ThumbDown, Gift, Hand, More, Photograph } from '../../components/icons';
+import Notification from '../../components/notification';
 import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, Styles, IMAGE_UPLOAD_SIZE_LIMIT } from '../../constants';
 
 import ReviewAppGlance from './review-app-glance';
@@ -37,15 +38,19 @@ function Review() {
     const [isDoingThumbDown, setIsDoingThumbDown] = React.useState(false);
     const [isActiveThumbUp, setIsActiveThumbUp] = React.useState(false);
     const [isActiveThumbDown, setIsActiveThumbDown] = React.useState(false);
+
     const [isOpenGiftModal, setIsOpenGiftModal] = React.useState(false);
     const [gifts, setGifts] = React.useState([]);
     const [checkedGift, setCheckedGift] = React.useState(null);
     const [isOpenGiftConfirmModal, setIsOpenGiftConfirmModal] = React.useState(false);
     const [isSendingGift, setIsSendingGift] = React.useState(false);
+
     const [reportContent, setReportContent] = React.useState('');
     const [isOpenReportModal, setIsOpenReportModal] = React.useState(false);
     const [isReporting, setIsReporting] = React.useState(false);
+    const [reportErr, setReportErr] = React.useState(null);
     const [isReported, setIsReported] = React.useState(true);
+
     const [isEditMode, setIsEditMode] = React.useState(false);
     const [draftReview, setDraftReview] = React.useState(null);
     const [isEditing, setIsEditing] = React.useState(false);
@@ -154,6 +159,7 @@ function Review() {
     const handleReport = async () => {
         if (!user) { navigate('/login'); return; }
         setIsReporting(true);
+        setReportErr(null);
         try {
             const res = await fetch(`/api/reviews/${review.id}/report`, {
                 method: 'POST',
@@ -163,6 +169,11 @@ function Review() {
             if (res.ok) {
                 setIsReported(true);
                 setIsOpenReportModal(false);
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setReportErr(json.message);
+                }
             }
         } finally {
             setIsReporting(false);
@@ -573,15 +584,18 @@ function Review() {
                                             </Block>
                                             {user && !isReported && user.id !== review.user?.id &&
                                                 <Block>
-                                                    <Button title='举报' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} kind='secondary' size='mini' overrides={Styles.Button.Act}>
+                                                    <Button title='举报' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} kind='secondary' size='mini' overrides={Styles.Button.Act}>
                                                         <Hand width={16} height={16} />
                                                     </Button>
                                                     <Modal onClose={() => setIsOpenReportModal(false)} closeable={false} isOpen={isOpenReportModal} animate autoFocus role={ROLE.alertdialog}>
                                                         <ModalHeader>举报评测</ModalHeader>
                                                         <ModalBody>
                                                             <LabelSmall marginBottom='scale600'>请输入您举报该评测的理由，如果理由不够充分，该操作无效。举报操作无法撤消。</LabelSmall>
+                                                            {reportErr && <Notification kind='negative' message={reportErr} />}
+                                                            <LabelXSmall color='primary400' marginBottom='scale300' overrides={{ Block: { style: { textAlign: 'right' } } }}>{reportContent.length > 0 ? `${reportContent.length} / 150` : ''}</LabelXSmall>
                                                             <Textarea readOnly={isReporting} placeholder='请注意文明用语，否则视为无效举报'
                                                                 rows='3' maxLength='150' value={reportContent} onChange={(e) => setReportContent(e.target.value)} />
+
                                                         </ModalBody>
                                                         <ModalFooter>
                                                             <ModalButton kind='tertiary' onClick={() => setIsOpenReportModal(false)}>取消</ModalButton>

@@ -1,11 +1,10 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { Block } from 'baseui/block';
-import { Button } from 'baseui/button';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import RouterLink from '../../components/router-link';
-import { Skeleton } from 'baseui/skeleton';
 import { PAGE_LIMIT_NORMAL } from '../../constants';
+import LoadMore from '../../components/load-more';
 
 function TabReviewComments({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;
@@ -66,18 +65,7 @@ function TabReviewComments({ theUser }) {
                     </Block>
                 </Block>
             ))}
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='158px' width='100%' />
-                <Skeleton animation height='158px' width='100%' />
-                <Skeleton animation height='158px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='158px' onClick={() => setSkip(prev => prev + limit)} />
         </Block>
     );
 }

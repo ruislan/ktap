@@ -20,9 +20,7 @@ import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
 import Notification from '../../components/notification';
 import Editor from '../../components/editor';
-
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
+import LoadMore from '../../components/load-more';
 
 function AppBanner({ appId }) {
     const [css, theme] = useStyletron();
@@ -390,10 +388,11 @@ function Discussions({ appId, channelId, }) {
             setIsLoading(true);
             setSkip(skip);
             setKeyword(keyword);
+            if (skip === 0) setDiscussions([]);
             const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keyword}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
-                setDiscussions(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                setDiscussions(prev => [...prev, ...json.data]);
                 setHasMore(json.skip + json.limit < json.count);
             }
         } finally {
@@ -412,6 +411,11 @@ function Discussions({ appId, channelId, }) {
             setSubmitErrorMessage(null);
         }
     }, [isOpenEditorModal]);
+
+    React.useEffect(() => {
+        dayjs.locale('zh-cn');
+        dayjs.extend(relativeTime);
+    }, []);
 
     return (
         <Block display='flex' flexDirection='column' width='100%'>
@@ -503,20 +507,7 @@ function Discussions({ appId, channelId, }) {
                 );
             })
             }
-            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='56px' width='100%' />
-                <Skeleton animation height='56px' width='100%' />
-                <Skeleton animation height='56px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' onClick={() => {
-                        fetchDiscussions(keyword, skip + limit);
-                    }}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='56px' onClick={() => fetchDiscussions(keyword, skip + limit)} />
         </Block>
     );
 }

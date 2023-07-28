@@ -249,13 +249,22 @@ const reviews = async (fastify, opts) => {
     // 举报
     fastify.post('/:id/report', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const userId = req.user.id;
-            const reviewId = Number(req.params.id);
-            const content = req.body.content;
-            await fastify.db.reviewReport.create({ data: { userId, reviewId, content } });
-            return reply.code(200).send();
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    content: { $ref: 'report#/properties/content' },
+                },
+                required: ['content'],
+                additionalProperties: false,
+            },
         }
+    }, async function (req, reply) {
+        const userId = req.user.id;
+        const reviewId = Number(req.params.id);
+        const content = req.body.content;
+        await fastify.db.reviewReport.create({ data: { userId, reviewId, content } });
+        return reply.code(200).send();
     });
 };
 

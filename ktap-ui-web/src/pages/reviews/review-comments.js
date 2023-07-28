@@ -14,8 +14,8 @@ import { TrashBin } from '../../components/icons';
 import Buzzword from '../../components/buzzword';
 import { useNavigate } from 'react-router-dom';
 import RouterLink from '../../components/router-link';
-import { Skeleton } from 'baseui/skeleton';
 import { PAGE_LIMIT_NORMAL } from '../../constants';
+import LoadMore from '../../components/load-more';
 
 function ReviewComments({ review }) {
     const limit = PAGE_LIMIT_NORMAL;
@@ -173,18 +173,7 @@ function ReviewComments({ review }) {
                         }
                     </Block>
                 ))}
-                {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                    <Skeleton animation height='58px' width='100%' />
-                    <Skeleton animation height='58px' width='100%' />
-                    <Skeleton animation height='58px' width='100%' />
-                </Block>}
-                {hasMore && !isLoading &&
-                    <Block marginTop='scale800' display='flex' justifyContent='center'>
-                        <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                            查看更多
-                        </Button>
-                    </Block>
-                }
+                <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='58px' onClick={() => setSkip(prev => prev + limit)} />
             </Block>
         </>
     );

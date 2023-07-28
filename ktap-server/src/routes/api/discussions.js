@@ -430,13 +430,22 @@ const discussions = async (fastify, opts) => {
     // 举报
     fastify.post('/:id/posts/:postId/report', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const userId = req.user.id;
-            const postId = Number(req.params.postId);
-            const content = req.body.content;
-            await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
-            return reply.code(200).send();
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    content: { $ref: 'report#/properties/content' },
+                },
+                required: ['content'],
+                additionalProperties: false,
+            },
         }
+    }, async function (req, reply) {
+        const userId = req.user.id;
+        const postId = Number(req.params.postId);
+        const content = req.body.content;
+        await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
+        return reply.code(200).send();
     });
 };
 

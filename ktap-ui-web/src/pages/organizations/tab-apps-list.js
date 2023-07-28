@@ -2,12 +2,11 @@ import React from 'react';
 
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
-import { Button } from 'baseui/button';
 import { LabelMedium } from 'baseui/typography';
 import { Star } from '../../components/icons';
 import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import Capsule from '../../components/capsule';
-import { Skeleton } from 'baseui/skeleton';
+import LoadMore from '../../components/load-more';
 
 function TabAppsList({ url }) {
     const limit = PAGE_LIMIT_NORMAL;
@@ -64,18 +63,7 @@ function TabAppsList({ url }) {
                     </Capsule>
                 );
             })}
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='68px' width='100%' />
-                <Skeleton animation height='68px' width='100%' />
-                <Skeleton animation height='68px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='68px' onClick={() => setSkip(prev => prev + limit)} />
         </>
     );
 }

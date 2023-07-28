@@ -1,13 +1,12 @@
 import React from 'react';
 import dayjs from 'dayjs';
+import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium, ParagraphMedium } from 'baseui/typography';
-import { Button } from 'baseui/button';
 import { useAuth } from '../../hooks/use-auth';
-import { useStyletron } from 'baseui';
 import RouterLink from '../../components/router-link';
 import { Star } from '../../components/icons';
-import { Skeleton } from 'baseui/skeleton';
+import LoadMore from '../../components/load-more';
 import { PAGE_LIMIT_NORMAL } from '../../constants';
 
 function TabDiscussions({ theUser }) {
@@ -96,18 +95,7 @@ function TabDiscussions({ theUser }) {
                     </Block>
                 </Block>
             ))}
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='186px' width='100%' />
-                <Skeleton animation height='186px' width='100%' />
-                <Skeleton animation height='186px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='186px' onClick={() => setSkip(prev => prev + limit)} />
         </Block>
     );
 }

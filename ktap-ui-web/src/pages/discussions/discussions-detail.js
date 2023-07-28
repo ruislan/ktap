@@ -2,6 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useStyletron } from 'baseui';
 import { useAuth } from '../../hooks/use-auth';
@@ -12,10 +13,12 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'b
 import { Textarea } from 'baseui/textarea';
 import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
-import RouterLink from '../../components/router-link';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
+import RouterLink from '../../components/router-link';
+import Notification from '../../components/notification';
 import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock, Update as UpdateIcon } from '../../components/icons';
 import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../../constants';
+
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
@@ -23,6 +26,7 @@ import GiftType from '../../components/gift';
 import Editor from '../../components/editor';
 
 import '../../assets/css/post.css';
+import LoadMore from '../../components/load-more';
 
 dayjs.locale('zh-cn');
 dayjs.extend(relativeTime);
@@ -285,6 +289,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     const [isOpenReportModal, setIsOpenReportModal] = React.useState(false);
     const [isReporting, setIsReporting] = React.useState(false);
     const [isReported, setIsReported] = React.useState(true);
+    const [reportErr, setReportErr] = React.useState(null);
     // end report
     // delete post
     const [isDeleting, setIsDeleting] = React.useState(false);
@@ -346,6 +351,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     const handleReport = async () => {
         if (!user) { navigate('/login'); return; }
         setIsReporting(true);
+        setReportErr(null);
         try {
             const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}/report`, {
                 method: 'POST',
@@ -355,6 +361,11 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
             if (res.ok) {
                 setIsReported(true);
                 setIsOpenReportModal(false);
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setReportErr(json.message);
+                }
             }
         } finally {
             setIsReporting(false);
@@ -415,21 +426,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
                     <Block display='flex' gridGap='scale100'>
                         {!discussion.isClosed && <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>}
                         {user && !isReported && user.id !== post.user?.id &&
-                            <>
-                                <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
-                                <Modal onClose={() => setIsOpenReportModal(false)} closeable={false} isOpen={isOpenReportModal} animate autoFocus role={ROLE.alertdialog}>
-                                    <ModalHeader>举报评测</ModalHeader>
-                                    <ModalBody>
-                                        <LabelSmall marginBottom='scale600'>请输入您举报该帖子的理由，如果理由不够充分，该操作无效。举报操作无法撤消。</LabelSmall>
-                                        <Textarea readOnly={isReporting} placeholder='请注意文明用语，否则视为无效举报'
-                                            rows='3' maxLength='150' value={reportContent} onChange={(e) => setReportContent(e.target.value)} />
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <ModalButton kind='tertiary' onClick={() => setIsOpenReportModal(false)}>取消</ModalButton>
-                                        <Button kind='primary' isLoading={isReporting} onClick={() => handleReport()}>确定</Button>
-                                    </ModalFooter>
-                                </Modal>
-                            </>
+                            <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
                         }
                         {operations.update && !discussion.isClosed &&
                             <Button kind='secondary' size='mini' title='编辑' onClick={() => onUpdateClick()}><UpdateIcon width={16} height={16} /></Button>
@@ -450,7 +447,20 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
                     </Block>
                 }
             </Block>
-
+            <Modal onClose={() => setIsOpenReportModal(false)} closeable={false} isOpen={isOpenReportModal} animate autoFocus role={ROLE.alertdialog}>
+                <ModalHeader>举报评测</ModalHeader>
+                <ModalBody>
+                    <LabelSmall marginBottom='scale600'>请输入您举报该帖子的理由，如果理由不够充分，该操作无效。举报操作无法撤消。</LabelSmall>
+                    {reportErr && <Notification kind='negative' message={reportErr} />}
+                    <LabelXSmall color='primary400' marginBottom='scale300' overrides={{ Block: { style: { textAlign: 'right' } } }}>{reportContent.length > 0 ? `${reportContent.length} / 150` : ''}</LabelXSmall>
+                    <Textarea readOnly={isReporting} placeholder='请注意文明用语，否则视为无效举报'
+                        rows='3' maxLength='150' value={reportContent} onChange={(e) => setReportContent(e.target.value)} />
+                </ModalBody>
+                <ModalFooter>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenReportModal(false)}>取消</ModalButton>
+                    <Button kind='primary' isLoading={isReporting} onClick={() => handleReport()}>确定</Button>
+                </ModalFooter>
+            </Modal>
             <Modal onClose={() => setIsOpenGiftModal(false)} isOpen={isOpenGiftModal} animate autoFocus role={ROLE.dialog}>
                 <ModalHeader>请选择礼物</ModalHeader>
                 <ModalBody $as='div'>
@@ -703,16 +713,7 @@ function DiscussionPosts({ discussion }) {
                     </Block>
                 );
             })}
-            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center' marginBottom='scale600' marginTop='scale600'>
-                <Skeleton animation height='220px' width='100%' />
-                <Skeleton animation height='220px' width='100%' />
-                <Skeleton animation height='220px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading} disabled={!hasMore}>查看更多</Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='220px' onClick={() => setSkip(prev => prev + limit)} />
             {user && !discussion?.isClosed &&
                 <Block marginTop='scale600' display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300 } }

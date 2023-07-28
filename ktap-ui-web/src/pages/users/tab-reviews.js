@@ -12,7 +12,7 @@ import ImageBoxGallery from '../../components/image-box-gallery';
 import GiftType from '../../components/gift';
 import useScoreRemark from '../../hooks/use-score-remark';
 import RouterLink from '../../components/router-link';
-import { Skeleton } from 'baseui/skeleton';
+import LoadMore from '../../components/load-more';
 
 function TabReviewsListItem({ review }) {
     const navigate = useNavigate();
@@ -372,21 +372,8 @@ function TabReviews({ theUser }) {
 
     return (
         <Block display='flex' flexDirection='column'>
-            {reviews?.map((review, index) => (
-                <TabReviewsListItem key={index} review={review} />
-            ))}
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='380px' width='100%' />
-                <Skeleton animation height='380px' width='100%' />
-                <Skeleton animation height='380px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' isLoading={isLoading} onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            {reviews?.map((review, index) => <TabReviewsListItem key={index} review={review} />)}
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='380px' onClick={() => setSkip(prev => prev + limit)} />
         </Block>
     );
 }

@@ -5,15 +5,14 @@ import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import Tag from '../../components/tag';
-import { Button } from 'baseui/button';
 import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, PAGE_LIMIT_NORMAL } from '../../constants';
 import RoundTab from '../../components/round-tab';
 import Capsule from '../../components/capsule';
 import { Star } from '../../components/icons';
-import { Skeleton } from 'baseui/skeleton';
 import SideGenres from './side-genres';
 import SideFeatures from './side-features';
 import SideHotTags from './side-hot-tags';
+import LoadMore from '../../components/load-more';
 
 function TagItem({ name }) {
     const navigate = useNavigate();
@@ -43,12 +42,13 @@ function Tags() {
         setIsLoading(true);
         setSkip(skip);
         setFlavor(flavor);
+        if (skip === 0) setAppList([]);
         try {
             const byWhat = flavor === 1 ? 'by-new' : (flavor === 2 ? 'by-score' : 'by-hot');
             const res = await fetch(`/api/tags/${name}?flavor=${byWhat}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
-                setAppList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                setAppList(prev => [...prev, ...json.data]);
                 setHasMore(json.skip + json.limit < json.count);
             }
         } finally {
@@ -127,18 +127,7 @@ function Tags() {
                         </Capsule>
                     ))}
                 </Block>
-                {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                    <Skeleton animation height='86px' width='100%' />
-                    <Skeleton animation height='86px' width='100%' />
-                    <Skeleton animation height='86px' width='100%' />
-                </Block>}
-                {hasMore && !isLoading &&
-                    <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                        <Button size='default' kind='tertiary' onClick={() => fetchData(flavor, skip + limit)}>
-                            查看更多
-                        </Button>
-                    </Block>
-                }
+                <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='86px' onClick={() => fetchData(flavor, skip + limit)} />
             </Block>
             <Block width={LAYOUT_RIGHT} margin='0 0 0 8px'
                 overrides={{

@@ -1,10 +1,9 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
-import { Button } from "baseui/button";
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
-import { Skeleton } from 'baseui/skeleton';
 import NewsItem from './news-item';
+import LoadMore from '../../components/load-more';
 
 function News() {
     const limit = PAGE_LIMIT_NORMAL;
@@ -44,18 +43,7 @@ function News() {
             }
         }}>
             {dataList && dataList.map((news, index) => <NewsItem key={index} news={news} />)}
-            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale600' justifyContent='center'>
-                <Skeleton animation height='212px' width='100%' />
-                <Skeleton animation height='212px' width='100%' />
-                <Skeleton animation height='212px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary'>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='212px' onClick={() => setSkip(prev => prev + limit)} />
         </Block >
     );
 }

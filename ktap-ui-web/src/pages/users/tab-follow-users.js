@@ -1,12 +1,11 @@
 import React from 'react';
 import { Block } from 'baseui/block';
-import { Button } from 'baseui/button';
 import { LabelLarge, LabelXSmall } from 'baseui/typography';
 import AvatarSquare from '../../components/avatar-square';
 import Capsule from '../../components/capsule';
 import GenderLabel from '../../components/gender-label';
-import { Skeleton } from 'baseui/skeleton';
 import { PAGE_LIMIT_NORMAL } from '../../constants';
+import LoadMore from '../../components/load-more';
 
 function TabFollowUsers({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;
@@ -49,18 +48,7 @@ function TabFollowUsers({ theUser }) {
                     </Block>
                 </Capsule>
             ))}
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='68px' width='100%' />
-                <Skeleton animation height='68px' width='100%' />
-                <Skeleton animation height='68px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='68px' onClick={() => setSkip(prev => prev + limit)} />
         </Block>
     );
 }

@@ -3,9 +3,8 @@ import dayjs from 'dayjs';
 import { Block } from "baseui/block";
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
-import { Button } from 'baseui/button';
-import { Skeleton } from 'baseui/skeleton';
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '../../constants';
+import LoadMore from '../../components/load-more';
 
 function TradingHistory() {
     const limit = PAGE_LIMIT_NORMAL;
@@ -68,18 +67,7 @@ function TradingHistory() {
                     {row => <LabelSmall>{Trading.type.getDirectionLabel(row.type)} {row.amount}</LabelSmall>}
                 </TableBuilderColumn>
             </TableBuilder>
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='40px' width='100%' />
-                <Skeleton animation height='40px' width='100%' />
-                <Skeleton animation height='40px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='40px' onClick={() => setSkip(prev => prev + limit)} />
         </Block>
     );
 }

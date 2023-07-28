@@ -9,8 +9,7 @@ import { LabelXSmall, LabelMedium } from 'baseui/typography';
 import Tag from '../../components/tag';
 import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
-import { Skeleton } from 'baseui/skeleton';
-import { Button } from 'baseui/button';
+import LoadMore from '../../components/load-more';
 
 
 function SearchPanel() {
@@ -32,11 +31,12 @@ function SearchPanel() {
         setWord(keyword);
         setSkip(skip);
         setIsLoading(true);
+        if (skip === 0) setDataList([]);
         try {
             const result = await fetch(`/api/search/apps?keyword=${keyword}&skip=${skip}&limit=${limit}`);
             const json = await result.json();
             setCount(json.count);
-            setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+            setDataList(prev => [...prev, ...json.data]);
             setHasMore(json.skip + json.limit < json.count);
         } finally {
             setIsLoading(false);
@@ -46,35 +46,6 @@ function SearchPanel() {
     React.useEffect(() => {
         fetchData();
     }, [fetchData]);
-
-    // React.useEffect(() => {
-    //     if (isLoading || !hasMore) return;
-    //     // const handleScroll = () => {
-    //     //     if (window.innerHeight + document.documentElement.scrollTop + 100 < document.documentElement.offsetHeight) {
-    //     //         return;
-    //     //     }
-    //     //     setSkip(prev => prev + limit);
-    //     // };
-    //     // window.addEventListener("scroll", handleScroll);
-    //     // return () => window.removeEventListener("scroll", handleScroll);
-    //     const observer = new IntersectionObserver((entries) => {
-    //         // 如果 intersectionRatio 为 0，则目标在视野外，
-    //         // 我们不需要做任何事情。
-    //         if (entries[0].intersectionRatio <= 0) return;
-    //         setSkip(prev => prev + limit);
-    //         console.log('Loaded new items');
-    //     });
-
-    //     let el = null;
-    //     if (ref.current) {
-    //         el = ref.current;
-    //         observer.observe(el);
-    //     }
-
-    //     return () => {
-    //         if (el) observer.unobserve(el);
-    //     }
-    // }, [dataList, isLoading, hasMore]);
 
     return (
         <>
@@ -120,7 +91,7 @@ function SearchPanel() {
                     }
                 }}
             >
-                <LabelXSmall color='primary300'>{count}个匹配的搜索结果。</LabelXSmall>
+                <LabelXSmall color='primary300'>共 {count} 个匹配的搜索结果</LabelXSmall>
             </Block>
 
             <Block ref={ref} display='flex' flexDirection='column' marginTop='scale300'>
@@ -171,18 +142,8 @@ function SearchPanel() {
                         </Block>
                     </Capsule>
                 ))}
-                {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                    <Skeleton animation height='86px' width='100%' />
-                    <Skeleton animation height='86px' width='100%' />
-                    <Skeleton animation height='86px' width='100%' />
-                </Block>}
-                {hasMore && !isLoading &&
-                    <Block marginTop='scale800' display='flex' justifyContent='center'>
-                        <Button size='default' kind='tertiary' onClick={() => fetchData(skip + limit)}>
-                            查看更多
-                        </Button>
-                    </Block>
-                }
+
+                <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='86px' onClick={() => fetchData(skip + limit)} />
             </Block>
         </>
     );

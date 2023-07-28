@@ -33,8 +33,9 @@ export default function Header() {
         },
     });
 
-    const [keyword, setKeyword] = React.useState('');
+    const keywordRef = React.useRef(null);
     const doSearch = () => {
+        const keyword = keywordRef.current?.value;
         if (keyword && keyword.length > 0) {
             navigate(`/search?q=${keyword}`);
         }
@@ -208,7 +209,7 @@ export default function Header() {
                                     }}>
                                     <Search size='scale800' />
                                 </div>
-                                <input
+                                <input ref={keywordRef}
                                     className={css({
                                         outline: 'none', border: 0, background: 'none', margin: 0,
                                         paddingLeft: 0, paddingRight: theme.sizing.scale550,
@@ -218,7 +219,7 @@ export default function Header() {
                                         height: '100%', width: '100%', minWidth: '0px', maxWidth: '100%',
                                         [MOBILE_BREAKPOINT]: { display: 'none', },
                                     })}
-                                    placeholder='搜索...' onChange={e => setKeyword(e.target.value)} value={keyword}
+                                    placeholder='搜索...'
                                     onKeyUp={e => {
                                         if (e.key === 'Enter') {
                                             e.preventDefault();

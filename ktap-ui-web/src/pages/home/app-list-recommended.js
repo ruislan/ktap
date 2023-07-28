@@ -1,16 +1,13 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { Button } from "baseui/button";
 import { LabelLarge, ParagraphMedium } from 'baseui/typography';
 import { Star } from '../../components/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Image from '../../components/image';
 import Tag from '../../components/tag';
-import { Skeleton } from 'baseui/skeleton';
 import { PAGE_LIMIT_NORMAL } from '../../constants';
-
-const tips = ['查看更多', '我还要', '再看看', '再来', 'More, More', '再查，再探', '接着奏乐，接着舞'];
+import LoadMore from '../../components/load-more';
 
 function AppCard({ app }) {
     const [css, theme] = useStyletron();
@@ -107,20 +104,7 @@ function AppListRecommend() {
                     <AppCard key={index} app={app} />
                 ))}
             </Block>
-            {isLoading &&
-                <Block display='flex' flexDirection='column' justifyContent='center' gridGap='scale600' marginTop='scale900' marginBottom='scale900'>
-                    <Skeleton width='100%' height='450px' marginTop='scale300' animation />
-                    <Skeleton width='100%' height='450px' marginTop='scale300' animation />
-                    <Skeleton width='100%' height='450px' marginTop='scale300' animation />
-                </Block>
-            }
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        {tips[Math.floor(Math.random() * tips.length) | 0]}
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='450px' onClick={() => setSkip(prev => prev + limit)} />
         </Block >
     );
 }

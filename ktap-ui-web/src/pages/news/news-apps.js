@@ -9,6 +9,7 @@ import { Check } from 'baseui/icon';
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { useAuth } from '../../hooks/use-auth';
 import NewsItem from './news-item';
+import LoadMore from '../../components/load-more';
 
 function NewsAppsBanner({ appId }) {
     const [css, theme] = useStyletron();
@@ -172,18 +173,7 @@ function NewsAppsNewsList({ appId }) {
             }
         }}>
             {dataList && dataList.map((news, index) => <NewsItem key={index} news={news} />)}
-            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale600' justifyContent='center'>
-                <Skeleton animation height='212px' width='100%' />
-                <Skeleton animation height='212px' width='100%' />
-                <Skeleton animation height='212px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button onClick={() => setSkip(prev => prev + limit)} kind='tertiary'>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='212px' onClick={() => setSkip(prev => prev + limit)} />
         </Block >
     );
 }

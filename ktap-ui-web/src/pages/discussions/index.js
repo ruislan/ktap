@@ -3,13 +3,12 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { LabelXSmall, LabelSmall, LabelMedium, HeadingXLarge, ParagraphMedium } from 'baseui/typography';
-import { Button } from "baseui/button";
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { Link } from 'react-router-dom';
 import { Input } from 'baseui/input';
 import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
 import { ChatAlt2, User } from '../../components/icons';
-import { Skeleton } from 'baseui/skeleton';
+import LoadMore from '../../components/load-more';
 
 function Discussions() {
     const limit = PAGE_LIMIT_NORMAL + 1;
@@ -133,16 +132,7 @@ function Discussions() {
                     </Link>
                 ))}
             </Block>
-            {isLoading && <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
-                <Skeleton animation height='320px' width='100%' />
-                <Skeleton animation height='320px' width='100%' />
-                <Skeleton animation height='320px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button onClick={() => fetchData(skip + limit)} kind='tertiary'>查看更多</Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='320px' skeletonDirection='row' onClick={() => fetchData(skip + limit)} />
         </Block >
     );
 }

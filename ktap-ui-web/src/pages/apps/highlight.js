@@ -121,9 +121,12 @@ function Highlight({ data }) {
                             {slides.map((slide, index) => (
                                 <SwiperSlide key={index} className={css({
                                     cursor: 'pointer',
-                                    opacity: 0.6,
+                                    opacity: 0.6, minHeight: '70px',
                                     transition: 'opacity 0.5s',
-                                    ':hover': { opacity: '1' }
+                                    ':hover': { opacity: '1' },
+                                    [MOBILE_BREAKPOINT]: {
+                                        minHeight: '40px',
+                                    }
                                 })}>
                                     {slide.type === 'video' && <div className={css({
                                         display: 'flex', alignItems: 'center', position: 'absolute',

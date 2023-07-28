@@ -117,7 +117,18 @@ const tag = {
             errorMessage: { enum: '无法识别的 Tag 分类', }
         },
     },
-}
+};
+
+const report = {
+    $id: 'report',
+    type: 'object',
+    properties: {
+        content: {
+            type: 'string', minLength: 1, maxLength: 15,
+            errorMessage: { minLength: '内容不能为空', maxLength: '内容不能超过 150 个字', }
+        },
+    }
+};
 
 const common = {
     $id: 'common',
@@ -135,4 +146,5 @@ export default async function (fastify) {
     await fastify.addSchema(discussionPost);
     await fastify.addSchema(discussionChannel);
     await fastify.addSchema(tag);
+    await fastify.addSchema(report);
 };

@@ -4,14 +4,13 @@ import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { Button } from 'baseui/button';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import { Annotation, Bookmark, ChatAlt2, Star, Gift as GiftIcon } from '../../components/icons';
 import RouterLink from '../../components/router-link';
 import Gift from '../../components/gift';
-import '../../assets/css/post.css';
-import { Skeleton } from 'baseui/skeleton';
+import LoadMore from '../../components/load-more';
 import { PAGE_LIMIT_NORMAL } from '../../constants';
+import '../../assets/css/post.css';
 
 function LeftLine({ type }) {
     return (
@@ -60,7 +59,7 @@ function ActivityItem({ activity }) {
                 (
                     <>
                         <LeftLine type={activity.type} />
-                    <Block display='flex' width='100%' overflow='hidden' paddingTop='scale100' paddingBottom='scale900' marginLeft='scale300' flexDirection='column'>
+                        <Block display='flex' width='100%' overflow='hidden' paddingTop='scale100' paddingBottom='scale900' marginLeft='scale300' flexDirection='column'>
                             {activity.type === 'Review' && (
                                 <>
                                     {activity.data.app ?
@@ -346,23 +345,12 @@ function TabActivities({ theUser }) {
 
     return (
         <Block display='flex' flexDirection='column'>
-            {activities?.map((activity, index) => (
+            {activities?.map((activity, index) =>
                 <Block key={index} display='flex'>
                     <ActivityItem activity={activity} />
                 </Block>
-            ))}
-            {isLoading && <Block display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='180px' width='100%' />
-                <Skeleton animation height='180px' width='100%' />
-                <Skeleton animation height='180px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale800' display='flex' justifyContent='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            )}
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='180px' onClick={() => setSkip(prev => prev + limit)} />
         </Block>
     );
 }

@@ -2,11 +2,10 @@ import React from 'react';
 
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
-import { Button } from 'baseui/button';
 import { LabelMedium, LabelLarge, LabelXSmall } from 'baseui/typography';
 import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import Capsule from '../../components/capsule';
-import { Skeleton } from 'baseui/skeleton';
+import LoadMore from '../../components/load-more';
 
 function RankOrganizationsList({ url }) {
     const limit = PAGE_LIMIT_NORMAL;
@@ -74,18 +73,7 @@ function RankOrganizationsList({ url }) {
                     </Capsule>
                 );
             })}
-            {isLoading && <Block display='flex' flexDirection='column' gridGap='scale300' justifyContent='center'>
-                <Skeleton animation height='76px' width='100%' />
-                <Skeleton animation height='76px' width='100%' />
-                <Skeleton animation height='76px' width='100%' />
-            </Block>}
-            {hasMore && !isLoading &&
-                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
-                    <Button size='default' kind='tertiary' onClick={() => setSkip(prev => prev + limit)}>
-                        查看更多
-                    </Button>
-                </Block>
-            }
+            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='76px' onClick={() => setSkip(prev => prev + limit)} />
         </>
     );
 }

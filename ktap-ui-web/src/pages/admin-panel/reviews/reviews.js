@@ -63,12 +63,7 @@ function ReportsBlock({ reviewId }) {
                 </Block>
             ))}
             {hasMore && (
-                <Block
-                    marginTop='scale600'
-                    display='flex'
-                    justifyContent='center'
-                    alignItems='center'
-                >
+                <Block marginTop='scale600' display='flex' justifyContent='center' alignItems='center'>
                     <Button size='compact' onClick={() => setSkip(prev => prev + limit)} kind='tertiary' isLoading={isLoading}>
                         查看更多
                     </Button>
