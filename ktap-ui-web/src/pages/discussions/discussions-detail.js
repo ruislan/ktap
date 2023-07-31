@@ -1,7 +1,10 @@
 import React from 'react';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
 
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useStyletron } from 'baseui';
@@ -27,9 +30,6 @@ import Editor from '../../components/editor';
 
 import '../../assets/css/post.css';
 import LoadMore from '../../components/load-more';
-
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
 
 function UserPanel({ id, name, avatar, gender, title }) {
     return (

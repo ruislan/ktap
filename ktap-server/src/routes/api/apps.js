@@ -390,34 +390,33 @@ const apps = async function (fastify, opts) {
     // 用户给这个游戏应用打的标签
     fastify.get('/:id/tags/by-me', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const id = Number(req.params.id) || 0;
-            const userId = req.user?.id;
-            const data = {
-                frequent: [],
-                current: [],
-            };
-            if (userId) {
-                // 用户常用的10个
-                let userFrequentTags = await fastify.db.$queryRaw`
+    }, async function (req, reply) {
+        const id = Number(req.params.id) || 0;
+        const userId = req.user?.id;
+        const data = {
+            frequent: [],
+            current: [],
+        };
+        if (userId) {
+            // 用户常用的10个
+            let userFrequentTags = await fastify.db.$queryRaw`
                     SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
                     WHERE AppUserTagRef.user_id = ${userId} AND AppUserTagRef.tag_id = Tag.id
                     GROUP BY id ORDER BY count DESC LIMIT 10;
                 `;
-                userFrequentTags.forEach(item => item.count = Number(item.count));
+            userFrequentTags.forEach(item => item.count = Number(item.count));
 
-                data.frequent = userFrequentTags;
+            data.frequent = userFrequentTags;
 
-                // 为当前游戏打的标签
-                let userCurrentTags = await fastify.db.appUserTagRef.findMany({
-                    where: { userId: userId, appId: id },
-                    include: { tag: { select: { id: true, name: true, colorHex: true } }, }
-                });
-                userCurrentTags = userCurrentTags.map(item => item.tag);
-                data.current = userCurrentTags;
-            }
-            return reply.code(200).send({ data });
+            // 为当前游戏打的标签
+            let userCurrentTags = await fastify.db.appUserTagRef.findMany({
+                where: { userId: userId, appId: id },
+                include: { tag: { select: { id: true, name: true, colorHex: true } }, }
+            });
+            userCurrentTags = userCurrentTags.map(item => item.tag);
+            data.current = userCurrentTags;
         }
+        return reply.code(200).send({ data });
     });
 
     fastify.post('/:id/tags', {
@@ -444,63 +443,61 @@ const apps = async function (fastify, opts) {
 
     fastify.delete('/:id/tags/:name', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const appId = Number(req.params.id) || 0;
-            const userId = req.user.id;
-            const tagName = req.params.name || '';
-            const tag = await fastify.db.tag.findUnique({ where: { name: tagName }, select: { id: true } });
-            if (tag?.id) await fastify.db.appUserTagRef.delete({ where: { appId_userId_tagId: { userId, appId, tagId: tag.id } } });
-            return reply.code(204).send();
-        }
+    }, async function (req, reply) {
+        const appId = Number(req.params.id) || 0;
+        const userId = req.user.id;
+        const tagName = req.params.name || '';
+        const tag = await fastify.db.tag.findUnique({ where: { name: tagName }, select: { id: true } });
+        if (tag?.id) await fastify.db.appUserTagRef.delete({ where: { appId_userId_tagId: { userId, appId, tagId: tag.id } } });
+        return reply.code(204).send();
     });
 
     // 用户提交评测（一个用户一个APP只能有一个评测，再有就是修改）
     fastify.post('/:id/reviews', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const appId = Number(req.params.id) || 0;
-            const userId = req.user.id;
-            const parts = req.parts();
-            const reqBody = { images: [] };
-            for await (const part of parts) {
-                if (part.file) {
-                    const buffer = await part.toBuffer();
-                    const url = await fastify.storage.store(part.filename, buffer);
-                    reqBody.images.push(url);
-                } else {
-                    reqBody[part.fieldname] = part.value;
-                }
+    }, async function (req, reply) {
+        const appId = Number(req.params.id) || 0;
+        const userId = req.user.id;
+        const parts = req.parts();
+        const reqBody = { images: [] };
+        for await (const part of parts) {
+            if (part.file) {
+                const buffer = await part.toBuffer();
+                const url = await fastify.storage.store(part.filename, buffer);
+                reqBody.images.push(url);
+            } else {
+                reqBody[part.fieldname] = part.value;
             }
-            // 处理一下超过三张图片的情况
-            if (reqBody.images.length > REVIEW_IMAGE_COUNT_LIMIT) reqBody.images = reqBody.images.slice(0, REVIEW_IMAGE_COUNT_LIMIT);
-            let data = {
-                content: reqBody.content || '',
-                score: Number(reqBody.score) || 3,
-                allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
-                images: {
-                    create: reqBody.images.map(url => { return { url } }),
-                }
-            };
-            const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
-            if (!review?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
+        }
+        // 处理一下超过三张图片的情况
+        if (reqBody.images.length > REVIEW_IMAGE_COUNT_LIMIT) reqBody.images = reqBody.images.slice(0, REVIEW_IMAGE_COUNT_LIMIT);
+        let data = {
+            content: reqBody.content || '',
+            score: Number(reqBody.score) || 3,
+            allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
+            images: {
+                create: reqBody.images.map(url => { return { url } }),
+            }
+        };
+        const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
+        if (!review?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
-            // 更新评分
-            await fastify.db.$queryRaw`
+        // 更新评分
+        await fastify.db.$queryRaw`
                 UPDATE App SET score = avgScore FROM
                 (SELECT COALESCE(AVG(score), 4) AS avgScore FROM review WHERE app_id = ${appId})
                 WHERE App.id = ${appId};
             `;
 
-            // Update timeline if it created a new review
-            if (!review?.id) {
-                await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } });
-            }
-            // reconstruct return data structure
-            data.images = reqBody.images.map(url => { return { url } });
-            delete data.appId;
-            delete data.userId;
-            return reply.code(200).send({ data });
+        // Update timeline if it created a new review
+        if (!review?.id) {
+            await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } });
         }
+        // reconstruct return data structure
+        data.images = reqBody.images.map(url => { return { url } });
+        delete data.appId;
+        delete data.userId;
+        return reply.code(200).send({ data });
     });
 
     // 获取热门评测内容
@@ -550,22 +547,21 @@ const apps = async function (fastify, opts) {
     // 用户给这个游戏写的评测
     fastify.get('/:id/reviews/by-me', {
         preHandler: authenticate,
-        handler: async function (req, reply) {
-            const id = Number(req.params.id) || 0;
-            const userId = req.user?.id;
-            let data = {};
-            if (userId) {
-                data = await fastify.db.review.findFirst({
-                    where: { userId: userId, appId: id },
-                    include: {
-                        images: {
-                            select: { id: true, url: true },
-                        }
-                    },
-                });
-            }
-            return reply.code(200).send({ data });
+    }, async function (req, reply) {
+        const id = Number(req.params.id) || 0;
+        const userId = req.user?.id;
+        let data = {};
+        if (userId) {
+            data = await fastify.db.review.findFirst({
+                where: { userId: userId, appId: id },
+                include: {
+                    images: {
+                        select: { id: true, url: true },
+                    }
+                },
+            });
         }
+        return reply.code(200).send({ data });
     });
 };
 

@@ -6,19 +6,17 @@ const user = async (fastify, opts) => {
     fastify.addHook('onRequest', authenticate);
 
     // 获取当前登陆用户的信息
-    fastify.get('',
-        {
-            schema: {
-                response: {
-                    200: { $ref: 'user#basic' }
-                }
-            },
-            handler: async function handler(req, reply) {
-                const user = await fastify.db.user.findUnique({ where: { id: req.user.id } });
-                return reply.code(200).send(user);
+    fastify.get('', async function (req, reply) {
+        const user = await fastify.db.user.findUnique({
+            where: { id: req.user.id },
+            select: {
+                id: true, name: true, email: true, phone: true, avatar: true, title: true, bio: true,
+                balance: true, birthday: true, gender: true, isAdmin: true, isActivated: true, isLocked: true,
+                location: true, createdAt: true, updatedAt: true,
             }
-        }
-    );
+        });
+        return reply.code(200).send({ data: user });
+    });
 
     // 获取用户与DiscussionPosts的赞踩信息
     fastify.get('/effect/discussions/posts/thumbs', async function (req, reply) {

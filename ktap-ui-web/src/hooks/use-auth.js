@@ -32,8 +32,8 @@ function AuthProvider({ children }) {
                 try {
                     const res = await fetch(`/api/user`);
                     if (!res.ok) throw new Error();
-                    const data = await res.json();
-                    setUser(data);
+                    const json = await res.json();
+                    setUser(json.data);
                 } catch (e) {
                     localLogout();
                 }

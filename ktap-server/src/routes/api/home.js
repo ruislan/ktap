@@ -2,9 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { errors, Keys, Gender, Trading, Pagination } from "../../constants.js";
 
 const home = async function (fastify, opts) {
-    fastify.route({
-        method: 'POST',
-        url: '/register',
+    fastify.post('/register', {
         schema: {
             body: {
                 type: 'object',
@@ -17,32 +15,35 @@ const home = async function (fastify, opts) {
                 },
                 additionalProperties: false,
             }
-        },
-        handler: async function handler(req, reply) {     // handler 不能使用箭头函数，因为this指向不同，我们需要指向fastify
-            const { email, password, name, agree } = req.body;
-            if (!agree) throw this.httpErrors.badRequest(errors.message.userAgreeRequired);
-
-            const existsEmail = await this.db.user.count({ where: { email } }) > 0;
-            if (existsEmail) throw this.httpErrors.badRequest(errors.message.userEmailDuplicated);
-
-            const existsName = await this.db.user.count({ where: { name } }) > 0;
-            if (existsName) throw this.httpErrors.badRequest(errors.message.userNameDuplicated);
-
-            const passwordHash = await this.bcrypt.hash(password);
-
-            const amount = 100;
-            const user = await this.db.user.create({ data: { name, email, password: passwordHash, birthday: new Date(), gender: Gender.GENDERLESS, balance: amount } });
-            // 注册成功，赠送 100 余额
-            await fastify.db.trading.create({ data: { userId: 0, target: 'User', targetId: user.id, amount, type: Trading.type.give, }, });
-
-            // XXX 给用户发激活email？ V2 or V3
-            return reply.code(201).send();
         }
+    }, async function (req, reply) {
+        const { email, password, name, agree } = req.body;
+        if (!agree) throw fastify.httpErrors.badRequest(errors.message.userAgreeRequired);
+
+        const existsEmail = await fastify.db.user.count({ where: { email } }) > 0;
+        if (existsEmail) throw fastify.httpErrors.badRequest(errors.message.userEmailDuplicated);
+
+        const existsName = await fastify.db.user.count({ where: { name } }) > 0;
+        if (existsName) throw fastify.httpErrors.badRequest(errors.message.userNameDuplicated);
+
+        const passwordHash = await fastify.bcrypt.hash(password);
+
+        const amount = 100;
+        const user = await fastify.db.user.create({
+            data: {
+                name, email, password: passwordHash,
+                avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg?width=285`,
+                birthday: new Date(), gender: Gender.GENDERLESS, balance: amount
+            }
+        });
+        // 注册成功，赠送 100 余额
+        await fastify.db.trading.create({ data: { userId: 0, target: 'User', targetId: user.id, amount, type: Trading.type.give, }, });
+
+        // XXX 给用户发激活email？ V2 or V3
+        return reply.code(201).send();
     });
 
-    fastify.route({
-        method: 'POST',
-        url: '/login',
+    fastify.post('/login', {
         schema: {
             body: {
                 type: 'object',
@@ -62,27 +63,26 @@ const home = async function (fastify, opts) {
                 }
             }
         },
-        handler: async function handler(req, reply) {
-            const { email, password } = req.body;
+    }, async function (req, reply) {
+        const { email, password } = req.body;
 
-            const user = await this.db.user.findUnique({ where: { email } });
-            if (!user) throw this.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
+        const user = await fastify.db.user.findUnique({ where: { email } });
+        if (!user) throw fastify.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
 
-            const isPasswordMatched = await this.bcrypt.compare(password, user.password);
-            if (!isPasswordMatched) throw this.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
+        const isPasswordMatched = await fastify.bcrypt.compare(password, user.password);
+        if (!isPasswordMatched) throw fastify.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
 
-            if (user.isLocked) throw this.httpErrors.createError(errors.code.forbidden, errors.message.userIsLocked);
+        if (user.isLocked) throw fastify.httpErrors.createError(errors.code.forbidden, errors.message.userIsLocked);
 
-            const token = await this.jwt.sign({ id: Number(user.id), email: user.email, name: user.name, isAdmin: user.isAdmin });
-            const expires = new Date(Date.now() + (Number(process.env.COOKIE_EXPIRES_IN) || 259200000));
-            return reply
-                .cookie(Keys.cookie.token, token, {
-                    path: '/', httpOnly: true, expires, sameSite: true, signed: true,
-                    secure: process.env.COOKIE_SECURE || false,  // XXX 注意：secure如果为true，则需要配置https，否则cookie无效
-                })
-                .cookie('user_id', user.id, { path: '/', expires, }) // 方便客户端使用
-                .code(200).send({ id: user.id });
-        }
+        const token = await fastify.jwt.sign({ id: Number(user.id), email: user.email, name: user.name, isAdmin: user.isAdmin });
+        const expires = new Date(Date.now() + (Number(process.env.COOKIE_EXPIRES_IN) || 259200000));
+        return reply
+            .cookie(Keys.cookie.token, token, {
+                path: '/', httpOnly: true, expires, sameSite: true, signed: true,
+                secure: process.env.COOKIE_SECURE || false,  // XXX 注意：secure如果为true，则需要配置https，否则cookie无效
+            })
+            .cookie('user_id', user.id, { path: '/', expires, }) // 方便客户端使用
+            .code(200).send({ id: user.id });
     });
 
     fastify.post('/logout', async function (req, reply) {

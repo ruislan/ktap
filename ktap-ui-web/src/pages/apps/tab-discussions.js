@@ -1,7 +1,10 @@
 import React from 'react';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
 
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
@@ -35,11 +38,6 @@ function TabDiscussions({ appId }) {
             }
         })();
     }, [appId, skip, limit]);
-
-    React.useEffect(() => {
-        dayjs.locale('zh-cn');
-        dayjs.extend(relativeTime);
-    }, []);
 
     return (
         <Block paddingTop='scale600' paddingBottom='scale600'>

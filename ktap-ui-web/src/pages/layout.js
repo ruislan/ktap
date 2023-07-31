@@ -3,7 +3,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet } from 'react-router-dom';
 
 import { Block } from 'baseui/block';
-// import { MOBILE_BREAKPOINT } from '../constants';
 import Header from './header';
 import Footer from './footer';
 import NotWork from './not-work';

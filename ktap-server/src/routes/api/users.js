@@ -394,9 +394,16 @@ const users = async (fastify, opts) => {
     fastify.get('/:id', async function (req, reply) {
         const id = Number(req.params.id) || 0;
 
-        const user = await fastify.db.user.findUnique({ where: { id } });
+        const user = await fastify.db.user.findUnique({
+            where: { id },
+            select: {
+                id: true, name: true, title: true, phone: true, avatar: true, bio: true,
+                birthday: true, email: true, gender: true,
+                isActivated: true, isAdmin: true, isLocked: true, location: true,
+                createdAt: true, updatedAt: true,
+            }
+        });
         if (!user) return reply.code(404).send(); // not found
-        delete user.password;
 
         // 关注数, 评测数, 回复数
         const meta = (await fastify.db.$queryRaw`

@@ -37,30 +37,6 @@ const user = {
             errorMessage: { maxLength: '地址长度不能大于 100 个字符', }
         },
     },
-    definitions: {
-        basic: {
-            $id: '#basic',
-            type: 'object',
-            properties: {
-                id: { type: 'number' },
-                name: { $ref: 'user#/properties/name' },
-                title: { type: 'string' },
-                email: { $ref: 'user#/properties/email' },
-                phone: { type: 'string' },
-                avatar: { type: 'string' },
-                balance: { type: 'number' },
-                gender: { $ref: 'user#/properties/gender' },
-                bio: { $ref: 'user#/properties/bio' },
-                location: { $ref: 'user#/properties/location' },
-                birthday: { type: 'string', format: 'date' },
-                isActivated: { type: 'boolean' },
-                isAdmin: { type: 'boolean' },
-                isLocked: { type: 'boolean' },
-                createdAt: { type: 'string', format: 'date-time' },
-                updatedAt: { type: 'string', format: 'date-time' },
-            }
-        },
-    },
 };
 
 const discussion = {
@@ -130,21 +106,32 @@ const report = {
     }
 };
 
+const comment = {
+    $id: 'comment',
+    type: 'object',
+    properties: {
+        content: {
+            type: 'string', minLength: 1, maxLength: 1000,
+            errorMessage: { minLength: '内容不能为空', maxLength: '内容不能超过 1000 个字', }
+        },
+    }
+};
 const common = {
     $id: 'common',
     type: 'object',
     properties: {
         id: { type: 'integer', minimum: 0, errorMessage: { type: 'id 只能是数字', minimum: 'id 不能为负数' } }
-    }
+    },
 };
 
-// XXX 添加schema首先以前端有 Post 和 Put 的对象为主，其他部分慢慢来即可
+// XXX 有 Post 和 Put 的对象为主，用于 validation 。暂不考虑用于 response 。
 export default async function (fastify) {
     await fastify.addSchema(common);
     await fastify.addSchema(user);
     await fastify.addSchema(discussion);
     await fastify.addSchema(discussionPost);
     await fastify.addSchema(discussionChannel);
+    await fastify.addSchema(comment);
     await fastify.addSchema(tag);
     await fastify.addSchema(report);
 };

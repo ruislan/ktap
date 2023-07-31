@@ -1,7 +1,11 @@
 import React from 'react';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
@@ -319,11 +323,6 @@ function TabActivities({ theUser }) {
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
-
-    React.useEffect(() => {
-        dayjs.locale('zh-cn');
-        dayjs.extend(relativeTime);
-    }, []);
 
     React.useEffect(() => {
         (async () => {

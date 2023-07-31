@@ -98,7 +98,7 @@ export default function Header() {
             })}>
                 <div className={css({
                     display: 'flex', alignItems: 'center', width: '100%', paddingLeft: theme.sizing.scale600, paddingRight: theme.sizing.scale600,
-                    maxWidth: MOBILE_BREAKPOINT_PX + 32 + 176 + 'px', flexWrap: 'nowrap',
+                    maxWidth: MOBILE_BREAKPOINT_PX + 32 + 132 + 'px', flexWrap: 'nowrap',
                     [MOBILE_BREAKPOINT]: {
                         paddingLeft: theme.sizing.scale500, paddingRight: theme.sizing.scale500,
                         paddingTop: theme.sizing.scale0, paddingBottom: theme.sizing.scale0,

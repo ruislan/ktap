@@ -23,7 +23,7 @@ function SettingsProfile() {
         location: user?.location || '',
         bio: user?.bio || '',
         gender: [{ id: user?.gender }],
-        birthday: user?.birthday,
+        birthday: dayjs(user?.birthday).format('YYYY-MM-DD'),
     });
 
     // process avatar upload

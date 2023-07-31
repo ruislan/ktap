@@ -1,7 +1,10 @@
 import React from 'react';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
 
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -37,7 +40,11 @@ function ReviewComments({ review }) {
             try {
                 setSubmitErrorMessage(null);
                 setIsSubmitting(true);
-                const res = await fetch(`/api/reviews/${review.id}/comments`, { body: JSON.stringify({ content: commentContent }), method: 'POST', headers: { 'content-type': 'application/json' } });
+                const res = await fetch(`/api/reviews/${review.id}/comments`,
+                    {
+                        method: 'POST', headers: { 'content-type': 'application/json' },
+                        body: JSON.stringify({ content: commentContent }),
+                    });
                 if (res.ok) {
                     const json = await res.json();
                     setCommentContent('');
@@ -81,9 +88,6 @@ function ReviewComments({ review }) {
     }, [review, skip, limit]);
 
     React.useEffect(() => {
-        dayjs.locale('zh-cn');
-        dayjs.extend(relativeTime);
-
         (async () => {
             const res = await fetch('/api/buzzwords?limit=15');
             if (res.ok) {
@@ -127,7 +131,7 @@ function ReviewComments({ review }) {
                             placeholder={review.allowComment ? '添加回复' : '该评测已关闭回复'}
                             endEnhancer={() =>
                                 commentContent &&
-                                <Block marginRight={'-8px'}>
+                                <Block marginRight='-8px'>
                                     <Button onClick={() => handleSubmitComment()} disabled={!commentContent || isSubmitting || !review.allowComment} kind='primary' shape='circle' size='mini'>
                                         <ArrowUp size={16} />
                                     </Button>
