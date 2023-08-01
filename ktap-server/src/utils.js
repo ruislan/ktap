@@ -12,9 +12,17 @@ const cleanContent = (content) => {
 };
 
 // XXX 临时的一个避免重复代码的归并处，后续应该还是要根据业务对象来进行划分开
-// TODO 重构：把所有重复代码都统一到这个地方来
 const utils = async (fastify, opts, next) => {
     fastify.decorate('utils', {
+        // 计算 App 的评分
+        async computeAppScore({ appId }) {
+            if (appId <= 0) return;
+            await fastify.db.$queryRaw`
+                UPDATE App SET score = avgScore FROM
+                (SELECT ROUND(COALESCE(AVG(score), 4), 1) AS avgScore FROM review WHERE app_id = ${appId})
+                WHERE App.id = ${appId};
+            `;
+        },
         // 检查操作权限
         // obj是操作对象，objType是操作对象的type, operation是操作名称
         // 注意，不同的obj，需要的obj的级联数据不同，尽量在检查之前就级联查询出来
@@ -241,6 +249,7 @@ const utils = async (fastify, opts, next) => {
             }
             return review;
         },
+        // 获取某个评测的礼物数据
         async getReviewGifts({ id }) {
             const gifts = await fastify.db.$queryRaw`
                 SELECT Gift.id, Gift.name, Gift.description, Gift.url, Gift.price, count(ReviewGiftRef.user_id) AS count FROM ReviewGiftRef, Gift

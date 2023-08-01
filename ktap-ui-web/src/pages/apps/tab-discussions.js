@@ -1,18 +1,12 @@
 import React from 'react';
 
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
-
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelLarge, LabelMedium, LabelSmall } from 'baseui/typography';
 import SplitBall from '../../components/split-ball';
 import { Gift2, Message4, Pin, Reply } from '../../components/icons';
 import RouterLink from '../../components/router-link';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
+import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
 import LoadMore from '../../components/load-more';
 
 function TabDiscussions({ appId }) {
@@ -91,7 +85,7 @@ function TabDiscussions({ appId }) {
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                     </>
                                 }
-                                <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
+                                <LabelSmall whiteSpace='nowrap' color='inherit'>{DateTime.fromNow(discussion?.createdAt)}</LabelSmall>
                             </Block>
                         </Block>
                     </Block>

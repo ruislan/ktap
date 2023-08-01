@@ -1,9 +1,7 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import { useStyletron } from 'baseui';
 import { Link, useNavigate } from 'react-router-dom';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { DateTime, MOBILE_BREAKPOINT } from '../../constants';
 import { Block } from 'baseui/block';
 import { HeadingXSmall, LabelXSmall, MonoLabelMedium, ParagraphSmall } from 'baseui/typography';
 
@@ -39,7 +37,7 @@ export default function ({ news }) {
         >
             <Block display='flex' flexDirection='column' overflow='hidden' padding='scale500'>
                 <HeadingXSmall overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap' marginTop='0' marginBottom='scale100'>{news.title}</HeadingXSmall>
-                <LabelXSmall marginTop='scale100' color='primary300'>日期：{dayjs(news.updatedAt).format('YYYY 年 M 月 D 日')}</LabelXSmall>
+                <LabelXSmall marginTop='scale100' color='primary300'>日期：{DateTime.formatCN(news.updatedAt)}</LabelXSmall>
                 <ParagraphSmall display='-webkit-box' color='primary100' overflow='hidden' overrides={{
                     Block: {
                         style: {

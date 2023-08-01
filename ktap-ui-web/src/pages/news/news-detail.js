@@ -1,13 +1,11 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from "baseui/block";
 import { Button } from 'baseui/button';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { Skeleton } from 'baseui/skeleton';
 import { Eye } from '../../components/icons';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { DateTime, MOBILE_BREAKPOINT } from '../../constants';
 import '../../assets/css/post.css';
 
 function NewsDetail() {
@@ -108,7 +106,7 @@ function NewsDetail() {
                         >
                             <HeadingSmall marginBottom='scale800'>{data.title}</HeadingSmall>
                             <Block display='flex' alignItems='center' marginBottom='scale1000'>
-                                <LabelSmall color='primary300'>{dayjs(data.updatedAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                                <LabelSmall color='primary300'>{DateTime.formatCN(data.updatedAt)}</LabelSmall>
                                 <Block display='flex' alignItems='center' marginLeft='scale600'>
                                     <LabelSmall display='flex' color='primary300'><Eye width='18px' height='18px' /></LabelSmall>
                                     <LabelSmall color='primary300' marginLeft='scale100'>{data.meta.views} 阅读</LabelSmall>

@@ -1,9 +1,8 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import RouterLink from '../../components/router-link';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
+import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
 import LoadMore from '../../components/load-more';
 
 function TabReviewComments({ theUser }) {
@@ -48,7 +47,7 @@ function TabReviewComments({ theUser }) {
                         ? (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${comment.review.user.id}`} kind='underline'>{comment.review.user.name}</RouterLink> 对 <RouterLink href={`/apps/${comment.review.app.id}`} kind='underline'>{comment.review.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${comment.review.id}`} kind='underline'>评测</RouterLink> </LabelMedium>)
                         : (<LabelMedium marginBottom='scale200'>回复了评测</LabelMedium>)
                     }
-                    <LabelSmall color='primary500' marginTop='scale0'>{dayjs(comment.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                    <LabelSmall color='primary500' marginTop='scale0'>{DateTime.formatCN(comment.createdAt)}</LabelSmall>
                     <Block display='flex' flexDirection='column'>
                         <ParagraphMedium marginBottom='0'>{comment.content}</ParagraphMedium>
                         <ParagraphSmall backgroundColor='backgroundTertiary' marginBottom='0' padding='scale300' color='primary200'

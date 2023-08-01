@@ -1,5 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -14,7 +13,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
-import { MOBILE_BREAKPOINT, Organization, PAGE_LIMIT_SMALL } from '../../../constants';
+import { DateTime, MOBILE_BREAKPOINT, Organization, PAGE_LIMIT_SMALL } from '../../../constants';
 
 function AdminPanelOrganizations() {
     const limit = PAGE_LIMIT_SMALL;
@@ -181,7 +180,7 @@ function AdminPanelOrganizations() {
                             {row => <LabelSmall>{row.meta?.published}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
-                            {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                            {row => <LabelSmall whiteSpace='nowrap'>{DateTime.format(row.createdAt)}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>

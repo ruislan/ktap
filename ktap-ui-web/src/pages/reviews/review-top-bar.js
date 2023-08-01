@@ -16,7 +16,8 @@ function ReviewTopBar({ review }) {
                 Block: {
                     style: ({ $theme }) => ({
                         background: $theme.colors.backgroundTertiary,
-                        boxShadow: 'rgb(0 0 0) 2px 2px 2px',
+                        borderRadius: $theme.borders.radius300,
+                        boxShadow: $theme.lighting.shadow700,
                     })
                 }
             }}

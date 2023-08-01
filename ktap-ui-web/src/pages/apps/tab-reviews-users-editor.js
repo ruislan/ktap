@@ -1,23 +1,22 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import Compressor from 'compressorjs';
 
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { LabelLarge, LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
+import { LabelLarge, LabelMedium, LabelSmall, LabelXSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { Checkbox } from 'baseui/checkbox';
 import { Textarea } from 'baseui/textarea';
+import { Skeleton } from 'baseui/skeleton';
 import { StarRating } from 'baseui/rating';
 import { Photograph } from '../../components/icons';
-import { IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT } from '../../constants';
+import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT } from '../../constants';
 import { useAuth } from '../../hooks/use-auth';
 import useScoreRemark from '../../hooks/use-score-remark';
 import ImageBoxGallery from '../../components/image-box-gallery';
 import ImageBox from '../../components/image-box';
 import { useNavigate } from 'react-router-dom';
 import RouterLink from '../../components/router-link';
-import { Skeleton } from 'baseui/skeleton';
 
 function TabReviewsUsersEditor({ app }) {
     const [, theme] = useStyletron();
@@ -101,7 +100,7 @@ function TabReviewsUsersEditor({ app }) {
                             <>
                                 <LabelLarge paddingBottom='scale300'>您为 《{app.name}》 撰写的评测</LabelLarge>
                                 <StarRating value={myReview.score} size='16' readOnly />
-                                <LabelSmall color='primary500' marginTop='scale300'>发布于：{dayjs(myReview.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                                <LabelSmall color='primary500' marginTop='scale300'>发布于：{DateTime.formatCN(myReview.createdAt)}</LabelSmall>
                                 <ParagraphMedium>{myReview.content}</ParagraphMedium>
                                 <ImageBoxGallery id='my-ibg' images={myReview.images} />
                                 <Block paddingTop='scale300' overrides={{
@@ -142,7 +141,8 @@ function TabReviewsUsersEditor({ app }) {
                                     <LabelSmall color='primary400'>{remark}</LabelSmall>
                                 </Block>
                                 <Block marginBottom='scale300'>
-                                    <Textarea rows='5' maxLength='5000' value={draftReview?.content} onChange={e => setDraftReview(prev => { return { ...prev, content: e.target.value }; })} />
+                                    <LabelXSmall color='primary400' marginBottom='scale300' marginRight='scale100' overrides={{ Block: { style: { textAlign: 'right' } } }}>{draftReview.content.length > 0 ? `${draftReview.content.length} / 8000` : ''}</LabelXSmall>
+                                    <Textarea rows='5' maxLength='8000' value={draftReview.content} onChange={e => setDraftReview(prev => { return { ...prev, content: e.target.value }; })} />
                                 </Block>
                                 {/* 图片预览区域 */}
                                 {draftReview?.files?.length > 0 && (

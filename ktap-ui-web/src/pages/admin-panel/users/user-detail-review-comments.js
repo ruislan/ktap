@@ -1,6 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Spinner } from 'baseui/spinner';
@@ -10,7 +8,7 @@ import { Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Delete } from 'baseui/icon';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
-import { PAGE_LIMIT_SMALL } from '../../../constants';
+import { DateTime, PAGE_LIMIT_SMALL } from '../../../constants';
 
 function UserDetailComments({ data }) {
     const limit = PAGE_LIMIT_SMALL;
@@ -92,7 +90,7 @@ function UserDetailComments({ data }) {
                             {row => <LabelSmall whiteSpace='nowrap' textOverflow='ellipsis' width='200px' maxWidth='200px' overflow='hidden'>{row.content}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
-                            {row => <LabelSmall>{dayjs(row?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                            {row => <LabelSmall>{DateTime.format(row?.createdAt)}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>

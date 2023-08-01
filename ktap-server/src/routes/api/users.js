@@ -116,17 +116,8 @@ const users = async (fastify, opts) => {
         });
         // XXX 这里读取数据库有点多了，看怎么减少一下
         for await (const item of data) {
-            const gifts = await fastify.db.$queryRaw`
-                SELECT Gift.id, Gift.name, Gift.description, Gift.url, Gift.price, count(ReviewGiftRef.user_id) AS count FROM ReviewGiftRef, Gift
-                WHERE Gift.id = ReviewGiftRef.gift_id AND review_id = ${item.id} GROUP BY ReviewGiftRef.gift_id;
-            `;
-
-            // 获取赞踩数量
-            const thumbs = (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${item.id}) AS ups,
-                (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${item.id}) AS downs
-            `)[0];
-            item.gifts = gifts;
+            const thumbs = await fastify.utils.getReviewThumbs({ id: item.id });
+            item.gifts = (await fastify.utils.getReviewGifts({ id: item.id })).gifts;
             item.meta = { comments: item._count.comments, gifts: item._count.gifts, ups: thumbs?.ups || 0, downs: thumbs?.downs || 0 };
 
             // app 不可见则无需展示

@@ -1,5 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -13,7 +12,7 @@ import { FormControl } from 'baseui/form-control';
 import { StatefulPopover } from 'baseui/popover';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 import { EditLine, TrashBin, ExternalLink } from '../../../components/icons';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { StyledLink } from 'baseui/link';
 
 function AdminPanelGifts() {
@@ -185,7 +184,7 @@ function AdminPanelGifts() {
                             }
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
-                            {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                            {row => <LabelSmall whiteSpace='nowrap'>{DateTime.format(row.createdAt)}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (

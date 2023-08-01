@@ -1,12 +1,11 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useNavigate } from "react-router-dom";
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium, ParagraphMedium, ParagraphSmall, LabelXSmall, LabelLarge } from 'baseui/typography';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
 import { Button } from 'baseui/button';
 import { ThumbUp, ThumbDown, Gift, ChevronRight, Star } from '../../components/icons';
-import { PAGE_LIMIT_NORMAL, Styles } from '../../constants';
+import { DateTime, PAGE_LIMIT_NORMAL, Styles } from '../../constants';
 import { useAuth } from '../../hooks/use-auth';
 import ImageBoxGallery from '../../components/image-box-gallery';
 import GiftType from '../../components/gift';
@@ -161,7 +160,7 @@ function TabReviewsListItem({ review }) {
                 </Block>
                 {/* 内容 */}
                 <Block paddingTop='scale300' paddingBottom='scale300'>
-                    <LabelSmall color='primary500' marginTop='scale300'>发布于：{dayjs(review.updatedAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                    <LabelSmall color='primary500' marginTop='scale300'>发布于：{DateTime.formatCN(review.updatedAt)}</LabelSmall>
                     <ParagraphMedium dangerouslySetInnerHTML={{ __html: review.content.replace(/\r\n/g, '<br>') }}></ParagraphMedium>
                     <Block display='flex' alignItems='baseline' paddingBottom='scale100'>
                         <ImageBoxGallery id={`list-ibg-${review.id}`} images={review.images} />

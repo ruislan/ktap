@@ -1,13 +1,11 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { LabelSmall } from 'baseui/typography';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
-import { PAGE_LIMIT_SMALL, Trading } from '../../../constants';
+import { DateTime, PAGE_LIMIT_SMALL, Trading } from '../../../constants';
 
 function UserDetailTradings({ data }) {
     const limit = PAGE_LIMIT_SMALL;
@@ -78,7 +76,7 @@ function UserDetailTradings({ data }) {
                             {row => <LabelSmall>{Trading.type.getDirectionLabel(row.type)} {row.amount}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
-                            {row => <LabelSmall>{dayjs(row?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                            {row => <LabelSmall>{DateTime.format(row?.createdAt)}</LabelSmall>}
                         </TableBuilderColumn>
                     </TableBuilder>
                 </Block>

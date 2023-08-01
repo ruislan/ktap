@@ -1,6 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Input, StatefulInput } from 'baseui/input';
@@ -12,7 +10,7 @@ import { Eye, Rocket, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Filter, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '../../../constants';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { Hand } from '../../../components/icons';
@@ -60,7 +58,7 @@ function ReportsBlock({ postId }) {
                     <Block display='flex' flexDirection='column' gridGap='scale100'>
                         <LabelXSmall>{report.user?.name}</LabelXSmall>
                         <ParagraphXSmall marginTop='0' marginBottom='0'>{report.content}</ParagraphXSmall>
-                        <LabelXSmall color='primary400'>{dayjs(report.createdAt).format('YYYY-MM-DD HH:mm')}</LabelXSmall>
+                        <LabelXSmall color='primary400'>{DateTime.format(report.createdAt)}</LabelXSmall>
                     </Block>
                 </Block>
             ))}
@@ -283,7 +281,7 @@ function AdminPanelPosts() {
                             {row => <LabelSmall whiteSpace='nowrap' textOverflow='ellipsis' maxWidth='100px' overflow='hidden'>{row.discussion?.title}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
-                            {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                            {row => <LabelSmall whiteSpace='nowrap'>{DateTime.format(row.createdAt)}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>

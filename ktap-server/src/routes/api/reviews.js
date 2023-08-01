@@ -1,4 +1,4 @@
-import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, Trading } from '../../constants.js';
+import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, REVIEW_CONTENT_LIMIT, Trading } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 
 const reviews = async (fastify, opts) => {
@@ -144,7 +144,7 @@ const reviews = async (fastify, opts) => {
             }
 
             const data = {
-                content: reqBody.content || '',
+                content: (reqBody.content || '').slice(0, REVIEW_CONTENT_LIMIT),
                 score: Number(reqBody.score) || 3,
                 allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
             };
@@ -188,11 +188,7 @@ const reviews = async (fastify, opts) => {
             await fastify.db.review.update({ data, where: { id } });
 
             // XXX 非必每次评测都更新，定时刷新App的评分或者异步请求更新
-            await fastify.db.$queryRaw`
-                    UPDATE App SET score = avgScore FROM
-                    (SELECT COALESCE(AVG(score), 4) AS avgScore FROM review WHERE app_id = ${review.appId})
-                    WHERE App.id = ${review.appId};
-                `;
+            await fastify.utils.computeAppScore({ appId: review.appId });
         }
         return reply.code(204).send();
     });

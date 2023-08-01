@@ -1,11 +1,4 @@
 import React from 'react';
-
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
-
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useStyletron } from 'baseui';
 import { useAuth } from '../../hooks/use-auth';
@@ -20,16 +13,16 @@ import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, Paragr
 import RouterLink from '../../components/router-link';
 import Notification from '../../components/notification';
 import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock, Update as UpdateIcon } from '../../components/icons';
-import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../../constants';
+import { DateTime, LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../../constants';
 
 import SideBox from '../../components/side-box';
 import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
 import GiftType from '../../components/gift';
 import Editor from '../../components/editor';
+import LoadMore from '../../components/load-more';
 
 import '../../assets/css/post.css';
-import LoadMore from '../../components/load-more';
 
 function UserPanel({ id, name, avatar, gender, title }) {
     return (
@@ -179,7 +172,7 @@ function DiscussionMeta({ discussion, onChange = () => { } }) {
             <Block display='flex' flexDirection='column' paddingTop='0' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600'>
                 <Block display='grid' gridTemplateColumns='1fr 3fr' gridGap='scale300'>
                     <LabelSmall color='primary200'>发布日期</LabelSmall>
-                    <LabelSmall color='primary'>{dayjs(discussion.createdAt).format('YYYY-MM-DD HH:ss')}</LabelSmall>
+                    <LabelSmall color='primary'>{DateTime.formatCN(discussion.createdAt)}</LabelSmall>
                     <LabelSmall color='primary200'>贴子总数</LabelSmall>
                     <LabelSmall color='primary'>{discussion?.meta?.posts || 0}</LabelSmall>
                     <LabelSmall color='primary200'>参与人数</LabelSmall>
@@ -674,7 +667,7 @@ function DiscussionPosts({ discussion }) {
                         Block: { style: { borderRadius: theme.borders.radius300 } }
                     }}>
                         <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
-                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{dayjs(post.updatedAt).format('YYYY 年 M 月 D 日 HH:mm')}</LabelSmall>
+                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{DateTime.formatCN(post.updatedAt)}</LabelSmall>
                         <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip || '神秘之地'}</LabelSmall>
                         <Block paddingTop='scale600' paddingBottom='scale600'>
                             {post.isEditing ? (
@@ -684,7 +677,7 @@ function DiscussionPosts({ discussion }) {
                                         setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: false } : v));
                                     }}
                                     afterUpdate={({ content }) => {
-                                        const now = dayjs().format('YYYY-MM-DDTHH:mm:ssZ');
+                                        const now = new Date().toISOString();
                                         setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, content, updatedAt: now, isEditing: false } : v));
                                         setDataList(prev => prev.map(v => v.id === post.id ? { ...v, content, updatedAt: now, isEditing: false } : v));
                                     }}

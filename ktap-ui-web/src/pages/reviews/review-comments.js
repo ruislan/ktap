@@ -1,11 +1,4 @@
 import React from 'react';
-
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { LabelMedium, LabelSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
@@ -17,7 +10,7 @@ import { TrashBin } from '../../components/icons';
 import Buzzword from '../../components/buzzword';
 import { useNavigate } from 'react-router-dom';
 import RouterLink from '../../components/router-link';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
+import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
 import LoadMore from '../../components/load-more';
 
 function ReviewComments({ review }) {
@@ -164,7 +157,7 @@ function ReviewComments({ review }) {
                                 }}>
                                     <RouterLink href={`/users/${review.user.id}`}>{comment.user.name}</RouterLink>
                                 </LabelSmall>
-                                <LabelXSmall color='primary400'>{dayjs(comment.createdAt).fromNow()}</LabelXSmall>
+                                <LabelXSmall color='primary400'>{DateTime.fromNow(comment.createdAt)}</LabelXSmall>
                             </Block>
                             <ParagraphSmall marginTop='scale200' marginBottom='0' color='primary100'>{comment.content}</ParagraphSmall>
                         </Block>

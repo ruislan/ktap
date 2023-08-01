@@ -1,11 +1,4 @@
 import React from 'react';
-
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
-
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -18,7 +11,7 @@ import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } fr
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useAuth } from '../../hooks/use-auth';
 import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply, Settings } from '../../components/icons';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL } from '../../constants';
+import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL } from '../../constants';
 import RouterLink from '../../components/router-link';
 import SplitBall from '../../components/split-ball';
 import Notification from '../../components/notification';
@@ -497,7 +490,7 @@ function Discussions({ appId, channelId, }) {
                                         @{discussion?.lastPost?.user ? discussion?.lastPost?.user.name : discussion?.user?.name}
                                     </LabelSmall>
                                     <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                    <LabelSmall whiteSpace='nowrap' color='inherit'>{dayjs(discussion?.createdAt).fromNow()}</LabelSmall>
+                                    <LabelSmall whiteSpace='nowrap' color='inherit'>{DateTime.fromNow(discussion?.createdAt)}</LabelSmall>
                                 </Block>
                             </Block>
                         </Block>

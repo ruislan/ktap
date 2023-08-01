@@ -1,5 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
 
 import { useStyletron } from 'baseui';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ import { LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Check, Plus } from 'baseui/icon';
 import { Modal, ModalBody, ModalHeader } from 'baseui/modal';
 import { Input } from 'baseui/input';
-import { MOBILE_BREAKPOINT, AppMedia } from '../../constants';
+import { MOBILE_BREAKPOINT, AppMedia, DateTime } from '../../constants';
 import { useAuth } from '../../hooks/use-auth';
 import Tag from '../../components/tag';
 import { Linux, Mac, Win } from '../../components/icons';
@@ -267,7 +266,7 @@ function Glance({ data }) {
                             <LabelSmall key={index} color='primary200'><RouterLink href={`/organizations/${publisher.id}`} kind='underline'>{publisher.name}</RouterLink></LabelSmall>
                         )
                     } />
-                    <Field label='发行于' value={dayjs(data?.releasedAt).format('YYYY 年 M 月 D 日')} />
+                    <Field label='发行于' value={DateTime.formatCNShort(data?.releasedAt)} />
                     <Field label='平台' value={
                         data?.platforms?.map((platform, index) =>
                             <Block key={index} display='flex' alignItems='center' overrides={{ Block: { style: { ':first-child': { marginLeft: 0 } } } }} marginLeft='scale200'>

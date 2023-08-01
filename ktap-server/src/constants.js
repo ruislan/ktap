@@ -20,6 +20,7 @@ export const errors = {
 
 export const USER_CHANGE_NAME_INTERVAL = 1000 * 60 * 60 * 24 * 30; // 30 days
 export const REVIEW_IMAGE_COUNT_LIMIT = 3; // 3 images
+export const REVIEW_CONTENT_LIMIT = 8000; // 8000个字
 
 export const Pagination = {
     limit: {

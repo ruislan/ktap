@@ -1,9 +1,8 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { Block } from "baseui/block";
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '../../constants';
+import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '../../constants';
 import LoadMore from '../../components/load-more';
 
 function TradingHistory() {
@@ -55,7 +54,7 @@ function TradingHistory() {
                 }}
             >
                 <TableBuilderColumn header='时间'>
-                    {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row.createdAt).format('YYYY 年 MM 月 DD 日 HH:mm:ss')}</LabelSmall>}
+                    {row => <LabelSmall whiteSpace='nowrap'>{DateTime.formatCN(row.createdAt)}</LabelSmall>}
                 </TableBuilderColumn>
                 <TableBuilderColumn header='内容'>
                     {row => <LabelSmall>{Trading.target.getContentLabel(row.target)}</LabelSmall>}

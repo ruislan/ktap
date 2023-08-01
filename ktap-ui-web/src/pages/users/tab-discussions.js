@@ -1,5 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium, ParagraphMedium } from 'baseui/typography';
@@ -7,7 +6,7 @@ import { useAuth } from '../../hooks/use-auth';
 import RouterLink from '../../components/router-link';
 import { Star } from '../../components/icons';
 import LoadMore from '../../components/load-more';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
+import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
 
 function TabDiscussions({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;
@@ -53,7 +52,7 @@ function TabDiscussions({ theUser }) {
                         (<LabelMedium marginBottom='scale200'>发起了对 <RouterLink href={`/apps/${discussion.app.id}`} kind='underline'>{discussion.app.name}</RouterLink> 的 <RouterLink href={`/discussions/${discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>) :
                         (<LabelMedium marginBottom='scale200'>发起了 <RouterLink href={`/discussions/${discussion.id}`} kind='underline'>讨论</RouterLink></LabelMedium>)
                     }
-                    <LabelSmall color='primary300'>{dayjs(discussion.createdAt).fromNow()}</LabelSmall>
+                    <LabelSmall color='primary500' marginTop='scale0'>{DateTime.formatCN(discussion.createdAt)}</LabelSmall>
                     <Block display='flex' flexDirection='column'>
                         <ParagraphMedium>{discussion.title}</ParagraphMedium>
                         <Block display='flex' alignItems='center' padding='scale300' backgroundColor='backgroundTertiary'

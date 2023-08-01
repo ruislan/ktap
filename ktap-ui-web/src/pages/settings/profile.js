@@ -1,5 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
 
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -9,7 +8,7 @@ import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { Select } from 'baseui/select';
 import { Textarea } from "baseui/textarea";
 
-import { Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '../../constants';
+import { DateTime, Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '../../constants';
 import Notification from '../../components/notification';
 import { useAuth } from '../../hooks/use-auth';
 import AvatarSquare from '../../components/avatar-square';
@@ -23,7 +22,7 @@ function SettingsProfile() {
         location: user?.location || '',
         bio: user?.bio || '',
         gender: [{ id: user?.gender }],
-        birthday: dayjs(user?.birthday).format('YYYY-MM-DD'),
+        birthday: DateTime.formatShort(user?.birthday),
     });
 
     // process avatar upload
@@ -106,7 +105,7 @@ function SettingsProfile() {
                     />
                 </FormControl>
                 <FormControl label={<LabelSmall>生日</LabelSmall>}>
-                    <DatePicker size='compact' formatString='yyyy-MM-dd' value={new Date(form.birthday)} onChange={({ date }) => setForm({ ...form, birthday: dayjs(date).format('YYYY-MM-DD') })} />
+                    <DatePicker size='compact' formatString='yyyy-MM-dd' value={new Date(form.birthday)} onChange={({ date }) => setForm({ ...form, birthday: DateTime.formatShort(date) })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
                     <Textarea size='compact' value={form.bio} error={form.bio.length > 255}

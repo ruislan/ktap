@@ -1,6 +1,4 @@
 import React from 'react';
-import dayjs from 'dayjs';
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { FormControl } from 'baseui/form-control';
@@ -14,7 +12,7 @@ import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Filter, Plus, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL, Tag } from '../../../constants';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL, Tag } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 
@@ -221,7 +219,7 @@ function AdminPanelTags() {
                             {row => <LabelSmall>{Tag.category.getDisplayLabel(row.category)}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='创建于'>
-                            {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                            {row => <LabelSmall whiteSpace='nowrap'>{DateTime.format(row.createdAt)}</LabelSmall>}
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>

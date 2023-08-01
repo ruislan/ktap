@@ -1,8 +1,6 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { useStyletron } from 'baseui/styles';
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Input, StatefulInput } from 'baseui/input';
@@ -10,7 +8,7 @@ import { HeadingSmall, LabelSmall, ParagraphXSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { ArrowLeft, ArrowRight, Filter, Overflow, Check, Delete } from 'baseui/icon';
 import { Eye, Rocket } from '../../../components/icons';
 import { StatefulPopover } from 'baseui/popover';
@@ -223,7 +221,7 @@ function AdminPanelUsers() {
                                     {row => <LabelSmall>{row?.isLocked ? '是' : '否'}</LabelSmall>}
                                 </TableBuilderColumn>
                                 <TableBuilderColumn header='创建于'>
-                                    {row => <LabelSmall whiteSpace='nowrap'>{dayjs(row?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</LabelSmall>}
+                                    {row => <LabelSmall whiteSpace='nowrap'>{DateTime.format(row?.createdAt)}</LabelSmall>}
                                 </TableBuilderColumn>
                                 <TableBuilderColumn header='操作'>
                                     {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>

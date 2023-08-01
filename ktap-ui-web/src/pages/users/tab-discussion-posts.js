@@ -1,10 +1,9 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 import RouterLink from '../../components/router-link';
 import '../../assets/css/post.css';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
+import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
 import LoadMore from '../../components/load-more';
 
 function TabDiscussionPosts({ theUser }) {
@@ -49,7 +48,7 @@ function TabDiscussionPosts({ theUser }) {
                         ? (<LabelMedium marginBottom='scale200'>回复了 <RouterLink href={`/users/${post.discussion.user.id}`} kind='underline'>{post.discussion.user.name}</RouterLink> 对 <RouterLink href={`/apps/${post.discussion.app.id}`} kind='underline'>{post.discussion.app.name}</RouterLink> 的 <RouterLink href={`/reviews/${post.discussion.id}`} kind='underline'>讨论</RouterLink> </LabelMedium>)
                         : (<LabelMedium marginBottom='scale200'>回复了讨论</LabelMedium>)
                     }
-                    <LabelSmall color='primary500' marginTop='scale0'>{dayjs(post.createdAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                    <LabelSmall color='primary500' marginTop='scale0'>{DateTime.formatCN(post.createdAt)}</LabelSmall>
                     <Block display='flex' flexDirection='column'>
                         <ParagraphMedium className='post' marginBottom='0' dangerouslySetInnerHTML={{ __html: post.content }} />
                         <ParagraphSmall backgroundColor='backgroundTertiary' marginBottom='0' padding='scale300' color='primary200'

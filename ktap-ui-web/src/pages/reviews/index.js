@@ -1,7 +1,5 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import Compressor from 'compressorjs';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { StatefulPopover, PLACEMENT } from 'baseui/popover';
@@ -14,7 +12,7 @@ import { LabelSmall, LabelXSmall, LabelLarge, LabelMedium, ParagraphMedium, Para
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
 import { ThumbUp, ThumbDown, Gift, Hand, More, Photograph } from '../../components/icons';
 import Notification from '../../components/notification';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, Styles, IMAGE_UPLOAD_SIZE_LIMIT } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, Styles, IMAGE_UPLOAD_SIZE_LIMIT, DateTime } from '../../constants';
 
 import ReviewAppGlance from './review-app-glance';
 import ReviewComments from './review-comments';
@@ -300,7 +298,8 @@ function Review() {
                                                 <LabelSmall color='primary400'>{remark}</LabelSmall>
                                             </Block>
                                             <Block marginBottom='scale300'>
-                                                <Textarea rows='5' maxLength='5000' value={draftReview.content} onChange={e => setDraftReview(prev => { return { ...prev, content: e.target.value }; })} />
+                                                <LabelXSmall color='primary400' marginBottom='scale300' marginRight='scale100' overrides={{ Block: { style: { textAlign: 'right' } } }}>{draftReview.content.length > 0 ? `${draftReview.content.length} / 8000` : ''}</LabelXSmall>
+                                                <Textarea rows='5' maxLength='8000' value={draftReview.content} onChange={e => setDraftReview(prev => { return { ...prev, content: e.target.value }; })} />
                                             </Block>
                                             {/* 图片操作区域 */}
                                             {draftReview.images.length + draftReview.files.length > 0 && (
@@ -426,7 +425,7 @@ function Review() {
                                         </Block> :
                                         <Block paddingTop='scale300' paddingBottom='scale300'>
                                             <Block display='flex' justifyContent='space-between' alignItems='center' marginTop='scale100' minHeight='28px'>
-                                                <LabelSmall color='primary500'>发布于：{dayjs(review.updatedAt).format('YYYY 年 M 月 D 日')}</LabelSmall>
+                                                <LabelSmall color='primary500'>发布于：{DateTime.formatCN(review.updatedAt)}</LabelSmall>
                                                 {user?.id === review?.user?.id &&
                                                     <Block>
                                                         <StatefulPopover

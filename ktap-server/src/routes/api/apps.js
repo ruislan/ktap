@@ -1,4 +1,4 @@
-import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
+import { AppMedia, Pagination, REVIEW_CONTENT_LIMIT, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
 import { authenticate } from "../../lib/auth.js";
 
 const apps = async function (fastify, opts) {
@@ -472,7 +472,7 @@ const apps = async function (fastify, opts) {
         // 处理一下超过三张图片的情况
         if (reqBody.images.length > REVIEW_IMAGE_COUNT_LIMIT) reqBody.images = reqBody.images.slice(0, REVIEW_IMAGE_COUNT_LIMIT);
         let data = {
-            content: reqBody.content || '',
+            content: (reqBody.content || '').slice(0, REVIEW_CONTENT_LIMIT),
             score: Number(reqBody.score) || 3,
             allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
             images: {
@@ -483,11 +483,7 @@ const apps = async function (fastify, opts) {
         if (!review?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
         // 更新评分
-        await fastify.db.$queryRaw`
-                UPDATE App SET score = avgScore FROM
-                (SELECT COALESCE(AVG(score), 4) AS avgScore FROM review WHERE app_id = ${appId})
-                WHERE App.id = ${appId};
-            `;
+        await fastify.utils.computeAppScore({ appId });
 
         // Update timeline if it created a new review
         if (!review?.id) {
@@ -530,10 +526,7 @@ const apps = async function (fastify, opts) {
         // XXX 这里读取数据库有点多了，看怎么减少一下
         for await (const item of data) {
             // 获取赞踩数量
-            const thumbs = (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${item.id}) AS ups,
-                (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${item.id}) AS downs
-            `)[0];
+            const thumbs = await fastify.utils.getReviewThumbs({ id: item.id });
             item.gifts = (await fastify.utils.getReviewGifts({ id: item.id })).gifts;
             item.meta = { comments: item._count.comments, gifts: item._count.gifts, ups: thumbs?.ups || 0, downs: thumbs?.downs || 0 };
 
