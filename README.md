@@ -1,4 +1,7 @@
-# KTap
+<div align="center">
+      <div style="display:flex; justify-content: center; align-items: center; border-radius:8px; color: #000; width: 96px; height: 96px; background-color: #fff;font-weight: 700; line-height: 32px; font-size: 56px;margin-bottom:32px;">K</div>
+      <h1>KTap</h1>
+</div>
 
 ## 简介
 

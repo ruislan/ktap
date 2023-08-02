@@ -1,24 +1,23 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { Button } from 'baseui/button';
-import { LabelMedium, MonoLabelMedium } from 'baseui/typography';
 import { Skeleton } from 'baseui/skeleton';
+import { LabelMedium, MonoLabelMedium } from 'baseui/typography';
 import SideBox from '../../components/side-box';
 import ListItem from '../../components/list-item';
+import { Button } from 'baseui/button';
 
-function SideGenres() {
+function SideTags({ title, apiUrl }) {
     const [isLoading, setIsLoading] = React.useState(false);
     const [dataList, setDataList] = React.useState([]);
     const [isHide, setIsHide] = React.useState(true);
     const [expendable, setExpendable] = React.useState(false);
     const expendRef = React.useRef(null);
-
     React.useEffect(() => {
         (async () => {
             setIsLoading(true);
             try {
-                const res = await fetch('/api/tags/genres');
+                const res = await fetch(apiUrl);
                 if (res.ok) {
                     const json = await res.json();
                     setDataList(json.data);
@@ -27,14 +26,14 @@ function SideGenres() {
                 setIsLoading(false);
             }
         })();
-    }, []);
+    }, [apiUrl]);
 
     React.useEffect(() => {
         setExpendable(expendRef.current.clientHeight > 300);
     }, [isLoading]);
 
     return (
-        <SideBox title='游戏类型'>
+        <SideBox title={title}>
             {isLoading && <Block display='flex' flexDirection='column' paddingLeft='scale300' paddingRight='scale300' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
                 <Skeleton animation height='40px' width='100%' />
                 <Skeleton animation height='40px' width='100%' />
@@ -75,4 +74,4 @@ function SideGenres() {
     );
 }
 
-export default SideGenres;
+export default SideTags;

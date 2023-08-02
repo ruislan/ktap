@@ -89,10 +89,7 @@ function NewsDetail() {
                                 })
                             }
                         }}>
-                        <Block
-                            paddingLeft='scale900'
-                            paddingRight='scale900'
-                            paddingBottom='scale900'
+                        <Block paddingLeft='scale900' paddingRight='scale900' paddingBottom='scale900'
                             overrides={{
                                 Block: {
                                     style: ({ $theme }) => ({

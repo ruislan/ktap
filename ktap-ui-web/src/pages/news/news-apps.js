@@ -62,77 +62,74 @@ function NewsAppsBanner({ appId }) {
             }
         })();
     }, [appId, navigate]);
+
+    if (isLoading) return <Block width='100vw'><Skeleton width='100%' height='152px' animation /></Block>;
     return (
-        <>{
-            isLoading ?
-                <Skeleton width='100%' height='152px' animation /> :
-                <Block width='100vw' justifyContent='center' display='flex' position='relative' backgroundColor='backgroundSecondary' overflow='hidden'>
-                    <Block width='100%' height='100%'
-                        overrides={{
-                            Block: {
-                                style: {
-                                    background: `url(${data.media.head.image}) center/cover no-repeat `,
-                                    filter: 'blur(60px) brightness(40%)',
-                                    position: 'absolute',
-                                    opacity: .6,
-                                    zIndex: 1,
-                                }
-                            }
-                        }}
-                    />
-                    <Block width={LAYOUT_MAIN} height='100%' display='flex' overrides={{
+        <Block width='100vw' justifyContent='center' display='flex' position='relative' backgroundColor='backgroundSecondary' overflow='hidden'>
+            <Block width='100%' height='100%'
+                overrides={{
+                    Block: {
+                        style: {
+                            background: `url(${data.media.head.image}) center/cover no-repeat `,
+                            filter: 'blur(60px) brightness(40%)',
+                            position: 'absolute',
+                            opacity: .6,
+                            zIndex: 1,
+                        }
+                    }
+                }}
+            />
+            <Block width={LAYOUT_MAIN} height='100%' display='flex' overrides={{
+                Block: {
+                    style: {
+                        zIndex: 2,
+                        [MOBILE_BREAKPOINT]: {
+                            flexDirection: 'column',
+                            width: '100%',
+                        },
+                    }
+                }
+            }}>
+                <Block width='290px' height='136px' marginTop='scale300' marginBottom='scale300' marginRight='scale300' marginLeft='0'
+                    overrides={{
                         Block: {
                             style: {
-                                zIndex: 2,
                                 [MOBILE_BREAKPOINT]: {
-                                    flexDirection: 'column',
-                                    width: '100%',
-                                },
+                                    display: 'none',
+                                }
                             }
                         }
-                    }}>
-                        <Block width='290px' height='136px' marginTop='scale300' marginBottom='scale300' marginRight='scale300' marginLeft='0'
-                            overrides={{
-                                Block: {
-                                    style: {
-                                        [MOBILE_BREAKPOINT]: {
-                                            display: 'none',
-                                        }
+                    }}
+                >
+                    <img width='100%' height='100%' className={css({
+                        borderRadius: theme.borders.radius300,
+                    })} src={data.media.head.image} />
+                </Block>
+                <Block display='flex' flexDirection='column' margin='scale300' justifyContent='space-between'>
+                    <Block>
+                        <HeadingMedium marginTop='0' marginBottom='scale100' >{data.name}</HeadingMedium>
+                        <HeadingXSmall marginTop='0' marginBottom='scale100' color='primary100' overrides={{
+                            Block: {
+                                style: {
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px',
+                                    lineHeight: '25px',
+                                    textShadow: '1px 1px 0px rgb(0 0 0 / 50%)',
+                                    [MOBILE_BREAKPOINT]: {
+                                        marginBottom: theme.sizing.scale600,
                                     }
                                 }
-                            }}
-                        >
-                            <img width='100%' height='100%' className={css({
-                                borderRadius: theme.borders.radius300,
-                            })} src={data.media.head.image} />
-                        </Block>
-                        <Block display='flex' flexDirection='column' margin='scale300' justifyContent='space-between'>
-                            <Block>
-                                <HeadingMedium marginTop='0' marginBottom='scale100' >{data.name}</HeadingMedium>
-                                <HeadingXSmall marginTop='0' marginBottom='scale100' color='primary100' overrides={{
-                                    Block: {
-                                        style: {
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '1px',
-                                            lineHeight: '25px',
-                                            textShadow: '1px 1px 0px rgb(0 0 0 / 50%)',
-                                            [MOBILE_BREAKPOINT]: {
-                                                marginBottom: theme.sizing.scale600,
-                                            }
-                                        }
-                                    }
-                                }}>新闻中心</HeadingXSmall>
-                            </Block>
-                            <Block>
-                                <Button kind='secondary' size='compact' onClick={() => handleFollow()} startEnhancer={isFollowed ? <Check size={16} /> : null}>
-                                    {isFollowed ? '已关注' : '关注'}
-                                </Button>
-                            </Block>
-                        </Block>
+                            }
+                        }}>新闻中心</HeadingXSmall>
+                    </Block>
+                    <Block>
+                        <Button kind='secondary' size='compact' onClick={() => handleFollow()} startEnhancer={isFollowed ? <Check size={16} /> : null}>
+                            {isFollowed ? '已关注' : '关注'}
+                        </Button>
                     </Block>
                 </Block>
-        }
-        </>
+            </Block>
+        </Block>
     );
 }
 

@@ -9,15 +9,20 @@ function useAuth() {
     return React.useContext(AuthContext);
 }
 
+function CheckLoginAndForward() {
+    const { user } = useAuth();
+    return user?.id ? <Navigate to={`/users/${user.id}`} replace /> : <></>;
+}
+
 function RequireAuth({ children }) {
     const { authenticating, isAuthenticated } = useAuth();
-    if (authenticating) { return <></>; }
+    if (authenticating) return <></>;
     return isAuthenticated() ? children : <Navigate to='/login' replace />;
 }
 
 function RequireAdmin({ children }) {
     const { authenticating, isAdmin } = useAuth();
-    if (authenticating) { return <></>; }
+    if (authenticating) return <></>;
     return isAdmin() ? children : <Navigate to='/not-found' replace />;
 }
 
@@ -26,22 +31,23 @@ function AuthProvider({ children }) {
     const [user, setUser] = React.useState(null);
     const [authenticating, setAuthenticating] = React.useState(true);
 
-    React.useEffect(() => {
-        async function fetchUser() {
-            if (Cookies.get(KEY_USER_ID)) {
-                try {
-                    const res = await fetch(`/api/user`);
-                    if (!res.ok) throw new Error();
-                    const json = await res.json();
-                    setUser(json.data);
-                } catch (e) {
-                    localLogout();
-                }
+    const fetchUser = React.useCallback(async () => {
+        if (Cookies.get(KEY_USER_ID)) {
+            try {
+                const res = await fetch(`/api/user`);
+                if (!res.ok) throw new Error();
+                const json = await res.json();
+                setUser(json.data);
+            } catch (e) {
+                localLogout();
             }
-            setAuthenticating(false);
         }
-        fetchUser();
+        setAuthenticating(false);
     }, []);
+
+    React.useEffect(() => {
+        fetchUser();
+    }, [fetchUser]);
 
     async function login(email, password) {
         try {
@@ -50,7 +56,10 @@ function AuthProvider({ children }) {
                 body: JSON.stringify({ email, password }),
                 headers: { 'Content-Type': 'application/json' }
             });
-            if (!res.ok) {
+            if (res.ok) {
+                fetchUser();
+                // window.location.href = to;
+            } else {
                 if (res.status === 403) {
                     const json = await res.json();
                     throw new Error(json.message);
@@ -107,4 +116,5 @@ export {
     AuthProvider,
     RequireAuth,
     RequireAdmin,
+    CheckLoginAndForward,
 };

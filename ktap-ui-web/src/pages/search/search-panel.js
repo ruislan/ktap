@@ -11,6 +11,32 @@ import { Star } from '../../components/icons';
 import Capsule from '../../components/capsule';
 import LoadMore from '../../components/load-more';
 
+function SearchInput({ initKeyword = '' }) {
+    const navigate = useNavigate();
+    const [word, setWord] = React.useState(initKeyword);
+    return (
+        <Block flex='1'>
+            <Input value={word} size='default' clearable placeholder='搜一搜'
+                overrides={{
+                    StartEnhancer: {
+                        style: () => ({
+                            paddingLeft: '0px'
+                        })
+                    }
+                }}
+                startEnhancer={<SearchIcon size='scale800' />}
+                endEnhancer={<ArrowRight cursor='pointer' onClick={() => { navigate(`/search?q=${word}`, { replace: true }); }} size='scale800' />}
+                onChange={e => setWord(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        navigate(`/search?q=${word}`, { replace: true });
+                    }
+                }}
+            />
+        </Block>
+    );
+}
 
 function SearchPanel() {
     const limit = PAGE_LIMIT_NORMAL;
@@ -23,12 +49,11 @@ function SearchPanel() {
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
     const [count, setCount] = React.useState(0);
-    const [word, setWord] = React.useState('');
+
     const ref = React.useRef(null);
 
     const fetchData = React.useCallback(async (skip = 0) => {
         const keyword = searchParams.get('q') || '';
-        setWord(keyword);
         setSkip(skip);
         setIsLoading(true);
         if (skip === 0) setDataList([]);
@@ -49,36 +74,7 @@ function SearchPanel() {
 
     return (
         <>
-            <Block display='flex' alignItems='center' justifyContent='space-between'>
-                <Block overrides={{
-                    Block: {
-                        style: {
-                            flex: 1,
-                        }
-                    }
-                }}>
-                    <Input value={word} size='default' clearable placeholder='搜一搜'
-                        overrides={{
-                            StartEnhancer: {
-                                style: () => ({
-                                    paddingLeft: '0px'
-                                })
-                            }
-                        }}
-                        startEnhancer={<SearchIcon size='scale800' />}
-                        endEnhancer={<ArrowRight cursor='pointer' onClick={() => { navigate(`/search?q=${word}`, { replace: true }); }} size='scale800' />}
-                        onChange={e => setWord(e.target.value)}
-                        onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                navigate(`/search?q=${word}`, { replace: true });
-                            }
-                        }}
-                    />
-                </Block>
-            </Block>
-
-
+            <SearchInput initKeyword={searchParams.get('q') || ''} />
             <Block
                 overrides={{
                     Block: {

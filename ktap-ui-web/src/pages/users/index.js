@@ -14,10 +14,32 @@ import TabFollowUsers from './tab-follow-users';
 
 const UserProfile = lazy(() => import('./user-profile'));
 
+function UserContent({ theUser }) {
+    const [activeTab, setActiveTab] = React.useState(0);
+    return (
+        <>
+            <Block display='flex' alignItems='center' marginBottom='scale600'>
+                <RoundTab activeKey={activeTab}
+                    onChange={(e) => setActiveTab(e.activeKey)}
+                    names={['活动', '评测', '评测回复', '讨论', '讨论发帖', '关注游戏', '关注用户']}
+                />
+            </Block>
+            <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
+                {activeTab === 0 && theUser && <TabActivities theUser={theUser} />}
+                {activeTab === 1 && theUser && <TabReviews theUser={theUser} />}
+                {activeTab === 2 && theUser && <TabReviewComments theUser={theUser} />}
+                {activeTab === 3 && theUser && <TabDiscussions theUser={theUser} />}
+                {activeTab === 4 && theUser && <TabDiscussionPosts theUser={theUser} />}
+                {activeTab === 5 && theUser && <TabFollowApps theUser={theUser} />}
+                {activeTab === 6 && theUser && <TabFollowUsers theUser={theUser} />}
+            </Block>
+        </>
+    );
+}
+
 function User() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = React.useState(0);
     const [theUser, setTheUser] = React.useState(null);
     const [theUserMeta, setTheUserMeta] = React.useState(null);
 
@@ -66,21 +88,7 @@ function User() {
                     })
                 }
             }}>
-                <Block display='flex' alignItems='center' marginBottom='scale600'>
-                    <RoundTab activeKey={activeTab}
-                        onChange={(e) => setActiveTab(e.activeKey)}
-                        names={['活动', '评测', '评测回复', '讨论', '讨论发帖', '关注游戏', '关注用户']}
-                    />
-                </Block>
-                <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
-                    {activeTab === 0 && theUser && <TabActivities theUser={theUser} />}
-                    {activeTab === 1 && theUser && <TabReviews theUser={theUser} />}
-                    {activeTab === 2 && theUser && <TabReviewComments theUser={theUser} />}
-                    {activeTab === 3 && theUser && <TabDiscussions theUser={theUser} />}
-                    {activeTab === 4 && theUser && <TabDiscussionPosts theUser={theUser} />}
-                    {activeTab === 5 && theUser && <TabFollowApps theUser={theUser} />}
-                    {activeTab === 6 && theUser && <TabFollowUsers theUser={theUser} />}
-                </Block>
+                <UserContent theUser={theUser} />
             </Block>
             <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}
                 overrides={{
@@ -94,7 +102,9 @@ function User() {
                     }
                 }}
             >
-                <Suspense fallback={<Skeleton width="100%" height="410px" animation />}><UserProfile theUser={theUser} theUserMeta={theUserMeta} /></Suspense>
+                <Suspense fallback={<Skeleton width="100%" height="410px" animation />}>
+                    <UserProfile theUser={theUser} theUserMeta={theUserMeta} />
+                </Suspense>
             </Block>
         </Block>
     );

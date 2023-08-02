@@ -8,7 +8,7 @@ import AvatarSquare from '../../components/avatar-square';
 import GenderLabel from '../../components/gender-label';
 import { Numbers } from '../../constants';
 
-function UserDataItem({ name, value }) {
+const UserDataItem = React.memo(({ name, value }) => {
     return (
         <Block display='flex' flexDirection='column' alignItems='flex-start' padding='scale300' width='100%'
             overrides={{
@@ -30,7 +30,7 @@ function UserDataItem({ name, value }) {
             <LabelSmall color='primary200' marginBottom='scale100'>{name}</LabelSmall>
         </Block>
     );
-}
+});
 
 function UserProfile({ theUser, theUserMeta }) {
     const navigate = useNavigate();
@@ -63,7 +63,6 @@ function UserProfile({ theUser, theUserMeta }) {
                 })
             }
         }}>
-
             <Block display='flex' justifyContent='flex-start'>
                 <AvatarSquare name={theUser?.name} size='128px' src={theUser?.avatar} radius='8px' />
             </Block>

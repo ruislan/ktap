@@ -48,31 +48,31 @@ function Rank() {
                 {activeTab === 0 &&
                     <>
                         <LabelSmall marginLeft='scale300' color='primary300' marginBottom='scale600'>按评分计算</LabelSmall>
-                        <RankAppsList url='/api/ranks/apps/best' />
+                        <RankAppsList apiUrl='/api/ranks/apps/best' />
                     </>
                 }
                 {activeTab === 1 &&
                     <>
                         <LabelSmall marginLeft='scale300' color='primary300' marginBottom='scale600'>按评论数量计算</LabelSmall>
-                        <RankAppsList url='/api/ranks/apps/hottest' />
+                        <RankAppsList apiUrl='/api/ranks/apps/hottest' />
                     </>
                 }
                 {activeTab === 2 &&
                     <>
                         <LabelSmall marginLeft='scale300' color='primary300' marginBottom='scale600'>按最新时间计算</LabelSmall>
-                        <RankAppsList url='/api/ranks/apps/newest' />
+                        <RankAppsList apiUrl='/api/ranks/apps/newest' />
                     </>
                 }
                 {activeTab === 3 &&
                     <>
                         <LabelSmall marginLeft='scale300' color='primary300' marginBottom='scale600'>按评分倒计算</LabelSmall>
-                        <RankAppsList url='/api/ranks/apps/worst' />
+                        <RankAppsList apiUrl='/api/ranks/apps/worst' />
                     </>
                 }
                 {activeTab === 4 &&
                     <>
                         <LabelSmall marginLeft='scale300' color='primary300' marginBottom='scale600'>按开发和发行综合计算</LabelSmall>
-                        <RankOrganizationsList url='/api/ranks/organizations/best' />
+                        <RankOrganizationsList apiUrl='/api/ranks/organizations/best' />
                     </>
                 }
             </Block>

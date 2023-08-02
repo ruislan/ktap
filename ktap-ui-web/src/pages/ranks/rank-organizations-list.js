@@ -7,7 +7,7 @@ import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import Capsule from '../../components/capsule';
 import LoadMore from '../../components/load-more';
 
-function RankOrganizationsList({ url }) {
+function RankOrganizationsList({ apiUrl }) {
     const limit = PAGE_LIMIT_NORMAL;
     const [css, theme] = useStyletron();
     const [skip, setSkip] = React.useState(0);
@@ -16,21 +16,19 @@ function RankOrganizationsList({ url }) {
     const [hasMore, setHasMore] = React.useState(false);
     React.useEffect(() => {
         (async () => {
-            if (url) {
-                setIsLoading(true);
-                try {
-                    const res = await fetch(`${url}?skip=${skip}&limit=${limit}`);
-                    if (res.ok) {
-                        const json = await res.json();
-                        setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                        setHasMore(json.skip + json.limit < json.count);
-                    }
-                } finally {
-                    setIsLoading(false);
+            setIsLoading(true);
+            try {
+                const res = await fetch(`${apiUrl}?skip=${skip}&limit=${limit}`);
+                if (res.ok) {
+                    const json = await res.json();
+                    setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                    setHasMore(json.skip + json.limit < json.count);
                 }
+            } finally {
+                setIsLoading(false);
             }
         })();
-    }, [url, skip, limit]);
+    }, [apiUrl, skip, limit]);
     return (
         <>
             {dataList && dataList.map((org, index) => {

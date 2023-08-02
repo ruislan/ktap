@@ -1,53 +1,64 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 
+const TabButton = React.memo(({ isActive, onPointerDown, ...props }) => {
+    const [css, theme] = useStyletron();
+    return (
+        <button className={css({
+            display: 'inline-block', margin: '0px', border: 'none', outline: 'none', appearance: 'none', position: 'relative',
+            zIndex: 2, backgroundColor: 'transparent', backgroundImage: 'none',
+            paddingLeft: theme.sizing.scale500, paddingRight: theme.sizing.scale500,
+            paddingTop: theme.sizing.scale400, paddingBottom: theme.sizing.scale400,
+            fontSize: theme.typography.LabelSmall.fontSize, fontFamily: theme.typography.LabelSmall.fontFamily,
+            fontWeight: theme.typography.LabelSmall.fontWeight, lineHeight: theme.typography.LabelSmall.lineHeight,
+            color: isActive ? theme.colors.primary : theme.colors.primary400, cursor: 'pointer',
+            boxShadow: isActive ? theme.lighting.shadow400 : 'none',
+            ':hover': { color: theme.colors.primary, }
+        })} onPointerDown={onPointerDown} {...props} />
+    );
+});
+
+const TabBg = React.memo(() => {
+    const [css, theme] = useStyletron();
+    return (
+        <div className={css({
+            backgroundColor: 'rgb(71,71,71)', borderRadius: theme.borders.radius300, position: 'absolute',
+            transition: 'transform ease .25s', zIndex: 1,
+        })} />
+    );
+});
+
 export default function RoundTab({ activeKey, names, onChange }) {
     const [css, theme] = useStyletron();
-    const btnRefs = React.useRef([]);
-    const bgRef = React.useRef(null);
+    const ref = React.useRef(null);
 
     React.useEffect(() => {
-        if (btnRefs.current[activeKey]) {
-            const { offsetLeft, offsetWidth, offsetHeight } = btnRefs.current[activeKey];
-            bgRef.current.style.width = `${offsetWidth}px`;
-            bgRef.current.style.height = `${offsetHeight}px`;
-            bgRef.current.style.transform = `translateX(${offsetLeft - 6}px)`;
+        if (ref.current) {
+            const tab = ref.current.children[activeKey];
+            const bg = ref.current.lastElementChild;
+            const { offsetLeft, offsetWidth, offsetHeight } = tab;
+            bg.style.width = `${offsetWidth}px`;
+            bg.style.height = `${offsetHeight}px`;
+            bg.style.transform = `translateZ(0) translateX(${offsetLeft - 6}px)`;
         }
     }, [activeKey]);
 
     return (
-        <div className={css({
+        <div ref={ref} className={css({
             display: 'flex', alignItems: 'center', width: '100%',
             borderRadius: theme.borders.radius300, padding: theme.sizing.scale200,
             overflow: 'auto', backgroundColor: 'rgb(41,41,41)',
             whiteSpace: 'nowrap', position: 'relative',
         })}>
             {names.map((name, index) => (
-                <button key={index} ref={el => btnRefs.current[index] = el} className={css({
-                    display: 'inline-block', margin: '0px', border: 'none', outline: 'none', appearance: 'none', position: 'relative',
-                    zIndex: 2,
-                    paddingLeft: theme.sizing.scale500, paddingRight: theme.sizing.scale500,
-                    paddingTop: theme.sizing.scale400, paddingBottom: theme.sizing.scale400,
-                    fontSize: theme.typography.LabelSmall.fontSize, fontFamily: theme.typography.LabelSmall.fontFamily,
-                    fontWeight: theme.typography.LabelSmall.fontWeight, lineHeight: theme.typography.LabelSmall.lineHeight,
-                    color: activeKey === index ? theme.colors.primary : theme.colors.primary400, cursor: 'pointer',
-                    backgroundColor: 'transparent',
-                    boxShadow: activeKey === index ? theme.lighting.shadow400 : 'none',
-                    ':hover': {
-                        color: theme.colors.primary,
-                    }
-                })} onClick={(e) => {
+                <TabButton key={index} isActive={activeKey === index} onPointerDown={(e) => {
                     e.activeKey = index;
                     onChange(e);
                 }}>
                     {name}
-                </button>
+                </TabButton>
             ))}
-            <div ref={bgRef} className={css({
-                backgroundColor: theme.colors.backgroundPrimary, borderRadius: theme.borders.radius300, position: 'absolute',
-                transitionTimingFunction: theme.animation.easeInOutCurve, transitionDuration: theme.animation.timing200,
-                zIndex: 1,
-            })} />
+            <TabBg />
         </div>
     );
 }
