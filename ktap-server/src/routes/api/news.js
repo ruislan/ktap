@@ -3,39 +3,41 @@ import { AppMedia, Pagination } from "../../constants.js";
 const news = async (fastify, opts) => {
     fastify.get('', async function (req, reply) {
         const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
-
-        const count = await fastify.db.news.count();
-        const data = await fastify.db.news.findMany({
-            take: limit,
-            skip,
-            orderBy: { updatedAt: 'desc' },
-            include: {
-                app: {
-                    include: {
-                        media: {
-                            where: { usage: AppMedia.usage.logo },
-                            select: {
-                                image: true,
-                                thumbnail: true,
+        const data = await fastify.caching.get(`news_${skip}_${limit}`, async () => {
+            const count = await fastify.db.news.count();
+            const newsList = await fastify.db.news.findMany({
+                take: limit,
+                skip,
+                orderBy: { updatedAt: 'desc' },
+                include: {
+                    app: {
+                        include: {
+                            media: {
+                                where: { usage: AppMedia.usage.logo },
+                                select: {
+                                    image: true,
+                                    thumbnail: true,
+                                },
                             },
-                        },
-                    }
-                },
-            }
+                        }
+                    },
+                }
+            });
+            // transform data
+            newsList.forEach(item => {
+                item.app = {
+                    id: item.app.id,
+                    name: item.app.name,
+                    logo: item.app.media[0].image,
+                };
+                item.meta = { views: item.viewCount };
+                delete item.content;
+                delete item.banner;
+                delete item.viewCount;
+            });
+            return { data: newsList, count, skip, limit };
         });
-        // transform data to the form that suite the view
-        data.forEach(item => {
-            item.app = {
-                id: item.app.id,
-                name: item.app.name,
-                logo: item.app.media[0].image,
-            };
-            item.meta = { views: item.viewCount };
-            delete item.content;
-            delete item.banner;
-            delete item.viewCount;
-        });
-        return reply.code(200).send({ data, count, skip, limit });
+        return reply.code(200).send(data);
     });
 
     fastify.get('/apps/:appId', async function (req, reply) {

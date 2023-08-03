@@ -23,7 +23,7 @@ const TabBg = React.memo(() => {
     return (
         <div className={css({
             backgroundColor: 'rgb(71,71,71)', borderRadius: theme.borders.radius300, position: 'absolute',
-            transition: 'transform ease .25s', zIndex: 1,
+            transition: 'all cubic-bezier(0.4, 0, 0.2, 1) .25s', zIndex: 1,
         })} />
     );
 });
@@ -36,10 +36,9 @@ export default function RoundTab({ activeKey, names, onChange }) {
         if (ref.current) {
             const tab = ref.current.children[activeKey];
             const bg = ref.current.lastElementChild;
-            const { offsetLeft, offsetWidth, offsetHeight } = tab;
-            bg.style.width = `${offsetWidth}px`;
-            bg.style.height = `${offsetHeight}px`;
-            bg.style.transform = `translateZ(0) translateX(${offsetLeft - 6}px)`;
+            bg.style.width = `${tab.offsetWidth}px`;
+            bg.style.height = `${tab.offsetHeight}px`;
+            bg.style.transform = `translate3d(${tab.offsetLeft - 6}px, 0, 0)`;
         }
     }, [activeKey]);
 

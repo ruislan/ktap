@@ -7,7 +7,7 @@ import fastifyStatic from '@fastify/static';
 import prismaPlugin from './src/plugins/prisma.js';
 import bcryptPlugin from './src/plugins/bcrypt.js';
 import storagePlugin from './src/plugins/storage.js';
-import eventPlugin from './src/plugins/events.js';
+import pubsubPlugin from './src/plugins/pubsub.js';
 import mailerPlugin from './src/plugins/mailer.js';
 import jiebaPlugin from './src/plugins/jieba.js';
 
@@ -37,7 +37,7 @@ const main = async () => {
     await server.register(prismaPlugin);
     await server.register(bcryptPlugin);
     await server.register(storagePlugin, { base: process.env.STORAGE_DISK_BASE });
-    await server.register(eventPlugin);
+    await server.register(pubsubPlugin);
     await server.register(mailerPlugin, {
         defaults: { from: process.env.MAILER_DEFAULTS_FROM },
         transport: {

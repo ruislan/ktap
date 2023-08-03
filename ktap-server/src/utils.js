@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin';
 import sanitizeHtml from 'sanitize-html';
-import { errors } from './constants.js';
+import { Pagination, errors } from './constants.js';
 
 const cleanContent = (content) => {
     return sanitizeHtml(content, {
@@ -14,6 +14,34 @@ const cleanContent = (content) => {
 // XXX 临时的一个避免重复代码的归并处，后续应该还是要根据业务对象来进行划分开
 const utils = async (fastify, opts, next) => {
     fastify.decorate('utils', {
+        // 被用得最多的 limit 个 Tag
+        async getTagsByHot({ id, limit = Pagination.limit.default, type = '' }) {
+            type = type.toLowerCase();
+
+            let tags = [];
+            if (type === 'app') {
+                tags = await fastify.db.$queryRaw`
+                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
+                    WHERE AppUserTagRef.app_id = ${id} AND AppUserTagRef.tag_id = Tag.id
+                    GROUP BY id ORDER BY count DESC LIMIT ${limit}
+                `;
+            } else if (type === 'user') {
+                tags = await fastify.db.$queryRaw`
+                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
+                    WHERE AppUserTagRef.user_id = ${id} AND AppUserTagRef.tag_id = Tag.id
+                    GROUP BY id ORDER BY count DESC LIMIT ${limit}
+                `;
+            } else {
+                tags = await fastify.db.$queryRaw`
+                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
+                    WHERE AppUserTagRef.tag_id = Tag.id
+                    GROUP BY id ORDER BY count DESC LIMIT ${limit}
+                `;
+            }
+            tags.forEach(tag => tag.count = Number(tag.count));
+
+            return tags;
+        },
         // 计算 App 的评分
         async computeAppScore({ appId }) {
             if (appId <= 0) return;

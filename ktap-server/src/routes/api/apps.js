@@ -9,8 +9,7 @@ const apps = async function (fastify, opts) {
     fastify.get('/recommended', async function (req, reply) {
         const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
-        let cachedData = fastify.caching.apps.get(`recommended_${skip}_${limit}`);
-        if (!cachedData) {
+        const data = await fastify.caching.get(`apps_recommended_${skip}_${limit}`, async () => {
             const count = await fastify.db.app.count();
             const apps = await fastify.db.app.findMany({
                 where: { isVisible: true, },
@@ -24,8 +23,8 @@ const apps = async function (fastify, opts) {
                 take: limit,
                 skip,
             });
-            // transform data to the form that suite the view
-            const data = [];
+            // transform data
+            const theData = [];
             for await (const item of apps) {
                 const app = {
                     id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
@@ -39,21 +38,16 @@ const apps = async function (fastify, opts) {
                     }
                 };
                 try {
-                    app.tags = await fastify.db.$queryRaw`
-                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM
-                    AppUserTagRef, Tag WHERE AppUserTagRef.app_id = ${item.id} AND AppUserTagRef.tag_id = Tag.id
-                    GROUP BY id ORDER BY count DESC LIMIT 5
-                `;
-                    app.tags.forEach(tag => tag.count = Number(tag.count));
+                    app.tags = await fastify.utils.getTagsByHot({ id: item.id, limit: 5, type: 'app' });
                 } catch {
                     app.tags = [];
                 }
-                data.push(app);
+                theData.push(app);
             }
-            cachedData = { data, count, skip, limit };
-            fastify.caching.apps.set(`recommended_${skip}_${limit}`, cachedData, 5 * 60 * 1000);
-        }
-        return reply.code(200).send(cachedData);
+            return { data: theData, count, skip, limit };
+        });
+
+        return reply.code(200).send(data);
     });
 
     // 最近更新
@@ -61,9 +55,8 @@ const apps = async function (fastify, opts) {
     fastify.get('/by-updated', async function (req, reply) {
         const { limit } = Pagination.parse(0, req.query.limit);
 
-        let cachedData = fastify.caching.apps.get(`by_updated_${limit}`);
-        if (!cachedData) {
-            cachedData = await fastify.db.app.findMany({
+        const data = await fastify.caching.get(`apps_by_updated_${limit}`, async () => {
+            let apps = await fastify.db.app.findMany({
                 where: { isVisible: true, },
                 orderBy: [{ updatedAt: 'desc' }],
                 include: {
@@ -74,8 +67,8 @@ const apps = async function (fastify, opts) {
                 },
                 take: limit,
             });
-            // transform data to the form that suite the view
-            cachedData = cachedData.map(item => {
+            // transform data
+            apps = apps.map(item => {
                 return {
                     id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
                     media: {
@@ -83,10 +76,10 @@ const apps = async function (fastify, opts) {
                     }
                 };
             });
-            fastify.caching.apps.set(`by_updated_${limit}`, cachedData, 5 * 60 * 1000);
-        }
+            return apps;
+        });
 
-        return reply.code(200).send({ data: cachedData, limit });
+        return reply.code(200).send({ data, limit });
     });
 
     // 最多评价
@@ -96,9 +89,8 @@ const apps = async function (fastify, opts) {
     fastify.get('/by-review', async function (req, reply) {
         const { limit } = Pagination.parse(0, req.query.limit);
 
-        let cachedData = fastify.caching.apps.get(`by_review_${limit}`);
-        if (!cachedData) {
-            cachedData = await fastify.db.app.findMany({
+        const data = await fastify.caching.get(`apps_by_review_${limit}`, async () => {
+            let apps = await fastify.db.app.findMany({
                 where: { isVisible: true, },
                 include: {
                     media: {
@@ -112,8 +104,8 @@ const apps = async function (fastify, opts) {
                 orderBy: [{ reviews: { _count: 'desc' } }],
                 take: limit,
             });
-            // transform data to the form that suite the view
-            cachedData = cachedData.map(item => {
+            // transform data
+            apps = apps.map(item => {
                 return {
                     id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
                     media: {
@@ -124,9 +116,10 @@ const apps = async function (fastify, opts) {
                     }
                 };
             });
-            fastify.caching.apps.set(`by_review_${limit}`, cachedData, 5 * 60 * 1000);
-        }
-        return reply.code(200).send({ data: cachedData, limit });
+            return apps;
+        });
+
+        return reply.code(200).send({ data, limit });
     });
 
     // 热门游戏
@@ -136,16 +129,15 @@ const apps = async function (fastify, opts) {
     fastify.get('/by-hot', async function (req, reply) {
         const { limit } = Pagination.parse(0, req.query.limit);
 
-        let cachedData = fastify.caching.apps.get(`by_hot_${limit}`);
-        if (!cachedData) {
-            cachedData = await fastify.db.$queryRaw`
+        const data = await fastify.caching.get(`apps_by_hot_${limit}`, async () => {
+            let apps = await fastify.db.$queryRaw`
                 SELECT a.*, am.image, am.thumbnail FROM
                 (SELECT a.*, max(r.updated_at) AS latest_updated FROM App a LEFT JOIN Review r ON a.id = r.app_id GROUP BY a.id LIMIT ${limit}) a
                 LEFT JOIN AppMedia am ON a.id = am.app_id WHERE a.is_visible=${true} AND am.usage = ${AppMedia.usage.landscape}
                 ORDER BY a.latest_updated DESC
             `;
             // transform data to the form that suite the view
-            cachedData = cachedData.map(item => {
+            apps = apps.map(item => {
                 return {
                     id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
                     media: {
@@ -153,9 +145,10 @@ const apps = async function (fastify, opts) {
                     }
                 };
             });
-            fastify.caching.apps.set(`by_hot_${limit}`, cachedData, 5 * 60 * 1000);
-        }
-        return reply.code(200).send({ data: cachedData, limit });
+            return apps;
+        });
+
+        return reply.code(200).send({ data, limit });
     });
 
     // app的信息
@@ -223,12 +216,7 @@ const apps = async function (fastify, opts) {
         data.genres = data.genres.map(ref => ref.tag);
         data.features = data.features.map(ref => ref.tag);
         // get hot tags
-        data.tags = await fastify.db.$queryRaw`
-                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM
-                    AppUserTagRef, Tag WHERE AppUserTagRef.app_id = ${id} AND AppUserTagRef.tag_id = Tag.id
-                    GROUP BY id ORDER BY count DESC LIMIT 15
-                `;
-        data.tags.forEach(tag => tag.count = Number(tag.count));
+        data.tags = await fastify.utils.getTagsByHot({ id, limit: 15, type: 'app' });
         data.developers = data.developers.map(ref => ref.organization);
         data.publishers = data.publishers.map(ref => ref.organization);
 
@@ -399,14 +387,7 @@ const apps = async function (fastify, opts) {
         };
         if (userId) {
             // 用户常用的10个
-            let userFrequentTags = await fastify.db.$queryRaw`
-                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
-                    WHERE AppUserTagRef.user_id = ${userId} AND AppUserTagRef.tag_id = Tag.id
-                    GROUP BY id ORDER BY count DESC LIMIT 10;
-                `;
-            userFrequentTags.forEach(item => item.count = Number(item.count));
-
-            data.frequent = userFrequentTags;
+            data.frequent = await fastify.utils.getTagsByHot({ type: 'user', id: userId, limit: 10 });
 
             // 为当前游戏打的标签
             let userCurrentTags = await fastify.db.appUserTagRef.findMany({

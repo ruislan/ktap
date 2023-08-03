@@ -1,3 +1,4 @@
+'use strict';
 import fs from 'fs';
 import fp from 'fastify-plugin';
 import { v4 as uuid } from 'uuid';

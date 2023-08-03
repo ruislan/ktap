@@ -1,3 +1,4 @@
+'use strict';
 import fp from 'fastify-plugin';
 import bcrypt from 'bcrypt';
 

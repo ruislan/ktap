@@ -44,12 +44,7 @@ export default async function (fastify, opts, next) {
             signed: true
         }
     });
-    await fastify.register(cachingPlugin, {
-        caches: [
-            { name: 'ranks', ttl: 20 * 60 * 1000 },
-            { name: 'apps', ttl: 10 * 60 * 1000 },
-        ]
-    });
+    await fastify.register(cachingPlugin);
 
     // utils
     await fastify.register(utils);

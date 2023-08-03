@@ -5,15 +5,33 @@ import { Skeleton } from 'baseui/skeleton';
 import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '../../constants';
 import RoundTab from '../../components/round-tab';
 import TabAppsList from './tab-apps-list';
+
 const OrganizationProfile = React.lazy(() => import('./organization-profile'));
 const OrganizationContact = React.lazy(() => import('./organization-contact'));
+
+function OrganizationContent({ id }) {
+    const [activeTab, setActiveTab] = React.useState(0);
+    return (
+        <>
+            <Block display='flex' alignItems='center' marginBottom='scale600' >
+                <RoundTab activeKey={activeTab}
+                    onChange={(e) => setActiveTab(e.activeKey)}
+                    names={['开发', '发行']}
+                />
+            </Block >
+            <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
+                {activeTab === 0 && <TabAppsList url={`/api/organizations/${id}/apps/developed`} />}
+                {activeTab === 1 && <TabAppsList url={`/api/organizations/${id}/apps/published`} />}
+            </Block>
+        </>
+    );
+}
 
 function Organization() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [data, setData] = React.useState(null);
     const [meta, setMeta] = React.useState(null);
-    const [activeTab, setActiveTab] = React.useState(0);
 
     React.useEffect(() => {
         (async () => {
@@ -57,17 +75,7 @@ function Organization() {
                     })
                 }
             }}>
-                {/* 新闻/开发/发行 */}
-                <Block display='flex' alignItems='center' marginBottom='scale600'>
-                    <RoundTab activeKey={activeTab}
-                        onChange={(e) => setActiveTab(e.activeKey)}
-                        names={['开发', '发行']}
-                    />
-                </Block>
-                <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
-                    {activeTab === 0 && <TabAppsList url={`/api/organizations/${id}/apps/developed`} />}
-                    {activeTab === 1 && <TabAppsList url={`/api/organizations/${id}/apps/published`} />}
-                </Block>
+                <OrganizationContent id={id} />
             </Block>
             <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}
                 overrides={{

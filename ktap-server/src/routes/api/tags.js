@@ -87,11 +87,7 @@ const tags = async (fastify, opts) => {
     });
 
     fastify.get('/hot', async function (req, reply) {
-        const data = await fastify.db.$queryRaw`
-            SELECT id, name, color_hex AS colorHex, count(*) AS count FROM
-            AppUserTagRef, Tag WHERE AppUserTagRef.tag_id = Tag.id
-            GROUP BY id ORDER BY count DESC LIMIT 20
-        `;
+        const data = await fastify.utils.getTagsByHot({ type: 'tag', limit: Pagination.limit.default });
         return reply.code(200).send({ data });
     });
 };
