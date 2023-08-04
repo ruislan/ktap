@@ -100,7 +100,7 @@ function AppDetailOrganizations({ data }) {
         <Block display='flex' flexDirection='column' gridGap='scale900'>
             {isLoading ?
                 <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
-                    <Spinner $size='scale1600' $borderWidth='scale200' />
+                    <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />
                 </Block>
                 :
                 <>

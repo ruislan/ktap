@@ -1,6 +1,6 @@
 import React from 'react';
 import Cookies from 'js-cookie';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Messages } from '../constants';
 
 const AuthContext = React.createContext({});
@@ -9,15 +9,16 @@ function useAuth() {
     return React.useContext(AuthContext);
 }
 
-function CheckLoginAndForward() {
+function CheckLoginAndForward({ children }) {
     const { user } = useAuth();
-    return user?.id ? <Navigate to={`/users/${user.id}`} replace /> : <></>;
+    return user?.id ? <Navigate to={`/users/${user.id}`} replace /> : children;
 }
 
 function RequireAuth({ children }) {
     const { authenticating, isAuthenticated } = useAuth();
+    const location = useLocation();
     if (authenticating) return <></>;
-    return isAuthenticated() ? children : <Navigate to='/login' replace />;
+    return isAuthenticated() ? children : <Navigate to={`/login?from=${location.pathname}`} replace />;
 }
 
 function RequireAdmin({ children }) {
@@ -49,7 +50,7 @@ function AuthProvider({ children }) {
         fetchUser();
     }, [fetchUser]);
 
-    async function login(email, password) {
+    async function login(email, password, from = '/') {
         try {
             const res = await fetch('/api/login', {
                 method: 'POST',
@@ -57,8 +58,7 @@ function AuthProvider({ children }) {
                 headers: { 'Content-Type': 'application/json' }
             });
             if (res.ok) {
-                fetchUser();
-                // window.location.href = to;
+                window.location.href = from;
             } else {
                 if (res.status === 403) {
                     const json = await res.json();
@@ -71,13 +71,14 @@ function AuthProvider({ children }) {
         }
     }
 
-    async function logout() {
+    async function logout(to = '/') {
         try {
             setAuthenticating(true);
             await fetch('/api/logout', { method: 'POST', });
         } finally { // 不管请求如何，直接清空本地
             localLogout();
             setAuthenticating(false);
+            window.location.href = to;
         }
     }
 

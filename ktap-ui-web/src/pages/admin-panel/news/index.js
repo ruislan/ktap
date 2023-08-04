@@ -149,7 +149,9 @@ function AdminPanelNews() {
                 </Block>
             </Block>
             {isLoading
-                ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1400' $borderWidth='scale200' /></Block>
+                ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                    <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />
+                </Block>
                 :
                 <Block display='flex' flexDirection='column'>
                     <TableBuilder data={newsList} size='compact' emptyMessage='没有数据'

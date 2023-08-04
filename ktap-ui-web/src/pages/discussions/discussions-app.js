@@ -219,6 +219,7 @@ function Channels({ appId, channelId = 0 }) {
     }, [dataList, channelId]); // dataList 存在了，就可以滑动了
 
     React.useEffect(() => {
+        if (!user) return;
         const isAdmin = user?.isAdmin;
         const isModerator = currentChannel?.moderators?.some(moderator => moderator.id == user.id);
         setCanSettingChannel(isAdmin || isModerator);
@@ -411,10 +412,11 @@ function Discussions({ appId, channelId, }) {
     return (
         <Block display='flex' flexDirection='column' width='100%'>
             <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale600'>
-                {channelId > 0 ? (user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新讨论</Button> : <Button size='compact' kind='secondary' onClick={e => {
-                    e.preventDefault();
-                    navigate('/login');
-                }}>登录</Button>) : <Block></Block>}
+                {channelId > 0 ? (user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新讨论</Button> :
+                    <Button size='compact' kind='secondary' onClick={e => {
+                        e.preventDefault();
+                        navigate(`/login?from=/discussions/apps/${appId}/channels/${channelId}`);
+                    }}>登录</Button>) : null}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />
                     <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><Search /></Button>

@@ -5,12 +5,12 @@ import { LabelMedium } from 'baseui/typography';
 
 function SideBox({ title, children }) {
     return (
-        <Block backgroundColor='backgroundSecondary' padding='0'
+        <Block backgroundColor='backgroundSecondary' padding='0' marginBottom='scale900'
             overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         borderRadius: $theme.borders.radius300,
-                        marginBottom: $theme.sizing.scale800,
+                        boxShadow: $theme.lighting.shadow400,
                     })
                 }
             }}

@@ -1,5 +1,6 @@
 import fp from 'fastify-plugin';
 import sanitizeHtml from 'sanitize-html';
+import { Prisma } from '@prisma/client'
 import { Pagination, errors } from './constants.js';
 
 const cleanContent = (content) => {
@@ -17,29 +18,17 @@ const utils = async (fastify, opts, next) => {
         // 被用得最多的 limit 个 Tag
         async getTagsByHot({ id, limit = Pagination.limit.default, type = '' }) {
             type = type.toLowerCase();
-
-            let tags = [];
+            let condition = Prisma.empty;
             if (type === 'app') {
-                tags = await fastify.db.$queryRaw`
-                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
-                    WHERE AppUserTagRef.app_id = ${id} AND AppUserTagRef.tag_id = Tag.id
-                    GROUP BY id ORDER BY count DESC LIMIT ${limit}
-                `;
+                condition = Prisma.sql`AppUserTagRef.app_id = ${id} AND `;
             } else if (type === 'user') {
-                tags = await fastify.db.$queryRaw`
-                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
-                    WHERE AppUserTagRef.user_id = ${id} AND AppUserTagRef.tag_id = Tag.id
-                    GROUP BY id ORDER BY count DESC LIMIT ${limit}
-                `;
-            } else {
-                tags = await fastify.db.$queryRaw`
-                    SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
-                    WHERE AppUserTagRef.tag_id = Tag.id
-                    GROUP BY id ORDER BY count DESC LIMIT ${limit}
-                `;
+                condition = Prisma.sql`AppUserTagRef.user_id = ${id} AND `;
             }
-            tags.forEach(tag => tag.count = Number(tag.count));
-
+            const tags = await fastify.db.$queryRaw`
+                SELECT id, name, color_hex AS colorHex, count(*) AS count FROM AppUserTagRef, Tag
+                WHERE ${condition} AppUserTagRef.tag_id = Tag.id
+                GROUP BY id ORDER BY count DESC LIMIT ${limit}
+            `;
             return tags;
         },
         // 计算 App 的评分

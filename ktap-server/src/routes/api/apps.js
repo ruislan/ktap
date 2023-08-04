@@ -136,7 +136,7 @@ const apps = async function (fastify, opts) {
                 LEFT JOIN AppMedia am ON a.id = am.app_id WHERE a.is_visible=${true} AND am.usage = ${AppMedia.usage.landscape}
                 ORDER BY a.latest_updated DESC
             `;
-            // transform data to the form that suite the view
+            // transform data
             apps = apps.map(item => {
                 return {
                     id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
@@ -251,7 +251,7 @@ const apps = async function (fastify, opts) {
         meta.follows = await fastify.db.followApp.count({ where: { appId: id, } });
 
         // 当前热力指数计算非常简单，通过加权算法来计算最近 1 周的数值，关注*2 + 评测*10 + 评测回复*1 + 讨论*5 + 讨论回复*1
-        // XXX 减少读取计算量，变成每日同一时间统一刷新，
+        // XXX 减少读取计算量，最后固定频率（例如每日同一时间）统一刷新，
         const limitDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         const hotOriginData = (await fastify.db.$queryRaw`
                 SELECT p1.cnt AS p1, p2.cnt AS p2, p3.cnt AS p3, p4.cnt AS p4, p5.cnt AS p5 FROM
@@ -286,10 +286,7 @@ const apps = async function (fastify, opts) {
             include: {
                 media: {
                     where: { usage: AppMedia.usage.landscape },
-                    select: {
-                        image: true,
-                        thumbnail: true,
-                    },
+                    select: { image: true, thumbnail: true, },
                 },
             },
             take: limit,
@@ -300,31 +297,19 @@ const apps = async function (fastify, opts) {
                 include: {
                     media: {
                         where: { usage: AppMedia.usage.landscape },
-                        select: {
-                            image: true,
-                            thumbnail: true,
-                        },
+                        select: { image: true, thumbnail: true, },
                     },
                 },
                 orderBy: { updatedAt: 'desc' },
                 take: limit,
             })
         }
-        // transform data to the form that suite the view
+        // transform data
         data = data.map(item => {
             return {
-                id: item.id,
-                name: item.name,
-                slogan: item.slogan,
-                summary: item.summary,
-                score: item.score,
+                id: item.id, name: item.name, slogan: item.slogan, summary: item.summary, score: item.score,
                 media: {
-                    landscape: item.media.map(m => {
-                        return {
-                            image: m.image,
-                            thumbnail: m.thumbnail,
-                        };
-                    })[0]
+                    landscape: item.media.map(m => ({ image: m.image, thumbnail: m.thumbnail, }))[0]
                 },
             };
         });

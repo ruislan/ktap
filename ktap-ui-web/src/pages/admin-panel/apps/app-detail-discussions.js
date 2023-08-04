@@ -52,6 +52,7 @@ function AppDetailDiscussions({ data }) {
     const fetchModerator = React.useCallback(async () => {
         if (isOpenModeratorModal) {
             try {
+                setModerators([]);
                 setIsLoadingModerator(true);
                 const res = await fetch(`/admin/apps/${data.id}/discussion-channels/${form.id}/moderators`);
                 if (res.ok) {
@@ -158,7 +159,7 @@ function AppDetailDiscussions({ data }) {
         <Block display='flex' flexDirection='column' gridGap='scale900'>
             {isLoading ?
                 <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
-                    <Spinner $size='scale1600' $borderWidth='scale200' />
+                    <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />
                 </Block>
                 :
                 <Block display='flex' flexWrap gridGap='scale300' width='100%'>
@@ -216,7 +217,7 @@ function AppDetailDiscussions({ data }) {
                             <Input size='compact' value={moderatorIds} onChange={e => setModeratorIds(e.target.value)} required></Input>
                         </FormControl>
                         <Block display='flex' gridGap='scale300' alignItems='center' flexWrap width='100%'>
-                            {isLoadingModerator && <Spinner $size='scale1200' $borderWidth='scale200' />}
+                            {isLoadingModerator && <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />}
                             {moderators?.map((moderator, index) => (
                                 <Tag key={index} closeable={true} onCloseClick={() => handleDeleteModerator(moderator.id)}>{moderator.name}</Tag>
                             ))}

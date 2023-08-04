@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { Notification } from "baseui/notification";
 import { DisplayMedium, ParagraphSmall } from 'baseui/typography';
@@ -14,12 +15,13 @@ function Login() {
     const [login, setLogin] = React.useState({ email: '', password: '', });
     const [error, setError] = React.useState(null);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [searchParams] = useSearchParams();
+
     const handleSubmit = async () => {
         setError(null);
         setIsLoading(true);
         try {
-            await auth.login(login.email, login.password);
-            window.location.href = '/';
+            await auth.login(login.email, login.password, searchParams.get('from') || '/');
         } catch (e) {
             setError(e.message);
         } finally {

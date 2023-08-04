@@ -60,7 +60,9 @@ function UserDetailReviews({ data }) {
     return (
         <Block display='flex' flexDirection='column'>
             {isLoading
-                ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1400' $borderWidth='scale200' /></Block>
+                ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                    <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />
+                </Block>
                 :
                 <Block display='flex' flexDirection='column'>
                     <Block marginBottom='scale600' display='flex' alignItems='center' justifyContent='flex-end'>

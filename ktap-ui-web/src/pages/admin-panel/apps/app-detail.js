@@ -46,7 +46,9 @@ function AdminPanelAppDetail() {
             </Block>
             <Block display='flex' justifyContent='flex-start'>
                 {isLoading
-                    ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>
+                    ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                        <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />
+                    </Block>
                     : (data && (
                         <Block display='flex' flexDirection='column' width='100%' gridGap='scale600'>
                             <RoundTab activeKey={activeTab}

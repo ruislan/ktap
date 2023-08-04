@@ -8,7 +8,7 @@ import { Delete, Menu, Search } from 'baseui/icon';
 
 export default function Header() {
     const [css, theme] = useStyletron();
-    const pathname = new URL(window.location.href).pathname;
+    const pathname = window.location.pathname;
     const navigate = useNavigate();
     const { user, logout, isAuthenticated, isAdmin } = useAuth();
 
@@ -44,7 +44,7 @@ export default function Header() {
     React.useEffect(() => {
         if (isAuthenticated()) {
             const items = [
-                { label: '个人中心', href: `/users/${user?.id}`, },
+                { label: '个人中心', href: `/users/${user.id}`, },
                 { label: '交易历史', href: `/tradings/history` },
                 { label: '设置', href: '/settings' },
             ];
@@ -57,7 +57,7 @@ export default function Header() {
             setUserItems(items);
         } else {
             setUserItems([
-                { label: '登录', href: '/login' },
+                { label: '登录', href: `/login?from=${window.location.pathname}${window.location.search}` },
                 { label: '注册', href: '/register' },
             ]);
         }
@@ -270,7 +270,7 @@ export default function Header() {
                                             {item.role === 'button' ?
                                                 <div className={userItemStyle} onClick={() => {
                                                     if (item.href === '/logout') {
-                                                        logout().then(() => navigate('/', { replace: true }));
+                                                        logout(pathname);
                                                     } else {
                                                         navigate(item.href);
                                                     }

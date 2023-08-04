@@ -20,10 +20,66 @@ import TabReviewsUsers from './tab-reviews-users';
 import TabDiscussions from './tab-discussions';
 import RoundTab from '../../components/round-tab';
 
+function MainContent({ isLoading, app }) {
+    const [activeTab, setActiveTab] = React.useState(0);
+
+    return (
+        <>
+            <Block overrides={{
+                Block: {
+                    style: ({ $theme }) => ({
+                        [MOBILE_BREAKPOINT]: {
+                            marginLeft: $theme.sizing.scale300, marginRight: $theme.sizing.scale300,
+                        }
+                    })
+                }
+            }}>
+                <RoundTab activeKey={activeTab} names={['详情', '新闻', '评测', '讨论']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
+            </Block>
+            <Block padding='scale300' overrides={{
+                Block: {
+                    style: ({ $theme }) => ({
+                        [MOBILE_BREAKPOINT]: {
+                            paddingLeft: $theme.sizing.scale600, paddingRight: $theme.sizing.scale600,
+                        }
+                    })
+                }
+            }}>
+                {activeTab === 0 &&
+                    (
+                        isLoading ?
+                            <Skeleton width='100%' height='800px' animation />
+                            :
+                            app && <>
+                                <TabDetailsDescription app={app} />
+                                <Block>
+                                    <TabDetailsRequirements app={app} />
+                                    <TabDetailsLanguages app={app} />
+                                    {app?.legalText && <ParagraphSmall color='primary300' marginTop='scale1200'>
+                                        {app?.legalUrl ? <StyledLink href={app.legalUrl || '#'} target='_blank'>
+                                            {app.legalText}
+                                        </StyledLink> : app.legalText}
+                                    </ParagraphSmall>
+                                    }
+                                </Block>
+                            </>
+                    )
+                }
+                {activeTab === 1 && app && <TabNews app={app} />}
+                {activeTab === 2 && app && <>
+                    <TabReviewsProfessional app={app} />
+                    <TabReviewsUsers app={app} />
+                </>}
+                {activeTab === 3 && app && <TabDiscussions appId={app.id} />}
+            </Block>
+        </>
+    );
+}
+
 function App() {
     const urlParams = useParams();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = React.useState(0);
+
     const [isLoading, setIsLoading] = React.useState(true);
     const [app, setApp] = React.useState(null);
     const [meta, setMeta] = React.useState(null);
@@ -157,53 +213,7 @@ function App() {
                         }
                     }
                 }} >
-                    <Block overrides={{
-                        Block: {
-                            style: ({ $theme }) => ({
-                                [MOBILE_BREAKPOINT]: {
-                                    marginLeft: $theme.sizing.scale300, marginRight: $theme.sizing.scale300,
-                                }
-                            })
-                        }
-                    }}>
-                        <RoundTab activeKey={activeTab} names={['详情', '新闻', '评测', '讨论']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
-                    </Block>
-                    <Block padding='scale300' overrides={{
-                        Block: {
-                            style: ({ $theme }) => ({
-                                [MOBILE_BREAKPOINT]: {
-                                    paddingLeft: $theme.sizing.scale600, paddingRight: $theme.sizing.scale600,
-                                }
-                            })
-                        }
-                    }}>
-                        {activeTab === 0 &&
-                            (
-                                isLoading ?
-                                    <Skeleton width='100%' height='800px' animation />
-                                    :
-                                    app && <>
-                                        <TabDetailsDescription app={app} />
-                                        <Block>
-                                            <TabDetailsRequirements app={app} />
-                                            <TabDetailsLanguages app={app} />
-                                            {app?.legalText && <ParagraphSmall color='primary300' marginTop='scale1200'>
-                                                {app?.legalUrl ? <StyledLink href={app.legalUrl || '#'} target='_blank'>
-                                                    {app.legalText}
-                                                </StyledLink> : app.legalText}
-                                            </ParagraphSmall>
-                                            }
-                                        </Block>
-                                    </>
-                            )
-                        }
-                        {activeTab === 1 && app && <TabNews app={app} />}
-                        {activeTab === 2 && app && <>
-                            <TabReviewsProfessional app={app} />
-                            <TabReviewsUsers app={app} />
-                        </>}
-                        {activeTab === 3 && app && <TabDiscussions appId={app.id} />}
-                    </Block>
+                    <MainContent isLoading={isLoading} app={app} />
                 </Block>
                 <Block width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
                     Block: {
@@ -225,7 +235,7 @@ function App() {
                     {app?.awards && app.awards.length > 0 && <SideAward app={app} />}
                     {app &&
                         <Block marginBottom='scale900' position='sticky' top='scale800'>
-                            <SideBoxApps title='相关游戏' apiUrl={`/api/apps/${urlParams.id}/related`} />
+                            <SideBoxApps title='相关游戏' apiUrl={`/api/apps/${app.id}/related`} />
                         </Block>
                     }
                 </Block>

@@ -196,7 +196,9 @@ function AdminPanelUsers() {
 
             <Block display='flex' justifyContent='flex-start'>
                 {isLoading
-                    ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'><Spinner $size='scale1600' $borderWidth='scale200' /></Block>
+                    ? <Block marginTop='scale900' width='100%' display='flex' alignItems='center' justifyContent='center'>
+                        <Spinner $size='scale1600' $borderWidth='scale300' $color='primary' />
+                    </Block>
                     : (data &&
                         <Block display='flex' flexDirection='column' width='100%'>
                             <TableBuilder data={data} size='compact' emptyMessage='没有数据'

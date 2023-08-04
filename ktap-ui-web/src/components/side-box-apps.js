@@ -1,11 +1,10 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
+import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelXSmall } from 'baseui/typography';
-import { useStyletron } from 'baseui';
 import { Skeleton } from 'baseui/skeleton';
 import SideBox from './side-box';
-import { Link } from 'react-router-dom';
 import Image from './image';
 
 function SideBoxApps({ title, apiUrl }) {

@@ -2,8 +2,8 @@ import React from 'react';
 
 import { LabelMedium, LabelSmall } from 'baseui/typography';
 import { Block } from 'baseui/block';
+import { Skeleton } from 'baseui/skeleton';
 import { Fire } from '../../components/icons';
-import { Spinner } from 'baseui/spinner';
 import SideBox from '../../components/side-box';
 import ListItem from '../../components/list-item';
 
@@ -29,12 +29,11 @@ function SideHotKeywords() {
     return (
         <SideBox title='热门搜索'>
             <Block display='flex' flexDirection='column' alignItems='center' paddingLeft='scale300' paddingBottom='scale600' paddingRight='scale300'>
-                {
-                    isLoading &&
-                    (<Block display='flex' justifyContent='center' marginTop='scale600'>
-                        <Spinner $size='scale1600' $borderWidth='scale200' />
-                    </Block>)
-                }
+                {isLoading && <Block width='100%' display='flex' flexDirection='column' marginTop='scale300' marginBottom='scale300' gridGap='scale300' justifyContent='center'>
+                    <Skeleton animation height='40px' width='100%' />
+                    <Skeleton animation height='40px' width='100%' />
+                    <Skeleton animation height='40px' width='100%' />
+                </Block>}
                 {dataList.map(({ keyword, count }, index) => {
                     return (
                         <ListItem key={index} href={`/search?q=${keyword}`} replace={true}>

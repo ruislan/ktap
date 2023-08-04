@@ -43,38 +43,27 @@ const news = async (fastify, opts) => {
     fastify.get('/apps/:appId', async function (req, reply) {
         const appId = Number(req.params.appId) || 0;
         const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
-
-        const count = await fastify.db.news.count({ where: { appId } });
-        const data = await fastify.db.news.findMany({
-            where: { appId },
-            select: { id: true, title: true, summary: true, head: true, updatedAt: true, createdAt: true, viewCount: true },
-            take: limit,
-            skip,
-            orderBy: { updatedAt: 'desc' }
+        const data = await fastify.caching.get(`news_${appId}_${skip}_${limit}`, async () => {
+            const count = await fastify.db.news.count({ where: { appId } });
+            const newsList = await fastify.db.news.findMany({
+                where: { appId },
+                select: { id: true, title: true, summary: true, head: true, updatedAt: true, createdAt: true, viewCount: true },
+                take: limit,
+                skip,
+                orderBy: { updatedAt: 'desc' }
+            });
+            newsList.forEach(item => {
+                item.meta = { views: item.viewCount }
+                delete item.viewCount;
+            });
+            return { data: newsList, count, skip, limit };
         });
-        data.forEach(item => {
-            item.meta = { views: item.viewCount }
-            delete data.viewCount;
-        });
-        return reply.code(200).send({ data, count, skip, limit });
+        return reply.code(200).send(data);
     });
 
     fastify.get('/:id', async function (req, reply) {
         const id = Number(req.params.id);
-        const data = await fastify.db.news.findUnique({
-            where: { id },
-            include: {
-                app: {
-                    select: {
-                        id: true,
-                        name: true,
-                        summary: true,
-                        score: true,
-                        releasedAt: true,
-                    }
-                },
-            }
-        });
+        const data = await fastify.db.news.findUnique({ where: { id }, });
         if (!data) return reply.code(404).send();
         await fastify.db.news.update({ where: { id }, data: { viewCount: { increment: 1 } } });
         data.meta = { views: data.viewCount };
