@@ -46,7 +46,7 @@ function Glance({ data }) {
     const [newTag, setNewTag] = React.useState('');
 
     const handleFollow = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         await fetch(`/api/user/follows/apps/${data.id}`, { method: isFollowed ? 'DELETE' : 'POST', });
         setIsFollowed(prev => !prev);
     };
@@ -85,7 +85,7 @@ function Glance({ data }) {
     }, [data.id]);
 
     const handleSaveTag = async (tagName) => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         if (userTags.length < USER_TAG_LIMIT && tagName && tagName.length > 0) {
             const res = await fetch(`/api/apps/${data.id}/tags`, { method: 'POST', body: JSON.stringify({ name: tagName }), headers: { 'Content-Type': 'application/json' } });
             if (res.ok) {
@@ -96,7 +96,7 @@ function Glance({ data }) {
     };
 
     const handleDeleteTag = async (name) => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         const res = await fetch(`/api/apps/${data.id}/tags/${name}`, { method: 'DELETE' });
         if (res.ok) await fetchUserTags();
     };
@@ -140,7 +140,7 @@ function Glance({ data }) {
                             <Tag key={index}><RouterLink href={`/tags/${tag.name}`}>{tag.name}</RouterLink></Tag>
                         )}
                         <Block marginLeft='scale100' display='inline-flex'>
-                            <Button size='mini' kind='tertiary' shape='circle' onClick={() => user ? setIsOpenTagModal(true) : navigate('/login')}>
+                            <Button size='mini' kind='tertiary' shape='circle' onClick={() => user ? setIsOpenTagModal(true) : navigate(`/login?from=${location.pathname}`)}>
                                 <Plus color='primary' size={20} />
                             </Button>
                             <Modal onClose={() => setIsOpenTagModal(false)} isOpen={isOpenTagModal} size='default' role='dialog'>

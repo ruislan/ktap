@@ -2,7 +2,8 @@ import React from 'react';
 import { Block } from 'baseui/block';
 import { DisplayMedium, HeadingSmall, LabelMedium, ParagraphMedium, } from 'baseui/typography';
 
-function Rules() {
+export default function () {
+
     return (
         <Block display='flex' alignItems='center' flexDirection='column' maxWidth='664px' margin='48px auto' padding='scale600'>
             <DisplayMedium marginBottom='scale600'>关于我们</DisplayMedium>
@@ -20,5 +21,3 @@ function Rules() {
         </Block>
     );
 }
-
-export default Rules;

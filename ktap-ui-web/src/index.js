@@ -122,11 +122,13 @@ const router = createBrowserRouter(
 );
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <StyletronProvider value={engine}>
-    <BaseProvider theme={DarkTheme}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
-    </BaseProvider>
-  </StyletronProvider>
+  <React.StrictMode>
+    <StyletronProvider value={engine}>
+      <BaseProvider theme={DarkTheme}>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </BaseProvider>
+    </StyletronProvider>
+  </React.StrictMode>
 );

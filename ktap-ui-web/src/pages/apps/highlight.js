@@ -2,14 +2,14 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, ParagraphMedium } from 'baseui/typography';
-import { AppMedia, MOBILE_BREAKPOINT } from '../../constants';
-import RouterLink from '../../components/router-link';
 import { Button } from 'baseui/button';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode, Thumbs } from "swiper";
-import '../../assets/css/swiper.css';
+import { AppMedia, MOBILE_BREAKPOINT } from '../../constants';
+import RouterLink from '../../components/router-link';
 import { Play } from '../../components/icons';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Thumbs } from 'swiper/modules';
+import '../../assets/css/swiper.css';
 
 function Highlight({ data }) {
     const slides = data.media.filter(m => m.usage === AppMedia.usage.gallery).map(m => {
@@ -26,25 +26,16 @@ function Highlight({ data }) {
     const [thumbsSwiper, setThumbsSwiper] = React.useState(null);
     const [allowSlidePrev, setAllowSlidePrev] = React.useState(false);
     const [allowSlideNext, setAllowSlideNext] = React.useState(false);
-    const slideNext = React.useCallback(() => {
-        if (thumbsSwiper) thumbsSwiper.slideNext();
-    }, [thumbsSwiper]);
-
-    const slidePrev = React.useCallback(() => {
-        if (thumbsSwiper) thumbsSwiper.slidePrev();
-    }, [thumbsSwiper]);
+    const slideNext = () => thumbsSwiper?.slideNext();
+    const slidePrev = () => thumbsSwiper?.slidePrev();
 
     return (
         <>
             <Block width='100%'>
                 <Swiper spaceBetween={8}
-                    thumbs={{ swiper: thumbsSwiper }}
+                    thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                     modules={[FreeMode, Thumbs]}
-                    effect='fade'
-                    fadeEffect={{ crossFade: true }}
-                    className={css({
-                        marginBottom: theme.sizing.scale600,
-                    })}
+                    className={css({ marginBottom: theme.sizing.scale600, })}
                 >
                     {slides.map((slide, index) => (
                         <SwiperSlide key={index}>
@@ -61,7 +52,7 @@ function Highlight({ data }) {
                                         margin: '0',
                                         [MOBILE_BREAKPOINT]: { borderRadius: '0' },
                                     })}
-                                    preload="metadata"
+                                    preload='metadata'
                                     poster={slide.poster}
                                     src={slide.src}
                                 >抱歉，您的浏览器不支持内嵌视频.</video>) :
@@ -106,9 +97,10 @@ function Highlight({ data }) {
                             }}
                             spaceBetween={6}
                             breakpoints={{
-                                480: { slidesPerView: 4, }
+                                480: { slidesPerView: 4, slidesPerGroup: 4 }
                             }}
                             slidesPerView={3}
+                            slidesPerGroup={3}
                             freeMode={true}
                             watchSlidesProgress={true}
                             modules={[FreeMode]}

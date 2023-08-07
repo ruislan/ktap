@@ -416,7 +416,7 @@ function Discussions({ appId, channelId, }) {
                     <Button size='compact' kind='secondary' onClick={e => {
                         e.preventDefault();
                         navigate(`/login?from=/discussions/apps/${appId}/channels/${channelId}`);
-                    }}>登录</Button>) : null}
+                    }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />
                     <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><Search /></Button>

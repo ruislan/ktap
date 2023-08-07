@@ -8,6 +8,7 @@ import Footer from './footer';
 import NotWork from './not-work';
 
 export default function Layout() {
+
     return (
         <Block display='flex' flexDirection='column' color='contentPrimary' backgroundColor='backgroundPrimary'
             maxWidth='100vw' minHeight='100vh'
