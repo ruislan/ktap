@@ -95,7 +95,7 @@ function Review() {
     }, [user, id]);
 
     const handleDeleteReview = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         try {
             const res = await fetch(`/api/reviews/${id}`, { method: 'DELETE' });
             if (res.ok) {
@@ -107,7 +107,7 @@ function Review() {
     };
 
     const handleThumb = async (direction) => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         direction === 'up' && setIsDoingThumbUp(true);
         direction === 'down' && setIsDoingThumbDown(true);
         try {
@@ -127,7 +127,7 @@ function Review() {
     };
 
     const handleGift = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         setIsOpenGiftModal(true);
         setCheckedGift(null);
         const giftsRes = await fetch(`/api/gifts`);
@@ -138,7 +138,7 @@ function Review() {
     };
 
     const handleSendGift = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         try {
             setIsSendingGift(true);
             const res = await fetch(`/api/reviews/${review.id}/gifts/${checkedGift.id}`, { method: 'POST' });
@@ -155,7 +155,7 @@ function Review() {
     };
 
     const handleReport = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         setIsReporting(true);
         setReportErr(null);
         try {
@@ -195,7 +195,7 @@ function Review() {
     };
 
     const handleUpdateReview = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         try {
             setIsEditing(true);
             const form = new FormData();

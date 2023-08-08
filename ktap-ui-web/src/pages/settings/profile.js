@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 
 import { Block } from 'baseui/block';
@@ -5,28 +6,19 @@ import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
+import { DatePicker } from 'baseui/datepicker';
 import { Select } from 'baseui/select';
 import { Textarea } from "baseui/textarea";
 
+import { useAuth } from '../../hooks/use-auth';
 import { DateTime, Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '../../constants';
 import Notification from '../../components/notification';
-import { useAuth } from '../../hooks/use-auth';
 import AvatarSquare from '../../components/avatar-square';
-import { DatePicker } from 'baseui/datepicker';
 
-function SettingsProfile() {
+function SettingsAvatar({ setNotification }) {
     const { user, setUser } = useAuth();
-    const [notification, setNotification] = React.useState(null);
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [form, setForm] = React.useState({
-        location: user?.location || '',
-        bio: user?.bio || '',
-        gender: [{ id: user?.gender }],
-        birthday: DateTime.formatShort(user?.birthday),
-    });
-
-    // process avatar upload
     const avatarInput = React.useRef(null);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const handleAvatarSelected = async (e) => {
         e.preventDefault();
@@ -57,6 +49,30 @@ function SettingsProfile() {
             }
         }
     };
+    return (
+        <Block display='flex' flexDirection='column' marginBottom='scale600'>
+            <Block display='flex' justifyContent='flex-start'>
+                <AvatarSquare name={user?.name} size='128px' src={user?.avatar} />
+            </Block>
+            <Block paddingTop='scale300' paddingBottom='scale300' display='flex' alignItems='center' justifyContent='flex-start'>
+                <input ref={avatarInput} type='file' hidden accept='image/*' onChange={handleAvatarSelected} />
+                <Button kind='secondary' size='compact' type='button' isLoading={isLoading} onClick={() => avatarInput.current.click()}>
+                    上传新头像
+                </Button>
+            </Block>
+        </Block>
+    );
+}
+
+function SettingsForm({ setNotification }) {
+    const { user, setUser } = useAuth();
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [form, setForm] = React.useState({
+        location: user?.location || '',
+        bio: user?.bio || '',
+        gender: [{ id: user?.gender }],
+        birthday: DateTime.formatShort(user?.birthday),
+    });
 
     const handleSubmit = async () => {
         if (form.bio.length > 255 || form.location.length > 100) return;
@@ -80,45 +96,43 @@ function SettingsProfile() {
     }
 
     return (
+        <form onSubmit={e => {
+            e.preventDefault();
+            handleSubmit();
+        }}>
+            <FormControl label={<LabelSmall>性别</LabelSmall>}>
+                <Select options={Gender.options} size='compact' value={form.gender}
+                    clearable={false} backspaceRemoves={false}
+                    onChange={options => setForm({ ...form, gender: options.value })}
+                />
+            </FormControl>
+            <FormControl label={<LabelSmall>生日</LabelSmall>}>
+                <DatePicker size='compact' formatString='yyyy-MM-dd' value={new Date(form.birthday)} onChange={({ date }) => setForm({ ...form, birthday: DateTime.formatShort(date) })} />
+            </FormControl>
+            <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
+                <Textarea size='compact' value={form.bio} error={form.bio.length > 255}
+                    onChange={e => setForm({ ...form, bio: e.currentTarget.value })}
+                />
+            </FormControl>
+            <FormControl label={<LabelSmall>地址</LabelSmall>} counter={{ length: form.location.length, maxLength: 100 }}>
+                <Input value={form.location} size='compact' error={form.location.length > 100}
+                    onChange={e => setForm({ ...form, location: e.currentTarget.value })}
+                />
+            </FormControl>
+            <Block marginTop='scale600'><Button type='submit' isLoading={isLoading} size='compact' kind='secondary'>保存</Button></Block>
+        </form>
+    );
+}
+
+function SettingsProfile() {
+    const [notification, setNotification] = React.useState(null);
+
+    return (
         <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600' justifyContent='flex-start'>
             <HeadingSmall marginTop='0' marginBottom='scale600'>个性化</HeadingSmall>
             {notification && <Notification kind={notification.kind} message={notification.message} />}
-            <form onSubmit={e => {
-                e.preventDefault();
-                handleSubmit();
-            }}>
-                <Block display='flex' flexDirection='column' marginBottom='scale600'>
-                    <Block display='flex' justifyContent='flex-start'>
-                        <AvatarSquare name={user?.name} size='128px' src={user?.avatar} />
-                    </Block>
-                    <Block paddingTop='scale300' paddingBottom='scale300' display='flex' alignItems='center' justifyContent='flex-start'>
-                        <input ref={avatarInput} type='file' hidden accept='image/*' onChange={handleAvatarSelected} />
-                        <Button kind='secondary' size='compact' type='button' isLoading={isLoading} onClick={() => avatarInput.current.click()}>
-                            上传新头像
-                        </Button>
-                    </Block>
-                </Block>
-                <FormControl label={<LabelSmall>性别</LabelSmall>}>
-                    <Select options={Gender.options} size='compact' value={form.gender}
-                        clearable={false} backspaceRemoves={false}
-                        onChange={options => setForm({ ...form, gender: options.value })}
-                    />
-                </FormControl>
-                <FormControl label={<LabelSmall>生日</LabelSmall>}>
-                    <DatePicker size='compact' formatString='yyyy-MM-dd' value={new Date(form.birthday)} onChange={({ date }) => setForm({ ...form, birthday: DateTime.formatShort(date) })} />
-                </FormControl>
-                <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
-                    <Textarea size='compact' value={form.bio} error={form.bio.length > 255}
-                        onChange={e => setForm({ ...form, bio: e.currentTarget.value })}
-                    />
-                </FormControl>
-                <FormControl label={<LabelSmall>地址</LabelSmall>} counter={{ length: form.location.length, maxLength: 100 }}>
-                    <Input value={form.location} size='compact' error={form.location.length > 100}
-                        onChange={e => setForm({ ...form, location: e.currentTarget.value })}
-                    />
-                </FormControl>
-                <Block marginTop='scale600'><Button type='submit' isLoading={isLoading} size='compact' kind='secondary'>保存</Button></Block>
-            </form>
+            <SettingsAvatar setNotification={setNotification} />
+            <SettingsForm setNotification={setNotification} />
         </Block>
     );
 }

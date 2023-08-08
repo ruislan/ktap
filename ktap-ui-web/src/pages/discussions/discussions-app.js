@@ -27,7 +27,7 @@ function AppBanner({ appId }) {
     const [isFollowed, setIsFollowed] = React.useState(false);
 
     const handleFollow = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         await fetch(`/api/user/follows/apps/${appId}`, { method: isFollowed ? 'DELETE' : 'POST', });
         setIsFollowed(prev => !prev);
     };
@@ -182,7 +182,7 @@ function Channels({ appId, channelId = 0 }) {
                     const json = await res.json();
                     setSubmitErrorMessage(json.message);
                 } else if (res.status === 401) {
-                    navigate('/login');
+                    navigate(`/login?from=${location.pathname}`);
                 } else {
                     setSubmitErrorMessage(Messages.unknownError);
                 }
@@ -370,7 +370,7 @@ function Discussions({ appId, channelId, }) {
                     const json = await res.json();
                     setSubmitErrorMessage(json.message);
                 } else if (res.status === 401) {
-                    navigate('/login');
+                    navigate(`/login?from=${location.pathname}`);
                 } else {
                     setSubmitErrorMessage(Messages.unknownError);
                 }
@@ -415,7 +415,7 @@ function Discussions({ appId, channelId, }) {
                 {channelId > 0 ? (user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新讨论</Button> :
                     <Button size='compact' kind='secondary' onClick={e => {
                         e.preventDefault();
-                        navigate(`/login?from=/discussions/apps/${appId}/channels/${channelId}`);
+                        navigate(`/login?from=${location.pathname}`);
                     }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />

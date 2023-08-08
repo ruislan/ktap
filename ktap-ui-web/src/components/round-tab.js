@@ -36,9 +36,11 @@ export default function RoundTab({ activeKey, names, onChange }) {
         if (ref.current) {
             const tab = ref.current.children[activeKey];
             const bg = ref.current.lastElementChild;
-            bg.style.width = `${tab.offsetWidth}px`;
-            bg.style.height = `${tab.offsetHeight}px`;
-            bg.style.transform = `translate3d(${tab.offsetLeft - 6}px, 0, 0)`;
+            if (tab && bg) {
+                bg.style.width = `${tab.offsetWidth}px`;
+                bg.style.height = `${tab.offsetHeight}px`;
+                bg.style.transform = `translate3d(${tab.offsetLeft - 6}px, 0, 0)`;
+            }
         }
     }, [activeKey]);
 

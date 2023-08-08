@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 
-function Tag({ startEnhancer, endEnhancer, closeable, onCloseClick, onClick, children }) {
+const Tag = function ({ startEnhancer, endEnhancer, closeable, onCloseClick, onClick, children }) {
     const [css, theme] = useStyletron();
     return (
         <div className={(css({
@@ -26,7 +26,7 @@ function Tag({ startEnhancer, endEnhancer, closeable, onCloseClick, onClick, chi
         }))} onClick={onClick}>
             {startEnhancer && typeof (startEnhancer) === 'function' && startEnhancer()}
             {children}
-            {endEnhancer && typeof(endEnhancer) === 'function' && endEnhancer()}
+            {endEnhancer && typeof (endEnhancer) === 'function' && endEnhancer()}
             {closeable && <span className={(css({
                 display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer',
             }))} onClick={onCloseClick}>

@@ -50,7 +50,7 @@ function UserProfile({ theUser, theUserMeta }) {
     }, [theUser, user]);
 
     const handleFollow = async () => {
-        if (!user) navigate('/login');
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         await fetch(`/api/user/follows/user/${theUser.id}`, { method: isFollowed ? 'DELETE' : 'POST', });
         setIsFollowed(prev => !prev);
     };

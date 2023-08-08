@@ -6,7 +6,7 @@ import { Provider as StyletronProvider } from 'styletron-react';
 import { DarkTheme, BaseProvider } from 'baseui';
 import './assets/css/index.css';
 
-import { AuthProvider, RequireAuth, RequireAdmin, CheckLoginAndForward } from './hooks/use-auth';
+import { AuthProvider, RequireAuth, RequireAdmin, CheckAlreadyLogin } from './hooks/use-auth';
 
 // Routes
 import Home from './pages/home';
@@ -60,7 +60,7 @@ const router = createBrowserRouter(
   createRoutesFromChildren(
     <Route element={<Layout />}>
       <Route index element={<Home />} />
-      <Route path='/login' element={<CheckLoginAndForward><Login /></CheckLoginAndForward>} />
+      <Route path='/login' element={<CheckAlreadyLogin><Login /></CheckAlreadyLogin>} />
       <Route path='/register' element={<Register />} />
       <Route path='/terms' element={<Terms />} />
       <Route path='/privacy' element={<Privacy />} />

@@ -21,7 +21,7 @@ function NewsAppsBanner({ appId }) {
     const [isFollowed, setIsFollowed] = React.useState(false);
 
     const handleFollow = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         await fetch(`/api/user/follows/apps/${appId}`, { method: isFollowed ? 'DELETE' : 'POST', });
         setIsFollowed(prev => !prev);
     };

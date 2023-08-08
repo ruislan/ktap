@@ -255,7 +255,7 @@ function TabReviewsUsersEditor({ app }) {
                 }}>
                     <LabelLarge paddingBottom='scale300'>我要写评测</LabelLarge>
                     <ParagraphMedium color='primary100' marginTop='scale200' marginBottom='scale200'>或表达你的观点，有理有据；或抒发你的情感，跌宕起伏；或留下你的谏言，鞭辟入里。</ParagraphMedium>
-                    <Button kind='secondary' size='compact' onClick={() => { navigate('/login') }} overrides={{
+                    <Button kind='secondary' size='compact' onClick={() => { navigate(`/login?from=/apps/${app.id}?tab=2`) }} overrides={{
                         BaseButton: {
                             style: ({ $theme }) => ({
                                 width: '7rem',

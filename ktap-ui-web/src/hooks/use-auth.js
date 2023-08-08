@@ -9,7 +9,7 @@ function useAuth() {
     return React.useContext(AuthContext);
 }
 
-function CheckLoginAndForward({ children }) {
+function CheckAlreadyLogin({ children }) {
     const { user } = useAuth();
     return user?.id ? <Navigate to={`/users/${user.id}`} replace /> : children;
 }
@@ -117,5 +117,5 @@ export {
     AuthProvider,
     RequireAuth,
     RequireAdmin,
-    CheckLoginAndForward,
+    CheckAlreadyLogin,
 };

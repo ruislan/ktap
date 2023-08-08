@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { HeadingMedium, ParagraphSmall } from 'baseui/typography';
 import { Skeleton } from 'baseui/skeleton';
@@ -21,7 +21,8 @@ import TabDiscussions from './tab-discussions';
 import RoundTab from '../../components/round-tab';
 
 function MainContent({ isLoading, app }) {
-    const [activeTab, setActiveTab] = React.useState(0);
+    const [searchParams] = useSearchParams();
+    const [activeTab, setActiveTab] = React.useState(Number(searchParams.get('tab')) || 0);
 
     return (
         <>

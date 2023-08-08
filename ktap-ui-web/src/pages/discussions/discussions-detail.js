@@ -292,7 +292,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     const [operations, setOperations] = React.useState({ update: false, delete: false });
 
     const handleThumb = async (direction) => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         direction === 'up' && setIsDoingThumbUp(true);
         direction === 'down' && setIsDoingThumbDown(true);
         try {
@@ -314,7 +314,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     };
 
     const handleGift = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         setIsOpenGiftModal(true);
         setCheckedGift(null);
         const giftsRes = await fetch(`/api/gifts`);
@@ -325,7 +325,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     };
 
     const handleSendGift = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         try {
             setIsSendingGift(true);
             const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}/gifts/${checkedGift.id}`, { method: 'POST' });
@@ -342,7 +342,7 @@ function DiscussionPostActions({ discussion, post, isFirst = false, onQuoteClick
     };
 
     const handleReport = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         setIsReporting(true);
         setReportErr(null);
         try {
@@ -626,7 +626,7 @@ function DiscussionPosts({ discussion }) {
                 throw { status: res.status };
             }
         } catch (error) {
-            if (error?.status === 403) navigate('/login');
+            if (error?.status === 401 || error?.status === 403) navigate(`/login?from=${location.pathname}`);
             else if (error?.status === 404) navigate('/not-found', { replace: true });
             else navigate('/not-work');
         } finally {
@@ -688,7 +688,10 @@ function DiscussionPosts({ discussion }) {
                         </Block>
                         {!post.isEditing &&
                             <DiscussionPostActions discussion={discussion} post={post} isFirst={index === 0}
-                                onQuoteClick={() => editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run()}
+                                onQuoteClick={() => {
+                                    if (!user) { navigate(`/login?from=${location.pathname}`); return; }
+                                    editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run();
+                                }}
                                 onUpdateClick={() => {
                                     setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: true } : v));
                                     setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: true } : v));
@@ -747,7 +750,7 @@ function DiscussionsDetail() {
                         throw { status: res.status };
                     }
                 } catch (error) {
-                    if (error?.status === 403) navigate('/login');
+                    if (error?.status === 401 || error?.status === 403) navigate(`/login?from=${location.pathname}`);
                     else if (error?.status === 404) navigate('/discussions', { replace: true });
                     else navigate('/not-work');
                 } finally {

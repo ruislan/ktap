@@ -28,7 +28,7 @@ function ReviewComments({ review }) {
     const [count, setCount] = React.useState(review?.meta.comments);
 
     const handleSubmitComment = async () => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         if (commentContent && commentContent.length > 0) {
             try {
                 setSubmitErrorMessage(null);
@@ -54,7 +54,7 @@ function ReviewComments({ review }) {
     };
 
     const handleDeleteComment = async (comment) => {
-        if (!user) { navigate('/login'); return; }
+        if (!user) { navigate(`/login?from=${location.pathname}`); return; }
         if (comment && comment.id) {
             const res = await fetch(`/api/reviews/${review.id}/comments/${comment.id}`, { method: "DELETE" });
             if (res.ok) {

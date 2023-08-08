@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 
-function SplitBall({ color = 'inherit', gap = '4px', }) {
+const SplitBall = function ({ color = 'inherit', gap = '4px', }) {
     const [css, theme] = useStyletron();
     return (
         <div className={css({
@@ -10,7 +10,6 @@ function SplitBall({ color = 'inherit', gap = '4px', }) {
         })}></div>
     );
 }
-
 
 export default SplitBall;
 
