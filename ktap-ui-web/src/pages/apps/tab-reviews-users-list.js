@@ -22,9 +22,9 @@ function TabReviewsUsersList({ app }) {
                     const json = await res.json();
 
                     if (user && json.data && json.data.length > 0) {
-                        const thumbRes = await fetch(`/api/user/effect/reviews/thumbs?ids=${json.data.map(v => v.id).join(',')}`);
-                        const thumbJson = await thumbRes.json();
-                        json.data.forEach(review => review.viewer = { direction: thumbJson.data[review.id] });
+                        const effectRes = await fetch(`/api/user/effect/reviews?ids=${json.data.map(v => v.id).join(',')}`);
+                        const effectJson = await effectRes.json();
+                        json.data.forEach(review => review.viewer = { direction: effectJson.data[review.id].thumb, reported: effectJson.data[review.id].reported });
                     }
                     setReviews(prev => skip === 0 ? json.data : [...prev, ...json.data]);
                     setHasMore(json.skip + json.limit < json.count);
@@ -37,7 +37,7 @@ function TabReviewsUsersList({ app }) {
 
     return (
         <>
-            {reviews?.map((review, index) => <ReviewBox key={index} review={review} include={{ header: true, user: true, comments: true }} />)}
+            {reviews?.map((review, index) => <ReviewBox key={index} review={review} include={{ header: true, user: true, comments: { summary: true } }} />)}
             <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='400px' onClick={() => setSkip(prev => prev + limit)} />
         </>
     );

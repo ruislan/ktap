@@ -45,18 +45,21 @@ const user = async (fastify, opts) => {
     });
 
     // 获取用户与reviews的赞踩信息
-    fastify.get('/effect/reviews/thumbs', async function (req, reply) {
+    fastify.get('/effect/reviews', async function (req, reply) {
         const userId = req.user.id;
+        const data = {};
         const reviewIds = (req.query.ids || '').split(',').map(item => Number(item) || 0).filter(item => item > 0);
-        let data = {};
         if (reviewIds.length > 0) {
             const thumbs = await fastify.db.reviewThumb.findMany({
                 where: { userId, reviewId: { in: reviewIds } },
                 select: { reviewId: true, direction: true, }
             });
-            thumbs.forEach(thumb => {
-                data[thumb.reviewId] = thumb.direction;
+            const reported = await fastify.db.reviewReport.findMany({
+                where: { userId, reviewId: { in: reviewIds } },
             });
+            reviewIds.forEach(reviewId => data[reviewId] = { thumb: null, reported: false });
+            thumbs.forEach(thumb => data[thumb.reviewId].thumb = thumb.direction);
+            reported.forEach(report => data[report.reviewId].reported = true);
         }
         return reply.code(200).send({ data });
     });

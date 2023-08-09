@@ -5,9 +5,8 @@ import { Button } from 'baseui/button';
 import { Star } from '../../components/icons';
 import { useNavigate } from 'react-router-dom';
 
-function ReviewAppGlance({ review }) {
+function ReviewAppGlance({ app }) {
     const navigate = useNavigate();
-    const app = review?.app;
     return (
         <Block backgroundColor='backgroundSecondary'
             overrides={{
@@ -51,7 +50,7 @@ function ReviewAppGlance({ review }) {
                         </Block>
                     </>
                 )
-                : (<LabelMedium padding='scale300' color='primary400'>该游戏暂不可见</LabelMedium>) }
+                : (<LabelMedium padding='scale300' color='primary400'>该游戏暂不可见</LabelMedium>)}
 
         </Block>
     );

@@ -15,7 +15,7 @@ function SideAward({ app }) {
 
     return (
         <SideBox title='获取奖项'>
-            <Block overflow='hidden' maxHeight={isHide ? '600px' : 'auto'} padding='scale600'>
+            <Block overflow='hidden' maxHeight={isHide ? '600px' : 'fit-content'} padding='scale600'>
                 <Block ref={awardRef}>
                     {app?.awards && app.awards.map((award, index) => (
                         award.url && award.url.length > 0 && award.url !== '#' ?
@@ -27,7 +27,7 @@ function SideAward({ app }) {
             {
                 expendable &&
                 <Block width='100%' display='flex' flexDirection='column' position='relative' backgroundColor='rgb(28,28,28)'>
-                        <Button kind='secondary' size='compact' onClick={() => setIsHide(prev => !prev)}>{isHide ? '显示全部' : '隐藏部分'}</Button>
+                    <Button kind='secondary' size='compact' onClick={() => setIsHide(prev => !prev)}>{isHide ? '显示全部' : '隐藏部分'}</Button>
                     <Block overrides={{
                         Block: {
                             style: {
