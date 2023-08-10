@@ -307,7 +307,6 @@ function Channels({ appId, channelId = 0 }) {
                     }
                 </Block>
             }
-            <Discussions appId={appId} channelId={channelId} />
             <Modal onClose={() => setIsOpenChannelSettingModal(false)} closeable={false} isOpen={isOpenChannelSettingModal} role={ROLE.alertdialog} animate autoFocus>
                 <ModalHeader>设置频道</ModalHeader>
                 <ModalBody>
@@ -385,11 +384,10 @@ function Discussions({ appId, channelId, }) {
             setIsLoading(true);
             setSkip(skip);
             setKeyword(keyword);
-            if (skip === 0) setDiscussions([]);
             const res = await fetch(`/api/discussions/apps/${appId}/channels/${channelId}?keyword=${keyword}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
-                setDiscussions(prev => [...prev, ...json.data]);
+                setDiscussions(prev => skip === 0 ? json.data : [...prev, ...json.data]);
                 setHasMore(json.skip + json.limit < json.count);
             }
         } finally {
@@ -411,7 +409,7 @@ function Discussions({ appId, channelId, }) {
 
     return (
         <Block display='flex' flexDirection='column' width='100%'>
-            <Block display='flex' alignItems='center' justifyContent='space-between' paddingTop='scale300' paddingBottom='scale600'>
+            <Block display='flex' alignItems='center' justifyContent='space-between' marginBottom='scale600'>
                 {channelId > 0 ? (user ? <Button size='compact' kind='secondary' onClick={() => setIsOpenEditorModal(true)}>发起新讨论</Button> :
                     <Button size='compact' kind='secondary' onClick={e => {
                         e.preventDefault();
@@ -522,6 +520,7 @@ function DiscussionsApp() {
                 }
             }}>
                 <Channels appId={appId} channelId={channelId} />
+                <Discussions appId={appId} channelId={channelId} />
             </Block>
         </Block>
     );

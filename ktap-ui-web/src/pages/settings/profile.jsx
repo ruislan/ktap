@@ -128,7 +128,14 @@ function SettingsProfile() {
     const [notification, setNotification] = React.useState(null);
 
     return (
-        <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600' justifyContent='flex-start'>
+        <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'
+            justifyContent='flex-start' overrides={{
+                Block: {
+                    style: {
+                        overflowWrap: 'break-word',
+                    }
+                }
+            }}>
             <HeadingSmall marginTop='0' marginBottom='scale600'>个性化</HeadingSmall>
             {notification && <Notification kind={notification.kind} message={notification.message} />}
             <SettingsAvatar setNotification={setNotification} />

@@ -40,13 +40,12 @@ function TagContent() {
         setIsLoading(true);
         setSkip(skip);
         setFlavor(flavor);
-        if (skip === 0) setAppList([]);
         try {
             const byWhat = flavor === 1 ? 'by-new' : (flavor === 2 ? 'by-score' : 'by-hot');
             const res = await fetch(`/api/tags/${name}?flavor=${byWhat}&skip=${skip}&limit=${limit}`);
             if (res.ok) {
                 const json = await res.json();
-                setAppList(prev => [...prev, ...json.data]);
+                setAppList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
                 setHasMore(json.skip + json.limit < json.count);
             }
         } finally {

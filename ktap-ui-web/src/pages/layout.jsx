@@ -7,7 +7,7 @@ import Header from './header';
 import Footer from './footer';
 import NotWork from './not-work';
 
-export default function Layout() {
+export default function RootLayout() {
     const location = useLocation(); // Whenever the location changes, the error boundary state is reset.
     return (
         <Block display='flex' flexDirection='column' color='contentPrimary' backgroundColor='backgroundPrimary'

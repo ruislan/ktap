@@ -115,10 +115,7 @@ const router = createBrowserRouter(
       <Route path='not-work' element={<NotWork />} />
       <Route path='*' element={<NotFound />} />
     </Route>
-  ),
-  {
-    future: { v7_startTransition: true }
-  }
+  )
 );
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -126,7 +123,7 @@ root.render(
     <StyletronProvider value={engine}>
       <BaseProvider theme={DarkTheme}>
         <AuthProvider>
-          <RouterProvider router={router} />
+          <RouterProvider router={router} future={{ v7_startTransition: true }} />
         </AuthProvider>
       </BaseProvider>
     </StyletronProvider>

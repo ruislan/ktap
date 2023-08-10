@@ -56,12 +56,11 @@ function SearchPanel() {
         const keyword = searchParams.get('q') || '';
         setSkip(skip);
         setIsLoading(true);
-        if (skip === 0) setDataList([]);
         try {
             const result = await fetch(`/api/search/apps?keyword=${keyword}&skip=${skip}&limit=${limit}`);
             const json = await result.json();
             setCount(json.count);
-            setDataList(prev => [...prev, ...json.data]);
+            setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
             setHasMore(json.skip + json.limit < json.count);
         } finally {
             setIsLoading(false);
