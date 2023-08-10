@@ -11,7 +11,7 @@ function Capsule({ href, children }) {
             display: 'flex',
             backgroundColor: theme.colors.backgroundSecondary,
             padding: theme.sizing.scale100,
-            marginBottom: theme.sizing.scale300,
+            // marginBottom: theme.sizing.scale600,
             color: 'inherit',
             textDecoration: 'none',
             borderRadius: theme.borders.radius300,

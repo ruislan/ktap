@@ -32,9 +32,9 @@ function TabDiscussionPosts({ theUser }) {
     }, [theUser, skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column'>
+        <Block display='flex' flexDirection='column' gridGap='scale600'>
             {dataList?.map((post, index) => (
-                <Block key={index} display='flex' padding='scale600' flexDirection='column' marginBottom='scale300'
+                <Block key={index} display='flex' padding='scale600' flexDirection='column'
                     backgroundColor='backgroundSecondary'
                     overrides={{
                         Block: {

@@ -4,7 +4,7 @@ import { Route, createBrowserRouter, createRoutesFromChildren, RouterProvider } 
 import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { DarkTheme, BaseProvider } from 'baseui';
-import './assets/css/index.css';
+import './assets/css/globals.css';
 
 import { AuthProvider, RequireAuth, RequireAdmin, CheckAlreadyLogin } from './hooks/use-auth';
 
@@ -38,6 +38,7 @@ import SettingsPassword from './pages/settings/password';
 import Tags from './pages/tags';
 import TradingHistory from './pages/tradings/history';
 import NotFound from './pages/not-found';
+import NotWork from './pages/not-work';
 import AdminPanel from './pages/admin-panel';
 import AdminPanelDashboard from './pages/admin-panel/dashboard';
 import AdminPanelUsers from './pages/admin-panel/users';
@@ -53,7 +54,6 @@ import AdminPanelBuzzwords from './pages/admin-panel/buzzwords';
 import AdminPanelGifts from './pages/admin-panel/gifts';
 import AdminPanelDiscover from './pages/admin-panel/discover';
 import Layout from './pages/layout';
-import NotWork from './pages/not-work';
 
 const engine = new Styletron();
 const router = createBrowserRouter(

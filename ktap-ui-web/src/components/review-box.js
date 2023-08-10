@@ -842,7 +842,7 @@ const Separator = React.memo(function () {
 const ReviewBox = function ({ review, include = {}, editable, afterUpdated = () => { } }) {
     if (!review) return null;
     return (
-        <Block display='flex' flexDirection='column' marginBottom='scale300' backgroundColor='backgroundSecondary'
+        <Block display='flex' flexDirection='column' marginBottom='scale600' backgroundColor='backgroundSecondary'
             overrides={{
                 Block: {
                     style: ({ $theme }) => ({

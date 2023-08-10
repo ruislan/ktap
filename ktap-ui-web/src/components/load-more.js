@@ -13,7 +13,6 @@ function SkeletonLayout({ direction, children }) {
 }
 
 export default function LoadMore({ isLoading, hasMore, skeletonRow = 3, skeletonHeight = '100%', pun = false, skeletonDirection = 'column', onClick = () => { } }) {
-    if (!hasMore) return null;
 
     if (isLoading) return (
         <Block marginTop='scale600' marginBottom='scale600'>
@@ -22,6 +21,8 @@ export default function LoadMore({ isLoading, hasMore, skeletonRow = 3, skeleton
             </SkeletonLayout>
         </Block>
     );
+
+    if (!hasMore) return null;
 
     return (
         <Block marginTop='scale600' marginBottom='scale600'>

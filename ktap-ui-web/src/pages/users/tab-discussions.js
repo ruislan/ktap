@@ -2,7 +2,6 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium, ParagraphMedium } from 'baseui/typography';
-import { useAuth } from '../../hooks/use-auth';
 import RouterLink from '../../components/router-link';
 import { Star } from '../../components/icons';
 import LoadMore from '../../components/load-more';
@@ -15,7 +14,6 @@ function TabDiscussions({ theUser }) {
     const [isLoading, setIsLoading] = React.useState(false);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
-    const { user } = useAuth();
 
     React.useEffect(() => {
         (async () => {
@@ -33,12 +31,12 @@ function TabDiscussions({ theUser }) {
                 }
             }
         })();
-    }, [theUser, skip, limit, user]);
+    }, [theUser, skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column'>
+        <Block display='flex' flexDirection='column' gridGap='scale600'>
             {dataList?.map((discussion, index) => (
-                <Block key={index} display='flex' flexDirection='column' padding='scale600' marginBottom='scale300' backgroundColor='backgroundSecondary'
+                <Block key={index} display='flex' flexDirection='column' padding='scale600' backgroundColor='backgroundSecondary'
                     overrides={{
                         Block: {
                             style: ({ $theme }) => ({

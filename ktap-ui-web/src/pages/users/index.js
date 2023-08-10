@@ -1,17 +1,18 @@
 import React, { Suspense, lazy } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
 import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
-import { useParams, useNavigate } from 'react-router-dom';
 import RoundTab from '../../components/round-tab';
-import TabActivities from './tab-activities';
-import TabReviews from './tab-reviews';
-import TabReviewComments from './tab-review-comments';
-import TabDiscussions from './tab-discussions';
-import TabDiscussionPosts from './tab-discussion-posts';
-import TabFollowApps from './tab-follow-apps';
-import TabFollowUsers from './tab-follow-users';
 
+const TabActivities = lazy(() => import('./tab-activities'));
+const TabReviews = lazy(() => import('./tab-reviews'));
+const TabReviewComments = lazy(() => import('./tab-review-comments'));
+const TabDiscussions = lazy(() => import('./tab-discussions'));
+const TabDiscussionPosts = lazy(() => import('./tab-discussion-posts'));
+const TabFollowApps = lazy(() => import('./tab-follow-apps'));
+const TabFollowUsers = lazy(() => import('./tab-follow-users'));
 const UserProfile = lazy(() => import('./user-profile'));
 
 function UserContent({ theUser }) {
@@ -25,13 +26,15 @@ function UserContent({ theUser }) {
                 />
             </Block>
             <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
-                {activeTab === 0 && theUser && <TabActivities theUser={theUser} />}
-                {activeTab === 1 && theUser && <TabReviews theUser={theUser} />}
-                {activeTab === 2 && theUser && <TabReviewComments theUser={theUser} />}
-                {activeTab === 3 && theUser && <TabDiscussions theUser={theUser} />}
-                {activeTab === 4 && theUser && <TabDiscussionPosts theUser={theUser} />}
-                {activeTab === 5 && theUser && <TabFollowApps theUser={theUser} />}
-                {activeTab === 6 && theUser && <TabFollowUsers theUser={theUser} />}
+                <Suspense>
+                    {activeTab === 0 && theUser && <TabActivities theUser={theUser} />}
+                    {activeTab === 1 && theUser && <TabReviews theUser={theUser} />}
+                    {activeTab === 2 && theUser && <TabReviewComments theUser={theUser} />}
+                    {activeTab === 3 && theUser && <TabDiscussions theUser={theUser} />}
+                    {activeTab === 4 && theUser && <TabDiscussionPosts theUser={theUser} />}
+                    {activeTab === 5 && theUser && <TabFollowApps theUser={theUser} />}
+                    {activeTab === 6 && theUser && <TabFollowUsers theUser={theUser} />}
+                </Suspense>
             </Block>
         </>
     );

@@ -90,7 +90,7 @@ function SearchPanel() {
                 <LabelXSmall color='primary300'>共 {count} 个匹配的搜索结果</LabelXSmall>
             </Block>
 
-            <Block ref={ref} display='flex' flexDirection='column' marginTop='scale300'>
+            <Block ref={ref} display='flex' flexDirection='column' marginTop='scale300' gridGap='scale300'>
                 {dataList.map((app, index) => (
                     <Capsule key={index} href={`/apps/${app.id}`}>
                         <Block width='154px' height='86.5px'>

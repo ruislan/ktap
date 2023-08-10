@@ -31,7 +31,7 @@ function RankAppsList({ apiUrl }) {
         })();
     }, [apiUrl, skip, limit]);
     return (
-        <>
+        <Block display='flex' flexDirection='column' gridGap='scale300'>
             {appList && appList.map((app, index) => {
                 return (
                     <Capsule key={index} href={`/apps/${app.id}`}>
@@ -73,7 +73,7 @@ function RankAppsList({ apiUrl }) {
                 );
             })}
             <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='76px' onClick={() => setSkip(prev => prev + limit)} />
-        </>
+        </Block>
     );
 }
 export default RankAppsList;

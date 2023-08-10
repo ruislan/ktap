@@ -3,10 +3,8 @@ import { Block } from 'baseui/block';
 import { DisplayMedium, ParagraphLarge } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { MOBILE_BREAKPOINT } from '../constants';
-import { useNavigate } from 'react-router-dom';
 
 function NotWork() {
-    const navigate = useNavigate();
     return (
         <Block display='flex' alignItems='center' flexDirection='column' maxWidth='664px' margin='48px auto' padding='scale600'>
             <DisplayMedium marginBottom='scale600'>5xx - 服务故障</DisplayMedium>
@@ -29,7 +27,7 @@ function NotWork() {
                 然后，可能是你发现了什么漏洞，请联系我。
                 最后，愿圣光忽悠着你。
             </ParagraphLarge>
-            <Block marginTop='scale900'><Button size='default' kind='secondary' onClick={() => navigate('/')}>去首页</Button></Block>
+            <Block marginTop='scale900'><Button size='default' kind='secondary' onClick={() => location.href = '/'}>去首页</Button></Block>
         </Block>
     );
 }

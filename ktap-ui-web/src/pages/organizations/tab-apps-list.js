@@ -33,7 +33,7 @@ function TabAppsList({ url }) {
         })();
     }, [url, skip, limit]);
     return (
-        <>
+        <Block display='flex' flexDirection='column' gridGap='scale600'>
             {appList && appList.map((app, index) => {
                 return (
                     <Capsule key={index} href={`/apps/${app.id}`}>
@@ -64,7 +64,7 @@ function TabAppsList({ url }) {
                 );
             })}
             <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='68px' onClick={() => setSkip(prev => prev + limit)} />
-        </>
+        </Block>
     );
 }
 export default TabAppsList;

@@ -43,11 +43,8 @@ function TabNews({ app }) {
                                     overrides={{
                                         Content: {
                                             style: {
-                                                minHeight: '44px',
-                                                paddingRight: '0px',
-                                                marginLeft: '0px',
-                                                width: '100%',
-                                                borderBottomColor: 'rgba(255, 255, 255, 0.12)',
+                                                minHeight: '44px', paddingRight: '0px', marginLeft: '0px',
+                                                width: '300px',borderBottomColor: 'rgba(255, 255, 255, 0.12)',
                                             }
                                         },
                                     }}

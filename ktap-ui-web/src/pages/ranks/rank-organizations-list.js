@@ -30,7 +30,7 @@ function RankOrganizationsList({ apiUrl }) {
         })();
     }, [apiUrl, skip, limit]);
     return (
-        <>
+        <Block display='flex' flexDirection='column' gridGap='scale300'>
             {dataList && dataList.map((org, index) => {
                 return (
                     <Capsule key={index} href={`/organizations/${org.id}`}>
@@ -72,7 +72,7 @@ function RankOrganizationsList({ apiUrl }) {
                 );
             })}
             <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='76px' onClick={() => setSkip(prev => prev + limit)} />
-        </>
+        </Block>
     );
 }
 export default RankOrganizationsList;

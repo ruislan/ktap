@@ -1,6 +1,6 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { Block } from 'baseui/block';
 import Header from './header';
@@ -8,7 +8,7 @@ import Footer from './footer';
 import NotWork from './not-work';
 
 export default function Layout() {
-
+    const location = useLocation(); // Whenever the location changes, the error boundary state is reset.
     return (
         <Block display='flex' flexDirection='column' color='contentPrimary' backgroundColor='backgroundPrimary'
             maxWidth='100vw' minHeight='100vh'
@@ -16,13 +16,13 @@ export default function Layout() {
                 Block: {
                     style: {
                         contain: 'paint',
-                        overflowWrap: 'break-word',
+                        overflowWrap: 'anywhere',
                     }
                 }
             }}>
             <Header />
             <Block display='flex' justifyContent='center' flex='1' margin='0' padding='0' maxWidth='100%'>
-                <ErrorBoundary fallback={<NotWork />}>
+                <ErrorBoundary key={location.pathname} fallback={<NotWork />}>
                     <Outlet />
                 </ErrorBoundary>
             </Block>

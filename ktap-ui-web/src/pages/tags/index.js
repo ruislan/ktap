@@ -64,7 +64,7 @@ function TagContent() {
             <Block display='flex' alignItems='center' marginBottom='scale600'>
                 <RoundTab activeKey={flavor} names={['按最热', '按最新', '按评分']} onChange={(e) => fetchData(e.activeKey, 0)} />
             </Block>
-            <Block display='flex' flexDirection='column'>
+            <Block display='flex' flexDirection='column' gridGap='scale300'>
                 {appList && appList.map((app, index) => (
                     <Capsule key={index} href={`/apps/${app.id}`}>
                         <Block width='154px' height='86.5px'>

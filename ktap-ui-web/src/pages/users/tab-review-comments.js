@@ -31,10 +31,9 @@ function TabReviewComments({ theUser }) {
     }, [theUser, skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column'>
+        <Block display='flex' flexDirection='column' gridGap='scale600'>
             {comments?.map((comment, index) => (
-                <Block key={index} display='flex' padding='scale600' flexDirection='column' marginBottom='scale300'
-                    backgroundColor='backgroundSecondary'
+                <Block key={index} display='flex' padding='scale600' flexDirection='column' backgroundColor='backgroundSecondary'
                     overrides={{
                         Block: {
                             style: ({ $theme }) => ({

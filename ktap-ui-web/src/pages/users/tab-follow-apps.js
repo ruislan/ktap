@@ -34,7 +34,7 @@ function TabFollowUsers({ theUser }) {
     }, [theUser, skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column'>
+        <Block display='flex' flexDirection='column' gridGap='scale600'>
             {follows?.map((follow, index) => (
                 <Capsule key={index} href={`/apps/${follow.app.id}`}>
                     <Block marginLeft='scale100' width='138px' height='68px'>

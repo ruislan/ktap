@@ -40,8 +40,8 @@ function TabDiscussions({ appId }) {
                 <RouterLink href={`/discussions/apps/${appId}`}><LabelSmall>查看全部</LabelSmall></RouterLink>
             </Block>
             {discussions?.map((discussion, index) =>
-                <RouterLink key={index} href={`/discussions/${discussion.id}`} >
-                    <Block display='flex' gridGap='scale300' width='100%' paddingTop='scale400' paddingBottom='scale400' overrides={{
+                <RouterLink key={index} href={`/discussions/${discussion.id}`}>
+                    <Block display='flex' gridGap='scale300' paddingTop='scale400' paddingBottom='scale400' overrides={{
                         Block: {
                             style: {
                                 borderBottomColor: theme.borders.border300.borderColor,
