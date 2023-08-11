@@ -6,7 +6,7 @@ services:
     image: ktap-ui-web:latest
     build: ./ktap-ui-web
     ports:
-      - 3000:80
+      - 5173:80
     depends_on:
       - ktap-server
     networks:

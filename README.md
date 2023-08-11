@@ -74,7 +74,7 @@ ktap-ui-web为前端代码，进入目录后输入以下指令启动：
 yarn start
 ```
 
-完成后访问 [http://localhost:3000](http://localhost:3000)即可开始探索之旅。登录用户和密码可以在seed.js文件中查看。绝大部分页面都是Responsive的。
+完成后访问 [http://localhost:5173](http://localhost:5173)即可开始探索之旅。登录用户和密码可以在seed.js文件中查看。绝大部分页面都是Responsive的。
 
 ### Docker启动
 
