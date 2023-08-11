@@ -1,14 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { LabelXSmall, LabelSmall, LabelMedium, HeadingXLarge, ParagraphMedium } from 'baseui/typography';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
-import { Link } from 'react-router-dom';
 import { Input } from 'baseui/input';
+
 import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
-import { ChatAlt2, User } from '../../components/icons';
-import LoadMore from '../../components/load-more';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/constants';
+import { ChatAlt2, User } from '@ktap/components/icons';
+import LoadMore from '@ktap/components/load-more';
 
 function Discussions() {
     const limit = PAGE_LIMIT_NORMAL + 1;

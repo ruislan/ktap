@@ -1,10 +1,14 @@
 import React from 'react';
-import { useAuth } from '../hooks/use-auth';
+
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '../constants';
+
 import { useStyletron } from 'baseui';
-import { User, Coins } from '../components/icons';
 import { Delete, Menu, Search } from 'baseui/icon';
+
+import { useAuth } from '@ktap/hooks/use-auth';
+import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/constants';
+import { User, Coins } from '@ktap/components/icons';
+
 const Brand = function () {
     const [css, theme] = useStyletron();
     return (
