@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
-import RouterLink from '../../components/router-link';
-import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import RouterLink from '@ktap/components/router-link';
+import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import LoadMore from '@ktap/components/load-more';
 
 function TabReviewComments({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;

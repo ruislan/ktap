@@ -1,14 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { HeadingSmall, LabelLarge, LabelMedium, LabelSmall, ParagraphMedium } from 'baseui/typography';
-import { useAuth } from '../../hooks/use-auth';
-import AvatarSquare from '../../components/avatar-square';
-import GenderLabel from '../../components/gender-label';
-import { Numbers } from '../../constants';
 
-const UserDataItem = React.memo(({ name, value }) => {
+import { useAuth } from '@ktap/hooks/use-auth';
+import AvatarSquare from '@ktap/components/avatar-square';
+import GenderLabel from '@ktap/components/gender-label';
+import { Numbers } from '@ktap/libs/utils';
+
+const UserDataItem = React.memo(function UserDataItem({ name, value }) {
     return (
         <Block display='flex' flexDirection='column' alignItems='flex-start' padding='scale300' width='100%'
             overrides={{

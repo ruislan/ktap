@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { FormControl } from 'baseui/form-control';
@@ -8,13 +9,14 @@ import { Select } from 'baseui/select';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
-import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Filter, Plus, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL, Tag } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
+
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL, Tag } from '@ktap/libs/utils';
+import { EditLine, Eye, TrashBin } from '@ktap/components/icons';
 
 function AdminPanelTags() {
     const limit = PAGE_LIMIT_SMALL;

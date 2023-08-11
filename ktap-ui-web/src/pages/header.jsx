@@ -6,7 +6,7 @@ import { useStyletron } from 'baseui';
 import { Delete, Menu, Search } from 'baseui/icon';
 
 import { useAuth } from '@ktap/hooks/use-auth';
-import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/constants';
+import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
 import { User, Coins } from '@ktap/components/icons';
 
 const Brand = function () {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Cookies from 'js-cookie';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Messages } from '../constants';
+import { Messages } from '@ktap/libs/utils';
 
 const AuthContext = React.createContext({});
 

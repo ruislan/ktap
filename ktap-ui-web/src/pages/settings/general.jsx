@@ -6,9 +6,9 @@ import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 
-import { Messages } from '../../constants';
-import Notification from '../../components/notification';
-import { useAuth } from '../../hooks/use-auth';
+import { Messages } from '@ktap/libs/utils';
+import { useAuth } from '@ktap/hooks/use-auth';
+import Notification from '@ktap/components/notification';
 
 function SettingsGeneral() {
     const { user, setUser } = useAuth();

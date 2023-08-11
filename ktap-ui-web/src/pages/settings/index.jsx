@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from "react-router-dom";
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_LEFT, LAYOUT_SETTINGS_RIGHT } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_LEFT, LAYOUT_SETTINGS_RIGHT } from '../../libs/utils';
 
 import SideBar from './side-bar';
 import TopBar from './top-bar';

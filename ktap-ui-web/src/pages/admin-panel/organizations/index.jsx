@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -11,9 +12,10 @@ import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
-import { EditLine, Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
-import { DateTime, MOBILE_BREAKPOINT, Organization, PAGE_LIMIT_SMALL } from '../../../constants';
+
+import { DateTime, MOBILE_BREAKPOINT, Organization, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
+import { EditLine, Eye, TrashBin } from '@ktap/components/icons';
 
 function AdminPanelOrganizations() {
     const limit = PAGE_LIMIT_SMALL;

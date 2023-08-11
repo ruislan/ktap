@@ -4,14 +4,15 @@ import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Input } from 'baseui/input';
 import { LabelXSmall, LabelSmall } from 'baseui/typography';
-import AvatarSquare from '../../../components/avatar-square';
 import { FormControl } from 'baseui/form-control';
 import { Select } from 'baseui/select';
 import { Textarea } from 'baseui/textarea';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete } from 'baseui/icon';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
-import { Gender } from '../../../constants';
+
+import { Gender } from '@ktap/libs/utils';
+import AvatarSquare from '@ktap/components/avatar-square';
 
 function UserDetailProfile({ data, onChanged }) {
     const { enqueue } = useSnackbar();
@@ -57,7 +58,13 @@ function UserDetailProfile({ data, onChanged }) {
         }
     }
     return (
-        <Block display='flex' flexDirection='column'>
+        <Block display='flex' flexDirection='column' overrides={{
+            Block: {
+                style: {
+                    overflowWrap: 'normal',
+                }
+            }
+        }}>
             <form onSubmit={(e) => {
                 e.preventDefault();
                 handleSaveUser();

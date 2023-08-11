@@ -1,15 +1,17 @@
 import React from 'react';
-import { useStyletron } from 'baseui';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
+import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { Input } from 'baseui/input';
 import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
 import { LabelXSmall, LabelMedium } from 'baseui/typography';
-import Tag from '../../components/tag';
-import { Star } from '../../components/icons';
-import Capsule from '../../components/capsule';
-import LoadMore from '../../components/load-more';
+
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import Tag from '@ktap/components/tag';
+import { Star } from '@ktap/components/icons';
+import Capsule from '@ktap/components/capsule';
+import LoadMore from '@ktap/components/load-more';
 
 function SearchInput({ initKeyword = '' }) {
     const navigate = useNavigate();

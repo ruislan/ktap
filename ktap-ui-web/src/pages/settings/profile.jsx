@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 
 import { Block } from 'baseui/block';
@@ -10,10 +9,10 @@ import { DatePicker } from 'baseui/datepicker';
 import { Select } from 'baseui/select';
 import { Textarea } from "baseui/textarea";
 
-import { useAuth } from '../../hooks/use-auth';
-import { DateTime, Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '../../constants';
-import Notification from '../../components/notification';
-import AvatarSquare from '../../components/avatar-square';
+import { useAuth } from '@ktap/hooks/use-auth';
+import { DateTime, Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '@ktap/libs/utils';
+import Notification from '@ktap/components/notification';
+import AvatarSquare from '@ktap/components/avatar-square';
 
 function SettingsAvatar({ setNotification }) {
     const { user, setUser } = useAuth();

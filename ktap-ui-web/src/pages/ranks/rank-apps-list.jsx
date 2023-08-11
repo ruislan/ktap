@@ -3,10 +3,11 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { LabelMedium, LabelLarge } from 'baseui/typography';
-import { Star } from '../../components/icons';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
-import Capsule from '../../components/capsule';
-import LoadMore from '../../components/load-more';
+
+import { Star } from '@ktap/components/icons';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import Capsule from '@ktap/components/capsule';
+import LoadMore from '@ktap/components/load-more';
 
 function RankAppsList({ apiUrl }) {
     const limit = PAGE_LIMIT_NORMAL;

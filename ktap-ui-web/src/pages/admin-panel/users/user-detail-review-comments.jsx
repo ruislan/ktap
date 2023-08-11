@@ -1,14 +1,16 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { LabelSmall } from 'baseui/typography';
-import { Eye, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Delete } from 'baseui/icon';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
-import { DateTime, PAGE_LIMIT_SMALL } from '../../../constants';
+
+import { DateTime, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
+import { Eye, TrashBin } from '@ktap/components/icons';
 
 function UserDetailComments({ data }) {
     const limit = PAGE_LIMIT_SMALL;

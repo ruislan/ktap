@@ -1,10 +1,9 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
+
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import SideBoxApps from '@ktap/components/side-box-apps';
 
 import AppListRecommended from './app-list-recommended';
-import SideBoxApps from '../../components/side-box-apps';
 
 function Home() {
     return (

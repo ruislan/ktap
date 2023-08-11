@@ -1,11 +1,13 @@
 import React, { Suspense } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import { Block } from "baseui/block";
 import { Skeleton } from 'baseui/skeleton';
-import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '../../constants';
-import RoundTab from '../../components/round-tab';
-import TabAppsList from './tab-apps-list';
 
+import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import RoundTab from '@ktap/components/round-tab';
+
+import TabAppsList from './tab-apps-list';
 const OrganizationProfile = React.lazy(() => import('./organization-profile'));
 const OrganizationContact = React.lazy(() => import('./organization-contact'));
 

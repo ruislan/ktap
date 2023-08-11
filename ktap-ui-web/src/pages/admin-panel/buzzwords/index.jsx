@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -11,8 +12,9 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
-import { EditLine, TrashBin } from '../../../components/icons';
-import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
+
+import { EditLine, TrashBin } from '@ktap/components/icons';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
 
 function AdminPanelBuzzwords() {
     const limit = PAGE_LIMIT_SMALL;

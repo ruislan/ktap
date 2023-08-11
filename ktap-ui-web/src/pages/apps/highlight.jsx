@@ -1,15 +1,17 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, ParagraphMedium } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
-import { AppMedia, MOBILE_BREAKPOINT } from '../../constants';
-import RouterLink from '../../components/router-link';
-import { Play } from '../../components/icons';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Thumbs } from 'swiper/modules';
-import '../../assets/css/swiper.css';
+
+import { AppMedia, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import RouterLink from '@ktap/components/router-link';
+import { Play } from '@ktap/components/icons';
+import '@ktap/assets/css/swiper.css';
 
 function Highlight({ data }) {
     const slides = data.media.filter(m => m.usage === AppMedia.usage.gallery).map(m => {

@@ -1,8 +1,8 @@
-import React from 'react';
 import { Block } from 'baseui/block';
 import { StatefulTabs, Tab } from 'baseui/tabs-motion';
 import { LabelLarge, LabelSmall } from 'baseui/typography';
-import { Android, Apple, Linux, Mac, Win } from '../../components/icons';
+
+import { Android, Apple, Linux, Mac, Win } from '@ktap/components/icons';
 
 function RequirementItem({ name, content }) {
     return (

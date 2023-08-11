@@ -4,11 +4,11 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import ReviewBox from '@ktap/components/review-box';
+
 import ReviewAppGlance from './review-app-glance';
 import ReviewTopBar from './review-top-bar';
-import ReviewBox from '../../components/review-box';
-
 function Review() {
     const navigate = useNavigate();
     const { id } = useParams();

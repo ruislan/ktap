@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 
-import { PAGE_LIMIT_NORMAL, } from '../../constants';
-import { useAuth } from '../../hooks/use-auth';
-import LoadMore from '../../components/load-more';
-import ReviewBox from '../../components/review-box';
+import { PAGE_LIMIT_NORMAL, } from '@ktap/libs/utils';
+import { useAuth } from '@ktap/hooks/use-auth';
+import LoadMore from '@ktap/components/load-more';
+import ReviewBox from '@ktap/components/review-box';
 
 function TabReviews({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;

@@ -1,4 +1,3 @@
-import { BiliBili, Discord, Earth, Facebook, Instagram, QQ, Steam, Twitch, Twitter, WeChat, YouTube } from "./components/icons";
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -80,22 +79,6 @@ export const SocialLinks = {
     ],
     getDisplayLabel(id) {
         return this.options.find(item => item.id === id).label;
-    },
-    getIcon(id) {
-        id = id ? id.toLowerCase() : '';
-        switch (id) {
-            case 'qq': return <QQ />;
-            case 'wechat': return <WeChat />;
-            case 'steam': return <Steam />;
-            case 'bilibili': return <BiliBili />;
-            case 'twitch': return <Twitch />;
-            case 'youtube': return <YouTube />;
-            case 'discord': return <Discord />;
-            case 'facebook': return <Facebook />;
-            case 'instagram': return <Instagram />;
-            case 'twitter': return <Twitter />;
-            default: return <Earth />;
-        }
     },
 };
 

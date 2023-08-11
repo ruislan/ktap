@@ -1,15 +1,17 @@
 import React from 'react';
-import { useNavigate, useParams } from "react-router-dom";
-import { useStyletron } from 'baseui';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
-import Tag from '../../components/tag';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, PAGE_LIMIT_NORMAL } from '../../constants';
-import RoundTab from '../../components/round-tab';
-import Capsule from '../../components/capsule';
-import { Star } from '../../components/icons';
-import LoadMore from '../../components/load-more';
+
+import Tag from '@ktap/components/tag';
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import RoundTab from '@ktap/components/round-tab';
+import Capsule from '@ktap/components/capsule';
+import { Star } from '@ktap/components/icons';
+import LoadMore from '@ktap/components/load-more';
+
 import SideTags from './side-tags';
 
 function TagItem({ name }) {

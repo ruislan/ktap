@@ -1,9 +1,12 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
+
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import LoadMore from '@ktap/components/load-more';
+
 import NewsItem from './news-item';
-import LoadMore from '../../components/load-more';
 
 function News() {
     const limit = PAGE_LIMIT_NORMAL;

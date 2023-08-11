@@ -1,15 +1,18 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { Skeleton } from 'baseui/skeleton';
 import { HeadingXSmall, HeadingMedium } from 'baseui/typography';
 import { Button } from "baseui/button";
 import { Check } from 'baseui/icon';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
-import { useAuth } from '../../hooks/use-auth';
+
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import { useAuth } from '@ktap/hooks/use-auth';
+import LoadMore from '@ktap/components/load-more';
+
 import NewsItem from './news-item';
-import LoadMore from '../../components/load-more';
 
 function NewsAppsBanner({ appId }) {
     const [css, theme] = useStyletron();

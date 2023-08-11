@@ -9,8 +9,9 @@ import { FormControl } from 'baseui/form-control';
 import { StyledDivider } from 'baseui/divider';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete } from 'baseui/icon';
-import { AppMedia, MOBILE_BREAKPOINT } from '../../../constants';
-import { TrashBin } from '../../../components/icons';
+
+import { AppMedia, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { TrashBin } from '@ktap/components/icons';
 
 function collectMediaItem(data, type) {
     return data.filter(item => item.usage === type).map(item => {

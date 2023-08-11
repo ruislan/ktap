@@ -1,10 +1,28 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
-import { Block } from 'baseui/block';
-import SideBox from '../../components/side-box';
-import { LabelSmall } from 'baseui/typography';
 import { useStyletron } from 'baseui';
-import { SocialLinks } from '../../constants';
+import { Block } from 'baseui/block';
+import { LabelSmall } from 'baseui/typography';
+
+import SideBox from '@ktap/components/side-box';
+import { QQ, WeChat, Steam, BiliBili, Twitch, YouTube, Discord, Facebook, Instagram, Twitter, Earth } from '@ktap/components/icons';
+
+function getIcon(id) {
+    id = id ? id.toLowerCase() : '';
+    switch (id) {
+        case 'qq': return <QQ />;
+        case 'wechat': return <WeChat />;
+        case 'steam': return <Steam />;
+        case 'bilibili': return <BiliBili />;
+        case 'twitch': return <Twitch />;
+        case 'youtube': return <YouTube />;
+        case 'discord': return <Discord />;
+        case 'facebook': return <Facebook />;
+        case 'instagram': return <Instagram />;
+        case 'twitter': return <Twitter />;
+        default: return <Earth />;
+    }
+}
 
 function ContactItem({ icon, name, href, isBlank = true }) {
     const [css, theme] = useStyletron();
@@ -26,7 +44,7 @@ function ContactItem({ icon, name, href, isBlank = true }) {
         }
     });
     return href ? (
-        <a href={href || '#'} target={isBlank ? '_blank' : '_top'} className={contractItemStyle}>
+        <a href={href || '#'} target={isBlank ? '_blank' : '_top'} className={contractItemStyle} rel='noreferrer'>
             <Block width='20px' height='20px' minWidth='20px'>{icon}</Block>
             <LabelSmall marginLeft='scale100' overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis'>{name}</LabelSmall>
         </a>
@@ -39,14 +57,25 @@ function ContactItem({ icon, name, href, isBlank = true }) {
 }
 
 function SideContact({ socialLinks }) {
-
     return (
         <SideBox title='联系我们'>
             <Block display='flex' flexDirection='column' paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale600'>
-                {socialLinks && socialLinks.map((socialLink, index) => <ContactItem key={index} icon={SocialLinks.getIcon(socialLink.brand)} name={socialLink.name} href={socialLink.url} />)}
+                {socialLinks && socialLinks.map((socialLink, index) => <ContactItem key={index} icon={getIcon(socialLink.brand)} name={socialLink.name} href={socialLink.url} />)}
             </Block>
         </SideBox>
     );
 }
+
+
+SideContact.propTypes = {
+    socialLinks: PropTypes.array,
+};
+
+ContactItem.propTypes = {
+    icon: PropTypes.object,
+    name: PropTypes.string,
+    href: PropTypes.string,
+    isBlank: PropTypes.bool,
+};
 
 export default SideContact;

@@ -3,14 +3,15 @@ import React from 'react';
 import { Block } from 'baseui/block';
 import { LabelLarge, LabelMedium, LabelXSmall } from 'baseui/typography';
 
-import { Star } from '../../components/icons';
-import AvatarSquare from '../../components/avatar-square';
-import useScoreRemark from '../../hooks/use-score-remark';
-import RouterLink from '../../components/router-link';
-import GenderLabel from '../../components/gender-label';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { Star } from '@ktap/components/icons';
+import AvatarSquare from '@ktap/components/avatar-square';
+import useScoreRemark from '@ktap/hooks/use-score-remark';
+import RouterLink from '@ktap/components/router-link';
+import GenderLabel from '@ktap/components/gender-label';
 
-const ReviewTopBar = React.memo(function ({ user, score }) {
+
+const ReviewTopBar = React.memo(function ReviewTopBar({ user, score }) {
     const { remark, color } = useScoreRemark({ score });
     return (
         <Block display='flex' justifyContent='flex-start' alignItems='center' padding='scale600'

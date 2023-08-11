@@ -10,7 +10,8 @@ import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete, Plus } from 'baseui/icon';
-import { TrashBin } from '../../../components/icons';
+
+import { TrashBin } from '@ktap/components/icons';
 
 function AppDetailProReviews({ data }) {
     const { enqueue } = useSnackbar();

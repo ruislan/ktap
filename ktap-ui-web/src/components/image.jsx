@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
-import { MOBILE_BREAKPOINT } from '../constants';
 import { Skeleton } from 'baseui/skeleton';
+
+import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 
 function Image({ src, alt, width = 'auto', height = 'auto', skeletonWidth = 'auto', skeletonHeight = 'auto', }) {
     const [css,] = useStyletron();

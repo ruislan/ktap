@@ -1,9 +1,10 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import { Button } from 'baseui/button';
-import { Star } from '../../components/icons';
-import { useNavigate } from 'react-router-dom';
+
+import { Star } from '@ktap/components/icons';
 
 function ReviewAppGlance({ app }) {
     const navigate = useNavigate();

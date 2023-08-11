@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
-import { MOBILE_BREAKPOINT } from '../../constants';
-import useScoreRemark from '../../hooks/use-score-remark';
-import { Question } from '../../components/icons';
 import { StatefulTooltip } from "baseui/tooltip";
+
+import useScoreRemark from '@ktap/hooks/use-score-remark';
+import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { Question } from '@ktap/components/icons';
 
 function MetaItem({ label, value, tips, title, }) {
     return (

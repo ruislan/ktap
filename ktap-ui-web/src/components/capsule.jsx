@@ -1,7 +1,8 @@
-import React from 'react';
-import { useStyletron } from 'baseui';
-import { MOBILE_BREAKPOINT } from '../constants';
 import { Link } from 'react-router-dom';
+
+import { useStyletron } from 'baseui';
+
+import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 
 function Capsule({ href, children }) {
     const [css, theme] = useStyletron();
@@ -11,7 +12,6 @@ function Capsule({ href, children }) {
             display: 'flex',
             backgroundColor: theme.colors.backgroundSecondary,
             padding: theme.sizing.scale100,
-            // marginBottom: theme.sizing.scale600,
             color: 'inherit',
             textDecoration: 'none',
             borderRadius: theme.borders.radius300,

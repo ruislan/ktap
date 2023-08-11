@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
-import RoundTab from '../../components/round-tab';
+
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import RoundTab from '@ktap/components/round-tab';
 
 const TabActivities = lazy(() => import('./tab-activities'));
 const TabReviews = lazy(() => import('./tab-reviews'));

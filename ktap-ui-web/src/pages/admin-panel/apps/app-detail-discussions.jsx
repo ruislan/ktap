@@ -5,14 +5,15 @@ import { useSnackbar } from 'baseui/snackbar';
 import { Spinner } from 'baseui/spinner';
 import { useStyletron } from 'baseui';
 import { LabelSmall, LabelXSmall } from 'baseui/typography';
-import { ChatAlt2 } from '../../../components/icons';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
 import { Check, Delete, Plus } from 'baseui/icon';
 import { Button } from 'baseui/button';
 import { Select } from 'baseui/select';
-import Tag from '../../../components/tag';
+
+import { ChatAlt2 } from '@ktap/components/icons';
+import Tag from '@ktap/components/tag';
 
 function AppDetailDiscussions({ data }) {
     const [css, theme] = useStyletron();

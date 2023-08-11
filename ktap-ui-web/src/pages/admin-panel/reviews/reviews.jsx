@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Input, StatefulInput } from 'baseui/input';
@@ -6,15 +7,16 @@ import { StatefulPopover } from 'baseui/popover';
 import { HeadingSmall, LabelSmall, LabelXSmall, ParagraphXSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
-import { Eye, Rocket, TrashBin } from '../../../components/icons';
 import { ArrowLeft, ArrowRight, Check, Filter, Delete } from 'baseui/icon';
 import { useStyletron } from 'baseui/styles';
 import { OptionList, StatefulMenu } from 'baseui/menu';
-import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '../../../constants';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 import { useSnackbar } from 'baseui/snackbar';
-import { Hand } from '../../../components/icons';
-import AvatarSquare from '../../../components/avatar-square';
+
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
+import AvatarSquare from '@ktap/components/avatar-square';
+import { Eye, Rocket, TrashBin, Hand } from '@ktap/components/icons';
+
 import ReviewMonkeyModal from './review-monkey-modal';
 
 function ReportsBlock({ reviewId }) {
@@ -50,8 +52,8 @@ function ReportsBlock({ reviewId }) {
                 })
             }
         }}>
-            {reports && reports.map((report) => (
-                <Block display='flex' gridGap='scale600'>
+            {reports && reports.map((report, index) => (
+                <Block key={index} display='flex' gridGap='scale600'>
                     <Block><AvatarSquare src={report.user?.avatar} size='scale1200' /></Block>
                     <Block display='flex' flexDirection='column' gridGap='scale100'>
                         <LabelXSmall>{report.user?.name}</LabelXSmall>

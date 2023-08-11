@@ -1,9 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
-import { useAuth } from '../../hooks/use-auth';
 import { LabelXSmall } from 'baseui/typography';
-import SideBox from '../../components/side-box';
+
+import { useAuth } from '@ktap/hooks/use-auth';
+import SideBox from '@ktap/components/side-box';
 
 function Achievement({ src, name, progress }) {
     return (

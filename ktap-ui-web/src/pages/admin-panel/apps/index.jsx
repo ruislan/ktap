@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -15,8 +16,9 @@ import { FormControl } from 'baseui/form-control';
 import { useSnackbar } from 'baseui/snackbar';
 import { RadioGroup, Radio } from "baseui/radio";
 import { Textarea } from 'baseui/textarea';
-import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
-import { Rocket, Eye } from '../../../components/icons';
+
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
+import { Rocket, Eye } from '@ktap/components/icons';
 
 function AdminPanelApps() {
     const limit = PAGE_LIMIT_SMALL;

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui/styles';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
@@ -11,9 +12,10 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 import { StatefulPopover } from 'baseui/popover';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
-import { EditLine, TrashBin, ExternalLink } from '../../../components/icons';
-import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '../../../constants';
 import { StyledLink } from 'baseui/link';
+
+import { EditLine, TrashBin, ExternalLink } from '@ktap/components/icons';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
 
 function AdminPanelGifts() {
     const limit = PAGE_LIMIT_SMALL;

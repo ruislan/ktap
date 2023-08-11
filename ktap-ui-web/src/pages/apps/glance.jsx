@@ -1,19 +1,20 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
-import { useNavigate } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Check, Plus } from 'baseui/icon';
 import { Modal, ModalBody, ModalHeader } from 'baseui/modal';
 import { Input } from 'baseui/input';
-import { MOBILE_BREAKPOINT, AppMedia, DateTime } from '../../constants';
-import { useAuth } from '../../hooks/use-auth';
-import Tag from '../../components/tag';
-import { Linux, Mac, Win } from '../../components/icons';
-import RouterLink from '../../components/router-link';
-import Image from '../../components/image';
+
+import { MOBILE_BREAKPOINT, AppMedia, DateTime } from '@ktap/libs/utils';
+import { useAuth } from '@ktap/hooks/use-auth';
+import { Linux, Mac, Win } from '@ktap/components/icons';
+import Tag from '@ktap/components/tag';
+import RouterLink from '@ktap/components/router-link';
+import Image from '@ktap/components/image';
 
 function Field({ label, value }) {
     return (

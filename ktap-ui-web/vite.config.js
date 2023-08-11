@@ -13,8 +13,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': backServer,
-      '/admin': backServer,
+      '/api/': backServer,
+      '/admin/': backServer,
       '/public/uploads': backServer,
     }
   }

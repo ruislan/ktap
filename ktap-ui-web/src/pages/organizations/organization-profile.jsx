@@ -1,7 +1,7 @@
-import React from 'react';
 import { Block } from 'baseui/block';
 import { HeadingSmall, LabelLarge, LabelSmall, ParagraphMedium } from 'baseui/typography';
-import AvatarSquare from '../../components/avatar-square';
+
+import AvatarSquare from '@ktap/components/avatar-square';
 
 function OrganizationDataItem({ name, value }) {
     return (

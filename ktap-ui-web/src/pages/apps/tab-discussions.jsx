@@ -3,11 +3,12 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelLarge, LabelMedium, LabelSmall } from 'baseui/typography';
-import SplitBall from '../../components/split-ball';
-import { Gift2, Message4, Pin, Reply } from '../../components/icons';
-import RouterLink from '../../components/router-link';
-import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import SplitBall from '@ktap/components/split-ball';
+import { Gift2, Message4, Pin, Reply } from '@ktap/components/icons';
+import RouterLink from '@ktap/components/router-link';
+import LoadMore from '@ktap/components/load-more';
 
 function TabDiscussions({ appId }) {
     const limit = PAGE_LIMIT_NORMAL;

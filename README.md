@@ -97,37 +97,36 @@ docker-compose up
 
 ## 环境与工具
 
-* OS: macOS Ventura
-* IDE: Visual Studio Code
-* DBTool: DBeaver
 * Language: NodeJS v18
 * Web Framework: Fastify
 * Front Framework: ReactJS
 * Styling: BaseWeb UI
 * Database: SQLite
 * ORM: Prisma
-* Some useful libs:
-  * dayjs: 处理日期
-  * photoswipe: 图片放大和浏览
-  * swiper: 滚动效果
-  * tiptap: 非常给力的 Editor
-  * sanitize-html: 清理非法 HTML 标签
+* Other Libs:
+  * dayjs: date helper
+  * photoswipe: explore and scale images
+  * swiper
+  * tiptap: amazing editor
+  * sanitize-html
   * nodejieba: 中文分词
-  * nodemailer: 发送邮件
-  * node-cache: 简单缓存
-  * node-cron: 简单定时任务
+  * nodemailer: send mail
+  * node-cache: simple cache
+  * node-cron: simple schedule
 
-我对技术栈没有特别的倾向性，选择JS Stack主要原因有两个。第一，写起来方便，快捷，自由度高。第二，和前端语言保持一致。第三，社群资源非常丰富。
-
-SQLite仅仅作为开发和演示是OK的，甚至性能也挺好。但是如果要运营，推荐使用MySQL或者PostgreSQL（当然，有些代码要做针对性的调整）。
+SQLite仅仅作为开发、演示和独立小规模运营是非常棒的，甚至性能也非常好。不过，如果要正式运营，推荐使用MySQL或者PostgreSQL（当然，有些代码要做针对性的调整）。
 
 ## 接下来
 
-* 还有不少功能和想法（例如用户成就、通知，讨论(doing now)，专栏等）没有做，会持续地进行。
-* ~~BaseWeb已经快1年没有更新了~~（居然时隔大半年更新到了v13.0.0），即便如此，我依然比较期待[NextUI](https://nextui.org)，虽然其第一版还没有release，release 之后会酌情替换。
-* 增加搜索引擎，改进搜索、相关性。
-* 数据库支持MySQL或PG。
-* 阶段性重构和优化。
+* 增加用户成就
+* 增加消息通知
+* 增加专题专栏
+* 增加支付和交易
+* 增加活动和事件
+* 增加组织管理
+* 增加搜索引擎，改进搜索、相关性
+* 数据库支持MySQL或PG
+* 持续重构和优化
 
 ## 致敬
 

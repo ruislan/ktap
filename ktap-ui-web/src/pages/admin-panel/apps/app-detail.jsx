@@ -1,10 +1,10 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import { Block } from 'baseui/block';
 import { LabelSmall, HeadingSmall } from 'baseui/typography';
-import RouterLink from '../../../components/router-link';
-import { useParams } from 'react-router-dom';
 import { Spinner } from 'baseui/spinner';
+
 import AppDetailInfo from './app-detail-info';
 import AppDetailMedia from './app-detail-media';
 import AppDetailContact from './app-detail-contact';
@@ -16,7 +16,9 @@ import AppDetailOrganizations from './app-detail-organizations';
 import AppDetailProReviews from './app-detail-pro-reviews';
 import AppDetailAwards from './app-detail-awards';
 import AppDetailDiscussions from './app-detail-discussions';
-import RoundTab from '../../../components/round-tab';
+
+import RouterLink from '@ktap/components/router-link';
+import RoundTab from '@ktap/components/round-tab';
 
 function AdminPanelAppDetail() {
     const { id } = useParams();

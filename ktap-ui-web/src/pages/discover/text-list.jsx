@@ -2,7 +2,7 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { MOBILE_BREAKPOINT } from '../../libs/utils';
 import { Link } from 'react-router-dom';
 
 function TextList({ title, dataList }) {

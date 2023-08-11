@@ -10,8 +10,9 @@ import { useSnackbar } from 'baseui/snackbar';
 import { Check, ChevronDown, ChevronUp, Delete, Plus } from 'baseui/icon';
 import { FormControl } from 'baseui/form-control';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
-import { MOBILE_BREAKPOINT, PageWidget } from '../../../constants';
-import { Eye } from '../../../components/icons';
+
+import { MOBILE_BREAKPOINT, PageWidget } from '@ktap/libs/utils';
+import { Eye } from '@ktap/components/icons';
 
 function DiscoverWidget({ widget, onChanged, onSaved, onDeleted }) {
     const { enqueue } = useSnackbar();

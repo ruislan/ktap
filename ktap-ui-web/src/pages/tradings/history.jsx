@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { Block } from "baseui/block";
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
-import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '@ktap/libs/utils';
+import LoadMore from '@ktap/components/load-more';
 
 function TradingHistory() {
     const limit = PAGE_LIMIT_NORMAL;

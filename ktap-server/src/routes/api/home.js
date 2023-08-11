@@ -174,7 +174,7 @@ const home = async function (fastify, opts) {
                 html: `
                     <p>您好,</p>
                     <p>点击以下链接来为您在KTap的账户 ${email} 重置密码</p>
-                    <p><a href='${process.env.SERVER_HOST || 'http://localhost'}/password/reset?code=${code}'>${process.env.SERVER_HOST || 'http://localhost'}/password/reset?code=${code}</a></p>
+                    <p><a href='${process.env.SITE_URL || 'http://localhost'}/password/reset?code=${code}'>${process.env.SITE_URL || 'http://localhost'}/password/reset?code=${code}</a></p>
                     <p>如果您没有进行重置密码操作，您可以忽略本邮件内容。</p>
                     <p>感谢您对KTap的喜爱。</p>
                     <p>KTap团队</p>

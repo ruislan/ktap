@@ -1,12 +1,14 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { Notification } from 'baseui/notification';
 import { DisplayMedium, ParagraphSmall } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
-import { LAYOUT_LEFT, MOBILE_BREAKPOINT } from '../constants';
-import RouterLink from '../components/router-link';
+
+import { LAYOUT_LEFT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import RouterLink from '@ktap/components/router-link';
 
 function PasswordForgot() {
     const [email, setEmail] = React.useState('');

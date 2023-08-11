@@ -2,7 +2,7 @@ import React from 'react';
 import { Block } from 'baseui/block';
 import { DisplayMedium, ParagraphLarge } from 'baseui/typography';
 import { Button } from 'baseui/button';
-import { MOBILE_BREAKPOINT } from '../constants';
+import { MOBILE_BREAKPOINT } from '../libs/utils';
 
 function NotFound() {
     return (

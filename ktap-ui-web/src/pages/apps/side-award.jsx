@@ -2,7 +2,8 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
-import SideBox from '../../components/side-box';
+
+import SideBox from '@ktap/components/side-box';
 
 function SideAward({ app }) {
     const [isHide, setIsHide] = React.useState(true);

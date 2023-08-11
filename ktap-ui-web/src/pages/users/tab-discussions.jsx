@@ -1,11 +1,13 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium, ParagraphMedium } from 'baseui/typography';
-import RouterLink from '../../components/router-link';
-import { Star } from '../../components/icons';
-import LoadMore from '../../components/load-more';
-import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
+
+import RouterLink from '@ktap/components/router-link';
+import { Star } from '@ktap/components/icons';
+import LoadMore from '@ktap/components/load-more';
+import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 
 function TabDiscussions({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;

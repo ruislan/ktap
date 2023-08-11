@@ -7,7 +7,7 @@ import { LabelXSmall, LabelSmall, LabelMedium, HeadingXLarge, ParagraphMedium } 
 import { Input } from 'baseui/input';
 
 import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/constants';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import { ChatAlt2, User } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
 

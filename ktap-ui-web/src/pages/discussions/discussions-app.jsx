@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -9,14 +10,15 @@ import { Check, Search } from 'baseui/icon';
 import { FormControl } from 'baseui/form-control';
 import { HeadingMedium, HeadingXSmall, LabelMedium, LabelSmall, LabelXSmall } from 'baseui/typography';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
-import { useAuth } from '../../hooks/use-auth';
-import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply, Settings } from '../../components/icons';
-import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL } from '../../constants';
-import RouterLink from '../../components/router-link';
-import SplitBall from '../../components/split-ball';
-import Notification from '../../components/notification';
-import Editor from '../../components/editor';
-import LoadMore from '../../components/load-more';
+
+import { useAuth } from '@ktap/hooks/use-auth';
+import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import { ChatAlt2, Gift2, Lock, Message4, Pin, Reply, Settings } from '@ktap/components/icons';
+import RouterLink from '@ktap/components/router-link';
+import SplitBall from '@ktap/components/split-ball';
+import Notification from '@ktap/components/notification';
+import Editor from '@ktap/components/editor';
+import LoadMore from '@ktap/components/load-more';
 
 function AppBanner({ appId }) {
     const [css, theme] = useStyletron();

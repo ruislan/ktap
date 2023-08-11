@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+
 import { useStyletron } from 'baseui';
-import { useAuth } from '../../hooks/use-auth';
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Skeleton } from 'baseui/skeleton';
@@ -10,19 +10,19 @@ import { Textarea } from 'baseui/textarea';
 import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
 import { LabelLarge, LabelSmall, LabelMedium, HeadingXSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
-import RouterLink from '../../components/router-link';
-import Notification from '../../components/notification';
-import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock, Update as UpdateIcon } from '../../components/icons';
-import { DateTime, LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../../constants';
 
-import SideBox from '../../components/side-box';
-import AvatarSquare from '../../components/avatar-square';
-import GenderLabel from '../../components/gender-label';
-import GiftType from '../../components/gift';
-import Editor from '../../components/editor';
-import LoadMore from '../../components/load-more';
-
-import '../../assets/css/post.css';
+import { useAuth } from '@ktap/hooks/use-auth';
+import { DateTime, LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '@ktap/libs/utils';
+import RouterLink from '@ktap/components/router-link';
+import Notification from '@ktap/components/notification';
+import { Message4, Star, ThumbUp, ThumbDown, Gift, Hand, Quote, TrashBin, Pin, Lock, Update as UpdateIcon } from '@ktap/components/icons';
+import SideBox from '@ktap/components/side-box';
+import AvatarSquare from '@ktap/components/avatar-square';
+import GenderLabel from '@ktap/components/gender-label';
+import GiftType from '@ktap/components/gift';
+import Editor from '@ktap/components/editor';
+import LoadMore from '@ktap/components/load-more';
+import '@ktap/assets/css/post.css';
 
 function UserPanel({ id, name, avatar, gender, title }) {
     return (

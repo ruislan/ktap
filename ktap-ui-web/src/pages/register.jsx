@@ -1,13 +1,15 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { DisplayMedium, ParagraphSmall } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 import { Checkbox } from 'baseui/checkbox';
-import { MOBILE_BREAKPOINT, Messages } from '../constants';
-import Notification from '../components/notification';
-import RouterLink from '../components/router-link';
+
+import { MOBILE_BREAKPOINT, Messages } from '@ktap/libs/utils';
+import Notification from '@ktap/components/notification';
+import RouterLink from '@ktap/components/router-link';
 
 function Register() {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -50,9 +52,7 @@ function Register() {
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
-                            paddingTop: $theme.sizing.scale300,
-                            overflow: 'hidden',
-                            maxHeight: '196px',
+                            paddingTop: $theme.sizing.scale300, overflow: 'hidden', maxHeight: '196px',
                             display: 'none',
                         }
                     })
@@ -60,11 +60,7 @@ function Register() {
             }}>
                 <img width='100%' height='85%' src='/public/img/standing.svg' />
             </Block>
-            <Block
-                display='flex'
-                flexDirection='column'
-                padding='scale1200'
-                width='384px'
+            <Block display='flex' flexDirection='column' padding='scale1200' width='384px'
                 overrides={{
                     Block: {
                         style: ({ $theme }) => ({

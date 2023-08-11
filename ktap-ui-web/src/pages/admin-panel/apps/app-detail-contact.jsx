@@ -6,12 +6,13 @@ import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
 import { Select } from "baseui/select";
 import { FormControl } from 'baseui/form-control';
-import { TrashBin } from '../../../components/icons';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
-import { SocialLinks } from '../../../constants';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete, Plus } from 'baseui/icon';
+
+import { TrashBin } from '@ktap/components/icons';
+import { SocialLinks } from '@ktap/libs/utils';
 
 function AppDetailContact({ data }) {
     const { enqueue } = useSnackbar();

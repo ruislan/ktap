@@ -1,13 +1,15 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
 import { DisplayMedium, ParagraphSmall } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
-import { LAYOUT_LEFT, MOBILE_BREAKPOINT, Messages } from '../constants';
-import { useSearchParams } from 'react-router-dom';
 import { Notification } from 'baseui/notification';
-import RouterLink from '../components/router-link';
+
+import { LAYOUT_LEFT, MOBILE_BREAKPOINT, Messages } from '@ktap/libs/utils';
+import RouterLink from '@ktap/components/router-link';
 
 function PasswordReset() {
     const [searchParams] = useSearchParams();

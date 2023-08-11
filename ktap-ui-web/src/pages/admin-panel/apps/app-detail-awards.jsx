@@ -10,7 +10,8 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { useSnackbar } from 'baseui/snackbar';
 import { StyledLink } from 'baseui/link';
 import { Check, Delete, Plus } from 'baseui/icon';
-import { ExternalLink, TrashBin } from '../../../components/icons';
+
+import { ExternalLink, TrashBin } from '@ktap/components/icons';
 
 function AppDetailAwards({ data }) {
     const { enqueue } = useSnackbar();

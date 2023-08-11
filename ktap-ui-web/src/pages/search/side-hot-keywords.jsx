@@ -3,9 +3,10 @@ import React from 'react';
 import { LabelMedium, LabelSmall } from 'baseui/typography';
 import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
-import { Fire } from '../../components/icons';
-import SideBox from '../../components/side-box';
-import ListItem from '../../components/list-item';
+
+import { Fire } from '@ktap/components/icons';
+import SideBox from '@ktap/components/side-box';
+import ListItem from '@ktap/components/list-item';
 
 function SideHotKeywords() {
     const [isLoading, setIsLoading] = React.useState(false);

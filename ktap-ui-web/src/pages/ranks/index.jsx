@@ -1,12 +1,14 @@
 import React from 'react';
 
 import { Block } from "baseui/block";
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '../../constants';
-import RoundTab from '../../components/round-tab';
+import { LabelSmall } from 'baseui/typography';
+
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import RoundTab from '@ktap/components/round-tab';
 
 import RankAppsList from './rank-apps-list';
 import RankOrganizationsList from './rank-organizations-list';
-import { LabelSmall } from 'baseui/typography';
+
 
 function Rank() {
     const [activeTab, setActiveTab] = React.useState(0);

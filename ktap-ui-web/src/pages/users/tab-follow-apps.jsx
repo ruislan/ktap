@@ -1,11 +1,13 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { useStyletron } from 'baseui';
 import { LabelMedium } from 'baseui/typography';
-import { Star } from '../../components/icons';
-import Capsule from '../../components/capsule';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import { Star } from '@ktap/components/icons';
+import Capsule from '@ktap/components/capsule';
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import LoadMore from '@ktap/components/load-more';
 
 function TabFollowUsers({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;

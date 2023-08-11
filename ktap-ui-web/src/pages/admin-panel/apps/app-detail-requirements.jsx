@@ -6,9 +6,10 @@ import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
 import { FormControl } from 'baseui/form-control';
 import { Checkbox } from 'baseui/checkbox';
-import { MOBILE_BREAKPOINT } from '../../../constants';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete } from 'baseui/icon';
+
+import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 
 function RequirementBlock({ platform, onChange }) {
     return (

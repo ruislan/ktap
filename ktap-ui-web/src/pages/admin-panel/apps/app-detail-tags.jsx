@@ -4,12 +4,13 @@ import { Block } from 'baseui/block';
 import { HeadingXSmall, ParagraphXSmall, } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { StyledDivider } from 'baseui/divider'
-import Tag from '../../../components/tag';
 import { Select } from 'baseui/select';
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete, } from 'baseui/icon';
 import { StatefulInput } from 'baseui/input';
-import { PAGE_LIMIT_NORMAL } from '../../../constants';
+
+import { PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import Tag from '@ktap/components/tag';
 
 function GenresBlock({ data }) {
     const { enqueue } = useSnackbar();

@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
-import RouterLink from '../../components/router-link';
-import '../../assets/css/post.css';
-import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import RouterLink from '@ktap/components/router-link';
+import LoadMore from '@ktap/components/load-more';
+import '@ktap/assets/css/post.css';
 
 function TabDiscussionPosts({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;

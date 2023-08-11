@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { ListItem } from 'baseui/list';
 import { Block } from 'baseui/block';
 import { LabelLarge, LabelMedium, LabelSmall } from 'baseui/typography';
 import { ChevronRight } from 'baseui/icon';
 import { Skeleton } from 'baseui/skeleton';
-import RouterLink from '../../components/router-link';
+
+import RouterLink from '@ktap/components/router-link';
 
 function TabNews({ app }) {
     const appId = app?.id || 0;

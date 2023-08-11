@@ -1,16 +1,19 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelLarge, LabelMedium, ParagraphSmall, LabelSmall, LabelXSmall } from 'baseui/typography';
-import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '../../constants';
 import { Button } from 'baseui/button';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { Star } from '../../components/icons';
-import AvatarSquare from '../../components/avatar-square';
-import { Link } from 'react-router-dom';
-import GenderLabel from '../../components/gender-label';
+
+import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
+import { Star } from '@ktap/components/icons';
+import AvatarSquare from '@ktap/components/avatar-square';
+import GenderLabel from '@ktap/components/gender-label';
 
 function CardListReview({ title, dataList, perViewSize = 4, }) {
     const [css, theme] = useStyletron();

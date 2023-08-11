@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import { Block } from "baseui/block";
 import { Button } from 'baseui/button';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { Skeleton } from 'baseui/skeleton';
-import { Eye } from '../../components/icons';
-import { DateTime, MOBILE_BREAKPOINT } from '../../constants';
-import '../../assets/css/post.css';
+
+import { Eye } from '@ktap/components/icons';
+import { DateTime, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import '@ktap/assets/css/post.css';
 
 function NewsDetail() {
     const { id } = useParams();

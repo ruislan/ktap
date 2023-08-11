@@ -1,13 +1,14 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom'
 
 import { Block } from 'baseui/block';
-import { useSearchParams } from 'react-router-dom';
+
+import RoundTab from '@ktap/components/round-tab';
+
 import AdminPanelReviews from './reviews';
 import AdminPanelReviewComments from './comments';
-import RoundTab from '../../../components/round-tab';
 
-
-export default () => {
+export default function ReviewsLayout() {
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = React.useState(0);
 

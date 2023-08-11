@@ -1,11 +1,10 @@
 import React from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
 import { HeadingMedium, ParagraphSmall } from 'baseui/typography';
 import { Skeleton } from 'baseui/skeleton';
 import { StyledLink } from 'baseui/link';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../constants';
-import SideBoxApps from '../../components/side-box-apps';
 import Glance from './glance';
 import MetaBar from './meta-bar';
 import SideContact from './side-contact';
@@ -18,7 +17,10 @@ import TabDetailsRequirements from './tab-details-requirements';
 import TabReviewsProfessional from './tab-reviews-professional';
 import TabReviewsUsers from './tab-reviews-users';
 import TabDiscussions from './tab-discussions';
-import RoundTab from '../../components/round-tab';
+
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import SideBoxApps from '@ktap/components/side-box-apps';
+import RoundTab from '@ktap/components/round-tab';
 
 function MainContent({ isLoading, app }) {
     const [searchParams] = useSearchParams();

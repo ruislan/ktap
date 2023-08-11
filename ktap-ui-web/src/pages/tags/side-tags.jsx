@@ -3,9 +3,10 @@ import React from 'react';
 import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
 import { LabelMedium, MonoLabelMedium } from 'baseui/typography';
-import SideBox from '../../components/side-box';
-import ListItem from '../../components/list-item';
 import { Button } from 'baseui/button';
+
+import SideBox from '@ktap/components/side-box';
+import ListItem from '@ktap/components/list-item';
 
 function SideTags({ title, apiUrl }) {
     const [isLoading, setIsLoading] = React.useState(false);

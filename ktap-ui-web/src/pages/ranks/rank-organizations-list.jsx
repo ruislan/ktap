@@ -3,9 +3,10 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { LabelMedium, LabelLarge, LabelXSmall } from 'baseui/typography';
-import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '../../constants';
-import Capsule from '../../components/capsule';
-import LoadMore from '../../components/load-more';
+
+import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import Capsule from '@ktap/components/capsule';
+import LoadMore from '@ktap/components/load-more';
 
 function RankOrganizationsList({ apiUrl }) {
     const limit = PAGE_LIMIT_NORMAL;

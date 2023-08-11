@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStyletron } from 'baseui';
 import { Link, useNavigate } from 'react-router-dom';
-import { DateTime, MOBILE_BREAKPOINT } from '../../constants';
+import { DateTime, MOBILE_BREAKPOINT } from '../../libs/utils';
 import { Block } from 'baseui/block';
 import { HeadingXSmall, LabelXSmall, MonoLabelMedium, ParagraphSmall } from 'baseui/typography';
 

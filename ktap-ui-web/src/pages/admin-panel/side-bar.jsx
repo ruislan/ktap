@@ -1,10 +1,12 @@
 import React from 'react';
-import { Navigation } from 'baseui/side-navigation';
 import { useNavigate } from 'react-router-dom';
-import useWindowSize from '../../hooks/use-window-size';
-import { MOBILE_BREAKPOINT_PX } from '../../constants';
-import RoundTab from '../../components/round-tab';
+
 import { Block } from 'baseui/block';
+import { Navigation } from 'baseui/side-navigation';
+
+import useWindowSize from '@ktap/hooks/use-window-size';
+import { MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
+import RoundTab from '@ktap/components/round-tab';
 
 const sideMenus = [
     { title: '概览', itemId: '/admin-panel' },

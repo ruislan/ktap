@@ -1,5 +1,6 @@
 import React from 'react';
 import Compressor from 'compressorjs';
+import { useNavigate } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
@@ -9,14 +10,14 @@ import { Checkbox } from 'baseui/checkbox';
 import { Textarea } from 'baseui/textarea';
 import { Skeleton } from 'baseui/skeleton';
 import { StarRating } from 'baseui/rating';
-import { Photograph } from '../../components/icons';
-import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT } from '../../constants';
-import { useAuth } from '../../hooks/use-auth';
-import useScoreRemark from '../../hooks/use-score-remark';
-import ImageBoxGallery from '../../components/image-box-gallery';
-import ImageBox from '../../components/image-box';
-import { useNavigate } from 'react-router-dom';
-import RouterLink from '../../components/router-link';
+
+import { Photograph } from '@ktap/components/icons';
+import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { useAuth } from '@ktap/hooks/use-auth';
+import useScoreRemark from '@ktap/hooks/use-score-remark';
+import ImageBoxGallery from '@ktap/components/image-box-gallery';
+import ImageBox from '@ktap/components/image-box';
+import RouterLink from '@ktap/components/router-link';
 
 function TabReviewsUsersEditor({ app }) {
     const [, theme] = useStyletron();

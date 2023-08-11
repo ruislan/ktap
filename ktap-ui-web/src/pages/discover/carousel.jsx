@@ -1,15 +1,18 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium, HeadingSmall, ParagraphMedium, LabelSmall } from 'baseui/typography';
-import Tag from '../../components/tag';
-import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '../../constants';
-import { Star } from '../../components/icons';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade } from "swiper/modules";
 import 'swiper/css';
 import "swiper/css/effect-fade";
+
+import Tag from '@ktap/components/tag';
+import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { Star } from '@ktap/components/icons';
 
 function Carousel({ title, dataList }) {
     const navigate = useNavigate();

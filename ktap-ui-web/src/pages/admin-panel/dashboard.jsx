@@ -2,8 +2,9 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 import { HeadingSmall } from 'baseui/typography';
-import Statistic from '../../components/statistic';
-import { Numbers } from '../../constants';
+
+import { Numbers } from '@ktap/libs/utils';
+import Statistic from '@ktap/components/statistic';
 
 function AdminPanelDashboard() {
     const [data, setData] = React.useState();

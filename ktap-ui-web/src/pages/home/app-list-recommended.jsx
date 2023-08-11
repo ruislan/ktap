@@ -1,13 +1,15 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelLarge, ParagraphMedium } from 'baseui/typography';
-import { Star } from '../../components/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import Image from '../../components/image';
-import Tag from '../../components/tag';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import { Star } from '@ktap/components/icons';
+import Image from '@ktap/components/image';
+import Tag from '@ktap/components/tag';
+import { PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import LoadMore from '@ktap/components/load-more';
 
 function AppCard({ app }) {
     const [css, theme] = useStyletron();

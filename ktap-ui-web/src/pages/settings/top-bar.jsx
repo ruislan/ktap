@@ -1,11 +1,10 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium } from 'baseui/typography';
-import { useAuth } from '../../hooks/use-auth';
-import AvatarSquare from '../../components/avatar-square';
-import RouterLink from '../../components/router-link';
-import GenderLabel from '../../components/gender-label';
+
+import { useAuth } from '@ktap/hooks/use-auth';
+import AvatarSquare from '@ktap/components/avatar-square';
+import RouterLink from '@ktap/components/router-link';
+import GenderLabel from '@ktap/components/gender-label';
 
 function TopBar() {
     const { user } = useAuth();

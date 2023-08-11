@@ -2,11 +2,13 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 import { useSearchParams } from 'react-router-dom';
-import RoundTab from '../../../components/round-tab';
+
+import RoundTab from '@ktap/components/round-tab';
+
 import AdminPanelDiscussions from './discussions';
 import AdminPanelPosts from './posts';
 
-export default () => {
+export default function DiscussionsLayout() {
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = React.useState(0);
 

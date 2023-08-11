@@ -5,7 +5,7 @@ import { Spinner } from 'baseui/spinner';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 import { LabelSmall } from 'baseui/typography';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
-import { DateTime, PAGE_LIMIT_SMALL, Trading } from '../../../constants';
+import { DateTime, PAGE_LIMIT_SMALL, Trading } from '../../../libs/utils';
 
 function UserDetailTradings({ data }) {
     const limit = PAGE_LIMIT_SMALL;

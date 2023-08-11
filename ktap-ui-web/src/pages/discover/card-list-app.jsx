@@ -2,7 +2,7 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelXSmall } from 'baseui/typography';
-import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '../../constants';
+import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '../../libs/utils';
 import { Button } from 'baseui/button';
 import { ArrowLeft, ArrowRight } from 'baseui/icon';
 import { Swiper, SwiperSlide } from 'swiper/react';

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_MAIN, PageWidget } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_MAIN, PageWidget } from '../../libs/utils';
 import TextList from './text-list';
 import Carousel from './carousel';
 import CardListApp from './card-list-app';

@@ -4,13 +4,16 @@ import { useParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { HeadingSmall, LabelMedium, LabelSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
-import RouterLink from '../../../components/router-link';
+
+import RoundTab from '@ktap/components/round-tab';
+import RouterLink from '@ktap/components/router-link';
+
 import UserDetailProfile from './user-detail-profile';
 import UserDetailActions from './user-detail-actions';
 import UserDetailReviews from './user-detail-reviews';
 import UserDetailReviewComments from './user-detail-review-comments';
 import UserDetailTradings from './user-detail-tradings';
-import RoundTab from '../../../components/round-tab';
+
 
 function AdminPanelUserDetail() {
     const { id } = useParams();

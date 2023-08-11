@@ -3,12 +3,13 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
-import { Annotation, Bookmark, ChatAlt2, Star, Gift as GiftIcon } from '../../components/icons';
-import RouterLink from '../../components/router-link';
-import Gift from '../../components/gift';
-import LoadMore from '../../components/load-more';
-import { DateTime, PAGE_LIMIT_NORMAL } from '../../constants';
-import '../../assets/css/post.css';
+
+import { Annotation, Bookmark, ChatAlt2, Star, Gift as GiftIcon } from '@ktap/components/icons';
+import RouterLink from '@ktap/components/router-link';
+import Gift from '@ktap/components/gift';
+import LoadMore from '@ktap/components/load-more';
+import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import '@ktap/assets/css/post.css';
 
 function LeftLine({ type }) {
     return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_ADMIN_LEFT, LAYOUT_ADMIN_RIGHT } from '../../constants';
+import { MOBILE_BREAKPOINT, LAYOUT_ADMIN_LEFT, LAYOUT_ADMIN_RIGHT } from '../../libs/utils';
 import { SnackbarProvider } from 'baseui/snackbar';
 import SideBar from './side-bar';
 

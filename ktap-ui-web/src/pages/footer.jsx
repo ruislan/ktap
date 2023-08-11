@@ -1,8 +1,7 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
 import { LabelSmall } from 'baseui/typography';
-import RouterLink from '../components/router-link';
+
+import RouterLink from '@ktap/components/router-link';
 
 export default function Footer() {
     return (

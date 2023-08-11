@@ -16,7 +16,7 @@ import { ArrowUp } from 'baseui/icon';
 
 import { useAuth } from '../hooks/use-auth';
 import useScoreRemark from '../hooks/use-score-remark';
-import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../constants';
+import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../libs/utils';
 import { ChevronRight, Gift, Hand, More, Photograph, Star, ThumbDown, ThumbUp, TrashBin } from './icons';
 import ImageBoxGallery from './image-box-gallery';
 import GiftType from './gift';
@@ -29,7 +29,7 @@ import LoadMore from './load-more';
 import Buzzword from './buzzword';
 
 // 头部
-const Header = React.memo(function ({ id, score = 0, }) {
+const Header = React.memo(function Header({ id, score = 0, }) {
     const [css, theme] = useStyletron();
     const { remark, color } = useScoreRemark({ score });
 
@@ -63,7 +63,7 @@ const Header = React.memo(function ({ id, score = 0, }) {
 });
 
 // 发布时间，文本内容，图片内容
-const Content = React.memo(function ({ review, editable = false, afterUpdated }) {
+const Content = React.memo(function Content({ review, editable = false, afterUpdated }) {
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -598,7 +598,7 @@ const AppInfo = function ({ app }) {
 };
 
 // 用户部分
-const User = React.memo(function ({ user }) {
+const User = React.memo(function User({ user }) {
     if (!user) return null;
     return (
         <Block display='flex' justifyContent='flex-start' alignItems='center'>
@@ -617,7 +617,7 @@ const User = React.memo(function ({ user }) {
 });
 
 // 回复概览
-const CommentsSummary = React.memo(function ({ id, comments, count }) {
+const CommentsSummary = React.memo(function CommentsSummary({ id, comments, count }) {
     const navigate = useNavigate();
     if (!comments || comments.length === 0) return null;
     return (
@@ -652,7 +652,7 @@ const CommentsSummary = React.memo(function ({ id, comments, count }) {
     );
 });
 
-const Buzzwords = React.memo(function ({ onClick = () => { } }) {
+const Buzzwords = React.memo(function Buzzwords({ onClick = () => { } }) {
     const [buzzwords, setBuzzwords] = React.useState([]);
     React.useEffect(() => {
         (async () => {
@@ -810,7 +810,7 @@ const CommentsList = function ({ reviewId, commentsCount, allowComment }) {
     );
 };
 
-const Separator = React.memo(function () {
+const Separator = React.memo(function Separator() {
     const [css, theme] = useStyletron();
     return (
         <div className={css({ width: '100%', height: '1px', backgroundColor: theme.borders.border200.borderColor })} />

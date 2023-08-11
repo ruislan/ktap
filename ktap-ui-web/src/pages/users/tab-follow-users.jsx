@@ -1,11 +1,13 @@
 import React from 'react';
+
 import { Block } from 'baseui/block';
 import { LabelLarge, LabelXSmall } from 'baseui/typography';
-import AvatarSquare from '../../components/avatar-square';
-import Capsule from '../../components/capsule';
-import GenderLabel from '../../components/gender-label';
-import { PAGE_LIMIT_NORMAL } from '../../constants';
-import LoadMore from '../../components/load-more';
+
+import AvatarSquare from '@ktap/components/avatar-square';
+import Capsule from '@ktap/components/capsule';
+import GenderLabel from '@ktap/components/gender-label';
+import { PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import LoadMore from '@ktap/components/load-more';
 
 function TabFollowUsers({ theUser }) {
     const limit = PAGE_LIMIT_NORMAL;

@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { Earth } from '../../components/icons';
+
+import { Earth } from '@ktap/components/icons';
 
 function ContactItem({ href, title, target, icon, }) {
     const [css, theme] = useStyletron();
