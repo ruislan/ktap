@@ -94,7 +94,7 @@ function Discussions() {
             </Block>
             <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
                 {dataList && dataList.map((app, index) => (
-                    <Link key={index} to={`/discussions/apps/${app.id}`} className={css({
+                    <Link key={index} to={`/discussions/apps/${app.id}/channels/0`} className={css({
                         textDecoration: 'none',
                         display: 'flex', flexDirection: 'column', cursor: 'pointer', position: 'relative',
                         backgroundColor: theme.colors.backgroundSecondary, height: '320px',

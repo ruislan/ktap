@@ -204,7 +204,7 @@ const UserMenu = function () {
         },
     });
 
-    React.useMemo(() => {
+    React.useEffect(() => {
         if (isAuthenticated()) {
             const items = [
                 { label: '个人中心', href: `/users/${user.id}`, },

@@ -559,7 +559,7 @@ const Actions = function ({ review, actions }) {
 };
 
 // 游戏部分
-const AppInfo = function ({ app }) {
+const AppInfo = React.memo(function AppInfo({ app }) {
     return (
         <Block display='flex' alignItems='center' backgroundColor='backgroundTertiary' padding='scale300' overrides={{
             Block: {
@@ -595,7 +595,7 @@ const AppInfo = function ({ app }) {
             }
         </Block>
     );
-};
+});
 
 // 用户部分
 const User = React.memo(function User({ user }) {

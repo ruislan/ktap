@@ -2,23 +2,20 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
-import { Block } from "baseui/block";
+import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
-import { HeadingXSmall, HeadingMedium } from 'baseui/typography';
-import { Button } from "baseui/button";
+import { HeadingMedium, HeadingXSmall } from 'baseui/typography';
+import { Button } from 'baseui/button';
 import { Check } from 'baseui/icon';
 
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import { useAuth } from '@ktap/hooks/use-auth';
-import LoadMore from '@ktap/components/load-more';
+import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 
-import NewsItem from './news-item';
-
-function NewsAppsBanner({ appId }) {
+export default function Banner() {
+    const { appId } = useParams();
     const [css, theme] = useStyletron();
-    const { user } = useAuth();
     const navigate = useNavigate();
-
+    const { user } = useAuth();
     const [data, setData] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(true);
     const [isFollowed, setIsFollowed] = React.useState(false);
@@ -58,7 +55,7 @@ function NewsAppsBanner({ appId }) {
                     throw { status: res.status };
                 }
             } catch (error) {
-                if (error?.status === 404) navigate('/not-found', { replace: true });
+                if (error?.status === 404) navigate('/discussions', { replace: true });
                 else navigate('/not-work');
             } finally {
                 setIsLoading(false);
@@ -67,6 +64,7 @@ function NewsAppsBanner({ appId }) {
     }, [appId, navigate]);
 
     if (isLoading) return <Skeleton width='100vw' height='152px' animation />;
+
     return (
         <Block width='100vw' justifyContent='center' display='flex' position='relative' backgroundColor='backgroundSecondary' overflow='hidden'>
             <Block width='100%' height='100%'
@@ -108,22 +106,23 @@ function NewsAppsBanner({ appId }) {
                         borderRadius: theme.borders.radius300,
                     })} src={data.media.head.image} />
                 </Block>
-                <Block display='flex' flexDirection='column' margin='scale300' justifyContent='space-between'>
+                <Block display='flex' flexDirection='column' margin='scale300' gridGap='scale100' justifyContent='space-between'>
                     <Block>
-                        <HeadingMedium marginTop='0' marginBottom='scale100' >{data.name}</HeadingMedium>
-                        <HeadingXSmall marginTop='0' marginBottom='scale100' color='primary100' overrides={{
+                        <HeadingMedium marginTop='0' marginBottom='0'>{data.name}</HeadingMedium>
+                        <HeadingXSmall marginTop='0' marginBottom='0' color='primary100' overrides={{
                             Block: {
                                 style: {
                                     textTransform: 'uppercase',
                                     letterSpacing: '1px',
                                     lineHeight: '25px',
+                                    whiteSpace: 'normal',
                                     textShadow: '1px 1px 0px rgb(0 0 0 / 50%)',
                                     [MOBILE_BREAKPOINT]: {
                                         marginBottom: theme.sizing.scale600,
                                     }
                                 }
                             }
-                        }}>新闻中心</HeadingXSmall>
+                        }}>讨论中心</HeadingXSmall>
                     </Block>
                     <Block>
                         <Button kind='secondary' size='compact' onClick={() => handleFollow()} startEnhancer={isFollowed ? <Check size={16} /> : null}>
@@ -135,57 +134,3 @@ function NewsAppsBanner({ appId }) {
         </Block>
     );
 }
-
-function NewsAppsNewsList({ appId }) {
-    const limit = PAGE_LIMIT_NORMAL;
-    const [, theme] = useStyletron();
-    const [dataList, setDataList] = React.useState([]);
-    const [hasMore, setHasMore] = React.useState(false);
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [skip, setSkip] = React.useState(0);
-
-    React.useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            try {
-                const res = await fetch(`/api/news/apps/${appId}?limit=${limit}&skip=${skip}`);
-                if (res.ok) {
-                    const json = await res.json();
-                    setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                    setHasMore(json.skip + json.limit < json.count);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [appId, skip, limit]);
-
-    return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale600' overrides={{
-            Block: {
-                style: {
-                    [MOBILE_BREAKPOINT]: {
-                        width: 'auto',
-                        marginLeft: theme.sizing.scale300,
-                        marginRight: theme.sizing.scale300,
-                    }
-                }
-            }
-        }}>
-            {dataList && dataList.map((news, index) => <NewsItem key={index} news={news} />)}
-            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='212px' onClick={() => setSkip(prev => prev + limit)} />
-        </Block >
-    );
-}
-
-function NewsApps() {
-    const { appId } = useParams();
-    return (
-        <Block display='flex' flexDirection='column' alignItems='center'>
-            <NewsAppsBanner appId={appId} />
-            <NewsAppsNewsList appId={appId} />
-        </Block>
-    );
-}
-
-export default NewsApps;

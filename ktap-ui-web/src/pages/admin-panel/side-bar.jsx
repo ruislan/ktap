@@ -25,23 +25,21 @@ const sideMenus = [
 function SideBar() {
     const navigate = useNavigate();
     const windowSize = useWindowSize();
-    return (
-        <>
-            {windowSize?.width > MOBILE_BREAKPOINT_PX ?
-                <Navigation
-                    items={sideMenus}
-                    activeItemId={location.pathname}
-                    onChange={({ event, item }) => {
-                        event.preventDefault();
-                        navigate(item.itemId);
-                    }}
-                /> :
-                <Block display='flex' alignItems='center' marginBottom='scale600'>
-                    <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
-                </Block>
-            }
 
-        </>
+    if (windowSize?.width <= MOBILE_BREAKPOINT_PX) {
+        return (
+            <Block display='flex' alignItems='center' marginBottom='scale600'>
+                <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
+            </Block>
+        );
+    }
+    return (
+        <Navigation items={sideMenus} activeItemId={location.pathname}
+            onChange={({ event, item }) => {
+                event.preventDefault();
+                navigate(item.itemId);
+            }}
+        />
     );
 }
 
