@@ -1,4 +1,3 @@
-import React from 'react';
 import { Avatar } from 'baseui/avatar';
 
 function AvatarSquare({ name, src, size, radius }) {

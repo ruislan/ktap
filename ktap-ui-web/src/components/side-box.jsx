@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 

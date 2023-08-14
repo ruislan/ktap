@@ -1,4 +1,3 @@
-import React from 'react';
 import { useStyletron } from 'baseui';
 
 const SplitBall = function ({ color = 'inherit', gap = '4px', }) {

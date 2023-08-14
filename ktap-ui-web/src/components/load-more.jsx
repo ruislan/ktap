@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
 import { Button } from 'baseui/button';
 import { Skeleton } from 'baseui/skeleton';

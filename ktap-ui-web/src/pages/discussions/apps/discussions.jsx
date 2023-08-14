@@ -184,8 +184,7 @@ export default function Discussions() {
                         </Block>
                     </RouterLink>
                 );
-            })
-            }
+            })}
             <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='56px' onClick={() => fetchDiscussions(keyword, skip + limit)} />
         </Block>
     );

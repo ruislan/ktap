@@ -1,4 +1,3 @@
-import React from 'react';
 import { useStyletron } from 'baseui';
 import { Link } from 'react-router-dom';
 

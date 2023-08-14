@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { LabelXSmall } from 'baseui/typography';
 
 function Buzzword({ onClick, children }) {

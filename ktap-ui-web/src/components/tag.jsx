@@ -1,4 +1,3 @@
-import React from 'react';
 import { useStyletron } from 'baseui';
 
 const Tag = function ({ startEnhancer, endEnhancer, closeable, onCloseClick, onClick, children }) {

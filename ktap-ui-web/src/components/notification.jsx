@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { LabelMedium } from 'baseui/typography';
 import { Notification as BaseNotification } from "baseui/notification"
 

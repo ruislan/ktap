@@ -1,10 +1,8 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
 import { LabelXSmall } from 'baseui/typography';
 import { StatefulPopover } from 'baseui/popover';
 
-const Gift = function ({ src, number, name, description, price, $size = '16px', onClick = () => { } }) {
+export default function Gift({ src, number, name, description, price, $size = '16px', onClick = () => { } }) {
     return (
         <StatefulPopover accessibilityType='tooltip' triggerType='hover' placement='top'
             content={() => (
@@ -36,8 +34,6 @@ const Gift = function ({ src, number, name, description, price, $size = '16px', 
         </StatefulPopover>
     );
 }
-
-export default Gift;
 
 
 

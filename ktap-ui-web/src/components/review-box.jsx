@@ -13,6 +13,7 @@ import { StatefulPopover } from 'baseui/popover';
 import { StatefulMenu } from 'baseui/menu';
 import { Input } from 'baseui/input';
 import { ArrowUp } from 'baseui/icon';
+import { StarRating } from 'baseui/rating';
 
 import { useAuth } from '../hooks/use-auth';
 import useScoreRemark from '../hooks/use-score-remark';
@@ -23,7 +24,6 @@ import GiftType from './gift';
 import RouterLink from './router-link';
 import GenderLabel from './gender-label';
 import AvatarSquare from './avatar-square';
-import { StarRating } from 'baseui/rating';
 import ImageBox from './image-box';
 import LoadMore from './load-more';
 import Buzzword from './buzzword';
