@@ -21,7 +21,7 @@ import { Lock, Message4, Pin, Reply, Gift2 } from "@ktap/components/icons";
 
 export default function Discussions() {
     const limit = PAGE_LIMIT_NORMAL;
-    const { appId, channelId = 1 } = useParams();
+    const { appId, channelId = 0 } = useParams();
     const [css, theme] = useStyletron();
     const { user } = useAuth();
     const navigate = useNavigate();

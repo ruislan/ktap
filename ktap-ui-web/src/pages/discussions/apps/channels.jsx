@@ -49,19 +49,21 @@ function Setting({ appId, channel, afterUpdated = () => { } }) {
     };
 
     return (
-        <Block display='flex' alignItems='center' position='absolute' color='primary300' right='scale300' title='设置' overrides={{
-            Block: {
-                style: {
-                    cursor: 'pointer',
-                    ':hover': { color: theme.colors.primary100 },
+        <>
+            <Block display='flex' alignItems='center' position='absolute' color='primary300' right='scale300' title='设置' overrides={{
+                Block: {
+                    style: {
+                        cursor: 'pointer',
+                        ':hover': { color: theme.colors.primary100 },
+                    }
                 }
-            }
-        }} onClick={e => {
-            e.preventDefault();
-            setIsOpenChannelSettingModal(true);
-            setSettingForm({ id: channel.id, name: channel.name, icon: channel.icon, description: channel.description });
-        }}>
-            <Settings width='20px' height='20px' />
+            }} onClick={e => {
+                e.preventDefault();
+                setSettingForm({ id: channel.id, name: channel.name, icon: channel.icon, description: channel.description });
+                setIsOpenChannelSettingModal(true);
+            }}>
+                <Settings width='20px' height='20px' />
+            </Block>
             <Modal onClose={() => setIsOpenChannelSettingModal(false)} closeable={false} isOpen={isOpenChannelSettingModal} role={ROLE.alertdialog} animate autoFocus>
                 <ModalHeader>设置频道</ModalHeader>
                 <ModalBody>
@@ -79,16 +81,16 @@ function Setting({ appId, channel, afterUpdated = () => { } }) {
                     </Block>
                 </ModalBody>
                 <ModalFooter>
-                    <ModalButton kind='tertiary' onClick={() => setIsOpenChannelSettingModal(false)}>关闭</ModalButton>
+                    <ModalButton kind='tertiary' onClick={() => setIsOpenChannelSettingModal(false)}>取消</ModalButton>
                     <ModalButton isLoading={isSubmitting} onClick={() => handleChannelSettingSubmit()}>保存</ModalButton>
                 </ModalFooter>
             </Modal>
-        </Block>
+        </>
     );
 }
 
 export default function Channels() {
-    const { appId, channelId = 1 } = useParams();
+    const { appId, channelId = 0 } = useParams();
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
 

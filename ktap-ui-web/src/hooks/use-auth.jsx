@@ -75,7 +75,7 @@ function AuthProvider({ children }) {
         try {
             setAuthenticating(true);
             await fetch('/api/logout', { method: 'POST', });
-        } finally { // 不管请求如何，直接清空本地
+        } finally { // 不管结果如何，直接清空本地
             localLogout();
             setAuthenticating(false);
             window.location.href = to;
