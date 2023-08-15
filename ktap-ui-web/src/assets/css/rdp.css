@@ -1,0 +1,20 @@
+.rdp {
+    --rdp-cell-size       : 40px;
+    --rdp-accent-color    : white;
+    --rdp-background-color: rgb(41, 41, 41);
+}
+
+.rdp-button:focus-visible:not([disabled]),
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+    color : inherit;
+    border: 2px solid white;
+}
+
+.rdp-day_selected,
+.rdp-day_selected:focus-visible,
+.rdp-day_selected:hover {
+    color           : inherit;
+    opacity         : 1;
+    border: 2px solid white;
+    background-color: transparent;
+}

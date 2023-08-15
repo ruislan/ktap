@@ -7,8 +7,9 @@ import { Button } from 'baseui/button';
 import { FormControl } from 'baseui/form-control';
 import { useSnackbar } from 'baseui/snackbar';
 import { Textarea } from "baseui/textarea";
-import { DatePicker } from 'baseui/datepicker';
 import { Check, Delete } from 'baseui/icon';
+
+import RdPicker from '@ktap/components/rdpicker';
 
 function AppDetailInfo({ data, onChanged }) {
     const { enqueue } = useSnackbar();
@@ -62,7 +63,7 @@ function AppDetailInfo({ data, onChanged }) {
                     <Textarea size='compact' placeholder='详细介绍游戏内容' rows={10} value={app.description} onChange={e => setApp(prev => { return { ...prev, description: e.target.value } })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>发布于</LabelSmall>}>
-                    <DatePicker size='compact' value={new Date(app.releasedAt)} onChange={({ date }) => setApp(prev => { return { ...prev, releasedAt: date } })} />
+                    <RdPicker mode='single' value={new Date(app.releasedAt)} onSelect={(date) => setApp(prev => { return { ...prev, releasedAt: date } })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>下载链接</LabelSmall>}>
                     <Input size='compact' value={app.downloadUrl} type='text' onChange={e => setApp(prev => { return { ...prev, downloadUrl: e.target.value } })} />

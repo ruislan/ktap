@@ -1,8 +1,5 @@
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.locale('zh-cn');
-dayjs.extend(relativeTime);
+import * as dateFns from 'date-fns';
+import zh from 'date-fns/locale/zh-CN';
 
 export const MOBILE_BREAKPOINT_PX = 992;
 export const MOBILE_BREAKPOINT = `@media only screen and (max-width: ${MOBILE_BREAKPOINT_PX}px)`;
@@ -23,19 +20,19 @@ export const PAGE_LIMIT_MINI = 5;
 
 export const DateTime = {
     format(dateString) {
-        return dayjs(dateString).format('YYYY-MM-DD HH:mm:ss');
+        return dateFns.format(new Date(dateString), 'yyyy-MM-dd HH:mm:ss');
     },
     formatShort(dateString) {
-        return dayjs(dateString).format('YYYY-MM-DD');
+        return dateFns.format(new Date(dateString), 'yyyy-MM-dd');
     },
     formatCNShort(dateString) {
-        return dayjs(dateString).format('YYYY 年 M 月 D 日');
+        return dateFns.format(new Date(dateString), 'yyyy 年 M 月 d 日');
     },
     formatCN(dateString) {
-        return dayjs(dateString).format('YYYY 年 M 月 D 日 HH:mm');
+        return dateFns.format(new Date(dateString), 'yyyy 年 M 月 d 日 HH:mm');
     },
     fromNow(dateString) {
-        return dayjs(dateString).fromNow();
+        return dateFns.formatDistanceToNow(new Date(dateString), { locale: zh, addSuffix: true });
     }
 };
 

@@ -104,13 +104,13 @@ docker-compose up
 * Database: SQLite
 * ORM: Prisma
 * Other Libs:
-  * dayjs: date helper
+  * day-fns: date helper
   * photoswipe: explore and scale images
   * swiper
   * tiptap: amazing editor
   * sanitize-html
   * nodejieba: 中文分词
-  * nodemailer: send mail
+  * nodemailer: email helper
   * node-cache: simple cache
   * node-cron: simple schedule
 
@@ -118,8 +118,8 @@ SQLite仅仅作为开发、演示和独立小规模运营是非常棒的，甚�
 
 ## 接下来
 
-* 增加用户成就
 * 增加消息通知
+* 增加用户成就
 * 增加专题专栏
 * 增加支付和交易
 * 增加活动和事件

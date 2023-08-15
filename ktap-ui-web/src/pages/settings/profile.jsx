@@ -5,12 +5,12 @@ import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
-import { DatePicker } from 'baseui/datepicker';
 import { Select } from 'baseui/select';
 import { Textarea } from "baseui/textarea";
 
 import { useAuth } from '@ktap/hooks/use-auth';
 import { DateTime, Gender, IMAGE_UPLOAD_SIZE_LIMIT, Messages } from '@ktap/libs/utils';
+import RdPicker from '@ktap/components/rdpicker';
 import Notification from '@ktap/components/notification';
 import AvatarSquare from '@ktap/components/avatar-square';
 
@@ -106,7 +106,7 @@ function SettingsForm({ setNotification }) {
                 />
             </FormControl>
             <FormControl label={<LabelSmall>生日</LabelSmall>}>
-                <DatePicker size='compact' formatString='yyyy-MM-dd' value={new Date(form.birthday)} onChange={({ date }) => setForm({ ...form, birthday: DateTime.formatShort(date) })} />
+                <RdPicker mode='single' value={new Date(form.birthday)} onSelect={(date) => setForm({ ...form, birthday: DateTime.formatShort(date) })} />
             </FormControl>
             <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
                 <Textarea size='compact' value={form.bio} error={form.bio.length > 255}
