@@ -161,6 +161,32 @@ const user = async (fastify, opts) => {
         }
         return reply.code(200).send({ data, count, skip, limit });
     });
+
+    // 通知
+    fastify.get('/notifications/:type', async function (req, reply) {
+        const userId = req.user.id;
+        const type = req.params.type;
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+        const count = await fastify.db.notification.count({
+            where: { userId, type }
+        });
+        const data = await fastify.db.notification.findMany({
+            where: { userId, type },
+            orderBy: { createdAt: 'desc' },
+            skip, take: limit,
+        });
+        for (const item of data) {
+            switch (item.target) {
+                default: break;
+            }
+            // delete useless fields
+            item.type = item.target;
+            delete item.target;
+            delete item.targetId;
+            delete item.userId;
+        }
+        return reply.code(200).send({ data, count, skip, limit });
+    });
 };
 
 export default user;

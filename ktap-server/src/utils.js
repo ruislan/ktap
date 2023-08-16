@@ -282,8 +282,12 @@ const utils = async (fastify, opts, next) => {
                 SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${id}) AS ups,
                 (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${id}) AS downs
             `)[0];
+        },
+        // 通知 notification
+        async addNotification({ userId, type, targetId, target, content }) {
+            throw new Error('not implemented');
         }
-    });
+    ;
     next();
 };
 

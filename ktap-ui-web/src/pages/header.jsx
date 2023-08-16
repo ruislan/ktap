@@ -7,7 +7,7 @@ import { Delete, Menu, Search } from 'baseui/icon';
 
 import { useAuth } from '@ktap/hooks/use-auth';
 import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import { User, Coins } from '@ktap/components/icons';
+import { User, Coins, Bell } from '@ktap/components/icons';
 
 const Brand = function () {
     const [css, theme] = useStyletron();
@@ -26,59 +26,6 @@ const Brand = function () {
                 color: theme.colors.contentInversePrimary, width: theme.sizing.scale950, height: theme.sizing.scale950,
             })}>K</div>
             <span>Tap</span>
-        </div>
-    );
-};
-
-const SearchInput = function () {
-    const [css, theme] = useStyletron();
-    const navigate = useNavigate();
-    const keywordRef = React.useRef(null);
-
-    const doSearch = () => {
-        const keyword = keywordRef.current?.value;
-        if (keyword && keyword.length > 0) {
-            navigate(`/search?q=${keyword}`);
-        }
-    };
-
-    return (
-        <div className={css({
-            display: 'flex', alignItems: 'center', color: theme.colors.primary100,
-            height: theme.sizing.scale1000, backgroundColor: 'rgb(41, 41, 41)',
-            userSelect: 'none', borderRadius: theme.borders.radius300,
-            [MOBILE_BREAKPOINT]: { backgroundColor: 'unset' },
-        })}>
-            <div
-                className={css({
-                    pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: theme.sizing.scale1000, height: theme.sizing.scale1000, userSelect: 'none',
-                    minWidth: theme.sizing.scale1000, padding: theme.sizing.scale200,
-                    [MOBILE_BREAKPOINT]: { pointerEvents: 'unset', }
-                })}
-                onClick={e => {
-                    e.preventDefault();
-                    navigate('/search');
-                }}>
-                <Search size='scale800' />
-            </div>
-            <input ref={keywordRef}
-                className={css({
-                    outline: 'none', border: 0, background: 'none', margin: 0,
-                    paddingLeft: 0, paddingRight: theme.sizing.scale550,
-                    paddingTop: theme.sizing.scale200, paddingBottom: theme.sizing.scale200,
-                    color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit', lineHeight: 'inherit',
-                    caretColor: 'inherit', cursor: 'text', appearance: 'none',
-                    height: '100%', width: '100%', minWidth: '0px', maxWidth: '100%',
-                    [MOBILE_BREAKPOINT]: { display: 'none', },
-                })}
-                placeholder='搜索...'
-                onKeyUp={e => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        doSearch();
-                    }
-                }} />
         </div>
     );
 };
@@ -141,8 +88,8 @@ const MainMenu = function () {
                     backgroundColor: 'rgb(41,41,41)',
                     top: '58px', left: 0, right: 0,
                     padding: theme.sizing.scale600, zIndex: 9996,
-                    transition: 'all 0.2s ease-in-out',
                     transform: showMainItems ? 'translateX(0)' : 'translateX(-100%)',
+                    transition: 'transform 0.2s ease',
                 },
             })}>
                 <ul className={css({
@@ -182,6 +129,70 @@ const MainMenu = function () {
     );
 };
 
+const SearchInput = function () {
+    const [css, theme] = useStyletron();
+    const navigate = useNavigate();
+    const keywordRef = React.useRef(null);
+
+    const doSearch = () => {
+        const keyword = keywordRef.current?.value;
+        if (keyword && keyword.length > 0) {
+            navigate(`/search?q=${keyword}`);
+        }
+    };
+
+    return (
+        <div className={css({
+            display: 'flex', alignItems: 'center', color: theme.colors.primary100,
+            height: theme.sizing.scale1000, backgroundColor: 'rgb(41, 41, 41)',
+            userSelect: 'none', borderRadius: theme.borders.radius300,
+            [MOBILE_BREAKPOINT]: { backgroundColor: 'unset' },
+        })}>
+            <div
+                className={css({
+                    pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: theme.sizing.scale1000, height: theme.sizing.scale1000, userSelect: 'none',
+                    minWidth: theme.sizing.scale1000, padding: theme.sizing.scale200,
+                    [MOBILE_BREAKPOINT]: {
+                        pointerEvents: 'unset', padding: 0, margin: 0,
+                        minWidth: 'auto', width: 'auto',
+                    }
+                })}
+                onClick={e => {
+                    e.preventDefault();
+                    navigate('/search');
+                }}>
+                <Search size='scale900' />
+            </div>
+            <input ref={keywordRef}
+                className={css({
+                    outline: 'none', border: 0, background: 'none', margin: 0,
+                    paddingLeft: 0, paddingRight: theme.sizing.scale550,
+                    paddingTop: theme.sizing.scale200, paddingBottom: theme.sizing.scale200,
+                    color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit', lineHeight: 'inherit',
+                    caretColor: 'inherit', cursor: 'text', appearance: 'none',
+                    height: '100%', width: '100%', minWidth: '0px', maxWidth: '100%',
+                    [MOBILE_BREAKPOINT]: { display: 'none', },
+                })}
+                placeholder='搜索...'
+                onKeyUp={e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        doSearch();
+                    }
+                }} />
+        </div>
+    );
+};
+
+const UserNotification = function () {
+    const [css, theme] = useStyletron();
+    return (
+        <div className={css({
+            cursor: 'pointer',
+        })}><Bell width='24px' height='24px' /></div>
+    );
+}
 const UserMenu = function () {
     const [css, theme] = useStyletron();
     const { user, logout, isAuthenticated, isAdmin } = useAuth();
@@ -241,10 +252,11 @@ const UserMenu = function () {
     return (
         <div className={css({
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: theme.sizing.scale600,
+            gap: theme.sizing.scale500,
         })}>
             {/* Search */}
             {!location.pathname.startsWith('/search') && <SearchInput />}
+            <UserNotification />
             {user && <div className={css({
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,

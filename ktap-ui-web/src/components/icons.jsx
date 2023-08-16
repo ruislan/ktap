@@ -546,8 +546,8 @@ export const Pin = ({ width, height }) => {
 
 export const Message3 = ({ width, height, color }) => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width={width || '100%'} height={height || '100%'} fill={color || 'currentColor'} >
-            <path d="M2 8.99374C2 5.68349 4.67654 3 8.00066 3H15.9993C19.3134 3 22 5.69478 22 8.99374V21H8.00066C4.68659 21 2 18.3052 2 15.0063V8.99374ZM14 11V13H16V11H14ZM8 11V13H10V11H8Z"></path>
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width={width || '100%'} height={height || '100%'} fill={color || 'currentColor'} >
+            <path d='M2 8.99374C2 5.68349 4.67654 3 8.00066 3H15.9993C19.3134 3 22 5.69478 22 8.99374V21H8.00066C4.68659 21 2 18.3052 2 15.0063V8.99374ZM14 11V13H16V11H14ZM8 11V13H10V11H8Z'></path>
         </svg>
     );
 }
@@ -607,3 +607,11 @@ export const Update = ({ width, height, color }) => {
         </svg>
     );
 };
+
+export const Bell = ({ width, height, color }) => {
+    return (
+        <svg xmlns='http://www.w3.org/2000/svg' width={width || '100%'} height={height || '100%'} viewBox='0 0 24 24'>
+            <path fill={color || 'currentColor'} d="M20 17H22V19H2V17H4V10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10V17ZM18 17V10C18 6.68629 15.3137 4 12 4C8.68629 4 6 6.68629 6 10V17H18ZM9 21H15V23H9V21Z"></path>
+        </svg>
+    );
+}

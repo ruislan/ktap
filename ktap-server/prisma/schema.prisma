@@ -42,6 +42,7 @@ model User {
   discussionPostGifts   DiscussionPostGiftRef[] // 对讨论帖送的礼物
   discussionPostReports DiscussionPostReport[] // 讨论贴的举报
   discussionChannels    UserDiscussionChannelRef[] // 管理的讨论频道
+  notifications         Notification[] // 通知
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -235,7 +236,7 @@ model AppPlatform {
   id           Int      @id @default(autoincrement())
   appId        Int      @map("app_id")
   os           String // Windows, Macos, Linux, Android, iOS
-  requirements String // 这里可以简便处理，直接存储JSON数据，第一、电脑硬件固定就那些。第二、搜索只需要到OS即可，不需要到具体单个Requirement。第三、JSON可以动态变化结构
+  requirements String // 为了方便变化和简单处理，直接存储JSON数据
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -570,3 +571,23 @@ model DiscussionPostGiftRef {
 }
 
 // 讨论 End
+
+// 通知
+
+model Notification {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id") // 通知接收人
+  type      String    @default("system") // 通知类型，系统通知 / 关注通知 concern / 互动通知 interaction / 消息 inbox
+  target    String? // 发起对象，系统 / 游戏 / 用户, 如果是系统可直接留空
+  targetId  Int?      @map("target_id") // 发起对象 Id，如果是系统可直接留空
+  action    String    @default("create") // 发起对象行为，cud/thumb/gift/report ...
+  content   String    @default("{}") // 通知内容，json data，不同的action需要的内容是不同的
+  isRead    Boolean   @default(false) @map("is_read") // 是否已读
+  readAt    DateTime? @map("read_at") // 已读时间
+  createdAt DateTime  @default(now()) @map("created_at") // 创建时间
+
+  // ref
+  user User @relation(fields: [userId], references: [id])
+}
+
+// 通知 End
