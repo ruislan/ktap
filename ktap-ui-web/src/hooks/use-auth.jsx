@@ -24,7 +24,7 @@ function RequireAuth({ children }) {
 function RequireAdmin({ children }) {
     const { authenticating, isAdmin } = useAuth();
     if (authenticating) return <></>;
-    return isAdmin() ? children : <Navigate to='/not-found' replace />;
+    return isAdmin() ? children : <Navigate to='/' replace />;
 }
 
 function AuthProvider({ children }) {

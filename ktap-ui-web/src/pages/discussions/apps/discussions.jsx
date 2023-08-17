@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { useStyletron } from "baseui";
 import { Block } from "baseui/block";
-import { Search } from "baseui/icon";
 import { Button } from "baseui/button";
 import { Input } from "baseui/input";
 import { LabelMedium, LabelSmall } from "baseui/typography";
@@ -16,7 +15,7 @@ import SplitBall from "@ktap/components/split-ball";
 import Editor from "@ktap/components/editor";
 import Notification from "@ktap/components/notification";
 import RouterLink from "@ktap/components/router-link";
-import { Lock, Message4, Pin, Reply, Gift2 } from "@ktap/components/icons";
+import { Lock, Message4, Pin, Reply, Gift2, FatSearch } from "@ktap/components/icons";
 
 
 export default function Discussions() {
@@ -105,7 +104,7 @@ export default function Discussions() {
                     }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />
-                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><Search /></Button>
+                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><FatSearch width='16px' height='16px' /></Button>
                 </Block>
                 <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
                     <ModalHeader>发起新讨论</ModalHeader>

@@ -4,12 +4,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { Input } from 'baseui/input';
-import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
+import { ArrowRight } from 'baseui/icon';
 import { LabelXSmall, LabelMedium } from 'baseui/typography';
 
 import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import Tag from '@ktap/components/tag';
-import { Star } from '@ktap/components/icons';
+import { FatSearch, Star } from '@ktap/components/icons';
 import Capsule from '@ktap/components/capsule';
 import LoadMore from '@ktap/components/load-more';
 
@@ -26,7 +26,7 @@ function SearchInput({ initKeyword = '' }) {
                         })
                     }
                 }}
-                startEnhancer={<SearchIcon size='scale800' />}
+                startEnhancer={<FatSearch width='18px' height='18px' />}
                 endEnhancer={<ArrowRight cursor='pointer' onClick={() => { navigate(`/search?q=${word}`, { replace: true }); }} size='scale800' />}
                 onChange={e => setWord(e.target.value)}
                 onKeyDown={e => {

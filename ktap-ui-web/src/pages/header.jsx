@@ -3,11 +3,12 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
-import { Delete, Menu, Search } from 'baseui/icon';
+import { Delete, Menu } from 'baseui/icon';
 
 import { useAuth } from '@ktap/hooks/use-auth';
+import { useOutsideClick } from '@ktap/hooks/use-outside-click';
 import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import { User, Coins, Bell } from '@ktap/components/icons';
+import { User, Coins, Bell, FatSearch } from '@ktap/components/icons';
 
 const Brand = function () {
     const [css, theme] = useStyletron();
@@ -48,18 +49,7 @@ const MainMenu = function () {
         ]);
     }, [location]);
 
-    React.useEffect(() => {
-        function handleClickOutside(e) {
-            if (mainItemsRef.current && !mainItemsRef.current.contains(e.target)) {
-                setShowMainItems(false);
-            }
-        }
-        // mouseup comes first , and then click ...
-        document.addEventListener('mouseup', handleClickOutside);
-        return () => {
-            document.removeEventListener('mouseup', handleClickOutside);
-        };
-    }, []);
+    useOutsideClick({ ref: mainItemsRef, handler: () => setShowMainItems(false) });
 
     return (
         <>
@@ -129,6 +119,29 @@ const MainMenu = function () {
     );
 };
 
+const ActionMenu = function () {
+    const [css, theme] = useStyletron();
+    const { user } = useAuth();
+
+    return (
+        <div className={css({
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: theme.sizing.scale300
+        })}>
+            {!location.pathname.startsWith('/search') && <SearchInput />}
+            <UserNotification />
+            {user && <div className={css({
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
+            })}>
+                <Coins width='24px' height='24px' />
+                <span>{user?.balance || 0}</span>
+            </div>}
+            <UserMenu />
+        </div>
+    );
+};
+
 const SearchInput = function () {
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
@@ -144,15 +157,15 @@ const SearchInput = function () {
     return (
         <div className={css({
             display: 'flex', alignItems: 'center', color: theme.colors.primary100,
-            height: theme.sizing.scale1000, backgroundColor: 'rgb(41, 41, 41)',
+            height: theme.sizing.scale950, backgroundColor: 'rgb(41, 41, 41)',
             userSelect: 'none', borderRadius: theme.borders.radius300,
             [MOBILE_BREAKPOINT]: { backgroundColor: 'unset' },
         })}>
             <div
                 className={css({
                     pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: theme.sizing.scale1000, height: theme.sizing.scale1000, userSelect: 'none',
-                    minWidth: theme.sizing.scale1000, padding: theme.sizing.scale200,
+                    userSelect: 'none',
+                    minWidth: theme.sizing.scale950, padding: theme.sizing.scale200,
                     [MOBILE_BREAKPOINT]: {
                         pointerEvents: 'unset', padding: 0, margin: 0,
                         minWidth: 'auto', width: 'auto',
@@ -162,14 +175,16 @@ const SearchInput = function () {
                     e.preventDefault();
                     navigate('/search');
                 }}>
-                <Search size='scale900' />
+                <FatSearch className={css({ [MOBILE_BREAKPOINT]: { width: '24px', height: '24px' } })} width='16px' height='16px' />
             </div>
             <input ref={keywordRef}
                 className={css({
                     outline: 'none', border: 0, background: 'none', margin: 0,
                     paddingLeft: 0, paddingRight: theme.sizing.scale550,
                     paddingTop: theme.sizing.scale200, paddingBottom: theme.sizing.scale200,
-                    color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit', lineHeight: 'inherit',
+                    color: 'inherit', fontSize: theme.typography.LabelSmall.fontSize,
+                    fontFamily: theme.typography.LabelSmall.fontFamily,
+                    lineHeight: theme.typography.LabelSmall.lineHeight,
                     caretColor: 'inherit', cursor: 'text', appearance: 'none',
                     height: '100%', width: '100%', minWidth: '0px', maxWidth: '100%',
                     [MOBILE_BREAKPOINT]: { display: 'none', },
@@ -187,31 +202,60 @@ const SearchInput = function () {
 
 const UserNotification = function () {
     const [css, theme] = useStyletron();
+    const [isOpenContent, setIsOpenContent] = React.useState(false);
+    const ref = React.useRef(null);
+    useOutsideClick({ ref, handler: () => setIsOpenContent(false) });
     return (
-        <div className={css({
-            cursor: 'pointer',
-        })}><Bell width='24px' height='24px' /></div>
+        <div ref={ref} className={css({ position: 'relative' })}>
+            <div
+                className={css({
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: theme.colors.primary100,
+                })}
+                onClick={e => {
+                    e.stopPropagation();
+                    setIsOpenContent(!isOpenContent);
+                }}>
+                <Bell width='24px' height='24px' />
+            </div>
+            {isOpenContent && <div className={css({
+                zIndex: 666, minWidth: '10rem', outline: 'none',
+                position: 'absolute', top: '100%', left: 'auto', right: '0',
+                marginBottom: '0', marginTop: theme.sizing.scale300,
+                backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
+                borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow600,
+                [MOBILE_BREAKPOINT]: {
+                    left: '-8px', right: 'auto', transform: 'translateX(-50%)',
+                }
+            })}>
+                <div className={css({
+                    width: '300px', height: '400px', padding: theme.sizing.scale300,
+                })}>
+                    {/* TODO import notifications */}
+                </div>
+            </div>}
+        </div>
     );
-}
+};
+
 const UserMenu = function () {
     const [css, theme] = useStyletron();
     const { user, logout, isAuthenticated, isAdmin } = useAuth();
     const navigate = useNavigate();
     const [userItems, setUserItems] = React.useState([]);
-    const [showUserItems, setShowUserItems] = React.useState(false);
-    const userItemsRef = React.useRef(null);
-    const userItemStyle = css({
+    const [isOpenContent, setIsOpenContent] = React.useState(false);
+    const ref = React.useRef(null);
+    const menuItemStyle = css({
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        borderRadius: theme.borders.radius200,
+        borderRadius: theme.borders.radius300, outline: 'none',
         paddingLeft: theme.sizing.scale600, paddingRight: theme.sizing.scale600,
         paddingTop: theme.sizing.scale300, paddingBottom: theme.sizing.scale300,
         fontWeight: 500, fontSize: theme.sizing.scale600, lineHeight: theme.sizing.scale800,
         clear: 'both', width: '100%', whiteSpace: 'nowrap', border: 0,
-        textDecoration: 'none',
-        color: theme.colors.primary,
-        cursor: 'pointer',
+        textDecoration: 'none', color: theme.colors.primary, cursor: 'pointer',
         ':hover': {
-            backgroundColor: 'rgb(31, 31, 31)',
+            backgroundColor: 'rgb(71, 71, 71)',
+            boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
         },
     });
 
@@ -237,84 +281,57 @@ const UserMenu = function () {
         }
     }, [isAdmin, isAuthenticated, user]);
 
-    React.useEffect(() => {
-        function handleClickOutside(e) {
-            if (userItemsRef.current && !userItemsRef.current.contains(e.target)) {
-                setShowUserItems(false);
-            }
-        }
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, []);
+    useOutsideClick({ ref, handler: () => setIsOpenContent(false) });
 
     return (
-        <div className={css({
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: theme.sizing.scale500,
-        })}>
-            {/* Search */}
-            {!location.pathname.startsWith('/search') && <SearchInput />}
-            <UserNotification />
-            {user && <div className={css({
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
-            })}>
-                <Coins width='24px' height='24px' /> <span>{user?.balance || 0}</span>
-            </div>}
-            <div className={css({ position: 'relative', })}>
-                <div
-                    className={css({
-                        width: theme.sizing.scale950, height: theme.sizing.scale950,
-                        backgroundColor: theme.colors.backgroundInversePrimary,
+        <div ref={ref} className={css({ position: 'relative', })}>
+            <div
+                className={css({
+                    width: theme.sizing.scale950, height: theme.sizing.scale950, backgroundColor: 'transparent',
+                    borderRadius: theme.borders.radius300,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                })}
+                onClick={e => {
+                    e.stopPropagation();
+                    setIsOpenContent(!isOpenContent);
+                }}>
+                {user?.avatar ?
+                    <img src={user?.avatar} width='100%' height='100%' className={css({
+                        objectFit: 'cover',
                         borderRadius: theme.borders.radius300,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                    })}
-                    onClick={e => {
-                        e.stopPropagation();
-                        setShowUserItems(!showUserItems);
-                    }}>
-                    {user?.avatar ?
-                        <img src={user?.avatar} width='100%' height='100%' className={css({
-                            objectFit: 'cover',
-                            borderRadius: theme.borders.radius300,
-                        })} /> :
-                        <User color={theme.colors.backgroundPrimary} width='24px' height='24px' />
-                    }
-                </div>
-                {/* user items menu */}
-                {showUserItems}
-                {showUserItems && (
-                    <ul ref={userItemsRef} className={css({
-                        zIndex: 9999,
-                        position: 'absolute', top: '100%', left: 'auto', right: '0', marginBottom: '0',
-                        marginTop: theme.sizing.scale300,
-                        backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
-                        listStyle: 'none', borderRadius: theme.borders.radius300,
-                        boxShadow: theme.lighting.shadow600,
-                        minWidth: '10rem',
-                    })}>
-                        {userItems.map((item, index) => (
-                            <li key={index}>
-                                {item.role === 'button' ?
-                                    <div className={userItemStyle} onClick={() => {
-                                        item.href === '/logout' ? logout(location.pathname) : navigate(item.href);
-                                        showUserItems && setShowUserItems(false);
-                                    }}>{item.label}</div> :
-                                    item.role === 'divider' ?
-                                        <hr className={css({
-                                            width: '100%', height: '0', marginTop: theme.sizing.scale100, marginBottom: theme.sizing.scale100,
-                                            border: 0,
-                                            borderTop: '1px solid rgba(255, 255, 255, 0.15)', overflow: 'hidden', opacity: 1, color: 'inherit',
-                                        })} /> :
-                                        <Link className={userItemStyle} to={item.href} onClick={() => showUserItems && setShowUserItems(false)}>{item.label}</Link>
-                                }
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                    })} /> :
+                    <User color={theme.colors.backgroundPrimary} width='24px' height='24px' />
+                }
             </div>
+            {/* user items menu */}
+            {isOpenContent && (
+                <ul className={css({
+                    zIndex: 666, minWidth: '10rem', outline: 'none',
+                    position: 'absolute', top: '100%', left: 'auto', right: '0',
+                    marginBottom: '0', marginTop: theme.sizing.scale300,
+                    backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
+                    listStyle: 'none', borderRadius: theme.borders.radius300,
+                    boxShadow: theme.lighting.shadow600,
+                })}>
+                    {userItems.map((item, index) => (
+                        <li key={index}>
+                            {item.role === 'button' ?
+                                <div className={menuItemStyle} onClick={() => {
+                                    item.href === '/logout' ? logout(location.pathname) : navigate(item.href);
+                                    isOpenContent && setIsOpenContent(false);
+                                }}>{item.label}</div> :
+                                item.role === 'divider' ?
+                                    <hr className={css({
+                                        width: '100%', height: '0', marginTop: theme.sizing.scale100, marginBottom: theme.sizing.scale100,
+                                        border: 0,
+                                        borderTop: '1px solid rgba(255, 255, 255, 0.15)', overflow: 'hidden', opacity: 1, color: 'inherit',
+                                    })} /> :
+                                    <Link className={menuItemStyle} to={item.href} onClick={() => isOpenContent && setIsOpenContent(false)}>{item.label}</Link>
+                            }
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };
@@ -325,8 +342,9 @@ export default function Header() {
         <header>
             <nav className={css({
                 width: '100%', backgroundColor: 'transparent', top: '0',
-                minHeight: '68px', display: 'flex', alignItems: 'stretch', justifyContent: 'center',
-                boxShadow: 'none', borderBottom: '1px solid rgb(51,51,51)',
+                minHeight: '64px', display: 'flex', alignItems: 'stretch', justifyContent: 'center',
+                boxShadow: 'none',
+                borderBottom: '1px solid rgb(51,51,51)',
                 [MOBILE_BREAKPOINT]: {
                     flexDirection: 'column',
                     minHeight: '58px',
@@ -342,7 +360,7 @@ export default function Header() {
                 })}>
 
                     {/* Menu  */} <MainMenu />
-                    {/* Action & User */} <UserMenu />
+                    {/* Action */} <ActionMenu />
                 </div>
             </nav>
         </header>

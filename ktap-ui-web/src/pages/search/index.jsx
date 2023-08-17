@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '../../libs/utils';
+
+import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
 import SearchPanel from './search-panel';
 import SideHotKeywords from './side-hot-keywords';
 

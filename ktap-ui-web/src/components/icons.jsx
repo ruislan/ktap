@@ -504,7 +504,7 @@ export const Play = ({ width, height, color }) => {
 
 export const Shuffle = ({ width, height, color }) => {
     return (
-        <svg xmlns='http://www.w3.org/2000/svg' width={width || '100%'} height={height || '100%'} fill={color || 'currentColor'} viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round'>
+        <svg xmlns='http://www.w3.org/2000/svg' width={width || '100%'} height={height || '100%'} fill={color || 'currentColor'} viewBox='0 0 24 24' strokeWidth='2' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round'>
             <path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
             <path d='M18 4l3 3l-3 3'></path>
             <path d='M18 20l3 -3l-3 -3'></path>
@@ -610,8 +610,21 @@ export const Update = ({ width, height, color }) => {
 
 export const Bell = ({ width, height, color }) => {
     return (
-        <svg xmlns='http://www.w3.org/2000/svg' width={width || '100%'} height={height || '100%'} viewBox='0 0 24 24'>
-            <path fill={color || 'currentColor'} d="M20 17H22V19H2V17H4V10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10V17ZM18 17V10C18 6.68629 15.3137 4 12 4C8.68629 4 6 6.68629 6 10V17H18ZM9 21H15V23H9V21Z"></path>
+
+        <svg xmlns='http://www.w3.org/2000/svg' width={width || '100%'} height={height || '100%'} viewBox='0 0 24 24' strokeWidth={2} stroke={color || 'currentColor'} fill='none' strokeLinecap='round' strokeLinejoin='round'>
+            <path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
+            <path d='M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6'></path>
+            <path d='M9 17v1a3 3 0 0 0 6 0v-1'></path>
         </svg>
     );
-}
+};
+
+export const FatSearch = ({ width, height, color, ...rest }) => {
+    return (
+        <svg xmlns='http://www.w3.org/2000/svg' width={width || '100%'} height={height || '100%'} viewBox='0 0 24 24' strokeWidth={2} stroke={color || 'currentColor'} fill='none' strokeLinecap='round' strokeLinejoin='round' {...rest}>
+            <path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
+            <path d='M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0'></path>
+            <path d='M21 21l-6 -6'></path>
+        </svg>
+    );
+};

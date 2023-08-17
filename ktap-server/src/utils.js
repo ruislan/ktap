@@ -284,10 +284,10 @@ const utils = async (fastify, opts, next) => {
             `)[0];
         },
         // 通知 notification
-        async addNotification({ userId, type, targetId, target, content }) {
+        async addNotification({ userIds = [], type, targetId, target, content }) {
             throw new Error('not implemented');
         }
-    ;
+    });
     next();
 };
 

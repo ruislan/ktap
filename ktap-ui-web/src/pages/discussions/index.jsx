@@ -5,8 +5,9 @@ import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 import { LabelXSmall, LabelSmall, LabelMedium, HeadingXLarge, ParagraphMedium } from 'baseui/typography';
 import { Input } from 'baseui/input';
+import { ArrowRight } from 'baseui/icon';
 
-import { ArrowRight, Search as SearchIcon } from 'baseui/icon';
+import { FatSearch } from '@ktap/components/icons';
 import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import { ChatAlt2, User } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
@@ -85,7 +86,7 @@ function Discussions() {
                     <Block paddingRight='scale600'>
                         <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏...'
                             onKeyUp={e => e.key === 'Enter' && fetchData()}
-                            startEnhancer={<SearchIcon size='scale800' />}
+                            startEnhancer={<FatSearch width='18px' height='18px' />}
                             endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
                         />
                     </Block>

@@ -70,7 +70,7 @@ export default function RoundTab({ activeKey, names, onChange }) {
                 <TabButton key={index} isActive={activeKey === index} onPointerDown={(e) => {
                     moveBg(index);
                     e.activeKey = index;
-                    onChange(e);
+                    if (onChange) onChange(e);
                 }}>
                     {name}
                 </TabButton>
