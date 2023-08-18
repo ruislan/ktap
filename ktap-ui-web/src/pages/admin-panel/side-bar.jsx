@@ -6,7 +6,7 @@ import { Navigation } from 'baseui/side-navigation';
 
 import useWindowSize from '@ktap/hooks/use-window-size';
 import { MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import RoundTab from '@ktap/components/round-tab';
+import Tabs from '@ktap/components/tabs';
 
 const sideMenus = [
     { title: '概览', itemId: '/admin-panel' },
@@ -29,7 +29,7 @@ function SideBar() {
     if (windowSize?.width <= MOBILE_BREAKPOINT_PX) {
         return (
             <Block display='flex' alignItems='center' marginBottom='scale600'>
-                <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
+                <Tabs activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
             </Block>
         );
     }

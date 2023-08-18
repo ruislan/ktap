@@ -4,8 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
 
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
-import RoundTab from '@ktap/components/round-tab';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
+import Tabs from '@ktap/components/tabs';
 
 const TabActivities = lazy(() => import('./tab-activities'));
 const TabReviews = lazy(() => import('./tab-reviews'));
@@ -21,7 +21,7 @@ function UserContent({ theUser }) {
     return (
         <>
             <Block display='flex' alignItems='center' marginBottom='scale600'>
-                <RoundTab activeKey={activeTab}
+                <Tabs activeKey={activeTab}
                     onChange={(e) => setActiveTab(e.activeKey)}
                     names={['活动', '评测', '评测回复', '讨论', '讨论发帖', '关注游戏', '关注用户']}
                 />
@@ -41,7 +41,7 @@ function UserContent({ theUser }) {
     );
 }
 
-function User() {
+function Users() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [theUser, setTheUser] = React.useState(null);
@@ -80,7 +80,7 @@ function User() {
                 })
             }
         }}>
-            <Block width={LAYOUT_LEFT} margin={'0 8px 0 0'} overrides={{
+            <Block width={LAYOUT_DEFAULT_CONTENT} margin={'0 8px 0 0'} overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
@@ -94,7 +94,7 @@ function User() {
             }}>
                 <UserContent theUser={theUser} />
             </Block>
-            <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}
+            <Block width={LAYOUT_DEFAULT_SIDE} margin={'0 0 0 8px'}
                 overrides={{
                     Block: {
                         style: {
@@ -114,4 +114,4 @@ function User() {
     );
 }
 
-export default User;
+export default Users;

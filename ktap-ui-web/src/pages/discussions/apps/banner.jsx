@@ -9,7 +9,7 @@ import { Button } from 'baseui/button';
 import { Check } from 'baseui/icon';
 
 import { useAuth } from '@ktap/hooks/use-auth';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 
 export default function Banner() {
     const { appId } = useParams();
@@ -80,7 +80,7 @@ export default function Banner() {
                     }
                 }}
             />
-            <Block width={LAYOUT_MAIN} height='100%' display='flex' overrides={{
+            <Block width={LAYOUT_DEFAULT} height='100%' display='flex' overrides={{
                 Block: {
                     style: {
                         zIndex: 2,

@@ -4,13 +4,13 @@ import zh from 'date-fns/locale/zh-CN';
 export const MOBILE_BREAKPOINT_PX = 992;
 export const MOBILE_BREAKPOINT = `@media only screen and (max-width: ${MOBILE_BREAKPOINT_PX}px)`;
 
-export const LAYOUT_MAIN = '950px';
-export const LAYOUT_LEFT = '616px';
-export const LAYOUT_RIGHT = '334px';
-export const LAYOUT_SETTINGS_LEFT = '256px';
-export const LAYOUT_SETTINGS_RIGHT = '694px';
-export const LAYOUT_ADMIN_LEFT = '256px';
-export const LAYOUT_ADMIN_RIGHT = '880px';
+export const LAYOUT_DEFAULT = '950px';
+export const LAYOUT_DEFAULT_SIDE = '334px';
+export const LAYOUT_DEFAULT_CONTENT = '616px';
+export const LAYOUT_SETTINGS_SIDE = '256px';
+export const LAYOUT_SETTINGS_CONTENT = '694px';
+export const LAYOUT_ADMIN_SIDE = '256px';
+export const LAYOUT_ADMIN_CONTENT = '880px';
 
 export const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
 

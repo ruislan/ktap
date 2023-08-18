@@ -7,7 +7,7 @@ import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 
-import { LAYOUT_LEFT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT_CONTENT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
 
 function PasswordForgot() {
@@ -34,7 +34,7 @@ function PasswordForgot() {
     };
     return (
         <Block display='flex' minHeight='calc(100vh - 328px)' marginTop='scale800'>
-            <Block display='flex' flexDirection='column' padding='scale1200' minWidth='384px' width={LAYOUT_LEFT}
+            <Block display='flex' flexDirection='column' padding='scale1200' minWidth='384px' width={LAYOUT_DEFAULT_CONTENT}
                 overrides={{
                     Block: {
                         style: {

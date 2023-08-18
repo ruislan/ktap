@@ -18,7 +18,7 @@ import AppDetailAwards from './app-detail-awards';
 import AppDetailDiscussions from './app-detail-discussions';
 
 import RouterLink from '@ktap/components/router-link';
-import RoundTab from '@ktap/components/round-tab';
+import Tabs from '@ktap/components/tabs';
 
 function AdminPanelAppDetail() {
     const { id } = useParams();
@@ -53,7 +53,7 @@ function AdminPanelAppDetail() {
                     </Block>
                     : (data && (
                         <Block display='flex' flexDirection='column' width='100%' gridGap='scale600'>
-                            <RoundTab activeKey={activeTab}
+                            <Tabs activeKey={activeTab}
                                 onChange={(e) => setActiveTab(e.activeKey)}
                                 names={['快速操作', '论坛频道', '基本信息', '组织信息', '视觉信息', '分类信息', '联系信息', '系统需求', '支持语言', '专业评测', '获得荣誉']}
                             />

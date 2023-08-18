@@ -5,7 +5,7 @@ import { Block } from 'baseui/block';
 
 import useWindowSize from '@ktap/hooks/use-window-size';
 import { MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import RoundTab from '@ktap/components/round-tab';
+import Tabs from '@ktap/components/tabs';
 
 const sideMenus = [
     { title: '基本信息', itemId: '/settings' },
@@ -16,22 +16,24 @@ const sideMenus = [
 function SideBar() {
     const navigate = useNavigate();
     const windowSize = useWindowSize();
+
+    if (!windowSize || !windowSize.width) return null;
+
+    if (windowSize?.width > MOBILE_BREAKPOINT_PX) return (
+        <Navigation
+            items={sideMenus}
+            activeItemId={location.pathname}
+            onChange={({ event, item }) => {
+                event.preventDefault();
+                navigate(item.itemId);
+            }}
+        />
+    );
+
     return (
-        <>
-            {windowSize?.width > MOBILE_BREAKPOINT_PX ?
-                <Navigation
-                    items={sideMenus}
-                    activeItemId={location.pathname}
-                    onChange={({ event, item }) => {
-                        event.preventDefault();
-                        navigate(item.itemId);
-                    }}
-                /> :
-                <Block display='flex' alignItems='center' marginBottom='scale600'>
-                    <RoundTab activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
-                </Block>
-            }
-        </>
+        <Block display='flex' alignItems='center' marginBottom='scale600'>
+            <Tabs activeKey={sideMenus.findIndex((item) => item.itemId.startsWith(location.pathname)) || 0} names={sideMenus.map(item => item.title)} onChange={({ activeKey }) => navigate(sideMenus[activeKey].itemId)} />
+        </Block>
     );
 }
 

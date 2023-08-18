@@ -6,8 +6,8 @@ import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 
 import Tag from '@ktap/components/tag';
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
-import RoundTab from '@ktap/components/round-tab';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import Tabs from '@ktap/components/tabs';
 import Capsule from '@ktap/components/capsule';
 import { Star } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
@@ -63,7 +63,7 @@ function TagContent() {
     return (
         <>
             <Block display='flex' alignItems='center' marginBottom='scale600'>
-                <RoundTab activeKey={flavor} names={['按最热', '按最新', '按评分']} onChange={(e) => fetchData(e.activeKey, 0)} />
+                <Tabs activeKey={flavor} names={['按最热', '按最新', '按评分']} onChange={(e) => fetchData(e.activeKey, 0)} />
             </Block>
             <Block display='flex' flexDirection='column' gridGap='scale300'>
                 {appList && appList.map((app, index) => (
@@ -124,7 +124,7 @@ function Tags() {
                 })
             }
         }}>
-            <Block width={LAYOUT_LEFT} margin='0 8px 0 0' overrides={{
+            <Block width={LAYOUT_DEFAULT_CONTENT} margin='0 8px 0 0' overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
@@ -137,7 +137,7 @@ function Tags() {
             }}>
                 <TagContent />
             </Block>
-            <Block width={LAYOUT_RIGHT} margin='0 0 0 8px'
+            <Block width={LAYOUT_DEFAULT_SIDE} margin='0 0 0 8px'
                 overrides={{
                     Block: {
                         style: ({ $theme }) => ({

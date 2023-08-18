@@ -18,9 +18,9 @@ import TabReviewsProfessional from './tab-reviews-professional';
 import TabReviewsUsers from './tab-reviews-users';
 import TabDiscussions from './tab-discussions';
 
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import SideBoxApps from '@ktap/components/side-box-apps';
-import RoundTab from '@ktap/components/round-tab';
+import Tabs from '@ktap/components/tabs';
 
 function MainContent({ isLoading, app }) {
     const [searchParams] = useSearchParams();
@@ -37,7 +37,7 @@ function MainContent({ isLoading, app }) {
                     })
                 }
             }}>
-                <RoundTab activeKey={activeTab} names={['详情', '新闻', '评测', '讨论']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
+                <Tabs activeKey={activeTab} names={['详情', '新闻', '评测', '讨论']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
             </Block>
             <Block padding='scale300' overrides={{
                 Block: {
@@ -79,7 +79,7 @@ function MainContent({ isLoading, app }) {
     );
 }
 
-function App() {
+function Apps() {
     const urlParams = useParams();
     const navigate = useNavigate();
 
@@ -138,7 +138,7 @@ function App() {
                 }
             }}>
                 {/* app media swiper */}
-                <Block width={LAYOUT_LEFT} margin={'0 8px 0 0'} overrides={{
+                <Block width={LAYOUT_DEFAULT_CONTENT} margin={'0 8px 0 0'} overrides={{
                     Block: {
                         style: {
                             [MOBILE_BREAKPOINT]: {
@@ -160,7 +160,7 @@ function App() {
                     }
                 </Block>
                 {/* app summary */}
-                <Block width={LAYOUT_RIGHT} margin='0 0 0 8px'
+                <Block width={LAYOUT_DEFAULT_SIDE} margin='0 0 0 8px'
                     overrides={{
                         Block: {
                             style: {
@@ -206,7 +206,7 @@ function App() {
                     }
                 }
             }}>
-                <Block width={LAYOUT_LEFT} margin={['0', '0', '0 8px 0 0', '0 8px 0 0']} overrides={{
+                <Block width={LAYOUT_DEFAULT_CONTENT} margin={['0', '0', '0 8px 0 0', '0 8px 0 0']} overrides={{
                     Block: {
                         style: {
                             [MOBILE_BREAKPOINT]: {
@@ -218,7 +218,7 @@ function App() {
                 }} >
                     <MainContent isLoading={isLoading} app={app} />
                 </Block>
-                <Block width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
+                <Block width={LAYOUT_DEFAULT_SIDE} marginLeft='scale300' overrides={{
                     Block: {
                         style: ({ $theme }) => ({
                             [MOBILE_BREAKPOINT]: {
@@ -247,4 +247,4 @@ function App() {
     );
 }
 
-export default App;
+export default Apps;

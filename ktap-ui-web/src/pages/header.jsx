@@ -7,8 +7,9 @@ import { Delete, Menu } from 'baseui/icon';
 
 import { useAuth } from '@ktap/hooks/use-auth';
 import { useOutsideClick } from '@ktap/hooks/use-outside-click';
-import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import { User, Coins, Bell, FatSearch } from '@ktap/components/icons';
+import { LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
+import { User as UserIcon, Coins, Bell, FatSearch } from '@ktap/components/icons';
+import Notification from '@ktap/pages/notifications';
 
 const Brand = function () {
     const [css, theme] = useStyletron();
@@ -126,13 +127,14 @@ const ActionMenu = function () {
     return (
         <div className={css({
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: theme.sizing.scale300
+            gap: theme.sizing.scale200, [MOBILE_BREAKPOINT]: { gap: theme.sizing.scale0 }
         })}>
             {!location.pathname.startsWith('/search') && <SearchInput />}
-            <UserNotification />
+            {user && !location.pathname.startsWith('/notifications') && <UserNotification />}
             {user && <div className={css({
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
+                marginRight: theme.sizing.scale200,
             })}>
                 <Coins width='24px' height='24px' />
                 <span>{user?.balance || 0}</span>
@@ -159,6 +161,7 @@ const SearchInput = function () {
             display: 'flex', alignItems: 'center', color: theme.colors.primary100,
             height: theme.sizing.scale950, backgroundColor: 'rgb(41, 41, 41)',
             userSelect: 'none', borderRadius: theme.borders.radius300,
+            marginRight: theme.sizing.scale200,
             [MOBILE_BREAKPOINT]: { backgroundColor: 'unset' },
         })}>
             <div
@@ -175,7 +178,7 @@ const SearchInput = function () {
                     e.preventDefault();
                     navigate('/search');
                 }}>
-                <FatSearch className={css({ [MOBILE_BREAKPOINT]: { width: '24px', height: '24px' } })} width='16px' height='16px' />
+                <FatSearch className={css({ [MOBILE_BREAKPOINT]: { width: '23px', height: '23px' } })} width='16px' height='16px' />
             </div>
             <input ref={keywordRef}
                 className={css({
@@ -202,6 +205,7 @@ const SearchInput = function () {
 
 const UserNotification = function () {
     const [css, theme] = useStyletron();
+    const navigate = useNavigate();
     const [isOpenContent, setIsOpenContent] = React.useState(false);
     const ref = React.useRef(null);
     useOutsideClick({ ref, handler: () => setIsOpenContent(false) });
@@ -210,11 +214,11 @@ const UserNotification = function () {
             <div
                 className={css({
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: theme.colors.primary100,
+                    color: theme.colors.primary100, marginRight: theme.sizing.scale200,
                 })}
                 onClick={e => {
                     e.stopPropagation();
-                    setIsOpenContent(!isOpenContent);
+                    window.screen.width > MOBILE_BREAKPOINT_PX ? setIsOpenContent(!isOpenContent) : navigate('/notifications');
                 }}>
                 <Bell width='24px' height='24px' />
             </div>
@@ -222,16 +226,14 @@ const UserNotification = function () {
                 zIndex: 666, minWidth: '10rem', outline: 'none',
                 position: 'absolute', top: '100%', left: 'auto', right: '0',
                 marginBottom: '0', marginTop: theme.sizing.scale300,
-                backgroundColor: 'rgb(41,41,41)', padding: theme.sizing.scale100,
-                borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow600,
+                backgroundColor: 'rgb(41,41,41)', borderRadius: theme.borders.radius300,
+                boxShadow: theme.lighting.shadow600,
                 [MOBILE_BREAKPOINT]: {
-                    left: '-8px', right: 'auto', transform: 'translateX(-50%)',
+                    right: '-120px',
                 }
             })}>
-                <div className={css({
-                    width: '300px', height: '400px', padding: theme.sizing.scale300,
-                })}>
-                    {/* TODO import notifications */}
+                <div className={css({ width: LAYOUT_DEFAULT_SIDE, maxHeight: '400px', overflow: 'auto', })}>
+                    <Notification kind='popover' />
                 </div>
             </div>}
         </div>
@@ -275,7 +277,7 @@ const UserMenu = function () {
             setUserItems(items);
         } else {
             setUserItems([
-                { label: '登录', href: `/login?from=${window.location.pathname}${window.location.search}` },
+                { label: '登录', href: location.pathname.startsWith('/login') ? location.pathname + location.search : `/login?from=${location.pathname}${location.search}` },
                 { label: '注册', href: '/register' },
             ]);
         }
@@ -287,7 +289,7 @@ const UserMenu = function () {
         <div ref={ref} className={css({ position: 'relative', })}>
             <div
                 className={css({
-                    width: theme.sizing.scale950, height: theme.sizing.scale950, backgroundColor: 'transparent',
+                    backgroundColor: 'transparent',
                     borderRadius: theme.borders.radius300,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                 })}
@@ -296,11 +298,12 @@ const UserMenu = function () {
                     setIsOpenContent(!isOpenContent);
                 }}>
                 {user?.avatar ?
-                    <img src={user?.avatar} width='100%' height='100%' className={css({
+                    <img src={user?.avatar} className={css({
+                        width: theme.sizing.scale950, height: theme.sizing.scale950,
                         objectFit: 'cover',
                         borderRadius: theme.borders.radius300,
                     })} /> :
-                    <User color={theme.colors.backgroundPrimary} width='24px' height='24px' />
+                    <UserIcon color={theme.colors.primary} width='24px' height='24px' />
                 }
             </div>
             {/* user items menu */}

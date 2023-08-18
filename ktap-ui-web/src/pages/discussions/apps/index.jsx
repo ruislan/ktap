@@ -1,6 +1,6 @@
 import { Block } from "baseui/block";
 
-import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from "@ktap/libs/utils";
+import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from "@ktap/libs/utils";
 
 import Banner from './banner';
 import Channels from "./channels";
@@ -10,7 +10,7 @@ export default function AppsLayout() {
     return (
         <Block display='flex' flexDirection='column' alignItems='center'>
             <Banner />
-            <Block display='flex' width={LAYOUT_MAIN} marginTop='scale600' gridGap='scale900' overrides={{
+            <Block display='flex' width={LAYOUT_DEFAULT} marginTop='scale600' gridGap='scale900' overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
@@ -21,7 +21,7 @@ export default function AppsLayout() {
                     })
                 }
             }}>
-                <Block display='flex' flexDirection='column' width={LAYOUT_RIGHT} overrides={{
+                <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_SIDE} overrides={{
                     Block: {
                         style: {
                             [MOBILE_BREAKPOINT]: {
@@ -32,7 +32,7 @@ export default function AppsLayout() {
                 }}>
                     <Channels />
                 </Block>
-                <Block display='flex' flexDirection='column' width={LAYOUT_LEFT} overrides={{
+                <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_CONTENT} overrides={{
                     Block: {
                         style: {
                             [MOBILE_BREAKPOINT]: {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import SearchPanel from './search-panel';
 import SideHotKeywords from './side-hot-keywords';
 
@@ -19,7 +19,7 @@ function Search() {
                 })
             }
         }}>
-            <Block width={LAYOUT_LEFT} margin='0 8px 0 0' overrides={{
+            <Block width={LAYOUT_DEFAULT_CONTENT} margin='0 8px 0 0' overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
@@ -31,7 +31,7 @@ function Search() {
             }}>
                 <SearchPanel />
             </Block>
-            <Block width={LAYOUT_RIGHT} margin='0 0 0 8px'
+            <Block width={LAYOUT_DEFAULT_SIDE} margin='0 0 0 8px'
                 overrides={{
                     Block: {
                         style: ({ $theme }) => ({

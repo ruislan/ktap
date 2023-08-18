@@ -8,7 +8,7 @@ import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 import { Notification } from 'baseui/notification';
 
-import { LAYOUT_LEFT, MOBILE_BREAKPOINT, Messages } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT_CONTENT, MOBILE_BREAKPOINT, Messages } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
 
 function PasswordReset() {
@@ -55,7 +55,7 @@ function PasswordReset() {
     }, [searchParams]);
     return (
         <Block display='flex' minHeight='calc(100vh - 328px)' marginTop='scale800'>
-            <Block display='flex' flexDirection='column' padding='scale1200' minWidth='384px' width={LAYOUT_LEFT}
+            <Block display='flex' flexDirection='column' padding='scale1200' minWidth='384px' width={LAYOUT_DEFAULT_CONTENT}
                 overrides={{
                     Block: {
                         style: {

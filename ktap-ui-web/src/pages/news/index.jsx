@@ -3,7 +3,7 @@ import React from 'react';
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
 
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import LoadMore from '@ktap/components/load-more';
 
 import NewsItem from './news-item';
@@ -33,7 +33,7 @@ function News() {
     }, [skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
+        <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} marginTop='scale900' overrides={{
             Block: {
                 style: {
                     [MOBILE_BREAKPOINT]: {

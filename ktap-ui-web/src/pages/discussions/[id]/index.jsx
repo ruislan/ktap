@@ -5,7 +5,7 @@ import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { HeadingXSmall, LabelSmall } from 'baseui/typography';
 
-import { LAYOUT_LEFT, LAYOUT_MAIN, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
 import { Lock, Pin } from '@ktap/components/icons';
 
@@ -45,7 +45,7 @@ export default function Discussion() {
     }, [id, navigate]);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' maxWidth='100%' overflow='hidden'
+        <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} marginTop='scale900' maxWidth='100%' overflow='hidden'
             overrides={{
                 Block: {
                     style: {
@@ -75,12 +75,12 @@ export default function Discussion() {
             <Block display='flex' width='100%' overrides={{
                 Block: { style: { [MOBILE_BREAKPOINT]: { flexDirection: 'column', gap: theme.sizing.scale900 } } }
             }}>
-                <Block display='flex' flexDirection='column' width={LAYOUT_LEFT} marginRight='scale300' overrides={{
+                <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_CONTENT} marginRight='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginRight: 0, } } }
                 }}>
                     {!isLoadingDiscussion && <Posts discussion={discussion} />}
                 </Block>
-                <Block display='flex' flexDirection='column' width={LAYOUT_RIGHT} marginLeft='scale300' overrides={{
+                <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_SIDE} marginLeft='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginLeft: 0, } } }
                 }}>
                     {!isLoadingDiscussion && <Meta discussion={discussion} onChange={({ sticky, close, title }) => {

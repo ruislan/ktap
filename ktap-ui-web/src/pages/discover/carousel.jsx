@@ -11,7 +11,7 @@ import 'swiper/css';
 import "swiper/css/effect-fade";
 
 import Tag from '@ktap/components/tag';
-import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import { Star } from '@ktap/components/icons';
 
 function Carousel({ title, dataList }) {
@@ -63,7 +63,7 @@ function Carousel({ title, dataList }) {
                                 }
                             })}>
                                 {/* 左大图 */}
-                                <Block display='flex' width={LAYOUT_LEFT} height='353px'
+                                <Block display='flex' width={LAYOUT_DEFAULT_CONTENT} height='353px'
                                     overrides={{
                                         Block: {
                                             style: {
@@ -86,7 +86,7 @@ function Carousel({ title, dataList }) {
                                         })} />
                                 </Block>
                                 {/* 右介绍 */}
-                                <Block display='flex' flexDirection='column' justifyContent='space-between' width={LAYOUT_RIGHT} padding='scale600'
+                                <Block display='flex' flexDirection='column' justifyContent='space-between' width={LAYOUT_DEFAULT_SIDE} padding='scale600'
                                     backgroundColor='backgroundSecondary'
                                     overrides={{
                                         Block: {

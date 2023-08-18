@@ -5,7 +5,7 @@ import { Block } from 'baseui/block';
 import { HeadingSmall, LabelMedium, LabelSmall } from 'baseui/typography';
 import { Spinner } from 'baseui/spinner';
 
-import RoundTab from '@ktap/components/round-tab';
+import Tabs from '@ktap/components/tabs';
 import RouterLink from '@ktap/components/router-link';
 
 import UserDetailProfile from './user-detail-profile';
@@ -59,7 +59,7 @@ function AdminPanelUserDetail() {
                                 <LabelMedium>邮箱：{data.email}</LabelMedium>
                             </Block>
                             <Block display='flex' alignItems='center' marginBottom='scale600'>
-                                <RoundTab activeKey={activeTab}
+                                <Tabs activeKey={activeTab}
                                     onChange={(e) => setActiveTab(e.activeKey)}
                                     names={['快速操作', '个人信息', '评测列表', '评测回复', '交易记录']}
                                 />

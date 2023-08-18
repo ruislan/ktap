@@ -10,13 +10,13 @@ import { AuthProvider, RequireAuth, RequireAdmin, CheckAlreadyLogin } from './ho
 
 // Routes
 import Home from './pages/home';
-import Rank from './pages/ranks';
-import App from './pages/apps';
-import Review from './pages/reviews';
-import User from './pages/users';
+import Ranks from './pages/ranks';
+import Apps from './pages/apps';
+import Reviews from './pages/reviews';
+import Users from './pages/users';
 import Discover from './pages/discover';
 import Search from './pages/search';
-import Organization from './pages/organizations';
+import Organizations from './pages/organizations';
 import News from './pages/news';
 import NewsApps from './pages/news/news-apps';
 import NewsDetail from './pages/news/news-detail';
@@ -37,6 +37,7 @@ import SettingsProfile from './pages/settings/profile';
 import SettingsPassword from './pages/settings/password';
 import Tags from './pages/tags';
 import TradingHistory from './pages/tradings/history';
+import Notifications from './pages/notifications';
 import NotFound from './pages/not-found';
 import NotWork from './pages/not-work';
 import AdminPanel from './pages/admin-panel';
@@ -67,17 +68,18 @@ const router = createBrowserRouter(
             <Route path='/about' element={<About />} />
             <Route path='/password/forgot' element={<PasswordForgot />} />
             <Route path='/password/reset' element={<PasswordReset />} />
-            <Route path='/apps/:id' element={<App />} />
-            <Route path='/users/:id' element={<User />} />
+            <Route path='/apps/:id' element={<Apps />} />
+            <Route path='/users/:id' element={<Users />} />
             <Route path='/settings' element={<RequireAuth><Settings /></RequireAuth>}>
                 <Route index element={<SettingsGeneral />} />
                 <Route path='profile' element={<SettingsProfile />} />
                 <Route path='password' element={<SettingsPassword />} />
             </Route>
             <Route path='/tradings/history' element={<RequireAuth><TradingHistory /></RequireAuth>} />
-            <Route path='/reviews/:id' element={<Review />} />
-            <Route path='/ranks' element={<Rank />} />
-            <Route path='/organizations/:id' element={<Organization />} />
+            <Route path='/notifications' element={<RequireAuth><Notifications /></RequireAuth>} />
+            <Route path='/reviews/:id' element={<Reviews />} />
+            <Route path='/ranks' element={<Ranks />} />
+            <Route path='/organizations/:id' element={<Organizations />} />
             <Route path='/discover' element={<Discover />} />
             <Route path='/news'>
                 <Route index element={<News />} />

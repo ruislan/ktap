@@ -4,7 +4,7 @@ import { Block } from "baseui/block";
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { TableBuilder, TableBuilderColumn } from 'baseui/table-semantic';
 
-import { DateTime, LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '@ktap/libs/utils';
+import { DateTime, LAYOUT_DEFAULT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Trading } from '@ktap/libs/utils';
 import LoadMore from '@ktap/components/load-more';
 
 function TradingHistory() {
@@ -31,7 +31,7 @@ function TradingHistory() {
     }, [skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} maxWidth='100%' overrides={{
+        <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} maxWidth='100%' overrides={{
             Block: {
                 style: ({ $theme }) => ({
                     [MOBILE_BREAKPOINT]: {

@@ -8,7 +8,7 @@ import { Input } from 'baseui/input';
 import { ArrowRight } from 'baseui/icon';
 
 import { FatSearch } from '@ktap/components/icons';
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import { ChatAlt2, User } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
 
@@ -41,7 +41,7 @@ function Discussions() {
     }, [fetchData]);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
+        <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} marginTop='scale900' overrides={{
             Block: {
                 style: {
                     [MOBILE_BREAKPOINT]: {
@@ -64,9 +64,10 @@ function Discussions() {
                     minWidth: '42%', maxWidth: '42%', height: '240px',
                     backgroundImage: `url('/public/img/fight.jpeg')`, backgroundPosition: 'center left',
                     backgroundSize: 'cover', borderRadius: theme.borders.radius300,
-                    boxShadow: theme.lighting.shadow700, transition: 'all 0.2s ease-in-out',
+                    boxShadow: theme.lighting.shadow700, transition: 'transform 0.2s ease-in-out',
                     ':hover': { transform: 'rotate(-2deg)' },
                     [MOBILE_BREAKPOINT]: {
+                        ':hover': { transform: 'none' },
                         minWidth: '100%', maxWidth: '100%',
                     }
                 })} />

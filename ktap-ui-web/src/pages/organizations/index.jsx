@@ -4,8 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from "baseui/block";
 import { Skeleton } from 'baseui/skeleton';
 
-import { LAYOUT_LEFT, LAYOUT_RIGHT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
-import RoundTab from '@ktap/components/round-tab';
+import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import Tabs from '@ktap/components/tabs';
 
 import TabAppsList from './tab-apps-list';
 const OrganizationProfile = React.lazy(() => import('./organization-profile'));
@@ -16,7 +16,7 @@ function OrganizationContent({ id }) {
     return (
         <>
             <Block display='flex' alignItems='center' marginBottom='scale600' >
-                <RoundTab activeKey={activeTab}
+                <Tabs activeKey={activeTab}
                     onChange={(e) => setActiveTab(e.activeKey)}
                     names={['开发', '发行']}
                 />
@@ -29,7 +29,7 @@ function OrganizationContent({ id }) {
     );
 }
 
-function Organization() {
+function Organizations() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [data, setData] = React.useState(null);
@@ -65,7 +65,7 @@ function Organization() {
                 })
             }
         }}>
-            <Block width={LAYOUT_LEFT} margin={'0 8px 0 0'} overrides={{
+            <Block width={LAYOUT_DEFAULT_CONTENT} margin={'0 8px 0 0'} overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
@@ -79,7 +79,7 @@ function Organization() {
             }}>
                 <OrganizationContent id={id} />
             </Block>
-            <Block width={LAYOUT_RIGHT} margin={'0 0 0 8px'}
+            <Block width={LAYOUT_DEFAULT_SIDE} margin={'0 0 0 8px'}
                 overrides={{
                     Block: {
                         style: ({ $theme }) => ({
@@ -99,4 +99,4 @@ function Organization() {
     );
 }
 
-export default Organization;
+export default Organizations;

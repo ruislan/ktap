@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_LEFT, LAYOUT_SETTINGS_RIGHT } from '../../libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_SIDE, LAYOUT_SETTINGS_CONTENT } from '../../libs/utils';
 
 import SideBar from './side-bar';
 import TopBar from './top-bar';
@@ -40,7 +40,7 @@ function Settings() {
                                 marginBottom: $theme.sizing.scale600,
                                 paddingLeft: $theme.sizing.scale600,
                                 paddingRight: $theme.sizing.scale600,
-                                width: LAYOUT_SETTINGS_LEFT,
+                                width: LAYOUT_SETTINGS_SIDE,
                                 [MOBILE_BREAKPOINT]: {
                                     width: '100vw',
                                     marginRight: 0,
@@ -54,7 +54,7 @@ function Settings() {
                 <Block overrides={{
                     Block: {
                         style: ({ $theme }) => ({
-                            width: LAYOUT_SETTINGS_RIGHT,
+                            width: LAYOUT_SETTINGS_CONTENT,
                             marginLeft: $theme.sizing.scale300,
                             maxWidth: '100vw',
                             minHeight: '50vh',

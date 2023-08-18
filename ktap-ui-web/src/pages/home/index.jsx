@@ -1,6 +1,6 @@
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import SideBoxApps from '@ktap/components/side-box-apps';
 
 import AppListRecommended from './app-list-recommended';
@@ -22,7 +22,7 @@ function Home() {
                 Block: {
                     style: ({ $theme }) => ({
                         marginRight: $theme.sizing.scale300,
-                        width: LAYOUT_LEFT,
+                        width: LAYOUT_DEFAULT_CONTENT,
                         display: 'flex',
                         flexDirection: 'column',
                         [MOBILE_BREAKPOINT]: {
@@ -40,7 +40,7 @@ function Home() {
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: { width: 'auto', marginRight: $theme.sizing.scale300, marginTop: $theme.sizing.scale600 },
-                        width: LAYOUT_RIGHT,
+                        width: LAYOUT_DEFAULT_SIDE,
                         marginLeft: $theme.sizing.scale300,
                         display: 'flex',
                         flexDirection: 'column',

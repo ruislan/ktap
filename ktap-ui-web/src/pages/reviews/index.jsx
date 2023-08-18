@@ -4,12 +4,13 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_LEFT, LAYOUT_RIGHT } from '@ktap/libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import ReviewBox from '@ktap/components/review-box';
 
 import ReviewAppGlance from './review-app-glance';
 import ReviewTopBar from './review-top-bar';
-function Review() {
+
+function Reviews() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [review, setReview] = React.useState({});
@@ -73,7 +74,7 @@ function Review() {
                         }
                     }
                 }}>
-                    <Block width={LAYOUT_LEFT} marginRight='scale300' overrides={{
+                    <Block width={LAYOUT_DEFAULT_CONTENT} marginRight='scale300' overrides={{
                         Block: {
                             style: {
                                 [MOBILE_BREAKPOINT]: {
@@ -85,7 +86,7 @@ function Review() {
                     }} >
                         <ReviewBox review={review} editable include={{ actions: { report: true }, comments: { list: true } }} afterUpdated={() => fetchReview()} />
                     </Block>
-                    <Block width={LAYOUT_RIGHT} marginBottom='scale600' marginLeft='scale300' overrides={{
+                    <Block width={LAYOUT_DEFAULT_SIDE} marginBottom='scale600' marginLeft='scale300' overrides={{
                         Block: {
                             style: {
                                 [MOBILE_BREAKPOINT]: { marginLeft: 0, width: '100%', },
@@ -100,4 +101,4 @@ function Review() {
     );
 }
 
-export default Review;
+export default Reviews;

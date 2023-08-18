@@ -3,18 +3,18 @@ import React from 'react';
 import { Block } from "baseui/block";
 import { LabelSmall } from 'baseui/typography';
 
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
-import RoundTab from '@ktap/components/round-tab';
+import { LAYOUT_DEFAULT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import Tabs from '@ktap/components/tabs';
 
 import RankAppsList from './rank-apps-list';
 import RankOrganizationsList from './rank-organizations-list';
 
 
-function Rank() {
+function Ranks() {
     const [activeTab, setActiveTab] = React.useState(0);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale900' overrides={{
+        <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} marginTop='scale900' overrides={{
             Block: {
                 style: ({ $theme }) => ({
                     [MOBILE_BREAKPOINT]: {
@@ -35,7 +35,7 @@ function Rank() {
                     })
                 }
             }}>
-                <RoundTab activeKey={activeTab} names={['评分榜', '热门榜', '新品榜', '差评榜', '厂商榜']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
+                <Tabs activeKey={activeTab} names={['评分榜', '热门榜', '新品榜', '差评榜', '厂商榜']} onChange={({ activeKey }) => setActiveTab(activeKey)} />
             </Block>
             {/* 都是100个 */}
             <Block overrides={{
@@ -82,4 +82,4 @@ function Rank() {
     );
 }
 
-export default Rank;
+export default Ranks;

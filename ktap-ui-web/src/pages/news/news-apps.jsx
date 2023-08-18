@@ -8,7 +8,7 @@ import { HeadingXSmall, HeadingMedium } from 'baseui/typography';
 import { Button } from "baseui/button";
 import { Check } from 'baseui/icon';
 
-import { LAYOUT_MAIN, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import { useAuth } from '@ktap/hooks/use-auth';
 import LoadMore from '@ktap/components/load-more';
 
@@ -82,7 +82,7 @@ function NewsAppsBanner({ appId }) {
                     }
                 }}
             />
-            <Block width={LAYOUT_MAIN} height='100%' display='flex' overrides={{
+            <Block width={LAYOUT_DEFAULT} height='100%' display='flex' overrides={{
                 Block: {
                     style: {
                         zIndex: 2,
@@ -161,7 +161,7 @@ function NewsAppsNewsList({ appId }) {
     }, [appId, skip, limit]);
 
     return (
-        <Block display='flex' flexDirection='column' width={LAYOUT_MAIN} marginTop='scale600' overrides={{
+        <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} marginTop='scale600' overrides={{
             Block: {
                 style: {
                     [MOBILE_BREAKPOINT]: {

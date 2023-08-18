@@ -14,7 +14,7 @@ const TabButton = function ({ isActive, onPointerDown, children }) {
                 fontSize: theme.typography.LabelSmall.fontSize, fontFamily: theme.typography.LabelSmall.fontFamily,
                 fontWeight: theme.typography.LabelSmall.fontWeight, lineHeight: theme.typography.LabelSmall.lineHeight,
                 color: isActive || isPending ? theme.colors.primary : theme.colors.primary400, cursor: 'pointer',
-                boxShadow: isActive || isPending ? theme.lighting.shadow400 : 'none',
+                transition: 'color 0.25s ease',
                 ':hover': { color: theme.colors.primary, }
             })}
             onPointerDown={e => {
@@ -28,20 +28,22 @@ const TabButton = function ({ isActive, onPointerDown, children }) {
     );
 };
 
-const TabBg = function () {
+const TabBg = function ({ animation }) {
     const [css, theme] = useStyletron();
     return (
         <div className={css({
             backgroundColor: 'rgb(71,71,71)', borderRadius: theme.borders.radius300, position: 'absolute',
+            boxShadow: theme.lighting.shadow400,
             transformOrigin: '0 0', height: 'calc(100% - 8px)',
-            transition: 'width cubic-bezier(0.4, 0, 0.1, 1) 0.4s, transform cubic-bezier(0.4, 0, 0.2, 1) 0.5s', zIndex: 1,
+            transition: animation ? 'width cubic-bezier(0.4, 0, 0.1, 1) 0.4s, transform cubic-bezier(0.4, 0, 0.2, 1) 0.5s' : 'none', zIndex: 1,
         })} />
     );
 };
 
-export default function RoundTab({ activeKey, names, onChange }) {
+export default function Tabs({ activeKey, names, onChange }) {
     const [css, theme] = useStyletron();
     const ref = React.useRef(null);
+    const [updatedKey, setUpdatedKey] = React.useState(0); // avoid init slide
 
     const moveBg = async (index) => {
         if (ref.current) {
@@ -49,16 +51,16 @@ export default function RoundTab({ activeKey, names, onChange }) {
             const bg = ref.current.lastElementChild;
             if (tab && bg) {
                 bg.style.width = `${tab.offsetWidth}px`;
-                bg.style.transform = `translateX(${tab.offsetLeft - 4}px)`;
+                bg.style.transform = `translate3d(${tab.offsetLeft - 4}px, 0, 0)`;
             }
         }
     };
 
+    React.useEffect(() => setUpdatedKey(prev => prev + 1), [activeKey]);
     React.useEffect(() => {
         moveBg(activeKey);
         // eslint-disable-next-line
     }, []);
-
     return (
         <div ref={ref} className={css({
             display: 'flex', alignItems: 'center', width: '100%',
@@ -67,7 +69,7 @@ export default function RoundTab({ activeKey, names, onChange }) {
             whiteSpace: 'nowrap', position: 'relative',
         })}>
             {names.map((name, index) => (
-                <TabButton key={index} isActive={activeKey === index} onPointerDown={(e) => {
+                <TabButton key={index} isActive={activeKey == index} onPointerDown={(e) => {
                     moveBg(index);
                     e.activeKey = index;
                     if (onChange) onChange(e);
@@ -75,7 +77,7 @@ export default function RoundTab({ activeKey, names, onChange }) {
                     {name}
                 </TabButton>
             ))}
-            <TabBg />
+            <TabBg animation={updatedKey > 0} />
         </div>
     );
 }

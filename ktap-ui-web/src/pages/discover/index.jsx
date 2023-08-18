@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_MAIN, PageWidget } from '../../libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT, PageWidget } from '../../libs/utils';
 import TextList from './text-list';
 import Carousel from './carousel';
 import CardListApp from './card-list-app';
@@ -26,7 +26,7 @@ function Discover() {
         })();
     }, []);
     return (
-        <Block display='flex' marginTop='scale900' justifyContent='center' flexDirection='column' width={LAYOUT_MAIN} overrides={{
+        <Block display='flex' marginTop='scale900' justifyContent='center' flexDirection='column' width={LAYOUT_DEFAULT} overrides={{
             Block: {
                 style: ({ $theme }) => ({
                     [MOBILE_BREAKPOINT]: {
