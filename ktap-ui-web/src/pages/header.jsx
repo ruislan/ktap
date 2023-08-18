@@ -9,7 +9,7 @@ import { useAuth } from '@ktap/hooks/use-auth';
 import { useOutsideClick } from '@ktap/hooks/use-outside-click';
 import { LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
 import { User as UserIcon, Coins, Bell, FatSearch } from '@ktap/components/icons';
-import Notification from '@ktap/pages/notifications';
+import { CompactView as Notifications } from '@ktap/pages/notifications';
 
 const Brand = function () {
     const [css, theme] = useStyletron();
@@ -233,7 +233,7 @@ const UserNotification = function () {
                 }
             })}>
                 <div className={css({ width: LAYOUT_DEFAULT_SIDE, maxHeight: '400px', overflow: 'auto', })}>
-                    <Notification kind='popover' />
+                    <Notifications />
                 </div>
             </div>}
         </div>

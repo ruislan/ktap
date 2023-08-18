@@ -14,8 +14,7 @@ export default function AppsLayout() {
                 Block: {
                     style: ({ $theme }) => ({
                         [MOBILE_BREAKPOINT]: {
-                            width: '100%',
-                            flexDirection: 'column',
+                            width: '100%', flexDirection: 'column',
                             paddingLeft: $theme.sizing.scale300, paddingRight: $theme.sizing.scale300,
                         }
                     })

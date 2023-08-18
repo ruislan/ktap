@@ -37,7 +37,7 @@ import SettingsProfile from './pages/settings/profile';
 import SettingsPassword from './pages/settings/password';
 import Tags from './pages/tags';
 import TradingHistory from './pages/tradings/history';
-import Notifications from './pages/notifications';
+import { FullView as Notifications } from './pages/notifications';
 import NotFound from './pages/not-found';
 import NotWork from './pages/not-work';
 import AdminPanel from './pages/admin-panel';
