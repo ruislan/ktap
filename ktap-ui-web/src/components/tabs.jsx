@@ -32,10 +32,10 @@ const TabBg = function ({ animation }) {
     const [css, theme] = useStyletron();
     return (
         <div className={css({
-            backgroundColor: 'rgb(71,71,71)', borderRadius: theme.borders.radius300, position: 'absolute',
-            boxShadow: theme.lighting.shadow400,
+            backgroundColor: 'rgb(71,71,71)', borderRadius: theme.borders.radius300,
+            position: 'absolute', zIndex: 1, boxShadow: theme.lighting.shadow400,
             transformOrigin: '0 0', height: 'calc(100% - 8px)',
-            transition: animation ? 'width cubic-bezier(0.4, 0, 0.1, 1) 0.4s, transform cubic-bezier(0.4, 0, 0.2, 1) 0.5s' : 'none', zIndex: 1,
+            transition: animation ? 'width cubic-bezier(0.4, 0, 0.1, 1) 0.4s, transform cubic-bezier(0.4, 0, 0.2, 1) 0.5s' : 'none',
         })} />
     );
 };
@@ -56,11 +56,11 @@ export default function Tabs({ activeKey, names, onChange }) {
         }
     };
 
-    React.useEffect(() => setUpdatedKey(prev => prev + 1), [activeKey]);
     React.useEffect(() => {
+        setUpdatedKey(prev => prev + 1)
         moveBg(activeKey);
-        // eslint-disable-next-line
-    }, []);
+    }, [activeKey]);
+
     return (
         <div ref={ref} className={css({
             display: 'flex', alignItems: 'center', width: '100%',
@@ -70,9 +70,8 @@ export default function Tabs({ activeKey, names, onChange }) {
         })}>
             {names.map((name, index) => (
                 <TabButton key={index} isActive={activeKey == index} onPointerDown={(e) => {
-                    moveBg(index);
                     e.activeKey = index;
-                    if (onChange) onChange(e);
+                    if (typeof onChange === 'function') onChange(e);
                 }}>
                     {name}
                 </TabButton>
