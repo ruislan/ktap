@@ -10,6 +10,7 @@ import { useOutsideClick } from '@ktap/hooks/use-outside-click';
 import { LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
 import { User as UserIcon, Coins, Bell, FatSearch } from '@ktap/components/icons';
 import { CompactView as Notifications } from '@ktap/pages/notifications';
+import useWindowSize from '@ktap/hooks/use-window-size';
 
 const Brand = function () {
     const [css, theme] = useStyletron();
@@ -204,8 +205,9 @@ const SearchInput = function () {
 };
 
 const UserNotification = function () {
-    const [css, theme] = useStyletron();
     const navigate = useNavigate();
+    const { width } = useWindowSize();
+    const [css, theme] = useStyletron();
     const [isOpenContent, setIsOpenContent] = React.useState(false);
     const ref = React.useRef(null);
     useOutsideClick({ ref, handler: () => setIsOpenContent(false) });
@@ -218,7 +220,7 @@ const UserNotification = function () {
                 })}
                 onClick={e => {
                     e.stopPropagation();
-                    window.screen.width > MOBILE_BREAKPOINT_PX ? setIsOpenContent(!isOpenContent) : navigate('/notifications');
+                    width > MOBILE_BREAKPOINT_PX ? setIsOpenContent(!isOpenContent) : navigate('/notifications');
                 }}>
                 <Bell width='24px' height='24px' />
             </div>

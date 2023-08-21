@@ -11,6 +11,7 @@ const sideMenus = [
     { title: '基本信息', itemId: '/settings' },
     { title: '个性化', itemId: '/settings/profile' },
     { title: '密码', itemId: '/settings/password' },
+    { title: '消息通知', itemId: '/settings/notifications' },
 ];
 
 function SideBar() {

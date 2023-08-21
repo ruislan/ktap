@@ -38,6 +38,25 @@ export const Pagination = {
     },
 };
 
+export const Notification = {
+    type: {
+        system: 'system', following: 'following', reaction: 'reaction',
+    },
+    settings: {
+        keys: {
+            following: {
+                appChanged: 'notification.following.app.changed',
+                userChanged: 'notification.following.user.changed',
+            },
+            reaction: {
+                replied: 'notification.reaction.replied',
+                thumbed: 'notification.reaction.thumbed',
+                gift: 'notification.reaction.gift',
+            }
+        }
+    }
+};
+
 export const Pages = {
     discover: 'discover',
 };

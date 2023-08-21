@@ -28,7 +28,23 @@ function NewIcon() {
     );
 }
 
-function NotificationList({ dataList, isLoading, }) {
+function NotificationList({ activeIndex }) {
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [dataList, setDataList] = React.useState([]);
+
+    React.useEffect(() => {
+        (async function fetchData() {
+            try {
+                setIsLoading(true);
+                setDataList([
+                    { type: 'system', content: { text: '你的昵称通过了审核' }, read: false, },
+                    { type: 'system', content: { text: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格' }, read: true, },
+                ]);
+            } finally {
+                setIsLoading(false);
+            }
+        })();
+    }, [activeIndex]);
 
     if (isLoading) return (
         <Block padding='scale600'>

@@ -1,5 +1,5 @@
 import { authenticate } from '../../lib/auth.js';
-import { errors, USER_CHANGE_NAME_INTERVAL } from "../../constants.js";
+import { errors, Notification, USER_CHANGE_NAME_INTERVAL } from "../../constants.js";
 
 const settings = async (fastify, opts) => {
     fastify.addHook('onRequest', authenticate);
@@ -128,6 +128,39 @@ const settings = async (fastify, opts) => {
             where: { id: req.user.id },
             data: { password: newPasswordHash }
         });
+        return reply.code(204).send();
+    });
+
+    // 通知信息
+    fastify.put('/notifications', async function (req, reply) {
+        const followingUserChanged = req.body.followingUserChanged !== '0';
+        const followingAppChanged = req.body.followingAppChanged !== '0';
+        const replied = req.body.replied !== '0';
+        const thumbed = req.body.thumbed !== '0';
+        const giftSent = req.body.giftSent !== '0';
+
+        await fastify.db.$transaction([
+            fastify.db.settings.update({
+                where: { userId: req.user.id, key: Notification.settings.keys.following.appChanged },
+                data: { value: followingAppChanged },
+            }),
+            fastify.db.settings.update({
+                where: { userId: req.user.id, key: Notification.settings.keys.following.userChanged },
+                data: { value: followingUserChanged },
+            }),
+            fastify.db.settings.update({
+                where: { userId: req.user.id, key: Notification.settings.keys.reaction.replied },
+                data: { value: replied },
+            }),
+            fastify.db.settings.update({
+                where: { userId: req.user.id, key: Notification.settings.keys.reaction.thumbed },
+                data: { value: thumbed },
+            }),
+            fastify.db.settings.update({
+                where: { userId: req.user.id, key: Notification.settings.keys.reaction.gift },
+                data: { value: giftSent },
+            })
+        ]);
         return reply.code(204).send();
     });
 };

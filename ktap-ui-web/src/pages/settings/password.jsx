@@ -37,7 +37,7 @@ function SettingsPassword() {
         }
     }
     return (
-        <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600' justifyContent='flex-start'>
+        <Block display='flex' flexDirection='column' justifyContent='flex-start'>
             <HeadingSmall marginTop='0' marginBottom='scale600'>更改密码</HeadingSmall>
             {notification && <Notification kind={notification.kind} message={notification.message} />}
             <form onSubmit={handleSubmit}>

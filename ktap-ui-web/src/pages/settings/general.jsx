@@ -39,7 +39,7 @@ function SettingsGeneral() {
         }
     };
     return (
-        <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600' justifyContent='flex-start'>
+        <Block display='flex' flexDirection='column' justifyContent='flex-start'>
             <form onSubmit={handleSubmit}>
                 <HeadingSmall marginTop='0' marginBottom='scale600'>基本信息</HeadingSmall>
                 {notification && <Notification kind={notification.kind} message={notification.message} />}

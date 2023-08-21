@@ -163,6 +163,8 @@ const user = async (fastify, opts) => {
     });
 
     // 通知
+
+    // 获取某个分类的通知
     fastify.get('/notifications/:type', async function (req, reply) {
         const userId = req.user.id;
         const type = req.params.type;
@@ -187,6 +189,40 @@ const user = async (fastify, opts) => {
         }
         return reply.code(200).send({ data, count, skip, limit });
     });
+
+    // 整个通知分类标记已读
+    fastify.get('/notifications/:type/read', async function (req, reply) {
+        const userId = req.user.id;
+        const type = req.params.type;
+        await fastify.db.notification.updateMany({
+            where: { userId, type },
+            data: { read: true },
+        });
+        return reply.code(204).send();
+    });
+
+    // 清空整个通知分类
+    fastify.delete('/notifications/:type', async function (req, reply) {
+        const userId = req.user.id;
+        const type = req.params.type;
+        await fastify.db.notification.deleteMany({
+            where: { userId, type },
+        });
+        return reply.code(204).send();
+    });
+
+    // 单个通知标记已读
+    fastify.get('/notifications/:id/read', async function (req, reply) {
+        const userId = req.user.id;
+        const id = req.params.id;
+        await fastify.db.notification.update({
+            where: { id, userId },
+            data: { read: true },
+        });
+        return reply.code(204).send();
+    });
+
+    // 通知end
 };
 
 export default user;

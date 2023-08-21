@@ -9,7 +9,7 @@ import GenderLabel from '@ktap/components/gender-label';
 function TopBar() {
     const { user } = useAuth();
     return (
-        <>
+        <Block paddingLeft='scale600' paddingRight='scale600' marginBottom='scale900'>
             <Block display='flex' justifyContent='space-between' alignItems='center'>
                 <Block display='flex' alignItems='center' justifyContent='flex-start'>
                     <Block display='flex' marginRight='scale300'>
@@ -27,7 +27,7 @@ function TopBar() {
                     <LabelSmall><RouterLink href={`/users/${user.id}`} kind='underline'>返回个人页面</RouterLink></LabelSmall>
                 </Block>
             </Block>
-        </>
+        </Block>
     );
 }
 

@@ -127,7 +127,7 @@ function SettingsProfile() {
     const [notification, setNotification] = React.useState(null);
 
     return (
-        <Block display='flex' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'
+        <Block display='flex' flexDirection='column'
             justifyContent='flex-start' overrides={{
                 Block: {
                     style: {

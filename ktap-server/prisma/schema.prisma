@@ -43,6 +43,7 @@ model User {
   discussionPostReports DiscussionPostReport[] // 讨论贴的举报
   discussionChannels    UserDiscussionChannelRef[] // 管理的讨论频道
   notifications         Notification[] // 通知
+  settings              Setting[] // 设置
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -577,7 +578,7 @@ model DiscussionPostGiftRef {
 model Notification {
   id        Int       @id @default(autoincrement())
   userId    Int       @map("user_id") // 通知接收人
-  type      String    @default("system") // 通知类型，系统通知 / 关注通知 concern / 互动通知 interaction / 消息 inbox
+  type      String    @default("system") // 通知类型，系统通知 / 关注通知 following / 互动通知 reaction / 消息 inbox
   target    String? // 发起对象，系统 / 游戏 / 用户, 如果是系统可直接留空
   targetId  Int?      @map("target_id") // 发起对象 Id，如果是系统可直接留空
   action    String    @default("create") // 发起对象行为，cud/thumb/gift/report ...
@@ -590,4 +591,11 @@ model Notification {
   user User @relation(fields: [userId], references: [id])
 }
 
+
+model NotificationSetting {
+  id     Int    @id @default(autoincrement())
+  userId Int    @map("user_id") // 所属人
+
+  user User @relation(fields: [userId], references: [id])
+}
 // 通知 End

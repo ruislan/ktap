@@ -1,4 +1,7 @@
 {
     "editor.fontFamily": "Hack, SF Mono, Space Mono, Monaco, monospace",
-    "editor.fontSize": 14
+    "editor.fontSize": 14,
+    "cSpell.words": [
+        "baseui"
+    ]
 }

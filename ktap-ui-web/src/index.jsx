@@ -35,6 +35,7 @@ import Settings from './pages/settings';
 import SettingsGeneral from './pages/settings/general';
 import SettingsProfile from './pages/settings/profile';
 import SettingsPassword from './pages/settings/password';
+import SettingsNotification from './pages/settings/notifications';
 import Tags from './pages/tags';
 import TradingHistory from './pages/tradings/history';
 import { FullView as Notifications } from './pages/notifications';
@@ -74,6 +75,7 @@ const router = createBrowserRouter(
                 <Route index element={<SettingsGeneral />} />
                 <Route path='profile' element={<SettingsProfile />} />
                 <Route path='password' element={<SettingsPassword />} />
+                <Route path='notifications' element={<SettingsNotification />} />
             </Route>
             <Route path='/tradings/history' element={<RequireAuth><TradingHistory /></RequireAuth>} />
             <Route path='/notifications' element={<RequireAuth><Notifications /></RequireAuth>} />

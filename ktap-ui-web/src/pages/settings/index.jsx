@@ -1,4 +1,6 @@
-import { Outlet } from "react-router-dom";
+import { useStyletron } from 'baseui';
+import { Outlet } from 'react-router-dom';
+
 import { Block } from 'baseui/block';
 
 import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_SIDE, LAYOUT_SETTINGS_CONTENT } from '../../libs/utils';
@@ -6,62 +8,50 @@ import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_SIDE, LAYOUT_SETTINGS_CONTENT } from
 import SideBar from './side-bar';
 import TopBar from './top-bar';
 
+
 function Settings() {
+    const [, theme] = useStyletron();
     return (
         <Block display='flex' flexDirection='column' marginTop='scale900' overrides={{
             Block: {
-                style: ({ $theme }) => ({
+                style: {
                     [MOBILE_BREAKPOINT]: {
-                        marginTop: $theme.sizing.scale600,
+                        marginTop: theme.sizing.scale600,
                     },
-                })
+                }
             }
         }}>
-            <Block paddingLeft='scale600' paddingRight='scale600' marginBottom='scale900'>
-                <TopBar />
-            </Block>
-            <Block overrides={{
-                Block: {
-                    style: {
-                        display: 'flex',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                        [MOBILE_BREAKPOINT]: {
-                            flexDirection: 'column',
-                        },
+            <TopBar />
+            <Block display='flex' justifyContent='center' paddingLeft='scale600' paddingRight='scale600'
+                gridGap='scale900' overrides={{
+                    Block: {
+                        style: {
+                            [MOBILE_BREAKPOINT]: {
+                                flexDirection: 'column', gap: theme.sizing.scale600,
+                            },
+                        }
                     }
-                }
-            }}>
-                <Block
+                }}>
+                <Block width={LAYOUT_SETTINGS_SIDE} marginBottom='scale600'
                     overrides={{
                         Block: {
-                            style: ({ $theme }) => ({
-                                marginRight: $theme.sizing.scale300,
-                                marginBottom: $theme.sizing.scale600,
-                                paddingLeft: $theme.sizing.scale600,
-                                paddingRight: $theme.sizing.scale600,
-                                width: LAYOUT_SETTINGS_SIDE,
+                            style: {
                                 [MOBILE_BREAKPOINT]: {
                                     width: '100vw',
-                                    marginRight: 0,
                                 },
-                            })
+                            }
                         }
                     }}
                 >
                     <SideBar />
                 </Block>
-                <Block overrides={{
+                <Block maxWidth='100vw' minHeight='50vh' width={LAYOUT_SETTINGS_CONTENT} overrides={{
                     Block: {
-                        style: ({ $theme }) => ({
-                            width: LAYOUT_SETTINGS_CONTENT,
-                            marginLeft: $theme.sizing.scale300,
-                            maxWidth: '100vw',
-                            minHeight: '50vh',
+                        style: {
                             [MOBILE_BREAKPOINT]: {
                                 margin: '0',
                             }
-                        })
+                        }
                     }
                 }}>
                     <Outlet />
