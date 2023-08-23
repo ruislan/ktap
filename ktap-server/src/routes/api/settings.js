@@ -132,35 +132,34 @@ const settings = async (fastify, opts) => {
     });
 
     // 通知信息
-    fastify.put('/notifications', async function (req, reply) {
-        const followingUserChanged = req.body.followingUserChanged !== '0';
-        const followingAppChanged = req.body.followingAppChanged !== '0';
-        const replied = req.body.replied !== '0';
-        const thumbed = req.body.thumbed !== '0';
-        const giftSent = req.body.giftSent !== '0';
+    fastify.get('/notifications', async function (req, reply) {
+        const settings = await fastify.db.userSetting.findUnique({ where: { userId: req.user.id } });
+        let data = {};
+        if (settings?.options) {
+            const jsonData = JSON.parse(settings.options);
+            data = { ...jsonData?.notifications };
+        }
+        return reply.code(200).send({ data });
+    });
 
-        await fastify.db.$transaction([
-            fastify.db.settings.update({
-                where: { userId: req.user.id, key: Notification.settings.keys.following.appChanged },
-                data: { value: followingAppChanged },
-            }),
-            fastify.db.settings.update({
-                where: { userId: req.user.id, key: Notification.settings.keys.following.userChanged },
-                data: { value: followingUserChanged },
-            }),
-            fastify.db.settings.update({
-                where: { userId: req.user.id, key: Notification.settings.keys.reaction.replied },
-                data: { value: replied },
-            }),
-            fastify.db.settings.update({
-                where: { userId: req.user.id, key: Notification.settings.keys.reaction.thumbed },
-                data: { value: thumbed },
-            }),
-            fastify.db.settings.update({
-                where: { userId: req.user.id, key: Notification.settings.keys.reaction.gift },
-                data: { value: giftSent },
-            })
-        ]);
+    fastify.put('/notifications', async function (req, reply) {
+        const followingUserChanged = req.body.followingUserChanged;
+        const followingAppChanged = req.body.followingAppChanged;
+        const reactionReplied = req.body.reactionReplied;
+        const reactionThumbed = req.body.reactionThumbed;
+        const reactionGiftSent = req.body.reactionGiftSent;
+
+        const settings = await fastify.db.userSetting.findUnique({ where: { userId: req.user.id } });
+        const options = settings?.options ? JSON.parse(settings.options) : {};
+        const newOptions = JSON.stringify({
+            ...options,
+            notifications: {
+                followingAppChanged, followingUserChanged,
+                reactionReplied, reactionThumbed, reactionGiftSent,
+            }
+        });
+        const item = { userId: req.user.id, options: newOptions };
+        await fastify.db.userSetting.upsert({ where: { userId: req.user.id }, create: item, update: item });
         return reply.code(204).send();
     });
 };

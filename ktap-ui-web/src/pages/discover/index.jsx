@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT, PageWidget } from '../../libs/utils';
+import { Spinner } from 'baseui/spinner';
+
+import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT, PageWidget } from '@ktap/libs/utils';
 import TextList from './text-list';
 import Carousel from './carousel';
 import CardListApp from './card-list-app';
 import CardListReview from './card-list-review';
-import { Spinner } from 'baseui/spinner';
 
 function Discover() {
     const [components, setComponent] = React.useState([]);

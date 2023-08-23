@@ -123,7 +123,9 @@ export default function FullView() {
                     }}
                 >
                     <TitleActionBar title={MENU_ITEMS[activeIndex].title + '通知'} activeIndex={activeIndex} />
-                    <NotificationList activeIndex={activeIndex} />
+                    <Block display='flex' flexDirection='column' minHeight='144px'>
+                        <NotificationList activeIndex={activeIndex} />
+                    </Block>
                 </Block>
             </Block>
         </Block>

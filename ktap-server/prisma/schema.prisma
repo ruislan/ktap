@@ -31,19 +31,27 @@ model User {
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
   // ref
-  organizations         Organization[]
-  reviews               Review[]
-  reviewComments        ReviewComment[] // 评测回复
-  reviewGifts           ReviewGiftRef[] // review gifts 对评测送的礼物
-  reviewReports         ReviewReport[] // 对评测的举报
-  followers             FollowUser[] // 关注的人
-  discussions           Discussion[] // 讨论
-  discussionPosts       DiscussionPost[] // 讨论帖
-  discussionPostGifts   DiscussionPostGiftRef[] // 对讨论帖送的礼物
-  discussionPostReports DiscussionPostReport[] // 讨论贴的举报
-  discussionChannels    UserDiscussionChannelRef[] // 管理的讨论频道
+  organizations         Organization[] // 自己所属的组织
+  reviews               Review[] // 自己的评测
+  reviewComments        ReviewComment[] // 自己的评测回复
+  reviewGifts           ReviewGiftRef[] // 给某个评测送的礼物
+  reviewReports         ReviewReport[] // 给某个评测的举报
+  followers             FollowUser[] // 自己关注的人
+  discussions           Discussion[] // 自己的讨论
+  discussionPosts       DiscussionPost[] // 自己的讨论帖
+  discussionPostGifts   DiscussionPostGiftRef[] // 给某个讨论帖送的礼物
+  discussionPostReports DiscussionPostReport[] // 给某个讨论贴的举报
+  discussionChannels    UserDiscussionChannelRef[] // 自己管理的讨论频道
   notifications         Notification[] // 通知
-  settings              Setting[] // 设置
+  setting               UserSetting? // 自己的配置信息
+}
+
+// 用户配置信息
+model UserSetting {
+  userId  Int    @id @unique
+  options String @default("{}") // 用户设置，JSON 格式
+  // ref
+  user    User   @relation(fields: [userId], references: [id])
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -574,15 +582,16 @@ model DiscussionPostGiftRef {
 // 讨论 End
 
 // 通知
-
 model Notification {
   id        Int       @id @default(autoincrement())
   userId    Int       @map("user_id") // 通知接收人
-  type      String    @default("system") // 通知类型，系统通知 / 关注通知 following / 互动通知 reaction / 消息 inbox
+  type      String    @default("system") // 通知类型，系统 / 关注 following / 互动 reaction / 消息 inbox
   target    String? // 发起对象，系统 / 游戏 / 用户, 如果是系统可直接留空
   targetId  Int?      @map("target_id") // 发起对象 Id，如果是系统可直接留空
-  action    String    @default("create") // 发起对象行为，cud/thumb/gift/report ...
-  content   String    @default("{}") // 通知内容，json data，不同的action需要的内容是不同的
+  title     String // 通知文本的标题
+  content   String // 通知文本内容
+  url       String? // 跳转的链接
+  extra     String    @default("{}") // 附加内容，json data，用于更加详细和丰富的展现可能需要的不同的内容用于呈现
   isRead    Boolean   @default(false) @map("is_read") // 是否已读
   readAt    DateTime? @map("read_at") // 已读时间
   createdAt DateTime  @default(now()) @map("created_at") // 创建时间
@@ -591,11 +600,4 @@ model Notification {
   user User @relation(fields: [userId], references: [id])
 }
 
-
-model NotificationSetting {
-  id     Int    @id @default(autoincrement())
-  userId Int    @map("user_id") // 所属人
-
-  user User @relation(fields: [userId], references: [id])
-}
 // 通知 End

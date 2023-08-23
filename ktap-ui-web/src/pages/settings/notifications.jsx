@@ -2,28 +2,40 @@ import React from 'react';
 
 import { Block } from 'baseui/block';
 import { Checkbox } from 'baseui/checkbox';
+import { Spinner } from 'baseui/spinner';
 import { HeadingSmall, LabelLarge } from 'baseui/typography';
 
 import Notification from '@ktap/components/notification';
 import { Button } from 'baseui/button';
+import { Messages } from '@ktap/libs/utils';
 
-export default function SettingsNotifications() {
+function Form({ initData }) {
     const [tip, setTip] = React.useState(null);
-    const [form, setForm] = React.useState({
-        followingUserChanged: false, followingAppChanged: false,
-        reactionReplied: false, reactionThumbed: false, reactionGiftSent: false,
-    });
+    const [form, setForm] = React.useState({ ...initData });
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+    const save = async () => {
+        try {
+            setIsSubmitting(true);
+            const res = await fetch('/api/settings/notifications', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...form })
+            });
+            if (res.ok) {
+                setTip({ kind: 'positive', message: Messages.updated });
+            } else {
+                const json = await res.json();
+                setTip({ kind: 'negative', message: json.message });
+            }
+        } catch (e) {
+            setTip({ kind: 'negative', message: Messages.unknownError });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     return (
-        <Block display='flex' flexDirection='column'
-            justifyContent='flex-start' overrides={{
-                Block: {
-                    style: {
-                        overflowWrap: 'break-word',
-                    }
-                }
-            }}>
-            <HeadingSmall marginTop='0' marginBottom='scale600'>通知</HeadingSmall>
+        <>
             {tip && <Notification kind={tip.kind} message={tip.message} />}
 
             <Block display='flex' flexDirection='column' marginBottom='scale600'>
@@ -44,8 +56,40 @@ export default function SettingsNotifications() {
             </Block>
 
             <Block display='flex' alignItems='center'>
-                <Button $size='compact' $kind='secondary'>保存</Button>
+                <Button $isLoading={isSubmitting} $size='compact' $kind='secondary' onClick={() => save()}>保存</Button>
             </Block>
+        </>
+    );
+}
+
+export default function SettingsNotifications() {
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [initData, setInitData] = React.useState(null);
+
+    React.useEffect(() => {
+        (async () => {
+            setIsLoading(true);
+            try {
+                const res = await fetch('/api/settings/notifications', { headers: { 'Content-Type': 'application/json' } });
+                if (res.ok) {
+                    const json = await res.json();
+                    setInitData({ ...json.data });
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        })();
+    }, []);
+
+    return (
+        <Block display='flex' flexDirection='column' justifyContent='flex-start'>
+            <HeadingSmall marginTop='0' marginBottom='scale600'>通知</HeadingSmall>
+            {
+                isLoading ?
+                    <Block minHeight='20vh' display='flex' justifyContent='center' alignItems='center'><Spinner $size='scale1600' $borderWidth='scale300' $color='primary' /></Block> :
+                    <Form initData={initData} />
+            }
+
         </Block>
     );
 }

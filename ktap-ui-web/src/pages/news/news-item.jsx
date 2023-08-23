@@ -1,11 +1,12 @@
-import React from 'react';
-import { useStyletron } from 'baseui';
 import { Link, useNavigate } from 'react-router-dom';
-import { DateTime, MOBILE_BREAKPOINT } from '../../libs/utils';
+
+import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { HeadingXSmall, LabelXSmall, MonoLabelMedium, ParagraphSmall } from 'baseui/typography';
 
-export default function ({ news }) {
+import { DateTime, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+
+export default function NewsItem({ news }) {
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
 

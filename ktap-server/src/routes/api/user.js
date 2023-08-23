@@ -1,4 +1,4 @@
-import { Pagination } from '../../constants.js';
+import { AppMedia, Notification, Pagination } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 
 // 处理已经登陆用户自己相关业务
@@ -163,26 +163,47 @@ const user = async (fastify, opts) => {
     });
 
     // 通知
-
-    // 获取某个分类的通知
-    fastify.get('/notifications/:type', async function (req, reply) {
+    // 获取通知
+    fastify.get('/notifications', async function (req, reply) {
         const userId = req.user.id;
-        const type = req.params.type;
+        const type = req.query.type || Notification.type.system;
         const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
-        const count = await fastify.db.notification.count({
-            where: { userId, type }
-        });
-        const data = await fastify.db.notification.findMany({
-            where: { userId, type },
-            orderBy: { createdAt: 'desc' },
-            skip, take: limit,
-        });
+
+        const count = await fastify.db.notification.count({ where: { userId, type } });
+        // const data = await fastify.db.notification.findMany({
+        //     where: { userId, type },
+        //     orderBy: { createdAt: 'desc' },
+        //     skip, take: limit,
+        // });
+
+        const user2 = await fastify.db.user.findUnique({ where: { id: 2 } });
+        const app1 = await fastify.db.app.findUnique({ where: { id: 1 }, include: { media: true } });
+
+        const data = [];
+        if (type === Notification.type.system) {
+            [
+                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '你的昵称通过了审核', read: false, createdAt: new Date(), },
+                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, readAt: new Date(), createdAt: new Date(), },
+            ].forEach(item => data.push(item));
+        }
+        if (type === Notification.type.following) {
+            [
+                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '发表了一篇新闻', read: false, },
+                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, },
+                { type: 'following', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: '有新的评论', content: '发表了一片评论', read: false, },
+            ].forEach(item => data.push(item));
+        }
+        if (type === Notification.type.reaction) {
+            [
+                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: '有新的点赞', content: '发表了一片新闻', read: false, },
+                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: '有新的礼物', content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, },
+            ].forEach(item => data.push(item));
+        }
         for (const item of data) {
             switch (item.target) {
                 default: break;
             }
             // delete useless fields
-            item.type = item.target;
             delete item.target;
             delete item.targetId;
             delete item.userId;
@@ -190,10 +211,18 @@ const user = async (fastify, opts) => {
         return reply.code(200).send({ data, count, skip, limit });
     });
 
-    // 整个通知分类标记已读
-    fastify.get('/notifications/:type/read', async function (req, reply) {
+    // 清空整个通知分类
+    fastify.delete('/notifications', async function (req, reply) {
         const userId = req.user.id;
-        const type = req.params.type;
+        const type = req.query.type || Notification.type.system;
+        await fastify.db.notification.deleteMany({ where: { userId, type }, });
+        return reply.code(204).send();
+    });
+
+    // 整个通知分类标记已读
+    fastify.put('/notifications/read', async function (req, reply) {
+        const userId = req.user.id;
+        const type = req.query.type || Notification.type.system;
         await fastify.db.notification.updateMany({
             where: { userId, type },
             data: { read: true },
@@ -201,27 +230,15 @@ const user = async (fastify, opts) => {
         return reply.code(204).send();
     });
 
-    // 清空整个通知分类
-    fastify.delete('/notifications/:type', async function (req, reply) {
-        const userId = req.user.id;
-        const type = req.params.type;
-        await fastify.db.notification.deleteMany({
-            where: { userId, type },
-        });
-        return reply.code(204).send();
-    });
-
     // 单个通知标记已读
-    fastify.get('/notifications/:id/read', async function (req, reply) {
+    fastify.put('/notifications/:id/read', async function (req, reply) {
         const userId = req.user.id;
-        const id = req.params.id;
+        const id = Number(id) || 0;
         await fastify.db.notification.update({
             where: { id, userId },
             data: { read: true },
         });
-        return reply.code(204).send();
     });
-
     // 通知end
 };
 
