@@ -11,9 +11,8 @@ import Tabs from '@ktap/components/tabs';
 import RouterLink from '@ktap/components/router-link';
 import useWindowSize from '@ktap/hooks/use-window-size';
 
-import NotificationList from './list';
 import { MENU_ITEMS } from './constants';
-import { TitleBar } from './bar';
+import Notifications from './notifications';
 
 const TopBar = React.memo(function TopBar() {
     return (
@@ -59,12 +58,14 @@ export default function FullView() {
     const [, theme] = useStyletron();
     const location = useLocation();
     const activeIndex = MENU_ITEMS.findIndex((v,) => v.path == location.pathname + location.search);
+
     return (
         <Block display='flex' flexDirection='column' marginTop='scale900' overrides={{
             Block: {
                 style: {
                     [MOBILE_BREAKPOINT]: {
                         marginTop: theme.sizing.scale600,
+                        width: '100%',
                     },
                 }
             }
@@ -100,10 +101,7 @@ export default function FullView() {
                         }
                     }}
                 >
-                    <TitleBar activeIndex={activeIndex} />
-                    <Block display='flex' flexDirection='column' minHeight='144px'>
-                        <NotificationList activeIndex={activeIndex} />
-                    </Block>
+                    <Notifications kind='full' activeIndex={activeIndex} />
                 </Block>
             </Block>
         </Block>

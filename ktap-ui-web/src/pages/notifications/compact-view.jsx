@@ -5,10 +5,9 @@ import { LabelSmall, LabelXSmall } from 'baseui/typography';
 
 import RouterLink from '@ktap/components/router-link';
 
-import NotificationList from './list';
-import { TabBar } from './bar';
+import Notifications from './notifications';
 
-const TitleBar = React.memo(function TitleBar() {
+const TopTitle = React.memo(function TopTitle() {
     return (
         <Block display='flex' alignItems='center' justifyContent='space-between'
             paddingLeft='scale600' paddingRight='scale600' paddingTop='scale600' paddingBottom='scale300'>
@@ -23,9 +22,8 @@ export default function CompactView() {
 
     return (
         <Block display='flex' flexDirection='column'>
-            <TitleBar />
-            <TabBar activeIndex={activeTab} onTabChange={to => setActiveTab(to)} unread={4} />
-            <NotificationList activeIndex={activeTab} />
+            <TopTitle />
+            <Notifications activeIndex={activeTab} onActiveIndexChanged={to => setActiveTab(to)} />
         </Block >
     );
 }

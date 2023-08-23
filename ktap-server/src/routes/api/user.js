@@ -182,21 +182,21 @@ const user = async (fastify, opts) => {
         const data = [];
         if (type === Notification.type.system) {
             [
-                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '你的昵称通过了审核', read: false, createdAt: new Date(), },
-                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, readAt: new Date(), createdAt: new Date(), },
+                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '你的昵称通过了审核', isRead: false, createdAt: new Date(), },
+                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', isRead: true, readAt: new Date(), createdAt: new Date(), },
             ].forEach(item => data.push(item));
         }
         if (type === Notification.type.following) {
             [
-                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '发表了一篇新闻', read: false, },
-                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, },
-                { type: 'following', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '发表了一篇评测', read: false, },
+                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '发表了一篇新闻', isRead: false, },
+                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', isRead: true, },
+                { type: 'following', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '发表了一篇评测', isRead: false, },
             ].forEach(item => data.push(item));
         }
         if (type === Notification.type.reaction) {
             [
-                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的评论点赞了', read: false, },
-                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的回帖赠送了礼物', read: true, },
+                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的评论点赞了', isRead: false, },
+                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的回帖赠送了礼物', isRead: true, },
             ].forEach(item => data.push(item));
         }
         // for (const item of data) {
@@ -233,7 +233,7 @@ const user = async (fastify, opts) => {
         const type = req.query.type || Notification.type.system;
         await fastify.db.notification.updateMany({
             where: { userId, type },
-            data: { read: true },
+            data: { isRead: true },
         });
         return reply.code(204).send();
     });
@@ -244,7 +244,7 @@ const user = async (fastify, opts) => {
         const id = Number(id) || 0;
         await fastify.db.notification.update({
             where: { id, userId },
-            data: { read: true },
+            data: { isRead: true },
         });
     });
     // 通知end
