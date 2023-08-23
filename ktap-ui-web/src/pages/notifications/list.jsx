@@ -8,6 +8,7 @@ import { PAGE_LIMIT_MINI } from '@ktap/libs/utils';
 import LoadMore from '@ktap/components/load-more';
 
 import { MENU_ITEMS, TYPES } from './constants';
+import AvatarSquare from '@ktap/components/avatar-square';
 
 function SystemIcon() {
     const [css, theme] = useStyletron();
@@ -32,6 +33,16 @@ function NewIcon() {
     );
 }
 
+function ActorAvatar({ type, actor }) {
+    switch (type) {
+        case TYPES.SYSTEM: return <SystemIcon />;
+        case TYPES.FOLLOWING:
+        case TYPES.REACTION:
+            return <AvatarSquare size='scale950' src={actor?.avatar} />;
+    }
+    return null;
+}
+
 function NotificationItem({ item }) {
     return (
         <Block display='flex' alignItems='center' gridGap='scale600'
@@ -45,7 +56,7 @@ function NotificationItem({ item }) {
                     })
                 }
             }}>
-            {item.type === TYPES.SYSTEM && <SystemIcon />}
+            <ActorAvatar type={item.type} actor={item.actor} />
             <Block display='flex' flexDirection='column' gridGap='scale200' width='calc(100% - 44px)'>
                 <Block flex='1' display='flex' alignItems='center'>
                     <LabelSmall color='primary100' flex='1' overrides={{

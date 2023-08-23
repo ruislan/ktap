@@ -1,21 +1,19 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
-import { Check } from 'baseui/icon';
 import { Navigation } from 'baseui/side-navigation';
-import { HeadingSmall, LabelMedium, LabelSmall } from 'baseui/typography';
+import { HeadingSmall, LabelSmall } from 'baseui/typography';
 
 import { LAYOUT_SETTINGS_CONTENT, LAYOUT_SETTINGS_SIDE, MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
 import Tabs from '@ktap/components/tabs';
 import RouterLink from '@ktap/components/router-link';
-import { TrashBin } from '@ktap/components/icons';
+import useWindowSize from '@ktap/hooks/use-window-size';
 
 import NotificationList from './list';
 import { MENU_ITEMS } from './constants';
-import ActionButton from './action-button';
-import useWindowSize from '@ktap/hooks/use-window-size';
-import { useStyletron } from 'baseui';
+import { TitleBar } from './bar';
 
 const TopBar = React.memo(function TopBar() {
     return (
@@ -34,26 +32,6 @@ const TopBar = React.memo(function TopBar() {
         </Block>
     );
 });
-
-const TitleActionBar = function TitleActionBar({ title, activeIndex }) {
-    return (
-        <Block display='flex' alignItems='center' color='primary300' marginTop='scale300' marginBottom='scale300'
-            paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300' justifyContent='space-between'
-            overrides={{
-                Block: {
-                    style: {
-                        borderBottom: '2px solid rgb(61,61,61)',
-                    }
-                }
-            }}>
-            <LabelMedium>{title}</LabelMedium>
-            <Block display='flex' alignItems='center' gridGap='scale300'>
-                <ActionButton color='inherit' title='全部清空'><TrashBin width='15px' height='15px' /></ActionButton>
-                <ActionButton color='inherit' ><Check title='全部标记为已读' $size='scale800' /></ActionButton>
-            </Block>
-        </Block>
-    );
-}
 
 function Menus({ activeIndex }) {
     const { width } = useWindowSize();
@@ -122,7 +100,7 @@ export default function FullView() {
                         }
                     }}
                 >
-                    <TitleActionBar title={MENU_ITEMS[activeIndex].title + '通知'} activeIndex={activeIndex} />
+                    <TitleBar activeIndex={activeIndex} />
                     <Block display='flex' flexDirection='column' minHeight='144px'>
                         <NotificationList activeIndex={activeIndex} />
                     </Block>

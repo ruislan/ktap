@@ -190,24 +190,32 @@ const user = async (fastify, opts) => {
             [
                 { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '发表了一篇新闻', read: false, },
                 { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, },
-                { type: 'following', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: '有新的评论', content: '发表了一片评论', read: false, },
+                { type: 'following', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '发表了一篇评测', read: false, },
             ].forEach(item => data.push(item));
         }
         if (type === Notification.type.reaction) {
             [
-                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: '有新的点赞', content: '发表了一片新闻', read: false, },
-                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: '有新的礼物', content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', read: true, },
+                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的评论点赞了', read: false, },
+                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的回帖赠送了礼物', read: true, },
             ].forEach(item => data.push(item));
         }
-        for (const item of data) {
-            switch (item.target) {
-                default: break;
-            }
-            // delete useless fields
-            delete item.target;
-            delete item.targetId;
-            delete item.userId;
-        }
+        // for (const item of data) {
+        //     switch (item.target) {
+        //         case 'App': {
+        //             const app = await fastify.db.app.findUnique({ where: { id: item.targetId }, select: { id: true, name: true, media: { where: { usage: AppMedia.usage.logo } } } });
+        //             item.actor = { id: app.id, name: app.name, avatar: app.media.find(item => item.usage === AppMedia.usage.logo).image };
+        //         }
+        //         case 'User': {
+        //             const user = await fastify.db.user.findUnique({ where: { id: item.targetId }, select: { id: true, name: true, avatar: true } });
+        //             item.actor = { id: user.id, name: user.name, avatar: user.avatar };
+        //         }
+        //         default: break;
+        //     }
+        //     // delete useless fields
+        //     delete item.target;
+        //     delete item.targetId;
+        //     delete item.userId;
+        // }
         return reply.code(200).send({ data, count, skip, limit });
     });
 
