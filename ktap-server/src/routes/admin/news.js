@@ -1,4 +1,4 @@
-import { Pagination } from "../../constants.js";
+import { Notification, Pagination } from "../../constants.js";
 
 const news = async function (fastify, opts) {
     fastify.delete('/:id', async (req, reply) => {
@@ -37,10 +37,15 @@ const news = async function (fastify, opts) {
         let { appId, title, summary, content, head, banner } = req.body;
         appId = Number(appId) || 0;
         if (appId > 0) {
-            await fastify.db.news.create({
+            const news = await fastify.db.news.create({
                 data: {
                     title, summary, content, head, banner, appId,
                 }
+            });
+            // 发送新闻通知给关注用户
+            await fastify.utils.addFollowingNotification({
+                action: Notification.action.newsCreated, target: Notification.target.App, targetId: appId,
+                title, content: summary, url: '/news/' + news.id,
             });
         }
         return reply.code(201).send();

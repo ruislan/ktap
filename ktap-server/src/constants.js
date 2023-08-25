@@ -1,4 +1,4 @@
-export const errors = {
+export const Errors = {
     forbidden(message = '') { return { code: 403, message } },
     notFound(message = '') { return { code: 404, message } },
     code: {
@@ -39,20 +39,31 @@ export const Pagination = {
 };
 
 export const Notification = {
-    type: {
-        system: 'system', following: 'following', reaction: 'reaction',
-    },
+    type: { system: 'system', following: 'following', reaction: 'reaction', },
+    target: { App: 'App', User: 'User' },
     settings: {
-        keys: {
-            following: {
-                appChanged: 'notification.following.app.changed',
-                userChanged: 'notification.following.user.changed',
-            },
-            reaction: {
-                replied: 'notification.reaction.replied',
-                thumbed: 'notification.reaction.thumbed',
-                gift: 'notification.reaction.gift',
-            }
+        followingAppChanged: 'followingAppChanged', followingUserChanged: 'followingUserChanged',
+        reactionReplied: 'reactionReplied', reactionThumbed: 'reactionThumbed', reactionGiftSent: 'reactionGiftSent',
+    },
+    action: {
+        newsCreated: 'newsCreated',
+        reviewCreated: 'reviewCreated', commentCreated: 'commentCreated',
+        discussionCreated: 'discussionCreated', postCreated: 'postCreated',
+        reviewThumbed: 'reviewThumbed', postThumbed: 'postThumbed',
+        reviewGiftSent: 'reviewGiftSent', postGiftSent: 'postGiftSent',
+    },
+    getContent(action, type) {
+        switch (action) {
+            case Notification.action.newsCreated: return '发表了一篇新闻';
+            case Notification.action.reviewCreated: return '发表了一篇评测';
+            case Notification.action.commentCreated: return type === Notification.type.following ? '回复了一篇评测' : '你的评测有新的回复';
+            case Notification.action.discussionCreated: return '发表了一篇讨论主题';
+            case Notification.action.postCreated: return type === Notification.type.following ? '发表了一篇讨论回帖' : '你的讨论有新的回帖';
+            case Notification.action.reviewThumbed: return type === Notification.type.following ? '点赞了一篇评测' : '你的评测有新的点赞';
+            case Notification.action.postThumbed: return type === Notification.type.following ? '点赞了一篇讨论回帖' : '你的讨论回帖有新的点赞';
+            case Notification.action.reviewGiftSent: return type === Notification.type.following ? '给一篇评测赠送了礼物' : '你的评测收到了新的礼物';
+            case Notification.action.postGiftSent: return type === Notification.type.following ? '给一篇讨论回帖赠送了礼物' : '你的讨论回帖收到了新的礼物';
+            default: return '';
         }
     }
 };

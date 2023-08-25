@@ -170,52 +170,30 @@ const user = async (fastify, opts) => {
         const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
 
         const count = await fastify.db.notification.count({ where: { userId, type } });
-        // const data = await fastify.db.notification.findMany({
-        //     where: { userId, type },
-        //     orderBy: { createdAt: 'desc' },
-        //     skip, take: limit,
-        // });
+        const data = await fastify.db.notification.findMany({
+            where: { userId, type },
+            orderBy: { createdAt: 'desc' },
+            skip, take: limit,
+        });
 
-        const user2 = await fastify.db.user.findUnique({ where: { id: 2 } });
-        const app1 = await fastify.db.app.findUnique({ where: { id: 1 }, include: { media: true } });
+        for (const item of data) {
+            switch (item.target) {
+                case Notification.target.App:
+                    const app = await fastify.db.app.findUnique({ where: { id: item.targetId }, select: { id: true, name: true, media: { where: { usage: AppMedia.usage.logo } } } });
+                    item.actor = { id: app.id, name: app.name, avatar: app.media.find(item => item.usage === AppMedia.usage.logo).image };
+                    break;
+                case Notification.target.User:
+                    const user = await fastify.db.user.findUnique({ where: { id: item.targetId }, select: { id: true, name: true, avatar: true } });
+                    item.actor = { id: user.id, name: user.name, avatar: user.avatar };
+                    break;
+                default: break;
+            }
+            // delete useless fields
+            delete item.target;
+            delete item.targetId;
+            delete item.userId;
+        }
 
-        const data = [];
-        if (type === Notification.type.system) {
-            [
-                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '你的昵称通过了审核', isRead: false, createdAt: new Date(), },
-                { type: 'system', actor: { name: '系统', }, title: '审核通过', content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', isRead: true, readAt: new Date(), createdAt: new Date(), },
-            ].forEach(item => data.push(item));
-        }
-        if (type === Notification.type.following) {
-            [
-                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '发表了一篇新闻', isRead: false, },
-                { type: 'following', url: '#', actor: { id: 1, name: app1.name, avatar: app1.media.find(item => item.usage === AppMedia.usage.logo).image }, title: app1.name, content: '恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格恭喜你获得了内测资格', isRead: true, },
-                { type: 'following', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '发表了一篇评测', isRead: false, },
-            ].forEach(item => data.push(item));
-        }
-        if (type === Notification.type.reaction) {
-            [
-                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的评论点赞了', isRead: false, },
-                { type: 'reaction', url: '#', actor: { id: 2, name: user2.name, avatar: user2.avatar }, title: user2.name, content: '给你的回帖赠送了礼物', isRead: true, },
-            ].forEach(item => data.push(item));
-        }
-        // for (const item of data) {
-        //     switch (item.target) {
-        //         case 'App': {
-        //             const app = await fastify.db.app.findUnique({ where: { id: item.targetId }, select: { id: true, name: true, media: { where: { usage: AppMedia.usage.logo } } } });
-        //             item.actor = { id: app.id, name: app.name, avatar: app.media.find(item => item.usage === AppMedia.usage.logo).image };
-        //         }
-        //         case 'User': {
-        //             const user = await fastify.db.user.findUnique({ where: { id: item.targetId }, select: { id: true, name: true, avatar: true } });
-        //             item.actor = { id: user.id, name: user.name, avatar: user.avatar };
-        //         }
-        //         default: break;
-        //     }
-        //     // delete useless fields
-        //     delete item.target;
-        //     delete item.targetId;
-        //     delete item.userId;
-        // }
         return reply.code(200).send({ data, count, skip, limit });
     });
 

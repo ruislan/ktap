@@ -1,5 +1,5 @@
 import { authenticate } from '../../lib/auth.js';
-import { errors, Notification, USER_CHANGE_NAME_INTERVAL } from "../../constants.js";
+import { Errors, Notification, USER_CHANGE_NAME_INTERVAL } from "../../constants.js";
 
 const settings = async (fastify, opts) => {
     fastify.addHook('onRequest', authenticate);
@@ -17,7 +17,7 @@ const settings = async (fastify, opts) => {
             return reply.code(200).send({ avatar: uri });
         } catch (err) {
             fastify.log.warn(err);
-            throw fastify.httpErrors.badRequest(errors.message.userAvatarUploadFailed);
+            throw fastify.httpErrors.badRequest(Errors.message.userAvatarUploadFailed);
         }
     });
 
@@ -43,7 +43,7 @@ const settings = async (fastify, opts) => {
             const lastUpdatedNameAt = new Date(user.lastUpdatedNameAt).getTime();
             const now = new Date().getTime();
             if ((now - lastUpdatedNameAt) < USER_CHANGE_NAME_INTERVAL) {
-                throw fastify.httpErrors.createError(errors.code.validation, errors.message.userNameNotYet);
+                throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userNameNotYet);
             }
         }
 
@@ -55,7 +55,7 @@ const settings = async (fastify, opts) => {
                 ]
             }
         }) > 0;
-        if (existsName) throw fastify.httpErrors.createError(errors.code.validation, errors.message.userNameDuplicated);
+        if (existsName) throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userNameDuplicated);
 
         const existsEmail = await fastify.db.user.count({
             where: {
@@ -65,7 +65,7 @@ const settings = async (fastify, opts) => {
                 ]
             }
         }) > 0;
-        if (existsEmail) throw fastify.httpErrors.createError(errors.code.validation, errors.message.userEmailDuplicated);
+        if (existsEmail) throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userEmailDuplicated);
 
         await fastify.db.user.update({
             where: { id: user.id },
@@ -118,10 +118,10 @@ const settings = async (fastify, opts) => {
     }, async function (req, reply) {
         const { oldPassword, newPassword } = req.body;
         const user = await fastify.db.user.findUnique({ where: { id: req.user.id } });
-        if (!user) throw fastify.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
+        if (!user) throw fastify.httpErrors.createError(Errors.code.authentication, Errors.message.authenticationFailed);
 
         const isPasswordMatched = await fastify.bcrypt.compare(oldPassword, user.password);
-        if (!isPasswordMatched) throw fastify.httpErrors.createError(errors.code.validation, errors.message.userOldPasswordWrong);
+        if (!isPasswordMatched) throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userOldPasswordWrong);
 
         const newPasswordHash = await fastify.bcrypt.hash(newPassword);
         await fastify.db.user.update({
@@ -137,28 +137,27 @@ const settings = async (fastify, opts) => {
         let data = {};
         if (settings?.options) {
             const jsonData = JSON.parse(settings.options);
-            data = { ...jsonData?.notifications };
+            data = { ...jsonData?.notification };
         }
         return reply.code(200).send({ data });
     });
 
     fastify.put('/notifications', async function (req, reply) {
-        const followingUserChanged = req.body.followingUserChanged;
-        const followingAppChanged = req.body.followingAppChanged;
-        const reactionReplied = req.body.reactionReplied;
-        const reactionThumbed = req.body.reactionThumbed;
-        const reactionGiftSent = req.body.reactionGiftSent;
+        const notificationSettings = {};
+        notificationSettings[Notification.settings.followingUserChanged] = req.body.followingUserChanged;
+        notificationSettings[Notification.settings.followingAppChanged] = req.body.followingAppChanged;
+        notificationSettings[Notification.settings.reactionReplied] = req.body.reactionReplied;
+        notificationSettings[Notification.settings.reactionThumbed] = req.body.reactionThumbed;
+        notificationSettings[Notification.settings.reactionGiftSent] = req.body.reactionGiftSent;
 
         const settings = await fastify.db.userSetting.findUnique({ where: { userId: req.user.id } });
         const options = settings?.options ? JSON.parse(settings.options) : {};
         const newOptions = JSON.stringify({
             ...options,
-            notifications: {
-                followingAppChanged, followingUserChanged,
-                reactionReplied, reactionThumbed, reactionGiftSent,
-            }
+            notification: notificationSettings,
         });
         const item = { userId: req.user.id, options: newOptions };
+
         await fastify.db.userSetting.upsert({ where: { userId: req.user.id }, create: item, update: item });
         return reply.code(204).send();
     });

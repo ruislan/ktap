@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { errors, Keys, Gender, Trading, Pagination } from "../../constants.js";
+import { Errors, Keys, Gender, Trading, Pagination } from "../../constants.js";
 
 const home = async function (fastify, opts) {
     fastify.post('/register', {
@@ -18,13 +18,13 @@ const home = async function (fastify, opts) {
         }
     }, async function (req, reply) {
         const { email, password, name, agree } = req.body;
-        if (!agree) throw fastify.httpErrors.badRequest(errors.message.userAgreeRequired);
+        if (!agree) throw fastify.httpErrors.badRequest(Errors.message.userAgreeRequired);
 
         const existsEmail = await fastify.db.user.count({ where: { email } }) > 0;
-        if (existsEmail) throw fastify.httpErrors.badRequest(errors.message.userEmailDuplicated);
+        if (existsEmail) throw fastify.httpErrors.badRequest(Errors.message.userEmailDuplicated);
 
         const existsName = await fastify.db.user.count({ where: { name } }) > 0;
-        if (existsName) throw fastify.httpErrors.badRequest(errors.message.userNameDuplicated);
+        if (existsName) throw fastify.httpErrors.badRequest(Errors.message.userNameDuplicated);
 
         const passwordHash = await fastify.bcrypt.hash(password);
 
@@ -67,12 +67,12 @@ const home = async function (fastify, opts) {
         const { email, password } = req.body;
 
         const user = await fastify.db.user.findUnique({ where: { email } });
-        if (!user) throw fastify.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
+        if (!user) throw fastify.httpErrors.createError(Errors.code.authentication, Errors.message.authenticationFailed);
 
         const isPasswordMatched = await fastify.bcrypt.compare(password, user.password);
-        if (!isPasswordMatched) throw fastify.httpErrors.createError(errors.code.authentication, errors.message.authenticationFailed);
+        if (!isPasswordMatched) throw fastify.httpErrors.createError(Errors.code.authentication, Errors.message.authenticationFailed);
 
-        if (user.isLocked) throw fastify.httpErrors.createError(errors.code.forbidden, errors.message.userIsLocked);
+        if (user.isLocked) throw fastify.httpErrors.createError(Errors.code.forbidden, Errors.message.userIsLocked);
 
         const token = await fastify.jwt.sign({ id: Number(user.id), email: user.email, name: user.name, isAdmin: user.isAdmin });
         const expires = new Date(Date.now() + (Number(process.env.COOKIE_EXPIRES_IN) || 259200000));

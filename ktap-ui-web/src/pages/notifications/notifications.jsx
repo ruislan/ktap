@@ -56,7 +56,7 @@ function ItemContainer({ to, ...rest }) {
         ':last-child': { borderBottom: 'unset' },
     });
     if (!to) return <div className={style} {...rest} />;
-    return <Link to={to} className={style} {...rest} />;
+    return <a href={to} className={style} {...rest} />;
 }
 
 function NotificationItem({ item }) {
@@ -136,7 +136,7 @@ function Notifications({ kind = 'compact', activeIndex, onActiveIndexChanged, da
                 <TabBar activeIndex={activeIndex} onTabChange={onActiveIndexChanged} onClear={handleClear} onRead={handleRead} /> :
                 <TitleBar activeIndex={activeIndex} onClear={handleClear} onRead={handleRead} />}
             {dataList && dataList.map((item, index) => <NotificationItem key={index} item={item} />)}
-            {!isLoading && dataList && dataList.length === 0 && <LabelSmall display='flex' alignItems='center' justifyContent='center' height='100px'>您当前没有任何通知</LabelSmall>}
+            {!isLoading && dataList && dataList.length === 0 && <LabelSmall display='flex' alignItems='center' justifyContent='center' height='62px'>您当前没有任何通知</LabelSmall>}
             <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonRow={1} skeletonHeight='66px' onClick={() => setSkip(prev => prev + dataLimit)} />
         </Block>
     );

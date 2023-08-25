@@ -1,4 +1,4 @@
-import { AppMedia, Pagination, Trading } from "../../constants.js";
+import { AppMedia, Notification, Pagination, Trading } from "../../constants.js";
 import { authenticate } from '../../lib/auth.js';
 
 const bizErrorHandler = async function (error, request, reply) {
@@ -389,6 +389,19 @@ const discussions = async (fastify, opts) => {
         }
         // 重新取当前赞踩数据
         const data = await fastify.utils.getDiscussionPostThumbs({ id: postId });
+        // 如果是新创建的点赞，而且不是自己给自己点赞，则发出反馈通知
+        if (direction === 'up' && !toDelete) {
+            const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
+            if (post.userId !== userId) {
+                await fastify.utils.addReactionNotification({
+                    action: Notification.action.postThumbed,
+                    title: '通知', userId: post.userId, // 反馈通知的对象
+                    target: Notification.target.User, targetId: userId,
+                    content: Notification.getContent(Notification.action.postThumbed, Notification.type.reaction),
+                    url: '/discussions/' + post.discussionId,
+                });
+            }
+        }
         return reply.code(200).send({ data });
     });
 

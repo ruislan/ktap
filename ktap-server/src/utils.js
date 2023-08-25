@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import sanitizeHtml from 'sanitize-html';
 import { Prisma } from '@prisma/client'
-import { Pagination, errors } from './constants.js';
+import { Notification, Pagination, Errors } from './constants.js';
 
 const cleanContent = (content) => {
     return sanitizeHtml(content, {
@@ -10,6 +10,11 @@ const cleanContent = (content) => {
             'span': ['style'],
         }
     });
+};
+
+// 去掉所有的html标签，只保留文本
+const textContent = (content) => {
+    return content.replace(/<[^>]+>/g, '');
 };
 
 // XXX 临时的一个避免重复代码的归并处，后续应该还是要根据业务对象来进行划分开
@@ -40,6 +45,9 @@ const utils = async (fastify, opts, next) => {
                 WHERE App.id = ${appId};
             `;
         },
+
+        // Discussion
+
         // 检查操作权限
         // obj是操作对象，objType是操作对象的type, operation是操作名称
         // 注意，不同的obj，需要的obj的级联数据不同，尽量在检查之前就级联查询出来
@@ -88,9 +96,9 @@ const utils = async (fastify, opts, next) => {
         },
         async updateDiscussionChannel({ id, name, icon, description, appId, operator }) {
             const channel = await fastify.db.discussionChannel.findUnique({ where: { id }, include: { moderators: { select: { userId: true, } } } });
-            if (!channel) throw errors.notFound();
+            if (!channel) throw Errors.notFound();
             let canUpdate = await fastify.utils.canOperate({ obj: channel, objType: 'DiscussionChannel', operator, operation: 'update' });
-            if (!canUpdate) throw errors.forbidden();
+            if (!canUpdate) throw Errors.forbidden();
             await fastify.db.discussionChannel.update({ where: { id }, data: { name, icon, description, appId }, });
         },
         async createDiscussion({ title, content, appId, channelId, userId, ip }) {
@@ -110,15 +118,21 @@ const utils = async (fastify, opts, next) => {
                 await tx.timeline.create({ data: { userId, targetId: post.id, target: 'DiscussionPost', } });
                 return { discussion, post };
             });
+            // add notification
+            await fastify.utils.addFollowingNotification({
+                action: Notification.action.discussionCreated, target: Notification.target.User, targetId: userId,
+                title: Notification.getContent(Notification.action.discussionCreated, Notification.type.following),
+                content: result.discussion.title, url: '/discussions/' + result.discussion.id,
+            });
             return result;
         },
         async updateDiscussion({ id, title, operator }) {
             const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
             // 主题锁定的情况下，都不能编辑
-            if (!discussion || discussion.isClosed) throw errors.notFound();
+            if (!discussion || discussion.isClosed) throw Errors.notFound();
 
             let canUpdate = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'update' });
-            if (!canUpdate) throw errors.forbidden();
+            if (!canUpdate) throw Errors.forbidden();
 
             await fastify.db.discussion.update({ where: { id: discussion.id }, data: { title } });
         },
@@ -127,10 +141,10 @@ const utils = async (fastify, opts, next) => {
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussion({ id, operator }) {
             const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
-            if (!discussion) throw errors.notFound();
+            if (!discussion) throw Errors.notFound();
 
             let canDelete = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'delete' });
-            if (!canDelete) throw errors.forbidden();
+            if (!canDelete) throw Errors.forbidden();
 
             await fastify.db.$transaction([
                 fastify.db.$queryRaw`
@@ -150,16 +164,16 @@ const utils = async (fastify, opts, next) => {
         },
         async stickyDiscussion({ id, operator, isSticky = false }) {
             const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
-            if (!discussion) throw errors.notFound();
+            if (!discussion) throw Errors.notFound();
             let canSticky = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'sticky' });
-            if (!canSticky) throw errors.forbidden();
+            if (!canSticky) throw Errors.forbidden();
             await fastify.db.discussion.updateMany({ where: { id, }, data: { isSticky } });
         },
         async closeDiscussion({ id, operator, isClosed = false }) {
             const discussion = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
-            if (!discussion) throw errors.notFound();
+            if (!discussion) throw Errors.notFound();
             let canSticky = await fastify.utils.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'close' });
-            if (!canSticky) throw errors.forbidden();
+            if (!canSticky) throw Errors.forbidden();
             await fastify.db.discussion.updateMany({ where: { id, }, data: { isClosed } });
         },
         // 统计某个讨论的礼物数量
@@ -189,26 +203,46 @@ const utils = async (fastify, opts, next) => {
             `)[0];
         },
 
-        // discussion post
         async createDiscussionPost({ content, userId, discussionId, ip }) {
-            if ((await fastify.db.discussion.count({ where: { id: discussionId, isClosed: false } })) <= 0) return; // 如果讨论被关闭，是不能回帖的
-            let data = null;
-            await fastify.db.$transaction(async (tx) => {
-                data = await tx.discussionPost.create({ data: { content: cleanContent(content), discussionId, userId, ip } });
+            const discussion = await fastify.db.discussion.findUnique({ where: { id: discussionId }, select: { id: true, userId: true, isClosed: true } });
+            if (!discussion || discussion.isClosed) return null; // 如果讨论被关闭，是不能回帖的
+
+            const result = await fastify.db.$transaction(async (tx) => {
+                const data = await tx.discussionPost.create({ data: { content: cleanContent(content), discussionId, userId, ip }, include: {} });
                 await tx.discussion.update({ where: { id: discussionId }, data: { lastPostId: data.id } });
                 await tx.timeline.create({ data: { userId, targetId: data.id, target: 'DiscussionPost', } });
+                return data;
             });
-            return data;
+
+            // add notification
+            const notification = {
+                action: Notification.action.postCreated, target: Notification.target.User, targetId: userId,
+                content: textContent(result.content).slice(0, 50), url: '/discussions/' + result.discussionId,
+            };
+            await fastify.utils.addFollowingNotification({
+                ...notification,
+                title: Notification.getContent(Notification.action.postCreated, Notification.type.following)
+            });
+            // 自己给自己回不用发通知
+            if (discussion.userId !== userId) {
+                await fastify.utils.addReactionNotification({
+                    ...notification,
+                    userId: discussion.userId, // 反馈通知的对象
+                    title: Notification.getContent(Notification.action.postCreated, Notification.type.reaction)
+                });
+            }
+
+            return result;
         },
 
         // 修改帖子,修改只能改内容
         async updateDiscussionPost({ id, content, ip, operator }) {
             const post = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
             // 讨论如果处于关闭状态，则不能修改
-            if (!post || !post.discussion || post.discussion.isClosed) throw errors.notFound();
+            if (!post || !post.discussion || post.discussion.isClosed) throw Errors.notFound();
 
             let canUpdate = await fastify.utils.canOperate({ obj: post, objType: 'Post', operator, operation: 'update' });
-            if (!canUpdate) throw errors.forbidden();
+            if (!canUpdate) throw Errors.forbidden();
 
             await fastify.db.discussionPost.update({ where: { id }, data: { content: cleanContent(content), ip } });
         },
@@ -218,10 +252,10 @@ const utils = async (fastify, opts, next) => {
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussionPost({ id, operator }) {
             const post = await fastify.utils.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
-            if (!post) throw errors.notFound();
+            if (!post) throw Errors.notFound();
 
             let canDelete = await fastify.utils.canOperate({ obj: post, objType: 'Post', operator, operation: 'delete' });
-            if (!canDelete) throw errors.forbidden();
+            if (!canDelete) throw Errors.forbidden();
 
             await fastify.db.$transaction(async (tx) => {
                 const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: post.discussion.id, id: { not: id } }, orderBy: { createdAt: 'desc' }, });
@@ -233,8 +267,10 @@ const utils = async (fastify, opts, next) => {
                 await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: id, userId: post.userId } });
             });
         },
+        // Discussion End
+
         // reviews
-        // 获得某个评测的礼物情况
+        // 删除review
         async deleteReview({ id, userId, isByAdmin = false, }) {
             const whereCondition = { id };
             if (!isByAdmin) whereCondition.userId = userId; // isAdmin or is my review?
@@ -283,10 +319,94 @@ const utils = async (fastify, opts, next) => {
                 (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${id}) AS downs
             `)[0];
         },
+        // Review End
+
         // 通知 notification
-        async addNotification({ userIds = [], type, targetId, target, content }) {
-            throw new Error('not implemented');
+        // 系统通知，只针对某个人进行通知，且不需要检查设置
+        async addSystemNotification({ userId, title = '系统', content }) {
+            await fastify.db.notification.create({
+                data: {
+                    userId, type: Notification.type.system, title, content,
+                }
+            });
+        },
+
+        // 反馈通知，只针对某个人进行通知，也只需要查询当前这个人的设置，然后根据这个行动查看是是否需要通知
+        async addReactionNotification({ action, userId, target, targetId, title, content, url }) {
+            const setting = await fastify.db.userSetting.findUnique({ where: { userId } });
+            const options = setting?.options ? JSON.parse(setting.options) : {};
+            let canNotify = false;
+            switch (action) {
+                // 有人回复了我的评论和讨论，给我发送通知
+                case Notification.action.postCreated:
+                case Notification.action.commentCreated:
+                    canNotify = options?.notification && options.notification[Notification.settings.reactionReplied];
+                    break;
+                // 有人赞了我的评论和讨论，给我发送通知
+                case Notification.action.reviewThumbed:
+                case Notification.action.postThumbed:
+                    canNotify = options?.notification && options.notification[Notification.settings.reactionThumbed];
+                    break;
+                // 有人赏了礼物给我的评论和讨论，给我发送通知
+                case Notification.action.reviewGiftSent:
+                case Notification.action.postGiftSent:
+                    canNotify = options?.notification && options.notification[Notification.settings.reactionGiftSent];
+                    break;
+                default: break;
+            }
+
+            if (!canNotify) return null;
+
+            await fastify.db.notification.create({
+                data: {
+                    type: Notification.type.reaction,
+                    userId, title, content,
+                    target, targetId, url
+                }
+            });
+        },
+
+        // 关注通知，需要查询 following 的User极其setting，然后再根据这个行动查看是否需要通知
+        async addFollowingNotification({ action, target, targetId, title, content, url, }) {
+            // 获得关注的用户, XXX 如果关注的用户过多，例如:100K+？那就有钱换一个更棒的处理的模式了。
+            let followers = [];
+            if (target === Notification.target.App) {
+                followers = await fastify.db.$queryRaw`
+                    SELECT User.id, User.name FROM User, FollowApp
+                    WHERE FollowApp.app_id = ${targetId} AND FollowApp.follower_id = User.id;
+                `;
+            } else if (target === Notification.target.User) {
+                followers = await fastify.db.$queryRaw`
+                    SELECT User.id, User.name FROM User, FollowUser
+                    WHERE FollowUser.user_id = ${targetId} AND FollowUser.follower_id = User.id;
+                `;
+            }
+            const followerSettings = await fastify.db.userSetting.findMany({ where: { userId: { in: followers.map(f => f.id) } } });
+
+            const dataList = [];
+            for (const followerSetting of followerSettings) { // 没有配置的follower就不需要通知
+                const options = followerSetting?.options ? JSON.parse(followerSetting.options) : {};
+                let canNotify = false;
+                switch (action) {
+                    // 我关注的用户有了新的评测、回复、讨论等，给我发送通知
+                    case Notification.action.discussionCreated:
+                    case Notification.action.postCreated:
+                    case Notification.action.commentCreated:
+                    case Notification.action.reviewCreated:
+                        canNotify = options?.notification && options.notification[Notification.settings.followingUserChanged];
+                        break;
+                    // 我关注的游戏有了新的新闻、事件等，给我发送通知
+                    case Notification.action.newsCreated:
+                        canNotify = options?.notification && options.notification[Notification.settings.followingAppChanged];
+                        break;
+                }
+                if (!canNotify) continue;
+                dataList.push({ userId: followerSetting.userId, type: Notification.type.following, target, targetId, url, title, content, });
+            }
+            // Prisma 虽然不支持 SQLite createMany，但是如果放在同一个 transaction 中，性能会好很多 https://sqlite.org/faq.html#q19
+            await fastify.db.$transaction(dataList.map(data => fastify.db.notification.create({ data })));
         }
+        // 通知 End
     });
     next();
 };

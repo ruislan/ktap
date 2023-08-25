@@ -75,11 +75,8 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
                 const json = await res.json();
                 post.meta.ups = json.data?.ups;
                 post.meta.downs = json.data?.downs;
-
-                direction === 'up' && (setIsActiveThumbDown(false) || setIsActiveThumbUp(prev => !prev));
-                direction === 'down' && (setIsActiveThumbUp(false) || setIsActiveThumbDown(prev => !prev));
-
-                afterThumbed({ direction });
+                const isUndo = (direction === 'up' && isActiveThumbUp) || (direction === 'down' && isActiveThumbDown);
+                afterThumbed({ direction: isUndo ? null : direction }); // invoke this will rerender PostActions, so we don't need to changeState here.
             }
         } finally {
             direction === 'up' && setIsDoingThumbUp(false);
@@ -151,6 +148,11 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
     };
 
     React.useEffect(() => {
+        setIsActiveThumbUp(post.viewer?.direction === 'up');
+        setIsActiveThumbDown(post.viewer?.direction === 'down');
+    }, [user, post.viewer?.direction]);
+
+    React.useEffect(() => {
         (async () => {
             if (user && user.id !== post.user.id) {
                 const res = await fetch(`/api/user/effect/discussions/posts/${post.id}/report`);
@@ -160,9 +162,7 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
                 }
             }
         })();
-        setIsActiveThumbUp(post.viewer?.direction === 'up');
-        setIsActiveThumbDown(post.viewer?.direction === 'down');
-    }, [user, post]);
+    }, [user, post.user.id, post.id]);
 
 
     React.useEffect(() => {
