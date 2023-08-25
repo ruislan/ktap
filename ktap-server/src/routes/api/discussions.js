@@ -387,21 +387,23 @@ const discussions = async (fastify, opts) => {
         if (!toDelete || toDelete.direction !== direction) {
             await fastify.db.discussionPostThumb.create({ data: { postId, userId, direction } });
         }
-        // 重新取当前赞踩数据
-        const data = await fastify.utils.getDiscussionPostThumbs({ id: postId });
+
         // 如果是新创建的点赞，而且不是自己给自己点赞，则发出反馈通知
         if (direction === 'up' && !toDelete) {
             const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
             if (post.userId !== userId) {
                 await fastify.utils.addReactionNotification({
                     action: Notification.action.postThumbed,
-                    title: '通知', userId: post.userId, // 反馈通知的对象
+                    userId: post.userId, // 反馈通知的对象
                     target: Notification.target.User, targetId: userId,
                     content: Notification.getContent(Notification.action.postThumbed, Notification.type.reaction),
                     url: '/discussions/' + post.discussionId,
                 });
             }
         }
+
+        // 重新取当前赞踩数据
+        const data = await fastify.utils.getDiscussionPostThumbs({ id: postId });
         return reply.code(200).send({ data });
     });
 
@@ -412,8 +414,8 @@ const discussions = async (fastify, opts) => {
         const postId = Number(req.params.postId);
         const giftId = Number(req.params.giftId);
 
-        const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
         await fastify.db.$transaction(async (tx) => {
+            const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
             // 减去balance
             const updatedUser = await tx.user.update({
                 where: { id: userId },
@@ -425,6 +427,19 @@ const discussions = async (fastify, opts) => {
             await tx.timeline.create({ data: { userId, target: 'DiscussionPostGiftRef', targetId: giftRef.id } }); // 创建动态
         });
         // XXX 这里没有包裹事务出错的错误，直接扔给框架以500形式抛出了，后续需要更柔性处理
+
+        // 发送通知
+        const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
+        if (post.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
+            await fastify.utils.addReactionNotification({
+                action: Notification.action.postGiftSent,
+                userId: post.userId, // 反馈通知的对象
+                target: Notification.target.User, targetId: userId,
+                content: Notification.getContent(Notification.action.postGiftSent, Notification.type.reaction),
+                url: '/discussions/' + post.discussionId,
+            });
+        }
+
         // 读取最新的礼物情况
         // fetch gifts
         const gifts = await fastify.utils.getDiscussionPostGifts({ id: postId });

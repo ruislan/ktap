@@ -101,7 +101,7 @@ export default function FullView() {
                         }
                     }}
                 >
-                    <Notifications kind='full' activeIndex={activeIndex} />
+                    <Notifications activeIndex={activeIndex} />
                 </Block>
             </Block>
         </Block>

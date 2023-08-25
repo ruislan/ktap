@@ -10,10 +10,12 @@ function SkeletonLayout({ direction, children }) {
     return null;
 }
 
-export default function LoadMore({ isLoading, hasMore, skeletonRow = 3, skeletonHeight = '100%', pun = false, skeletonDirection = 'column', onClick = () => { } }) {
+export default function LoadMore({ size = 'default', isLoading, hasMore, skeletonRow = 3, skeletonHeight = '100%', pun = false, skeletonDirection = 'column', onClick = () => { } }) {
+
+    const margin = size === 'default' ? 'scale600' : 'scale300';
 
     if (isLoading) return (
-        <Block marginTop='scale600' marginBottom='scale600'>
+        <Block marginTop={margin} marginBottom={margin}>
             <SkeletonLayout direction={skeletonDirection}>
                 {[...Array(skeletonRow)].map((_, index) => <Skeleton animation height={skeletonHeight} width='100%' key={index} />)}
             </SkeletonLayout>
@@ -23,9 +25,9 @@ export default function LoadMore({ isLoading, hasMore, skeletonRow = 3, skeleton
     if (!hasMore) return null;
 
     return (
-        <Block marginTop='scale600' marginBottom='scale600'>
+        <Block marginTop={margin} marginBottom={margin}>
             <Block display='flex' justifyContent='center' alignItems='center'>
-                <Button onClick={onClick} kind='tertiary'>
+                <Button onClick={onClick} kind='tertiary' size={size}>
                     {pun ? puns[Math.floor(Math.random() * puns.length) | 0] : puns[0]}
                 </Button>
             </Block>

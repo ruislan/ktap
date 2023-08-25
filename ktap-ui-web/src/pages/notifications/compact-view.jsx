@@ -23,7 +23,7 @@ export default function CompactView() {
     return (
         <Block display='flex' flexDirection='column'>
             <TopTitle />
-            <Notifications activeIndex={activeTab} onActiveIndexChanged={to => setActiveTab(to)} />
+            <Notifications size='compact' activeIndex={activeTab} onActiveIndexChanged={to => setActiveTab(to)} />
         </Block >
     );
 }

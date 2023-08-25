@@ -332,7 +332,7 @@ const utils = async (fastify, opts, next) => {
         },
 
         // 反馈通知，只针对某个人进行通知，也只需要查询当前这个人的设置，然后根据这个行动查看是是否需要通知
-        async addReactionNotification({ action, userId, target, targetId, title, content, url }) {
+        async addReactionNotification({ action, userId, target, targetId, title = '通知', content, url }) {
             const setting = await fastify.db.userSetting.findUnique({ where: { userId } });
             const options = setting?.options ? JSON.parse(setting.options) : {};
             let canNotify = false;
@@ -367,7 +367,7 @@ const utils = async (fastify, opts, next) => {
         },
 
         // 关注通知，需要查询 following 的User极其setting，然后再根据这个行动查看是否需要通知
-        async addFollowingNotification({ action, target, targetId, title, content, url, }) {
+        async addFollowingNotification({ action, target, targetId, title = '通知', content, url, }) {
             // 获得关注的用户, XXX 如果关注的用户过多，例如:100K+？那就有钱换一个更棒的处理的模式了。
             let followers = [];
             if (target === Notification.target.App) {

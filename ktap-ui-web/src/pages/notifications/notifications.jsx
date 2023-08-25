@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
@@ -53,7 +52,7 @@ function ItemContainer({ to, ...rest }) {
         paddingTop: theme.sizing.scale500, paddingBottom: theme.sizing.scale500,
         borderBottomStyle: 'solid', borderBottomWidth: theme.borders.border200.borderWidth,
         borderBottomColor: theme.borders.border200.borderColor, textDecoration: 'none',
-        ':last-child': { borderBottom: 'unset' },
+        ':last-child': { borderBottomWidth: 'unset', borderBottomColor: 'unset', borderBottomStyle: 'unset' },
     });
     if (!to) return <div className={style} {...rest} />;
     return <a href={to} className={style} {...rest} />;
@@ -95,49 +94,55 @@ function NotificationItem({ item }) {
     );
 }
 
-function Notifications({ kind = 'compact', activeIndex, onActiveIndexChanged, dataLimit = PAGE_LIMIT_MINI }) {
+function Notifications({ size = 'default', activeIndex, onActiveIndexChanged, dataLimit = PAGE_LIMIT_MINI }) {
     const [isLoading, setIsLoading] = React.useState(true);
     const [dataList, setDataList] = React.useState([]);
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
     const activeType = MENU_ITEMS[activeIndex].type;
 
-    React.useEffect(() => setDataList([]), [activeType]);
+    const fetchData = React.useCallback(async (activeType, skip, dataLimit) => {
+        try {
+            setIsLoading(true);
+            const res = await fetch(`/api/user/notifications?type=${activeType}&skip=${skip}&limit=${dataLimit}`, { headers: { 'Content-Type': 'application/json', }, });
+            if (res.ok) {
+                const json = await res.json();
+                setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                setHasMore(json.skip + json.limit < json.count);
+                setSkip(skip + dataLimit);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
 
     React.useEffect(() => {
-        (async function fetchData() {
-            try {
-                setIsLoading(true);
-                const res = await fetch(`/api/user/notifications?type=${activeType}&skip=${skip}&limit=${dataLimit}`, { headers: { 'Content-Type': 'application/json', }, });
-                if (res.ok) {
-                    const json = await res.json();
-                    setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                    setHasMore(json.skip + json.limit < json.count);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [activeType, skip, dataLimit]);
+        setDataList([]);
+        fetchData(activeType, 0, dataLimit);
+    }, [fetchData, activeType, dataLimit]);
 
-    const handleClear = async () => {
+    const afterClear = async () => {
         if (isLoading) return;
         setDataList([]);
     };
 
-    const handleRead = async () => {
+    const afterRead = async () => {
         if (isLoading) return;
         setDataList(prev => prev.map(item => ({ ...item, isRead: true })));
     };
 
     return (
         <Block display='flex' flexDirection='column'>
-            {kind === 'compact' ?
-                <TabBar activeIndex={activeIndex} onTabChange={onActiveIndexChanged} onClear={handleClear} onRead={handleRead} /> :
-                <TitleBar activeIndex={activeIndex} onClear={handleClear} onRead={handleRead} />}
-            {dataList && dataList.map((item, index) => <NotificationItem key={index} item={item} />)}
-            {!isLoading && dataList && dataList.length === 0 && <LabelSmall display='flex' alignItems='center' justifyContent='center' height='62px'>您当前没有任何通知</LabelSmall>}
-            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonRow={1} skeletonHeight='66px' onClick={() => setSkip(prev => prev + dataLimit)} />
+            {size === 'compact' ?
+                <TabBar activeIndex={activeIndex} onTabChange={onActiveIndexChanged} onClear={afterClear} onRead={afterRead} /> :
+                <TitleBar activeIndex={activeIndex} onClear={afterClear} onRead={afterRead} />}
+            <Block display='flex' flexDirection='column' overflow='scrollY' maxHeight='300px'>
+                {dataList && dataList.map((item, index) => <NotificationItem key={index} item={item} />)}
+                {!isLoading && dataList && dataList.length === 0 && <LabelSmall display='flex' alignItems='center' justifyContent='center' height='62px'>您当前没有任何通知</LabelSmall>}
+                <LoadMore size={size} isLoading={isLoading} hasMore={hasMore} skeletonRow={1} skeletonHeight='62px' onClick={() => {
+                    fetchData(activeType, skip, dataLimit);
+                }} />
+            </Block>
         </Block>
     );
 }

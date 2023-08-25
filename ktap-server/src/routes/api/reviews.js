@@ -1,4 +1,4 @@
-import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, REVIEW_CONTENT_LIMIT, Trading } from '../../constants.js';
+import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, REVIEW_CONTENT_LIMIT, Trading, Notification } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 
 const reviews = async (fastify, opts) => {
@@ -101,10 +101,28 @@ const reviews = async (fastify, opts) => {
         const content = req.body.content || '';
         let data = {};
         if (content && content.length > 0) {
-            const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true } });
+            const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true, userId: true } });
             if (review?.allowComment) {
                 data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, } });
                 await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'ReviewComment', } });
+
+                // 发送通知
+                const notification = {
+                    action: Notification.action.commentCreated, target: Notification.target.User, targetId: userId,
+                    content: content.slice(0, 50), url: '/reviews/' + reviewId,
+                };
+                await fastify.utils.addFollowingNotification({
+                    ...notification,
+                    title: Notification.getContent(Notification.action.commentCreated, Notification.type.following)
+                });
+                // 自己给自己回不用发反馈通知
+                if (review.userId !== userId) {
+                    await fastify.utils.addReactionNotification({
+                        ...notification,
+                        userId: review.id, // 反馈通知的对象
+                        title: Notification.getContent(Notification.action.commentCreated, Notification.type.reaction)
+                    });
+                }
             }
         }
         return reply.code(200).send({ data });
@@ -209,6 +227,20 @@ const reviews = async (fastify, opts) => {
             await fastify.db.reviewThumb.create({ data: { reviewId, userId, direction } });
         }
 
+        // 如果是新创建的点赞，而且不是自己给自己点赞，则发出反馈通知
+        if (direction === 'up' && !toDelete) {
+            const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { id: true, userId: true } });
+            if (review.userId !== userId) {
+                await fastify.utils.addReactionNotification({
+                    action: Notification.action.reviewThumbed,
+                    userId: review.userId, // 反馈通知的对象
+                    target: Notification.target.User, targetId: userId,
+                    content: Notification.getContent(Notification.action.reviewThumbed, Notification.type.reaction),
+                    url: '/reviews/' + review.id,
+                });
+            }
+        }
+
         // 重新取当前review的数据
         const data = await fastify.utils.getReviewThumbs({ id: reviewId });
         return reply.code(200).send({ data });
@@ -222,8 +254,8 @@ const reviews = async (fastify, opts) => {
         const reviewId = Number(req.params.id);
         const giftId = Number(req.params.giftId);
 
-        const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
         await fastify.db.$transaction(async (tx) => {
+            const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
             // 减去balance
             const updatedUser = await tx.user.update({
                 where: { id: userId },
@@ -240,6 +272,19 @@ const reviews = async (fastify, opts) => {
             await tx.timeline.create({ data: { userId, target: 'ReviewGiftRef', targetId: giftRef.id } }); // 创建动态
         });
         // XXX 这里没有包裹事务出错的错误，直接扔给框架以500形式抛出了，后续需要更柔性处理
+
+        // 发送通知
+        const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { id: true, userId: true } });
+        if (review.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
+            await fastify.utils.addReactionNotification({
+                action: Notification.action.reviewGiftSent,
+                userId: review.userId, // 反馈通知的对象
+                target: Notification.target.User, targetId: userId,
+                content: Notification.getContent(Notification.action.reviewGiftSent, Notification.type.reaction),
+                url: '/reviews/' + review.id,
+            });
+        }
+
         // 读取最新的礼物情况
         // fetch gifts
         const gifts = await fastify.utils.getReviewGifts({ id: reviewId });

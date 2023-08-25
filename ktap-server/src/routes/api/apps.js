@@ -1,4 +1,4 @@
-import { AppMedia, Pagination, REVIEW_CONTENT_LIMIT, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
+import { AppMedia, Notification, Pagination, REVIEW_CONTENT_LIMIT, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
 import { authenticate } from "../../lib/auth.js";
 
 const apps = async function (fastify, opts) {
@@ -425,6 +425,10 @@ const apps = async function (fastify, opts) {
         const appId = Number(req.params.id) || 0;
         const userId = req.user.id;
         const parts = req.parts();
+
+        const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
+        if (review) return reply.code(400).send(); // 已经创建了，则不会继续处理了，前端正常调用下不会出现此情况
+
         const reqBody = { images: [] };
         for await (const part of parts) {
             if (part.file) {
@@ -445,16 +449,18 @@ const apps = async function (fastify, opts) {
                 create: reqBody.images.map(url => { return { url } }),
             }
         };
-        const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
-        if (!review?.id) data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
+        data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
-        // 更新评分
-        await fastify.utils.computeAppScore({ appId });
+        await fastify.utils.computeAppScore({ appId }); // 更新评分
+        await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } }); // 创建 timeline
 
-        // Update timeline if it created a new review
-        if (!review?.id) {
-            await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } });
-        }
+        // 发送通知
+        await fastify.utils.addFollowingNotification({
+            action: Notification.action.reviewCreated, target: Notification.target.User, targetId: userId,
+            title: Notification.getContent(Notification.action.reviewCreated, Notification.type.following),
+            content: data.content.slice(0, 50), url: '/reviews/' + data.id,
+        });
+
         // reconstruct return data structure
         data.images = reqBody.images.map(url => { return { url } });
         delete data.appId;
