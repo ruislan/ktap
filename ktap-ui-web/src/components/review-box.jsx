@@ -17,7 +17,7 @@ import { StarRating } from 'baseui/rating';
 
 import { useAuth } from '../hooks/use-auth';
 import useScoreRemark from '../hooks/use-score-remark';
-import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL, Styles } from '../libs/utils';
+import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL, Styles } from '../libs/utils';
 import { ChevronRight, Gift, Hand, More, Photograph, Star, ThumbDown, ThumbUp, TrashBin } from './icons';
 import ImageBoxGallery from './image-box-gallery';
 import GiftType from './gift';
@@ -695,7 +695,7 @@ const CommentsInput = function ({ reviewId, allowComment, afterSubmit = () => { 
                     afterSubmit({ comment: json.data });
                 }
             } catch {
-                setSubmitErrorMessage('抱歉，发生了某种错误，请稍后再试。');
+                setSubmitErrorMessage(Messages.unknownError);
             } finally {
                 setIsSubmitting(false);
             }

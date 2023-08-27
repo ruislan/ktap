@@ -17,6 +17,7 @@ function Settings() {
                 style: {
                     [MOBILE_BREAKPOINT]: {
                         marginTop: theme.sizing.scale600,
+                        width: '100%',
                     },
                 }
             }
@@ -37,7 +38,7 @@ function Settings() {
                         Block: {
                             style: {
                                 [MOBILE_BREAKPOINT]: {
-                                    width: '100vw',
+                                    width: '100%',
                                 },
                             }
                         }
@@ -45,7 +46,7 @@ function Settings() {
                 >
                     <SideBar />
                 </Block>
-                <Block maxWidth='100vw' minHeight='50vh' width={LAYOUT_SETTINGS_CONTENT} overrides={{
+                <Block maxWidth='100%' minHeight='50vh' width={LAYOUT_SETTINGS_CONTENT} overrides={{
                     Block: {
                         style: {
                             [MOBILE_BREAKPOINT]: {

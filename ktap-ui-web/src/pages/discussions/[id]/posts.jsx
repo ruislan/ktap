@@ -40,10 +40,12 @@ function UserPanel({ id, name, avatar, gender, title }) {
 function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { }, onUpdateClick = () => { } }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
+    // thumb
+    const isActiveThumbUp = post.viewer?.direction === 'up';
+    const isActiveThumbDown = post.viewer?.direction === 'down';
     const [isDoingThumbUp, setIsDoingThumbUp] = React.useState(false);
     const [isDoingThumbDown, setIsDoingThumbDown] = React.useState(false);
-    const [isActiveThumbUp, setIsActiveThumbUp] = React.useState(false);
-    const [isActiveThumbDown, setIsActiveThumbDown] = React.useState(false);
+    // end thumb
     // gift
     const [isOpenGiftModal, setIsOpenGiftModal] = React.useState(false);
     const [gifts, setGifts] = React.useState([]);
@@ -55,8 +57,8 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
     const [reportContent, setReportContent] = React.useState('');
     const [isOpenReportModal, setIsOpenReportModal] = React.useState(false);
     const [isReporting, setIsReporting] = React.useState(false);
-    const [isReported, setIsReported] = React.useState(true);
     const [reportErr, setReportErr] = React.useState(null);
+    const [isReported, setIsReported] = React.useState(post.viewer?.reported);
     // end report
     // delete post
     const [isDeleting, setIsDeleting] = React.useState(false);
@@ -148,24 +150,6 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
     };
 
     React.useEffect(() => {
-        setIsActiveThumbUp(post.viewer?.direction === 'up');
-        setIsActiveThumbDown(post.viewer?.direction === 'down');
-    }, [user, post.viewer?.direction]);
-
-    React.useEffect(() => {
-        (async () => {
-            if (user && user.id !== post.user.id) {
-                const res = await fetch(`/api/user/effect/discussions/posts/${post.id}/report`);
-                if (res.ok) {
-                    const json = await res.json();
-                    setIsReported(json.data.reported || false);
-                }
-            }
-        })();
-    }, [user, post.user.id, post.id]);
-
-
-    React.useEffect(() => {
         const isModerator = discussion.channel.moderators.some(mId => mId == user?.id);
         const isAdmin = user && user.isAdmin;
         const isOwner = user && post?.user && user.id === post.user.id;
@@ -174,6 +158,7 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
             update: isAdmin || isModerator || isOwner,
         });
     }, [user, discussion, post]);
+
 
     return (
         <>
@@ -192,7 +177,7 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
                     </Block>
                     <Block display='flex' gridGap='scale100'>
                         {!discussion.isClosed && <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>}
-                        {user && !isReported && user.id !== post.user?.id &&
+                        {!isReported && user && user.id !== post.user.id &&
                             <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
                         }
                         {operations.update && !discussion.isClosed &&
@@ -301,13 +286,7 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
                     </Block>
                 </ModalFooter>
             </Modal>
-            <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
-                closeable={false}
-                isOpen={isOpenDeleteConfirmModal}
-                animate
-                autoFocus
-                role={ROLE.alertdialog}
-            >
+            <Modal closeable={false} isOpen={isOpenDeleteConfirmModal} animate autoFocus role={ROLE.alertdialog} onClose={() => setIsOpenDeleteConfirmModal(false)} >
                 <ModalHeader>是否删除该贴？</ModalHeader>
                 <ModalBody>您确定要删除这个帖子吗？相关的礼物等将会一并删除。该操作<b>不能撤消</b>。</ModalBody>
                 <ModalFooter>
@@ -375,7 +354,6 @@ export default function Posts({ discussion }) {
     const [skip, setSkip] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(false);
 
-
     // editor
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [canSubmit, setCanSubmit] = React.useState(false);
@@ -410,29 +388,28 @@ export default function Posts({ discussion }) {
     };
     // editor end
 
-    const fetchDataList = React.useCallback(async () => {
-        try {
-            setIsLoading(true);
-            const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit=${limit}`);
-            if (res.ok) {
-                const json = await res.json();
-                if (user && json.data && json.data.length > 0) {
-                    const thumbRes = await fetch(`/api/user/effect/discussions/posts/thumbs?ids=${json.data.map(v => v.id).join(',')}`);
-                    const thumbJson = await thumbRes.json();
-                    json.data.forEach(post => post.viewer = { direction: thumbJson.data[post.id] });
-                }
-                setNewPosts(prev => prev.filter(newPost => !json.data.find(v => v.id === newPost.id)));
-                setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                setHasMore(json.skip + json.limit < json.count);
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [discussion.id, skip, limit, user]);
-
     React.useEffect(() => {
-        fetchDataList();
-    }, [fetchDataList]);
+        (async () => {
+            setIsLoading(true);
+            try {
+                setIsLoading(true);
+                const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit=${limit}`);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (user && json.data && json.data.length > 0) {
+                        const effectRes = await fetch(`/api/user/effect/discussions/posts?ids=${json.data.map(v => v.id).join(',')}`);
+                        const effectJson = await effectRes.json();
+                        json.data.forEach(post => post.viewer = { direction: effectJson.data[post.id].thumb, reported: effectJson.data[post.id].reported });
+                    }
+                    setNewPosts(prev => prev.filter(newPost => !json.data.find(v => v.id === newPost.id)));
+                    setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
+                    setHasMore(json.skip + json.limit < json.count);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        })();
+    }, [discussion.id, skip, limit, user]);
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale600'>

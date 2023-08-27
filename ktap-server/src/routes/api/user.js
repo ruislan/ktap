@@ -18,8 +18,8 @@ const user = async (fastify, opts) => {
         return reply.code(200).send({ data: user });
     });
 
-    // 获取用户与DiscussionPosts的赞踩信息
-    fastify.get('/effect/discussions/posts/thumbs', async function (req, reply) {
+    // 获取用户与DiscussionPost的交互信息
+    fastify.get('/effect/discussions/posts', async function (req, reply) {
         const userId = req.user.id;
         const postIds = (req.query.ids || '').split(',').map(item => Number(item) || 0).filter(item => item > 0);
         let data = {};
@@ -28,19 +28,11 @@ const user = async (fastify, opts) => {
                 where: { userId, postId: { in: postIds } },
                 select: { postId: true, direction: true, }
             });
-            thumbs.forEach(thumb => {
-                data[thumb.postId] = thumb.direction;
-            });
+            const reported = await fastify.db.discussionPostReport.findMany({ where: { userId, postId: { in: postIds } } });
+            postIds.forEach(postId => data[postId] = { thumb: null, reported: false });
+            thumbs.forEach(thumb => data[thumb.postId].thumb = thumb.direction);
+            reported.forEach(report => data[report.postId].reported = true);
         }
-        return reply.code(200).send({ data });
-    });
-
-    // 获取用户与DiscussionPost的交互信息
-    fastify.get('/effect/discussions/posts/:id/report', async function (req, reply) {
-        const userId = req.user.id;
-        const postId = Number(req.params.id) || 0;
-        const data = {};
-        data.reported = (await fastify.db.discussionPostReport.count({ where: { userId, postId } })) > 0;
         return reply.code(200).send({ data });
     });
 

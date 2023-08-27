@@ -71,7 +71,15 @@ function Discussions() {
                         minWidth: '100%', maxWidth: '100%',
                     }
                 })} />
-                <Block display='flex' flexDirection='column' flex='1'>
+                <Block display='flex' flexDirection='column' flex='1' overrides={{
+                    Block: {
+                        style: {
+                            [MOBILE_BREAKPOINT]: {
+                                paddingLeft: theme.sizing.scale300, paddingRight: theme.sizing.scale300
+                            }
+                        }
+                    }
+                }}>
                     <HeadingXLarge marginTop='0'>
                         <span className={css({
                             '-webkit-background-clip': 'text',
@@ -84,7 +92,15 @@ function Discussions() {
                             backgroundImage: 'linear-gradient(45deg, rgb(49, 41, 231) -20%, #ff4ecd 50%)',
                         })}>畅聊</span></HeadingXLarge>
                     <ParagraphMedium marginBottom='scale900'>在这里您可以加入任何讨论并舒服地聊天、询问和解答问题、吐槽游戏、发表意见和攻略，尽情地享受乐趣，战个痛快。</ParagraphMedium>
-                    <Block paddingRight='scale600'>
+                    <Block paddingRight='scale600' overrides={{
+                        Block: {
+                            style: {
+                                [MOBILE_BREAKPOINT]: {
+                                    paddingRight: 0
+                                }
+                            }
+                        }
+                    }}>
                         <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏...'
                             onKeyUp={e => e.key === 'Enter' && fetchData()}
                             startEnhancer={<FatSearch width='18px' height='18px' />}

@@ -463,7 +463,8 @@ const discussions = async (fastify, opts) => {
         const userId = req.user.id;
         const postId = Number(req.params.postId);
         const content = req.body.content;
-        await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
+        const exists = (await fastify.db.discussionPostReport.count({ where: { postId, userId } })) > 0;
+        if (!exists) await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
         return reply.code(200).send();
     });
 };
