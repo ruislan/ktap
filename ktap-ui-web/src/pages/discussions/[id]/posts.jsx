@@ -58,7 +58,7 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
     const [isOpenReportModal, setIsOpenReportModal] = React.useState(false);
     const [isReporting, setIsReporting] = React.useState(false);
     const [reportErr, setReportErr] = React.useState(null);
-    const [isReported, setIsReported] = React.useState(post.viewer?.reported);
+    const [isReported, setIsReported] = React.useState(false);
     // end report
     // delete post
     const [isDeleting, setIsDeleting] = React.useState(false);
@@ -149,6 +149,8 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
         }
     };
 
+    React.useEffect(() => setIsReported(post.viewer?.reported), [post.viewer?.reported]);
+
     React.useEffect(() => {
         const isModerator = discussion.channel.moderators.some(mId => mId == user?.id);
         const isAdmin = user && user.isAdmin;
@@ -158,7 +160,6 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
             update: isAdmin || isModerator || isOwner,
         });
     }, [user, discussion, post]);
-
 
     return (
         <>
@@ -390,7 +391,6 @@ export default function Posts({ discussion }) {
 
     React.useEffect(() => {
         (async () => {
-            setIsLoading(true);
             try {
                 setIsLoading(true);
                 const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit=${limit}`);

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useStyletron } from 'baseui';
@@ -8,7 +9,7 @@ import { LabelMedium } from 'baseui/typography';
 import SideBox from '@ktap/components/side-box';
 import { Star } from '@ktap/components/icons';
 
-export default function AppGlance({ app }) {
+const AppGlance = React.memo(function AppGlance({ app }) {
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
     return (
@@ -39,4 +40,6 @@ export default function AppGlance({ app }) {
             </Block>
         </SideBox>
     );
-}
+});
+
+export default AppGlance;

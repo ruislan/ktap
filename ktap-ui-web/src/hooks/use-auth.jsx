@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Messages } from '@ktap/libs/utils';
 
+const KEY_USER_ID = 'user_id';
 const AuthContext = React.createContext({});
 
 function useAuth() {
@@ -11,44 +12,44 @@ function useAuth() {
 
 function CheckAlreadyLogin({ children }) {
     const { user } = useAuth();
-    return user?.id ? <Navigate to={`/users/${user.id}`} replace /> : children;
+    if (user?.id) return <Navigate to={`/users/${user.id}`} />;
+    return children;
 }
 
 function RequireAuth({ children }) {
     const { authenticating, isAuthenticated } = useAuth();
     const location = useLocation();
     if (authenticating) return <></>;
-    return isAuthenticated() ? children : <Navigate to={`/login?from=${location.pathname}`} replace />;
+    if (!isAuthenticated()) return <Navigate to={`/login?from=${location.pathname}`} />;
+    return children;
 }
 
 function RequireAdmin({ children }) {
     const { authenticating, isAdmin } = useAuth();
     if (authenticating) return <></>;
-    return isAdmin() ? children : <Navigate to='/' replace />;
+    if (!isAdmin()) return <Navigate to='/' replace />;
+    return children;
 }
 
 function AuthProvider({ children }) {
-    const KEY_USER_ID = 'user_id';
     const [user, setUser] = React.useState(null);
     const [authenticating, setAuthenticating] = React.useState(true);
 
-    const fetchUser = React.useCallback(async () => {
-        if (Cookies.get(KEY_USER_ID)) {
-            try {
-                const res = await fetch(`/api/user`);
-                if (!res.ok) throw new Error();
-                const json = await res.json();
-                setUser(json.data);
-            } catch (e) {
-                localLogout();
-            }
-        }
-        setAuthenticating(false);
-    }, []);
-
     React.useEffect(() => {
-        fetchUser();
-    }, [fetchUser]);
+        (async () => {
+            if (Cookies.get(KEY_USER_ID)) {
+                try {
+                    const res = await fetch(`/api/user`);
+                    if (!res.ok) throw new Error();
+                    const json = await res.json();
+                    setUser(json.data);
+                } catch (e) {
+                    localLogout();
+                }
+            }
+            setAuthenticating(false);
+        })();
+    }, []);
 
     async function login(email, password, from = '/') {
         try {
