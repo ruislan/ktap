@@ -75,7 +75,7 @@ const home = async function (fastify, opts) {
         if (user.isLocked) throw fastify.httpErrors.createError(Errors.code.forbidden, Errors.message.userIsLocked);
 
         const token = await fastify.jwt.sign({ id: Number(user.id), email: user.email, name: user.name, isAdmin: user.isAdmin });
-        const expires = new Date(Date.now() + (Number(process.env.COOKIE_EXPIRES_IN) || 259200000));
+        const expires = new Date(Date.now() + (Number(process.env.COOKIE_EXPIRES_IN) || 259200000)); // 3days
         return reply
             .cookie(Keys.cookie.token, token, {
                 path: '/', httpOnly: true, expires, sameSite: true, signed: true,

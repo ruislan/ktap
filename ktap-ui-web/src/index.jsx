@@ -91,6 +91,7 @@ const router = createBrowserRouter(
             <Route path='/discussions'>
                 <Route index element={<Discussions />} />
                 <Route path=':id' element={<DiscussionsDetail />} />
+                <Route path=':id/posts/:postId' element={<DiscussionsDetail />} />
                 <Route path='apps/:appId' element={<DiscussionsApps />} />
                 <Route path='apps/:appId/channels/:channelId' element={<DiscussionsApps />} />
             </Route>

@@ -316,6 +316,27 @@ const discussions = async (fastify, opts) => {
         return reply.code(204).send();
     });
 
+    fastify.get('/:id/posts/:postId', async function (req, reply) {
+        const id = Number(req.params.id) || 0;
+        const postId = Number(req.params.postId);
+        const data = await fastify.db.discussionPost.findUnique({
+            where: { id: postId },
+            select: {
+                id: true, content: true, createdAt: true, ip: true, updatedAt: true, discussionId: true,
+                user: { select: { id: true, name: true, title: true, avatar: true, gender: true } },
+            }
+        });
+        if (data.discussionId != id) return reply.code(404).send(); // not belongs to this discussion
+        const giftsData = await fastify.utils.getDiscussionPostGifts({ id: data.id });
+        const thumbs = await fastify.utils.getDiscussionPostThumbs({ id: data.id });
+        data.gifts = giftsData.gifts;
+        data.meta = {
+            ups: thumbs?.ups || 0, downs: thumbs?.downs || 0,
+            gifts: giftsData.count,
+        };
+        return reply.code(200).send({ data });
+    });
+
     fastify.put('/:id/posts/:postId', {
         preHandler: authenticate,
         errorHandler: bizErrorHandler,
@@ -397,7 +418,7 @@ const discussions = async (fastify, opts) => {
                     userId: post.userId, // 反馈通知的对象
                     target: Notification.target.User, targetId: userId,
                     content: Notification.getContent(Notification.action.postThumbed, Notification.type.reaction),
-                    url: '/discussions/' + post.discussionId,
+                    url: `/discussions/${post.discussionId}/posts/${post.id}`,
                 });
             }
         }
@@ -436,7 +457,7 @@ const discussions = async (fastify, opts) => {
                 userId: post.userId, // 反馈通知的对象
                 target: Notification.target.User, targetId: userId,
                 content: Notification.getContent(Notification.action.postGiftSent, Notification.type.reaction),
-                url: '/discussions/' + post.discussionId,
+                url: `/discussions/${post.discussionId}/posts/${post.id}`,
             });
         }
 

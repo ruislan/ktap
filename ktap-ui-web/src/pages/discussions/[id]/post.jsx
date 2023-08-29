@@ -8,10 +8,8 @@ import { Textarea } from 'baseui/textarea';
 import { LabelLarge, LabelMedium, LabelSmall, LabelXSmall, ParagraphSmall } from 'baseui/typography';
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton, ROLE } from 'baseui/modal';
 
-import Editor from '@ktap/components/editor';
-import LoadMore from '@ktap/components/load-more';
 import { useAuth } from '@ktap/hooks/use-auth';
-import { DateTime, PAGE_LIMIT_NORMAL, Styles } from '@ktap/libs/utils';
+import { DateTime, Styles } from '@ktap/libs/utils';
 import { Hand, Quote, ThumbDown, Gift, ThumbUp, TrashBin, Update as UpdateIcon } from '@ktap/components/icons';
 import GiftType from '@ktap/components/gift';
 import Notification from '@ktap/components/notification';
@@ -37,7 +35,7 @@ function UserPanel({ id, name, avatar, gender, title }) {
     );
 }
 
-function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { }, onUpdateClick = () => { } }) {
+function PostActions({ discussion, post, isFirst = false, actions = { thumb: true, gift: true, report: true, quote: true, update: true, delete: true }, onQuoteClick = () => { }, afterThumbed = () => { }, afterDeleted = () => { }, onUpdateClick = () => { } }) {
     const navigate = useNavigate();
     const { user, setUser } = useAuth();
     // thumb
@@ -166,25 +164,25 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
             <Block display='flex' flexDirection='column' width='100%' marginTop='scale600'>
                 <Block display='flex' width='100%' justifyContent='space-between' alignItems='center'>
                     <Block display='flex' gridGap='scale100'>
-                        <Button kind='secondary' size='mini' onClick={() => handleThumb('up')} startEnhancer={() => <ThumbUp width={16} height={16} />} overrides={Styles.Button.Act} isSelected={isActiveThumbUp} isLoading={isDoingThumbUp}>
+                        {actions.thumb && <Button kind='secondary' size='mini' onClick={() => handleThumb('up')} startEnhancer={() => <ThumbUp width={16} height={16} />} overrides={Styles.Button.Act} isSelected={isActiveThumbUp} isLoading={isDoingThumbUp}>
                             赞 {post?.meta?.ups || 0}
-                        </Button>
-                        <Button kind='secondary' size='mini' onClick={() => handleThumb('down')} overrides={Styles.Button.Act} isSelected={isActiveThumbDown} isLoading={isDoingThumbDown} startEnhancer={() => <ThumbDown width={16} height={16} />}>
+                        </Button>}
+                        {actions.thumb && <Button kind='secondary' size='mini' onClick={() => handleThumb('down')} overrides={Styles.Button.Act} isSelected={isActiveThumbDown} isLoading={isDoingThumbDown} startEnhancer={() => <ThumbDown width={16} height={16} />}>
                             踩 {post?.meta?.downs || 0}
-                        </Button>
-                        <Button kind='secondary' size='mini' onClick={() => handleGift()} overrides={Styles.Button.Act} startEnhancer={() => <Gift width={16} height={16} />}>
+                        </Button>}
+                        {actions.gift && <Button kind='secondary' size='mini' onClick={() => handleGift()} overrides={Styles.Button.Act} startEnhancer={() => <Gift width={16} height={16} />}>
                             赏 {post?.meta?.gifts || 0}
-                        </Button>
+                        </Button>}
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        {!discussion.isClosed && <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>}
-                        {!isReported && user && user.id !== post.user.id &&
+                        {actions.quote && !discussion.isClosed && <Button kind='secondary' size='mini' onClick={() => onQuoteClick()} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>}
+                        {actions.report && !isReported && user && user.id !== post.user.id &&
                             <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
                         }
-                        {operations.update && !discussion.isClosed &&
+                        {actions.update && operations.update && !discussion.isClosed &&
                             <Button kind='secondary' size='mini' title='编辑' onClick={() => onUpdateClick()}><UpdateIcon width={16} height={16} /></Button>
                         }
-                        {operations.delete && !isFirst && !discussion.isClosed &&
+                        {actions.delete && operations.delete && !isFirst && !discussion.isClosed &&
                             <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }}><TrashBin width={16} height={16} /></Button>
                         }
                     </Block>
@@ -299,179 +297,59 @@ function PostActions({ discussion, post, isFirst = false, onQuoteClick = () => {
     );
 }
 
-
-function PostUpdater({ discussion, post, afterUpdate = () => { }, onCancelClick = () => { } }) {
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-    const [canSubmit, setCanSubmit] = React.useState(false);
-    const [editor, setEditor] = React.useState();
-
-    const handlePostSubmit = async () => {
-        setIsSubmitting(true);
-        try {
-            const content = editor.getHTML();
-            const res = await fetch(`/api/discussions/${discussion.id}/posts/${post.id}`, {
-                method: 'PUT',
-                body: JSON.stringify({ content }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            if (res.ok) {
-                afterUpdate({ content });
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-    return (
-        <Block display='flex' flexDirection='column' gridGap='scale600'>
-            <Block>
-                <Editor initContent={post.content} onCreate={({ editor }) => setEditor(editor)} onUpdate={({ editor }) => setCanSubmit(editor.getText().length > 0)} />
-            </Block>
-            <Block display='flex' justifyContent='flex-end' alignItems='center' gridGap='scale300'>
-                <Button size='compact' kind='tertiary' onClick={() => onCancelClick()}>取消</Button>
-                <Button size='compact' kind='primary' disabled={!canSubmit} isLoading={isSubmitting} onClick={() => handlePostSubmit()}>保存</Button>
-            </Block>
-        </Block>
-    );
-}
-
-
 // 回复讨论的帖子直接追加到当前最后一贴的后面，如果用户点击“查看更多”，
 // 后续的帖子中如果没有包含新帖，则保持该贴在最后一贴的后面。
 // 后续的帖子中如果包含了新帖，则将这个保持在最后的帖子取消掉。
 // XXX 新帖子在删除前，最好有个标志来标记它是新放进去的。
-export default function Posts({ discussion }) {
-    const limit = PAGE_LIMIT_NORMAL;
+export default function Post({ discussion, postId }) {
     const { user } = useAuth();
     const [, theme] = useStyletron();
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [dataList, setDataList] = React.useState([]);
-    const [skip, setSkip] = React.useState(0);
-    const [hasMore, setHasMore] = React.useState(false);
-
-    // editor
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-    const [canSubmit, setCanSubmit] = React.useState(false);
-    const [editor, setEditor] = React.useState();
-    const [newPosts, setNewPosts] = React.useState([]);
-
-    const handlePostSubmit = async () => {
-        setIsSubmitting(true);
-        try {
-            const res = await fetch(`/api/discussions/${discussion.id}/posts`, {
-                method: 'POST',
-                body: JSON.stringify({ content: editor.getHTML() }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            if (res.ok) {
-                const json = await res.json();
-                setNewPosts(prev => [...prev, {
-                    ...json.data,
-                    user, gifts: [], meta: { up: 0, downs: 0, gifts: 0 },
-                }]);
-                editor?.chain().focus().clearContent().run();
-            } else {
-                throw { status: res.status };
-            }
-        } catch (error) {
-            if (error?.status === 401 || error?.status === 403) navigate(`/login?from=${location.pathname}`);
-            else if (error?.status === 404) navigate('/not-found', { replace: true });
-            else navigate('/not-work');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-    // editor end
-
+    const [post, setPost] = React.useState(null);
     React.useEffect(() => {
         (async () => {
             try {
                 setIsLoading(true);
-                const res = await fetch(`/api/discussions/${discussion.id}/posts?skip=${skip}&limit=${limit}`);
+                const res = await fetch(`/api/discussions/${discussion.id}/posts/${postId}`);
                 if (res.ok) {
                     const json = await res.json();
-                    if (user && json.data && json.data.length > 0) {
-                        const effectRes = await fetch(`/api/user/effect/discussions/posts?ids=${json.data.map(v => v.id).join(',')}`);
+                    if (user && json.data) {
+                        const effectRes = await fetch(`/api/user/effect/discussions/posts?ids=${postId}`);
                         const effectJson = await effectRes.json();
-                        json.data.forEach(post => post.viewer = { direction: effectJson.data[post.id].thumb, reported: effectJson.data[post.id].reported });
+                        json.data.viewer = { direction: effectJson.data[json.data.id].thumb, reported: effectJson.data[json.data.id].reported };
                     }
-                    setNewPosts(prev => prev.filter(newPost => !json.data.find(v => v.id === newPost.id)));
-                    setDataList(prev => skip === 0 ? json.data : [...prev, ...json.data]);
-                    setHasMore(json.skip + json.limit < json.count);
+                    setPost(json.data);
                 }
             } finally {
                 setIsLoading(false);
             }
         })();
-    }, [discussion.id, skip, limit, user]);
+    }, [discussion.id, user, postId]);
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale600'>
-            {[...dataList, ...newPosts].map((post, index) => {
-                return (
-                    <Block key={index} display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
-                        Block: { style: { borderRadius: theme.borders.radius300 } }
-                    }}>
-                        <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
-                        <LabelSmall color='primary500' marginTop='scale600'>编辑于：{DateTime.formatCN(post.updatedAt)}</LabelSmall>
-                        <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip || '神秘之地'}</LabelSmall>
-                        <Block paddingTop='scale600' paddingBottom='scale600'>
-                            {post.isEditing ? (
-                                <PostUpdater discussion={discussion} post={post}
-                                    onCancelClick={() => {
-                                        setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: false } : v));
-                                        setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: false } : v));
-                                    }}
-                                    afterUpdate={({ content }) => {
-                                        const now = new Date().toISOString();
-                                        setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, content, updatedAt: now, isEditing: false } : v));
-                                        setDataList(prev => prev.map(v => v.id === post.id ? { ...v, content, updatedAt: now, isEditing: false } : v));
-                                    }}
-                                />
-                            ) : (
-                                <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
-                            )}
-                        </Block>
-                        {!post.isEditing &&
-                            <PostActions discussion={discussion} post={post} isFirst={index === 0}
-                                onQuoteClick={() => {
-                                    if (!user) { navigate(`/login?from=${location.pathname}`); return; }
-                                    editor?.chain().focus().insertContent(`<blockquote>${post.content}</blockquote>`).run();
-                                }}
-                                onUpdateClick={() => {
-                                    setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: true } : v));
-                                    setDataList(prev => prev.map(v => v.id === post.id ? { ...v, isEditing: true } : v));
-                                }}
-                                afterThumbed={({ direction }) => {
-                                    setNewPosts(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
-                                    setDataList(prev => prev.map(v => v.id === post.id ? { ...v, viewer: { ...v.viewer, direction } } : v));
-                                }}
-                                afterDeleted={() => {
-                                    setNewPosts(prev => prev.filter(v => v.id !== post.id));
-                                    setDataList(prev => prev.filter(v => v.id !== post.id));
-                                }}
-                            />
-                        }
-                    </Block>
-                );
-            })}
-            <LoadMore isLoading={isLoading} hasMore={hasMore} skeletonHeight='220px' onClick={() => setSkip(prev => prev + limit)} />
-            {user && !discussion?.isClosed &&
-                <Block marginTop='scale600' display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
+            {!isLoading && post &&
+                <Block display='flex' flexDirection='column' backgroundColor='backgroundSecondary' padding='scale600' overrides={{
                     Block: { style: { borderRadius: theme.borders.radius300 } }
                 }}>
-                    <LabelMedium marginBottom='scale600'>回复</LabelMedium>
-                    <Block display='flex' marginBottom='scale600'>
-                        <UserPanel id={user.id} name={user.name} avatar={user.avatar} title={user.title} gender={user.gender} />
+                    <UserPanel id={post.user.id} name={post.user.name} avatar={post.user.avatar} title={post.user.title} gender={post.user.gender} />
+                    <LabelSmall color='primary500' marginTop='scale600'>编辑于：{DateTime.formatCN(post.updatedAt)}</LabelSmall>
+                    <LabelSmall color='primary500' marginTop='scale0'>IP：{post.ip || '神秘之地'}</LabelSmall>
+                    <Block paddingTop='scale600' paddingBottom='scale600'>
+                        <div dangerouslySetInnerHTML={{ __html: post.content }} className='post'></div>
                     </Block>
-                    <Block display='flex' flexDirection='column'>
-                        <Editor onCreate={({ editor }) => setEditor(editor)} onUpdate={({ editor }) => setCanSubmit(editor.getText().length > 0)} />
-                        <Block marginTop='scale600' alignSelf='flex-end'>
-                            <Button size='compact' disabled={!canSubmit} isLoading={isSubmitting} kind='secondary' onClick={() => handlePostSubmit()}>提交</Button>
-                        </Block>
-                    </Block>
+                    <PostActions discussion={discussion} post={post} isFirst={true} actions={{ thumb: true, gift: true, report: true }}
+                        afterThumbed={({ direction }) => setPost(prev => ({ ...prev, viewer: { ...prev.viewer, direction } }))}
+                    />
                 </Block>
             }
+            <Block display='flex' width='100%' alignItems='center' justifyContent='center' backgroundColor='backgroundSecondary' padding='scale600'
+                overrides={{
+                    Block: { style: { borderRadius: theme.borders.radius300, boxShadow: theme.lighting.shadow500, } }
+                }}
+            >
+                <RouterLink href={`/discussions/${discussion.id}`}>查看全部回帖</RouterLink>
+            </Block>
         </Block>
     );
 }

@@ -13,9 +13,10 @@ import Posts from './posts';
 import Meta from './meta';
 import Others from './others';
 import AppGlance from './app-glance';
+import Post from './post';
 
 export default function Discussion() {
-    const { appId, id } = useParams();
+    const { appId, id, postId } = useParams();
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
     const [discussion, setDiscussion] = React.useState({});
@@ -78,7 +79,7 @@ export default function Discussion() {
                 <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_CONTENT} marginRight='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginRight: 0, } } }
                 }}>
-                    {!isLoadingDiscussion && <Posts discussion={discussion} />}
+                    {!isLoadingDiscussion && (postId > 0 ? <Post discussion={discussion} postId={postId} /> : <Posts discussion={discussion} />)}
                 </Block>
                 <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_SIDE} marginLeft='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginLeft: 0, } } }

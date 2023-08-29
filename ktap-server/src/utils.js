@@ -202,7 +202,7 @@ const utils = async (fastify, opts, next) => {
                 (SELECT count(*) FROM DiscussionPostThumb WHERE direction = 'down' AND post_id = ${id}) AS downs
             `)[0];
         },
-
+        // 给讨论回帖
         async createDiscussionPost({ content, userId, discussionId, ip }) {
             const discussion = await fastify.db.discussion.findUnique({ where: { id: discussionId }, select: { id: true, userId: true, isClosed: true } });
             if (!discussion || discussion.isClosed) return null; // 如果讨论被关闭，是不能回帖的
@@ -217,7 +217,7 @@ const utils = async (fastify, opts, next) => {
             // add notification
             const notification = {
                 action: Notification.action.postCreated, target: Notification.target.User, targetId: userId,
-                content: textContent(result.content).slice(0, 50), url: '/discussions/' + result.discussionId,
+                content: textContent(result.content).slice(0, 50), url: `/discussions/${result.discussionId}/posts/${result.id}`,
             };
             await fastify.utils.addFollowingNotification({
                 ...notification,
