@@ -227,3 +227,7 @@ export const Numbers = {
         return (num / 1000000000).toFixed(1) + 'B';
     }
 };
+
+export function runIfFn(fn, ...args) {
+    if (typeof fn === 'function') return fn(...args);
+}

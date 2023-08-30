@@ -9,41 +9,42 @@ import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT, LAYOUT_DEFAULT_SIDE, MOBILE_BRE
 import RouterLink from '@ktap/components/router-link';
 import { Lock, Pin } from '@ktap/components/icons';
 
+import Post from './post';
 import Posts from './posts';
 import Meta from './meta';
 import Others from './others';
 import AppGlance from './app-glance';
-import Post from './post';
 
 export default function Discussion() {
     const { appId, id, postId } = useParams();
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
-    const [discussion, setDiscussion] = React.useState({});
-    const [isLoadingDiscussion, setIsLoadingDiscussion] = React.useState(true);
+    const [discussion, setDiscussion] = React.useState(null);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
-        if (id > 0) {
-            (async () => {
-                try {
-                    setIsLoadingDiscussion(true);
-                    const res = await fetch(`/api/discussions/${id}`);
-                    if (res.ok) {
-                        const json = await res.json();
-                        setDiscussion(json.data);
-                    } else {
-                        throw { status: res.status };
-                    }
-                } catch (error) {
-                    if (error?.status === 401 || error?.status === 403) navigate(`/login?from=${location.pathname}`);
-                    else if (error?.status === 404) navigate('/discussions', { replace: true });
-                    else navigate('/not-work');
-                } finally {
-                    setIsLoadingDiscussion(false);
+        (async () => {
+            if (!id) return;
+            try {
+                setIsLoading(true);
+                const res = await fetch(`/api/discussions/${id}`);
+                if (res.ok) {
+                    const json = await res.json();
+                    setDiscussion(json.data);
+                } else {
+                    throw { status: res.status };
                 }
-            })();
-        }
+            } catch (error) {
+                if (error?.status === 401 || error?.status === 403) navigate(`/login?from=${location.pathname}`);
+                else if (error?.status === 404) navigate('/discussions', { replace: true });
+                else navigate('/not-work');
+            } finally {
+                setIsLoading(false);
+            }
+        })();
     }, [id, navigate]);
+
+    if (isLoading) return null;
 
     return (
         <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT} marginTop='scale900' maxWidth='100%' overflow='hidden'
@@ -57,8 +58,8 @@ export default function Discussion() {
                 }
             }}>
             <Block display='flex' width='100%' alignItems='center' gridGap='scale300' marginBottom='scale800'>
-                <RouterLink href={`/discussions/apps/${discussion?.app?.id}`} kind='underline'><LabelSmall>{discussion?.app?.name}</LabelSmall></RouterLink> /
-                <RouterLink href={`/discussions/apps/${discussion?.app?.id}/channels/${discussion?.channel?.id}`} kind='underline'><LabelSmall>{discussion?.channel?.name}</LabelSmall></RouterLink> /
+                <RouterLink href={`/discussions/apps/${discussion.app?.id}`} kind='underline'><LabelSmall>{discussion.app?.name}</LabelSmall></RouterLink> /
+                <RouterLink href={`/discussions/apps/${discussion.app?.id}/channels/${discussion.channel?.id}`} kind='underline'><LabelSmall>{discussion.channel?.name}</LabelSmall></RouterLink> /
                 <LabelSmall>讨论详情</LabelSmall>
             </Block>
             <Block display='flex' width='100%' backgroundColor='backgroundSecondary' padding='scale700'
@@ -79,18 +80,18 @@ export default function Discussion() {
                 <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_CONTENT} marginRight='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginRight: 0, } } }
                 }}>
-                    {!isLoadingDiscussion && (postId > 0 ? <Post discussion={discussion} postId={postId} /> : <Posts discussion={discussion} />)}
+                    {postId > 0 ? <Post discussion={discussion} postId={postId} /> : <Posts discussion={discussion} />}
                 </Block>
                 <Block display='flex' flexDirection='column' width={LAYOUT_DEFAULT_SIDE} marginLeft='scale300' overrides={{
                     Block: { style: { [MOBILE_BREAKPOINT]: { width: '100%', marginLeft: 0, } } }
                 }}>
-                    {!isLoadingDiscussion && <Meta discussion={discussion} onChange={({ sticky, close, title }) => {
+                    {<Meta discussion={discussion} onChange={({ sticky, close, title }) => {
                         if (sticky !== undefined) setDiscussion(prev => ({ ...prev, isSticky: sticky }));
                         if (close !== undefined) setDiscussion(prev => ({ ...prev, isClosed: close }));
                         if (title !== undefined) setDiscussion(prev => ({ ...prev, title }));
                     }} />}
-                    {!isLoadingDiscussion && <AppGlance app={discussion?.app} />}
-                    {!isLoadingDiscussion && <Others appId={appId} discussionId={discussion.id} />}
+                    {<AppGlance app={discussion.app} />}
+                    {<Others appId={appId} discussionId={discussion.id} />}
                 </Block>
             </Block>
         </Block>
