@@ -5,6 +5,7 @@ const reviews = async (fastify, opts) => {
     // 获取评测
     fastify.get('/:id', async function (req, reply) {
         const id = Number(req.params.id);
+        const commentIds = (req.query.commentIds || '')?.split(',').map(id => Number(id) || 0).filter(id => id > 0) || [];
         const data = await fastify.db.review.findUnique({
             where: { id },
             include: {
@@ -17,6 +18,13 @@ const reviews = async (fastify, opts) => {
                         },
                     }
                 },
+                comments: {
+                    where: { id: { in: commentIds } },
+                    select: {
+                        id: true, content: true, createdAt: true, updatedAt: true,
+                        user: { select: { id: true, name: true, avatar: true, gender: true, title: true } },
+                    }
+                },
                 images: { select: { id: true, url: true } },
                 user: { select: { id: true, name: true, avatar: true, gender: true, title: true } },
                 _count: { select: { comments: true } },
@@ -24,7 +32,6 @@ const reviews = async (fastify, opts) => {
         });
 
         if (!data) return reply.code(404).send(); // maybe no data
-
         // fetch gifts
         const gifts = await fastify.utils.getReviewGifts({ id });
         data.gifts = gifts.gifts;
@@ -100,7 +107,7 @@ const reviews = async (fastify, opts) => {
         const userId = req.user.id;
         const content = req.body.content || '';
         let data = {};
-        if (content && content.length > 0) {
+        if (content.length > 0) {
             const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true, userId: true } });
             if (review?.allowComment) {
                 data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, } });
@@ -109,7 +116,7 @@ const reviews = async (fastify, opts) => {
                 // 发送通知
                 const notification = {
                     action: Notification.action.commentCreated, target: Notification.target.User, targetId: userId,
-                    content: content.slice(0, 50), url: '/reviews/' + reviewId,
+                    content: content.slice(0, 50), url: '/reviews/' + reviewId + '/comments/' + data.id,
                 };
                 await fastify.utils.addFollowingNotification({
                     ...notification,
@@ -119,7 +126,7 @@ const reviews = async (fastify, opts) => {
                 if (review.userId !== userId) {
                     await fastify.utils.addReactionNotification({
                         ...notification,
-                        userId: review.id, // 反馈通知的对象
+                        userId: review.userId, // 反馈通知的对象
                         title: Notification.getContent(Notification.action.commentCreated, Notification.type.reaction)
                     });
                 }

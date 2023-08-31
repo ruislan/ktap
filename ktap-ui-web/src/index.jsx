@@ -79,7 +79,10 @@ const router = createBrowserRouter(
             </Route>
             <Route path='/tradings/history' element={<RequireAuth><TradingHistory /></RequireAuth>} />
             <Route path='/notifications' element={<RequireAuth><Notifications /></RequireAuth>} />
-            <Route path='/reviews/:id' element={<Reviews />} />
+            <Route path='/reviews/:id'>
+                <Route index element={<Reviews />} />
+                <Route path='comments/:commentId' element={<Reviews />} />
+            </Route>
             <Route path='/ranks' element={<Ranks />} />
             <Route path='/organizations/:id' element={<Organizations />} />
             <Route path='/discover' element={<Discover />} />

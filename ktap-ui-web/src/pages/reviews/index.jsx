@@ -12,14 +12,14 @@ import ReviewTopBar from './review-top-bar';
 
 function Reviews() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { id, commentId } = useParams();
     const [review, setReview] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(true);
 
     const fetchReview = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await fetch(`/api/reviews/${id}`);
+            const res = await fetch(commentId > 0 ? `/api/reviews/${id}?commentIds=${commentId}` : `/api/reviews/${id}`);
             if (res.ok) {
                 const json = await res.json();
                 const effectRes = await fetch(`/api/user/effect/reviews?ids=${id}`);
@@ -35,13 +35,12 @@ function Reviews() {
                 throw { status: res.status };
             }
         } catch (error) {
-            console.log(error);
             if (error?.status === 404) navigate('/not-found', { replace: true });
             else navigate('/not-work');
         } finally {
             setIsLoading(false);
         }
-    }, [id, navigate]);
+    }, [id, commentId, navigate]);
 
     React.useEffect(() => {
         fetchReview();
@@ -84,7 +83,10 @@ function Reviews() {
                             }
                         }
                     }} >
-                        <ReviewBox review={review} editable include={{ actions: { report: true }, comments: { list: true } }} afterUpdated={() => fetchReview()} />
+                        {commentId > 0 ?
+                            <ReviewBox review={review} include={{ comments: { summary: true } }} /> :
+                            <ReviewBox review={review} editable include={{ actions: { report: true }, comments: { list: true } }} afterUpdated={() => fetchReview()} />
+                        }
                     </Block>
                     <Block width={LAYOUT_DEFAULT_SIDE} marginBottom='scale600' marginLeft='scale300' overrides={{
                         Block: {
