@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 
 import { Block } from 'baseui/block';

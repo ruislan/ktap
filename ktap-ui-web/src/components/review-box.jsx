@@ -770,11 +770,13 @@ const CommentsList = function ({ reviewId, commentsCount, allowComment }) {
 
     return (
         <Block display='flex' flexDirection='column' gridGap='scale400'>
-            <CommentsInput reviewId={reviewId} allowComment={allowComment} afterSubmit={({ comment }) => {
-                setComments(prev => [comment, ...prev]);
-                setCount(prev => prev + 1);
-            }} />
-            <Separator />
+            {user && <>
+                <CommentsInput reviewId={reviewId} allowComment={allowComment} afterSubmit={({ comment }) => {
+                    setComments(prev => [comment, ...prev]);
+                    setCount(prev => prev + 1);
+                }} />
+                <Separator />
+            </>}
             <LabelMedium color='primary100'>回复 ({count})</LabelMedium>
             <Block display='flex' flexDirection='column' marginBottom='scale300' gridGap='scale300'>
                 {comments?.map((comment, index) => (

@@ -5,16 +5,14 @@ KTap是一个时尚的游戏社区平台。
 ## 功能列表
 
 * 用户：注册、登录、个人中心、动态等。
-* 游戏：评测、回复、礼物、赞踩等
+* 游戏：评测、回复、礼物、赞踩、新闻等
 * 讨论：发帖、回帖、礼物、赞踩等。
 * 探索
-* 新闻
 * 排行榜
 * 搜索
-* 通知
-* 后台管理
-
-等等等等功能，自行探索。
+* 通知：系统、关注、反馈
+* 运营后台管理：用户、游戏、评测、讨论、标签……
+* ……
 
 ## 截图
 
@@ -23,31 +21,15 @@ KTap是一个时尚的游戏社区平台。
         <td><img src="./docs/screenshots/index.png"/></td>
         <td><img src="./docs/screenshots/discover.png"/></td>
         <td><img src="./docs/screenshots/rank.png"/></td>
-        <td><img src="./docs/screenshots/tag.png"/></td>
+        <td><img src="./docs/screenshots/news.png"/></td>
+        <td><img src="./docs/screenshots/discussions.png"/></td>
     </tr>
     <tr>
         <td><img src="./docs/screenshots/app-detail.png"/></td>
-        <td><img src="./docs/screenshots/news.png"/></td>
-        <td><img src="./docs/screenshots/app-news.png"/></td>
-        <td><img src="./docs/screenshots/news-detail.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="./docs/screenshots/user-center.png"/></td>
         <td><img src="./docs/screenshots/review.png"/></td>
-        <td><img src="./docs/screenshots/gift.png"/></td>
-        <td><img src="./docs/screenshots/search.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="./docs/screenshots/app-discussion-tab.png"/></td>
-        <td><img src="./docs/screenshots/discussions.png"/></td>
-        <td><img src="./docs/screenshots/app-discussions.png"/></td>
+        <td><img src="./docs/screenshots/news-detail.png"/></td>
+        <td><img src="./docs/screenshots/user-center.png"/></td>
         <td><img src="./docs/screenshots/discussion-posts.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="./docs/screenshots/login.png"/></td>
-        <td><img src="./docs/screenshots/profile.png"/></td>
-        <td><img src="./docs/screenshots/admin-panel.png"/></td>
-        <td><img src="./docs/screenshots/organizations.png"/></td>
     </tr>
 </table>
 
