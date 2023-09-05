@@ -8,13 +8,11 @@ import fastifyMultipart from '@fastify/multipart';
 import cachingPlugin from './plugins/caching.js';
 import { Keys } from './constants.js';
 
-import apiRoutes from './api.js';
-import adminRoutes from './admin.js'
+import apiRoutes from './routes/api/index.js';
+import adminRoutes from './routes/admin/index.js';
 import schedule from './schedule.js';
-
 import jsonSchema from './json-schema.js';
-
-import utils from './utils.js';
+import models from './models/index.js';
 
 export default async function (fastify, opts, next) {
     // config
@@ -22,9 +20,6 @@ export default async function (fastify, opts, next) {
         const errorMessage = errors.map(error => error.message).join('\n');
         return new Error(errorMessage);
     });
-
-    // json schema
-    await jsonSchema(fastify);
 
     // plugins
     await fastify.register(fastifyCors);
@@ -46,8 +41,11 @@ export default async function (fastify, opts, next) {
     });
     await fastify.register(cachingPlugin);
 
-    // utils
-    await fastify.register(utils);
+    // json schema
+    await jsonSchema(fastify);
+
+    // models
+    await fastify.register(models);
 
     // schedule
     await fastify.register(schedule);
@@ -55,6 +53,5 @@ export default async function (fastify, opts, next) {
     // routes
     await fastify.register(apiRoutes, { prefix: '/api' });
     await fastify.register(adminRoutes, { prefix: '/admin' });
-
     next();
 };

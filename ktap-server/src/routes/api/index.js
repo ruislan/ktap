@@ -1,16 +1,16 @@
-import apiHome from './routes/api/home.js';
-import apiSearch from './routes/api/search.js';
-import apiApps from './routes/api/apps.js';
-import apiUser from './routes/api/user.js';
-import apiUsers from './routes/api/users.js';
-import apiSettings from './routes/api/settings.js';
-import apiReviews from './routes/api/reviews.js';
-import apiNews from './routes/api/news.js';
-import apiTags from './routes/api/tags.js';
-import apiRanks from './routes/api/ranks.js';
-import apiOrganizations from './routes/api/organizations.js';
-import apiDiscover from './routes/api/discover.js';
-import apiDiscussions from './routes/api/discussions.js';
+import apiHome from './home.js';
+import apiSearch from './search.js';
+import apiApps from './apps.js';
+import apiUser from './user.js';
+import apiUsers from './users.js';
+import apiSettings from './settings.js';
+import apiReviews from './reviews.js';
+import apiNews from './news.js';
+import apiTags from './tags.js';
+import apiRanks from './ranks.js';
+import apiOrganizations from './organizations.js';
+import apiDiscover from './discover.js';
+import apiDiscussions from './discussions.js';
 
 const apiRoutes = async (fastify, opts, next) => {
     // routes

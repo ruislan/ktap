@@ -3,7 +3,7 @@ import { Pagination } from "../../constants.js";
 const discussions = async function (fastify, opts) {
     fastify.delete('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        await fastify.utils.deleteDiscussion({ id, operator: req.user });
+        await fastify.discussion.deleteDiscussion({ id, operator: req.user });
         return reply.code(204).send();
     });
 
@@ -47,7 +47,7 @@ const discussions = async function (fastify, opts) {
             });
             for (const channel of appChannels) {
                 try {
-                    await fastify.utils.createDiscussion({ appId: channel.app.id, channelId: channel.id, userId: Number(userId) || req.user.id, title, content, ip: null });
+                    await fastify.discussion.createDiscussion({ appId: channel.app.id, channelId: channel.id, userId: Number(userId) || req.user.id, title, content, ip: null });
                 } catch (ignore) {
                     // ignore
                 }

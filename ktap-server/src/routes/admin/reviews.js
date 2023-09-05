@@ -9,7 +9,7 @@ const reviews = async function (fastify, opts) {
 
     fastify.delete('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        await fastify.utils.deleteReview({ id, isByAdmin: true });
+        await fastify.review.deleteReview({ id, isByAdmin: true });
         return reply.code(204).send();
     });
 

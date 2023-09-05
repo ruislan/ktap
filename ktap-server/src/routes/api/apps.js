@@ -38,7 +38,7 @@ const apps = async function (fastify, opts) {
                     }
                 };
                 try {
-                    app.tags = await fastify.utils.getTagsByHot({ id: item.id, limit: 5, type: 'app' });
+                    app.tags = await fastify.tag.getTagsByHot({ id: item.id, limit: 5, type: 'app' });
                 } catch {
                     app.tags = [];
                 }
@@ -216,7 +216,7 @@ const apps = async function (fastify, opts) {
         data.genres = data.genres.map(ref => ref.tag);
         data.features = data.features.map(ref => ref.tag);
         // get hot tags
-        data.tags = await fastify.utils.getTagsByHot({ id, limit: 15, type: 'app' });
+        data.tags = await fastify.tag.getTagsByHot({ id, limit: 15, type: 'app' });
         data.developers = data.developers.map(ref => ref.organization);
         data.publishers = data.publishers.map(ref => ref.organization);
 
@@ -352,7 +352,7 @@ const apps = async function (fastify, opts) {
         for (const item of data) {
             item.meta = {
                 posts: item._count.posts,
-                gifts: await fastify.utils.countDiscussionGifts({ id: item.id }),
+                gifts: await fastify.discussion.countDiscussionGifts({ id: item.id }),
             };
             delete item._count;
         }
@@ -372,7 +372,7 @@ const apps = async function (fastify, opts) {
         };
         if (userId) {
             // 用户常用的10个
-            data.frequent = await fastify.utils.getTagsByHot({ type: 'user', id: userId, limit: 10 });
+            data.frequent = await fastify.tag.getTagsByHot({ type: 'user', id: userId, limit: 10 });
 
             // 为当前游戏打的标签
             let userCurrentTags = await fastify.db.appUserTagRef.findMany({
@@ -451,11 +451,11 @@ const apps = async function (fastify, opts) {
         };
         data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
-        await fastify.utils.computeAppScore({ appId }); // 更新评分
+        await fastify.app.computeAppScore({ appId }); // 更新评分
         await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } }); // 创建 timeline
 
         // 发送通知
-        await fastify.utils.addFollowingNotification({
+        await fastify.notification.addFollowingNotification({
             action: Notification.action.reviewCreated, target: Notification.target.User, targetId: userId,
             title: Notification.getContent(Notification.action.reviewCreated, Notification.type.following),
             content: data.content.slice(0, 50), url: '/reviews/' + data.id,
@@ -498,8 +498,8 @@ const apps = async function (fastify, opts) {
         // XXX 这里读取数据库有点多了，看怎么减少一下
         for await (const item of data) {
             // 获取赞踩数量
-            const thumbs = await fastify.utils.getReviewThumbs({ id: item.id });
-            item.gifts = (await fastify.utils.getReviewGifts({ id: item.id })).gifts;
+            const thumbs = await fastify.review.getReviewThumbs({ id: item.id });
+            item.gifts = (await fastify.review.getReviewGifts({ id: item.id })).gifts;
             item.meta = { comments: item._count.comments, gifts: item._count.gifts, ups: thumbs?.ups || 0, downs: thumbs?.downs || 0 };
 
             delete item._count;

@@ -116,8 +116,8 @@ const users = async (fastify, opts) => {
         });
         // XXX 这里读取数据库有点多了，看怎么减少一下
         for await (const item of data) {
-            const thumbs = await fastify.utils.getReviewThumbs({ id: item.id });
-            item.gifts = (await fastify.utils.getReviewGifts({ id: item.id })).gifts;
+            const thumbs = await fastify.review.getReviewThumbs({ id: item.id });
+            item.gifts = (await fastify.review.getReviewGifts({ id: item.id })).gifts;
             item.meta = { comments: item._count.comments, gifts: item._count.gifts, ups: thumbs?.ups || 0, downs: thumbs?.downs || 0 };
 
             // app 不可见则无需展示

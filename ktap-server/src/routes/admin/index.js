@@ -1,17 +1,17 @@
-import { requireAdmin, authenticate } from './lib/auth.js';
-import adminHome from './routes/admin/home.js';
-import adminUsers from './routes/admin/users.js';
-import adminApps from './routes/admin/apps.js';
-import adminReviews from './routes/admin/reviews.js';
-import adminReviewComments from './routes/admin/review-comments.js';
-import adminNews from './routes/admin/news.js';
-import adminOrganizations from './routes/admin/organizations.js';
-import adminTags from './routes/admin/tags.js';
-import adminBuzzwords from './routes/admin/buzzwords.js';
-import adminGifts from './routes/admin/gifts.js';
-import adminDiscover from './routes/admin/discover.js';
-import adminDiscussions from './routes/admin/discussions.js';
-import adminDiscussionPosts from './routes/admin/discussion-posts.js';
+import { requireAdmin, authenticate } from '../../lib/auth.js';
+import adminHome from './home.js';
+import adminUsers from './users.js';
+import adminApps from './apps.js';
+import adminReviews from './reviews.js';
+import adminReviewComments from './review-comments.js';
+import adminNews from './news.js';
+import adminOrganizations from './organizations.js';
+import adminTags from './tags.js';
+import adminBuzzwords from './buzzwords.js';
+import adminGifts from './gifts.js';
+import adminDiscover from './discover.js';
+import adminDiscussions from './discussions.js';
+import adminDiscussionPosts from './discussion-posts.js';
 
 const adminRoutes = async (fastify, opts, next) => {
     fastify.addHook('onRequest', authenticate);

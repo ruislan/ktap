@@ -125,6 +125,7 @@ const common = {
 };
 
 // XXX 有 Post 和 Put 的对象为主，用于 validation 。暂不考虑用于 response 。
+// XXX 需要将各自model的schema移动到各自的model中吗？
 export default async function (fastify) {
     await fastify.addSchema(common);
     await fastify.addSchema(user);

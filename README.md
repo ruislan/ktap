@@ -46,18 +46,20 @@ KTap是一个时尚的游戏社区平台。
 ktap-server为服务端代码，进入目录后输入以下指令启动：
 
 ```bash
+yarn install
 yarn prisma db push
 yarn seed
-yarn start:dev
+yarn dev
 ```
 
 ktap-ui-web为前端代码，进入目录后输入以下指令启动：
 
 ```bash
-yarn start
+yarn install
+yarn dev
 ```
 
-完成后访问 [http://localhost:5173](http://localhost:5173)即可开始探索之旅。登录用户和密码可以在seed.js文件中查看。绝大部分页面都是Responsive的。
+完成后访问 [http://localhost:5173](http://localhost:5173)即可开始探索之旅。登录用户和密码可以在seed.js文件中查看。
 
 ### Docker启动
 

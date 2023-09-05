@@ -73,7 +73,7 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const userId = req.user.id;
         const { title, content, appId, channelId, } = req.body;
-        await fastify.utils.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
+        await fastify.discussion.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
         return reply.code(200).send();
     });
 
@@ -139,7 +139,7 @@ const discussions = async (fastify, opts) => {
         for (const item of data) {
             item.meta = {
                 posts: item._count.posts,
-                gifts: await fastify.utils.countDiscussionGifts({ id: item.id }), // 统计礼物数量
+                gifts: await fastify.discussion.countDiscussionGifts({ id: item.id }), // 统计礼物数量
             };
             delete item._count;
         }
@@ -167,7 +167,7 @@ const discussions = async (fastify, opts) => {
         const channelId = Number(req.params.channelId) || 0;
         const { name, icon, description } = req.body;
         if (channelId > 0) {
-            await fastify.utils.updateDiscussionChannel({
+            await fastify.discussion.updateDiscussionChannel({
                 id: channelId, name, icon, description, appId, operator: req.user,
             });
         }
@@ -214,7 +214,7 @@ const discussions = async (fastify, opts) => {
         data.meta = {
             posts: data._count.posts,
             users: metaUsers,
-            gifts: await fastify.utils.countDiscussionGifts({ id }),
+            gifts: await fastify.discussion.countDiscussionGifts({ id }),
         };
         delete data._count;
         delete data.app.media.head.usage;
@@ -233,8 +233,8 @@ const discussions = async (fastify, opts) => {
             }
         });
         if (data.discussionId != id) return reply.code(404).send(); // not belongs to this discussion
-        const giftsData = await fastify.utils.getDiscussionPostGifts({ id: data.id });
-        const thumbs = await fastify.utils.getDiscussionPostThumbs({ id: data.id });
+        const giftsData = await fastify.discussion.getDiscussionPostGifts({ id: data.id });
+        const thumbs = await fastify.discussion.getDiscussionPostThumbs({ id: data.id });
         data.gifts = giftsData.gifts;
         data.meta = {
             ups: thumbs?.ups || 0, downs: thumbs?.downs || 0,
@@ -258,8 +258,8 @@ const discussions = async (fastify, opts) => {
             }
         });
         for (const post of data) {
-            const giftsData = await fastify.utils.getDiscussionPostGifts({ id: post.id });
-            const thumbs = await fastify.utils.getDiscussionPostThumbs({ id: post.id });
+            const giftsData = await fastify.discussion.getDiscussionPostGifts({ id: post.id });
+            const thumbs = await fastify.discussion.getDiscussionPostThumbs({ id: post.id });
             post.gifts = giftsData.gifts;
             post.meta = {
                 ups: thumbs?.ups || 0, downs: thumbs?.downs || 0,
@@ -284,7 +284,7 @@ const discussions = async (fastify, opts) => {
         const id = Number(req.params.id);
         const userId = req.user.id;
         const { content } = req.body;
-        const data = await fastify.utils.createDiscussionPost({ content, discussionId: id, userId, ip: req.ip });
+        const data = await fastify.discussion.createDiscussionPost({ content, discussionId: id, userId, ip: req.ip });
         return reply.code(200).send({ data });
     });
 
@@ -295,7 +295,7 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id);
         const isSticky = req.body.sticky === true;
-        await fastify.utils.stickyDiscussion({ id, operator: req.user, isSticky });
+        await fastify.discussion.stickyDiscussion({ id, operator: req.user, isSticky });
         return reply.code(204).send();
     });
 
@@ -305,7 +305,7 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id) || 0;
         const isClosed = req.body.close === true;
-        await fastify.utils.closeDiscussion({ id, operator: req.user, isClosed });
+        await fastify.discussion.closeDiscussion({ id, operator: req.user, isClosed });
         return reply.code(204).send();
     });
 
@@ -324,7 +324,7 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id) || 0;
         const { title } = req.body;
-        await fastify.utils.updateDiscussion({ id, title, operator: req.user });
+        await fastify.discussion.updateDiscussion({ id, title, operator: req.user });
         return reply.code(204).send();
     });
 
@@ -333,7 +333,7 @@ const discussions = async (fastify, opts) => {
         errorHandler: bizErrorHandler,
     }, async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        await fastify.utils.deleteDiscussion({ id, operator: req.user });
+        await fastify.discussion.deleteDiscussion({ id, operator: req.user });
         return reply.code(204).send();
     });
 
@@ -348,7 +348,7 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const postId = Number(req.params.postId);
         const { content } = req.body;
-        await fastify.utils.updateDiscussionPost({ id: postId, content, ip: req.ip, operator: req.user });
+        await fastify.discussion.updateDiscussionPost({ id: postId, content, ip: req.ip, operator: req.user });
         return reply.code(204).send();
     });
 
@@ -357,7 +357,7 @@ const discussions = async (fastify, opts) => {
         errorHandler: bizErrorHandler,
     }, async function (req, reply) {
         const postId = Number(req.params.postId);
-        await fastify.utils.deleteDiscussionPost({ id: postId, operator: req.user });
+        await fastify.discussion.deleteDiscussionPost({ id: postId, operator: req.user });
         return reply.code(204).send();
     });
 
@@ -413,7 +413,7 @@ const discussions = async (fastify, opts) => {
         if (direction === 'up' && !toDelete) {
             const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
             if (post.userId !== userId) {
-                await fastify.utils.addReactionNotification({
+                await fastify.notification.addReactionNotification({
                     action: Notification.action.postThumbed,
                     userId: post.userId, // 反馈通知的对象
                     target: Notification.target.User, targetId: userId,
@@ -424,7 +424,7 @@ const discussions = async (fastify, opts) => {
         }
 
         // 重新取当前赞踩数据
-        const data = await fastify.utils.getDiscussionPostThumbs({ id: postId });
+        const data = await fastify.discussion.getDiscussionPostThumbs({ id: postId });
         return reply.code(200).send({ data });
     });
 
@@ -452,7 +452,7 @@ const discussions = async (fastify, opts) => {
         // 发送通知
         const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
         if (post.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
-            await fastify.utils.addReactionNotification({
+            await fastify.notification.addReactionNotification({
                 action: Notification.action.postGiftSent,
                 userId: post.userId, // 反馈通知的对象
                 target: Notification.target.User, targetId: userId,
@@ -463,7 +463,7 @@ const discussions = async (fastify, opts) => {
 
         // 读取最新的礼物情况
         // fetch gifts
-        const gifts = await fastify.utils.getDiscussionPostGifts({ id: postId });
+        const gifts = await fastify.discussion.getDiscussionPostGifts({ id: postId });
         return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
     });
 

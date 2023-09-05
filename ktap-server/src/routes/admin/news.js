@@ -43,7 +43,7 @@ const news = async function (fastify, opts) {
                 }
             });
             // 发送新闻通知给关注用户
-            await fastify.utils.addFollowingNotification({
+            await fastify.notification.addFollowingNotification({
                 action: Notification.action.newsCreated, target: Notification.target.App, targetId: appId,
                 title, content: summary, url: '/news/' + news.id,
             });

@@ -33,13 +33,13 @@ const reviews = async (fastify, opts) => {
 
         if (!data) return reply.code(404).send(); // maybe no data
         // fetch gifts
-        const gifts = await fastify.utils.getReviewGifts({ id });
+        const gifts = await fastify.review.getReviewGifts({ id });
         data.gifts = gifts.gifts;
 
         // fetch meta data
         // 获取礼物，礼物分组并统计送的人的总数
         // 获取赞踩数量
-        const thumbs = await fastify.utils.getReviewThumbs({ id });
+        const thumbs = await fastify.review.getReviewThumbs({ id });
         data.meta = { ups: thumbs?.ups || 0, downs: thumbs?.downs || 0, comments: data._count.comments, gifts: gifts.count };
 
         // transform data for api output
@@ -63,7 +63,7 @@ const reviews = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id);
         const userId = req.user.id;
-        await fastify.utils.deleteReview({ id, userId });
+        await fastify.review.deleteReview({ id, userId });
         return reply.code(204).send();
     });
 
@@ -118,13 +118,13 @@ const reviews = async (fastify, opts) => {
                     action: Notification.action.commentCreated, target: Notification.target.User, targetId: userId,
                     content: content.slice(0, 50), url: '/reviews/' + reviewId + '/comments/' + data.id,
                 };
-                await fastify.utils.addFollowingNotification({
+                await fastify.notification.addFollowingNotification({
                     ...notification,
                     title: Notification.getContent(Notification.action.commentCreated, Notification.type.following)
                 });
                 // 自己给自己回不用发反馈通知
                 if (review.userId !== userId) {
-                    await fastify.utils.addReactionNotification({
+                    await fastify.notification.addReactionNotification({
                         ...notification,
                         userId: review.userId, // 反馈通知的对象
                         title: Notification.getContent(Notification.action.commentCreated, Notification.type.reaction)
@@ -213,7 +213,7 @@ const reviews = async (fastify, opts) => {
             await fastify.db.review.update({ data, where: { id } });
 
             // XXX 非必每次评测都更新，定时刷新App的评分或者异步请求更新
-            await fastify.utils.computeAppScore({ appId: review.appId });
+            await fastify.app.computeAppScore({ appId: review.appId });
         }
         return reply.code(204).send();
     });
@@ -238,7 +238,7 @@ const reviews = async (fastify, opts) => {
         if (direction === 'up' && !toDelete) {
             const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { id: true, userId: true } });
             if (review.userId !== userId) {
-                await fastify.utils.addReactionNotification({
+                await fastify.notification.addReactionNotification({
                     action: Notification.action.reviewThumbed,
                     userId: review.userId, // 反馈通知的对象
                     target: Notification.target.User, targetId: userId,
@@ -249,7 +249,7 @@ const reviews = async (fastify, opts) => {
         }
 
         // 重新取当前review的数据
-        const data = await fastify.utils.getReviewThumbs({ id: reviewId });
+        const data = await fastify.review.getReviewThumbs({ id: reviewId });
         return reply.code(200).send({ data });
     });
 
@@ -283,7 +283,7 @@ const reviews = async (fastify, opts) => {
         // 发送通知
         const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { id: true, userId: true } });
         if (review.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
-            await fastify.utils.addReactionNotification({
+            await fastify.notification.addReactionNotification({
                 action: Notification.action.reviewGiftSent,
                 userId: review.userId, // 反馈通知的对象
                 target: Notification.target.User, targetId: userId,
@@ -294,7 +294,7 @@ const reviews = async (fastify, opts) => {
 
         // 读取最新的礼物情况
         // fetch gifts
-        const gifts = await fastify.utils.getReviewGifts({ id: reviewId });
+        const gifts = await fastify.review.getReviewGifts({ id: reviewId });
         return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
     });
 

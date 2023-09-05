@@ -27,7 +27,7 @@ const TopBar = React.memo(function TopBar() {
                 }
             }}>
             <HeadingSmall margin='0'>通知中心</HeadingSmall>
-            <RouterLink kind='underline' href='/notifications'><LabelSmall>设置</LabelSmall></RouterLink>
+            <RouterLink kind='underline' href='/settings/notification'><LabelSmall>设置</LabelSmall></RouterLink>
         </Block>
     );
 });

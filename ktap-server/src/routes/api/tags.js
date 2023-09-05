@@ -87,7 +87,7 @@ const tags = async (fastify, opts) => {
     });
 
     fastify.get('/hot', async function (req, reply) {
-        const data = await fastify.utils.getTagsByHot({ type: 'tag', limit: Pagination.limit.default });
+        const data = await fastify.tag.getTagsByHot({ type: 'tag', limit: Pagination.limit.default });
         return reply.code(200).send({ data });
     });
 };

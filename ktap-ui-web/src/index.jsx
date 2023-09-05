@@ -75,7 +75,7 @@ const router = createBrowserRouter(
                 <Route index element={<SettingsGeneral />} />
                 <Route path='profile' element={<SettingsProfile />} />
                 <Route path='password' element={<SettingsPassword />} />
-                <Route path='notifications' element={<SettingsNotification />} />
+                <Route path='notification' element={<SettingsNotification />} />
             </Route>
             <Route path='/tradings/history' element={<RequireAuth><TradingHistory /></RequireAuth>} />
             <Route path='/notifications' element={<RequireAuth><Notifications /></RequireAuth>} />
