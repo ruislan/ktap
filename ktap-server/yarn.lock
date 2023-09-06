@@ -154,7 +154,7 @@
   resolved "https://registry.npmmirror.com/@lukeed/ms/-/ms-2.0.1.tgz#3c2bbc258affd9cc0e0cc7828477383c73afa6ee"
   integrity sha512-Xs/4RZltsAL7pkvaNStUQt7netTkyxrS0K+RILcVr3TRMS/ToOg4I6uNfhB9SlGsnWBym4U+EaXq0f0cEMNkHA==
 
-"@mapbox/node-pre-gyp@^1.0.11", "@mapbox/node-pre-gyp@^1.0.4":
+"@mapbox/node-pre-gyp@^1.0.11":
   version "1.0.11"
   resolved "https://registry.npmmirror.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.11.tgz#417db42b7f5323d79e93b34a6d7a2a12c0df43fa"
   integrity sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==
@@ -168,6 +168,90 @@
     rimraf "^3.0.2"
     semver "^7.3.5"
     tar "^6.1.11"
+
+"@node-rs/jieba-android-arm-eabi@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-android-arm-eabi/-/jieba-android-arm-eabi-1.7.2.tgz#06d10feef9a0718b4b3f07b2d7f161c193439b96"
+  integrity sha512-FyDHRNSRIHOQO7S6Q4RwuGffnnnuNwaXPH7K8WqSzifEY+zFIaSPcNqrZHrnqyeXc4JiYpBIHeP+0Mkf1kIGRA==
+
+"@node-rs/jieba-android-arm64@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-android-arm64/-/jieba-android-arm64-1.7.2.tgz#10830a0d59e84faa1a52c0fea5618ef9b1d5ac03"
+  integrity sha512-z0UEZCGrAX/IiarhuDMsEIDZBS77UZv4SQyL/J48yrsbWKbb2lJ1vCrYxXIWqwp6auXHEu4r1O/pMriDAcEnPg==
+
+"@node-rs/jieba-darwin-arm64@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-darwin-arm64/-/jieba-darwin-arm64-1.7.2.tgz#70e6b9f6d3167817b8a8259c49e0aa6693fd4871"
+  integrity sha512-M2cHIWRaaOmXGKy446SH2+Y2PzREaI2oYznPbg55wYEdioUp01YS/2WRG8CaoCKEj0aUocA7MFM2vVcoIAsbQw==
+
+"@node-rs/jieba-darwin-x64@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-darwin-x64/-/jieba-darwin-x64-1.7.2.tgz#bf21be9875a30a5fad4030893b3088993831e54f"
+  integrity sha512-euDawBU2FxB0CGTR803BA6WABsiicIrqa61z2AFFDPkJCDrauEM0jbMg3GDKLAvbaLbZ1Etu3QNN5xyroqp4Qw==
+
+"@node-rs/jieba-freebsd-x64@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-freebsd-x64/-/jieba-freebsd-x64-1.7.2.tgz#f173089e34135bca613ced7c816ad9fefc023c39"
+  integrity sha512-vXCaYxPb90d/xTBVG+ZZXrFLXsO2719pZSyiZCL2tey+UY28U7MOoK6394Wwmf0FCB/eRTQMCKjVIUDi+IRMUg==
+
+"@node-rs/jieba-linux-arm-gnueabihf@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-linux-arm-gnueabihf/-/jieba-linux-arm-gnueabihf-1.7.2.tgz#307923401ba49bb4e28639ab2954c4be3362f807"
+  integrity sha512-HTep79XlJYO3KRYZ2kJChG9HnYr1DKSQTB+HEYWKLK0ifphqybcxGNLAdH0S4dViG2ciD0+iN/refgtqZEidpw==
+
+"@node-rs/jieba-linux-arm64-gnu@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-linux-arm64-gnu/-/jieba-linux-arm64-gnu-1.7.2.tgz#3af77273d84b3e4d158ad3bfdaa23e523efb8fce"
+  integrity sha512-P8QJdQydOVewL1MIqYiRpI7LOfrRQag+p4/hwExe+YXH8C7DOrR8rWJD/7XNRTbpOimlHq1UN/e+ZzhxQF/cLw==
+
+"@node-rs/jieba-linux-arm64-musl@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-linux-arm64-musl/-/jieba-linux-arm64-musl-1.7.2.tgz#c6cfe6eeb163683032e6265136b8713a9b28a793"
+  integrity sha512-WjnN0hmDvTXb2h3hMW5VnUGkK1xaqhs+WHfMMilau55+YN+YOYALKZ0TeBY4BapClLuBx54wqwmBX+B4hAXunQ==
+
+"@node-rs/jieba-linux-x64-gnu@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-linux-x64-gnu/-/jieba-linux-x64-gnu-1.7.2.tgz#0f5ea2499a64d3f2e639b538d7ff78095fd0477a"
+  integrity sha512-gBXds/DwNSA6lNUxJjL6WIaNT6pnlM5juUgV/krLLkBJ8vXpOrQ07p0rrK1tnigz9b20xhsHaFRSwED1Y8zeXw==
+
+"@node-rs/jieba-linux-x64-musl@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-linux-x64-musl/-/jieba-linux-x64-musl-1.7.2.tgz#c60ea4f3f4e7202208aa61b318dd1a34f82734b5"
+  integrity sha512-tNVD3SMuG5zAj7+bLS2Enio3zR7BPxi3PhQtpQ+Hv83jajIcN46QQ0EdoMFz/aB+hkQ9PlLAstu+VREFegs5EA==
+
+"@node-rs/jieba-win32-arm64-msvc@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-win32-arm64-msvc/-/jieba-win32-arm64-msvc-1.7.2.tgz#3cc4a1781115d282d39d98f6e4039872c3c63c84"
+  integrity sha512-/e1iQ0Dh02lGPNCYTU/H3cfIsWydaGRzZ3TDj6GfWrxkWqXORL98x/VJ/C/uKLpc7GSLLd9ygyZG7SOAfKe2tA==
+
+"@node-rs/jieba-win32-ia32-msvc@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-win32-ia32-msvc/-/jieba-win32-ia32-msvc-1.7.2.tgz#574695c602be2c38cc49708b4829b5cf0574e4b6"
+  integrity sha512-cYjA6YUiOwtuEzWErvwMMt/RETNWQDLcmAaiHA8ohsa6c0eB0kRJlQCc683tlaczZxqroY/7C9mxgJNGvoGRbw==
+
+"@node-rs/jieba-win32-x64-msvc@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba-win32-x64-msvc/-/jieba-win32-x64-msvc-1.7.2.tgz#847b23c6e2cb255e095d990c78b678fa73e518a6"
+  integrity sha512-2M+Um3woFF17sa8VBYQQ6E5PNMe9Kf9fdzmeDh/GzuNHXlxW4LyK9VTV8zchIv/bDNAR5Z85kfW4wASULUxvFQ==
+
+"@node-rs/jieba@^1.7.2":
+  version "1.7.2"
+  resolved "https://registry.npmmirror.com/@node-rs/jieba/-/jieba-1.7.2.tgz#2ddccfb1208c00e9a6733b2ba31fd18645e07677"
+  integrity sha512-zGto08NDU+KWm670qVHYGTb0YTEJ0A97dwH3WCnnhyRYMqTbOXKC6OwTc/cjzfSJP1UDBSar9Ug9BlmWmEThWg==
+  optionalDependencies:
+    "@node-rs/jieba-android-arm-eabi" "1.7.2"
+    "@node-rs/jieba-android-arm64" "1.7.2"
+    "@node-rs/jieba-darwin-arm64" "1.7.2"
+    "@node-rs/jieba-darwin-x64" "1.7.2"
+    "@node-rs/jieba-freebsd-x64" "1.7.2"
+    "@node-rs/jieba-linux-arm-gnueabihf" "1.7.2"
+    "@node-rs/jieba-linux-arm64-gnu" "1.7.2"
+    "@node-rs/jieba-linux-arm64-musl" "1.7.2"
+    "@node-rs/jieba-linux-x64-gnu" "1.7.2"
+    "@node-rs/jieba-linux-x64-musl" "1.7.2"
+    "@node-rs/jieba-win32-arm64-msvc" "1.7.2"
+    "@node-rs/jieba-win32-ia32-msvc" "1.7.2"
+    "@node-rs/jieba-win32-x64-msvc" "1.7.2"
 
 "@prisma/client@^5.2.0":
   version "5.2.0"
@@ -997,11 +1081,6 @@ nanoid@^3.3.6:
   resolved "https://registry.npmmirror.com/nanoid/-/nanoid-3.3.6.tgz#443380c856d6e9f9824267d960b4236ad583ea4c"
   integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
 
-node-addon-api@^3.0.2:
-  version "3.2.1"
-  resolved "https://registry.npmmirror.com/node-addon-api/-/node-addon-api-3.2.1.tgz#81325e0a2117789c0128dab65e7e38f07ceba161"
-  integrity sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==
-
 node-addon-api@^5.0.0:
   version "5.1.0"
   resolved "https://registry.npmmirror.com/node-addon-api/-/node-addon-api-5.1.0.tgz#49da1ca055e109a23d537e9de43c09cca21eb762"
@@ -1020,14 +1099,6 @@ node-fetch@^2.6.7:
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
   dependencies:
     whatwg-url "^5.0.0"
-
-nodejieba@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.npmmirror.com/nodejieba/-/nodejieba-2.6.0.tgz#f56dd4f0660cd294af0e2834f9008ef92dfe36c0"
-  integrity sha512-cyEOLRGLjDuxbTuv6nuMAK3NpML4ft9i7st98TFHvXtg+m3RFhIuf4INBHGp3VhUaqPsCTfAkhHB/ZNTFiwJjg==
-  dependencies:
-    "@mapbox/node-pre-gyp" "^1.0.4"
-    node-addon-api "^3.0.2"
 
 nodemailer@^6.9.1:
   version "6.9.4"
