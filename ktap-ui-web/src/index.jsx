@@ -55,6 +55,7 @@ import AdminPanelTags from './pages/admin-panel/tags';
 import AdminPanelBuzzwords from './pages/admin-panel/buzzwords';
 import AdminPanelGifts from './pages/admin-panel/gifts';
 import AdminPanelDiscover from './pages/admin-panel/discover';
+import AdminPanelHotSearch from './pages/admin-panel/hotsearch';
 import Layout from './pages/layout';
 
 const engine = new Styletron();
@@ -119,6 +120,7 @@ const router = createBrowserRouter(
                 <Route path='gifts' element={<AdminPanelGifts />} />
                 <Route path='buzzwords' element={<AdminPanelBuzzwords />} />
                 <Route path='discover' element={<AdminPanelDiscover />} />
+                <Route path='hotsearch' element={<AdminPanelHotSearch />} />
             </Route>
             <Route path='not-work' element={<NotWork />} />
             <Route path='*' element={<NotFound />} />

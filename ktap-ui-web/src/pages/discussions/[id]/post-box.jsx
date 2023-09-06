@@ -197,7 +197,7 @@ function PostActions({ discussion, post, isFirst, actions, onQuoteClick, onUpdat
             <Modal onClose={() => setIsOpenGiftModal(false)} isOpen={isOpenGiftModal} animate autoFocus role={ROLE.dialog}>
                 <ModalHeader>请选择礼物</ModalHeader>
                 <ModalBody $as='div'>
-                    <Block display='flex' flexWrap='wrap' justifyContent='flex-start' overflow='scroll' maxHeight='600px'>
+                    <Block display='flex' flexWrap='wrap' justifyContent='flex-start' overflow='auto' maxHeight='600px'>
                         {gifts && gifts.map((gift, index) => (
                             <Block key={index} display='flex' flexDirection='column' alignItems='center' width='128px'
                                 margin='scale300' padding='scale300'

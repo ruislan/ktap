@@ -402,8 +402,8 @@ model News {
 // 热搜
 model HotSearch {
   id        Int      @id @default(autoincrement())
-  keyword   String   @unique // 关键词
-  count     Int // 计数
+  content   String   @unique // 搜索词语
+  hitCount  Int      @map("hit_count") // 搜索计数
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }

@@ -1,12 +1,10 @@
-import React from 'react';
-
 import { Block } from 'baseui/block';
 
 import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import SearchPanel from './search-panel';
-import SideHotKeywords from './side-hot-keywords';
+import SideHotSearch from './side-hot-search';
 
-function Search() {
+export default function Search() {
     return (
         <Block display='flex' marginTop='scale900' overrides={{
             Block: {
@@ -44,10 +42,8 @@ function Search() {
                     }
                 }}
             >
-                <SideHotKeywords />
+                <SideHotSearch />
             </Block>
         </Block>
     );
 }
-
-export default Search;

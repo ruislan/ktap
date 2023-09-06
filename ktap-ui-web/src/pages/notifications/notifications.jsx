@@ -136,9 +136,9 @@ function Notifications({ size = 'default', activeIndex, onActiveIndexChanged, da
             {size === 'compact' ?
                 <TabBar activeIndex={activeIndex} onTabChange={onActiveIndexChanged} onClear={afterClear} onRead={afterRead} /> :
                 <TitleBar activeIndex={activeIndex} onClear={afterClear} onRead={afterRead} />}
-            <Block display='flex' flexDirection='column' overflow='scrollY' maxHeight='300px'>
+            <Block display='flex' flexDirection='column' overflow='auto' maxHeight='300px'>
                 {dataList && dataList.map((item, index) => <NotificationItem key={index} item={item} />)}
-                {!isLoading && dataList && dataList.length === 0 && <LabelSmall display='flex' alignItems='center' justifyContent='center' height='62px'>您当前没有任何通知</LabelSmall>}
+                {!isLoading && dataList && dataList.length === 0 && <LabelSmall display='flex' alignItems='center' justifyContent='center' height='80px'>您当前没有任何通知</LabelSmall>}
                 <LoadMore size={size} isLoading={isLoading} hasMore={hasMore} skeletonRow={1} skeletonHeight='62px' onClick={() => {
                     fetchData(activeType, skip, dataLimit);
                 }} />

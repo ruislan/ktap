@@ -20,6 +20,7 @@ const sideMenus = [
     { title: '礼物管理', itemId: '/admin-panel/gifts' },
     { title: '流行语管理', itemId: '/admin-panel/buzzwords' },
     { title: '探索页面管理', itemId: '/admin-panel/discover' },
+    { title: '搜索热词管理', itemId: '/admin-panel/hotsearch' },
 ];
 
 function SideBar() {

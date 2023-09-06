@@ -680,11 +680,11 @@ const appPlatforms = [
 ];
 
 const hotSearchList = [
-    { id: 1, keyword: '圆圆神', count: 100 },
-    { id: 2, keyword: '赛博朋克', count: 78 },
-    { id: 3, keyword: '埃登法圈', count: 103 },
-    { id: 4, keyword: '烈焰战神', count: 56 },
-    { id: 5, keyword: '星球争霸', count: 49 },
+    { id: 1, content: '圆圆神', hitCount: 100 },
+    { id: 2, content: '赛博朋克', hitCount: 78 },
+    { id: 3, content: '埃登法圈', hitCount: 103 },
+    { id: 4, content: '烈焰战神', hitCount: 56 },
+    { id: 5, content: '星球争霸', hitCount: 49 },
 ];
 
 const news = [

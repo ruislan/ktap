@@ -4,7 +4,7 @@ const search = async function (fastify, opts) {
     // 获取App热词
     fastify.get('/hot', async function (req, res) {
         const data = await fastify.db.hotSearch.findMany({
-            orderBy: { count: 'desc' },
+            orderBy: { hitCount: 'desc' },
             take: 20,
         });
         res.code(200).send({ data });
@@ -70,10 +70,10 @@ const search = async function (fastify, opts) {
                 where: { keyword },
                 create: {
                     keyword,
-                    count: 1,
+                    hitCount: 1,
                 },
                 update: {
-                    count: {
+                    hitCount: {
                         increment: 1,
                     }
                 }
