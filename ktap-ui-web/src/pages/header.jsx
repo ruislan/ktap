@@ -246,6 +246,7 @@ const UserMenu = function () {
     const [css, theme] = useStyletron();
     const { user, logout, isAuthenticated, isAdmin } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [userItems, setUserItems] = React.useState([]);
     const [isOpenContent, setIsOpenContent] = React.useState(false);
     const ref = React.useRef(null);
@@ -283,7 +284,7 @@ const UserMenu = function () {
                 { label: '注册', href: '/register' },
             ]);
         }
-    }, [isAdmin, isAuthenticated, user]);
+    }, [isAdmin, isAuthenticated, user, location]);
 
     useOutsideClick({ ref, handler: () => setIsOpenContent(false) });
 

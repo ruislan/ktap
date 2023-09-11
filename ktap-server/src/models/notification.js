@@ -86,6 +86,24 @@ const notification = async (fastify, opts, next) => {
             }
             // Prisma 虽然不支持 SQLite createMany，但是如果放在同一个 transaction 中，性能会好很多 https://sqlite.org/faq.html#q19
             await fastify.db.$transaction(dataList.map(data => fastify.db.notification.create({ data })));
+        },
+
+        // 删除过期的通知
+        async deleteExpiredNotifications() {
+            const max = process.env.NOTIFICATION_PER_USER_MAX || 100; // 每个用户最多 100 条。
+            const resultCount = await fastify.db.$executeRaw`
+                DELETE FROM Notification
+                WHERE id IN (
+                    SELECT id
+                    FROM (
+                        SELECT n.id, n.user_id, COUNT(*) AS total
+                        FROM Notification AS n
+                        GROUP BY n.id, n.user_id
+                        HAVING total > ${max}
+                    ) AS sub
+                )
+            `;
+            return resultCount;
         }
     });
     next();

@@ -1065,14 +1065,13 @@ async function initForSteam() {
         const gift = await db.gift.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created gift id: ${gift.id}`);
     }
-    // 探索页面组件
-    console.log(`初始化搜索页面组件...`);
+
+    console.log(`开始初始化搜索页面组件...`);
     for (const item of discoverPageWidgets) {
         const pageWidget = await db.pageWidget.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created page widget: ${pageWidget.id}`);
     }
 
-    // Steam APP
     console.log(`开始初始化Steam游戏...`);
     const steamGames = fs.readFileSync(path.join(path.resolve(), './prisma/gameList'), 'utf8').split('\n');
     for (const steamGame of steamGames) {
@@ -1081,10 +1080,15 @@ async function initForSteam() {
         const steamAppId = pair[0];
         const gameData = JSON.parse(Buffer.from(pair[1], 'base64').toString());
         if (gameData) {
-            console.log(`初始化游戏 [${steamAppId}] ${gameData[steamAppId].data.name} ...`);
             const newApp = await steam.parseGameDetailToPrismaData(gameData);
             newApp.isVisible = true; // set it visible
+            newApp.discussionChannels = {
+                create: [
+                    { name: '综合讨论', description: '各种话题都可以谁便说' }
+                ],
+            };
             if (newApp) await db.app.create({ data: newApp });
+            console.log(`已初始化游戏 [${steamAppId}] ${gameData[steamAppId].data.name}`);
         }
     }
     console.log(`初始化数据完成.`);
