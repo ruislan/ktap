@@ -231,37 +231,11 @@ const apps = async function (fastify, opts) {
 
         // get meta
         // 统计评测中的几个分段和分段占比
-        const lData = (await fastify.db.$queryRaw`
-                SELECT l1.cnt AS l1, l2.cnt AS l2, l3.cnt AS l3, l4.cnt AS l4, l5.cnt AS l5 FROM
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 1) AS l1,
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 2) AS l2,
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 3) AS l3,
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 4) AS l4,
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND score = 5) AS l5;
-            `)[0];
         const meta = {};
-        meta.ratings = [
-            { score: 1, count: Number(lData.l1) || 0 },
-            { score: 2, count: Number(lData.l2) || 0 },
-            { score: 3, count: Number(lData.l3) || 0 },
-            { score: 4, count: Number(lData.l4) || 0 },
-            { score: 5, count: Number(lData.l5) || 0 }
-        ];
-        meta.reviews = await fastify.db.review.count({ where: { appId: id, } });
-        meta.follows = await fastify.db.followApp.count({ where: { appId: id, } });
-
-        // 当前热力指数计算非常简单，通过加权算法来计算最近 1 周的数值，关注*2 + 评测*10 + 评测回复*1 + 讨论*5 + 讨论回复*1
-        // XXX 减少读取计算量，最后固定频率（例如每日同一时间）统一刷新，
-        const limitDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        const hotOriginData = (await fastify.db.$queryRaw`
-                SELECT p1.cnt AS p1, p2.cnt AS p2, p3.cnt AS p3, p4.cnt AS p4, p5.cnt AS p5 FROM
-                    (SELECT count(id) AS cnt FROM FollowApp WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p1,
-                    (SELECT count(id) AS cnt FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p2,
-                    (SELECT count(id) AS cnt FROM ReviewComment WHERE review_id in (SELECT id FROM Review WHERE app_id = ${id} AND created_at >= ${limitDate})) AS p3,
-                    (SELECT count(id) AS cnt FROM Discussion WHERE app_id = ${id} AND created_at >= ${limitDate}) AS p4,
-                    (SELECT count(id) AS cnt FROM DiscussionPost WHERE discussion_id in (SELECT id FROM Discussion WHERE app_id = ${id} AND created_at >= ${limitDate})) AS p5;
-            `)[0];
-        meta.popular = Number(hotOriginData.p1) * 2 + Number(hotOriginData.p2) * 10 + Number(hotOriginData.p3) * 1 + Number(hotOriginData.p4) * 5 + Number(hotOriginData.p5) * 1;
+        meta.reviews = await fastify.db.review.count({ where: { appId: id, } }); // TODO 后面通过异步计算，直接读取
+        meta.follows = await fastify.db.followApp.count({ where: { appId: id, } }); // TODO 后面通过异步计算，直接读取
+        meta.ratings = await fastify.app.computeAppScoreRatio({ appId: id });// TODO 后面通过异步计算，直接读取
+        meta.popular = await fastify.app.computeAppPopular({ appId: id, }); // 热力指数, TODO 后面通过异步计算，直接读取
         return reply.code(200).send({ data, meta });
     });
 
@@ -451,7 +425,7 @@ const apps = async function (fastify, opts) {
         };
         data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
 
-        await fastify.app.computeAppScore({ appId }); // 更新评分
+        await fastify.app.computeAndUpdateAppScore({ appId }); // 更新评分
         await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } }); // 创建 timeline
 
         // 发送通知

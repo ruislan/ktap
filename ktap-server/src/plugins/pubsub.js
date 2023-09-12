@@ -11,6 +11,10 @@ const pubsub = {
 
 const pubsubPlugin = async (fastify, opts, next) => {
     fastify.decorate('pubsub', pubsub);
+    fastify.addHook('onClose', async (fastify) => {
+        fastify.log.info('waiting for pubsub to complete...');
+        // TODO implements
+    });
     next();
 };
 

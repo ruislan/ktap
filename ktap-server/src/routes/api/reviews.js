@@ -213,7 +213,7 @@ const reviews = async (fastify, opts) => {
             await fastify.db.review.update({ data, where: { id } });
 
             // XXX 非必每次评测都更新，定时刷新App的评分或者异步请求更新
-            await fastify.app.computeAppScore({ appId: review.appId });
+            await fastify.app.computeAndUpdateAppScore({ appId: review.appId });
         }
         return reply.code(204).send();
     });
