@@ -1,4 +1,4 @@
-'use client';
+'use strict';
 
 import { Prisma } from '@prisma/client'
 import { Pagination } from '../constants.js';

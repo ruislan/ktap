@@ -124,18 +124,11 @@ const apps = async function (fastify, opts) {
 
     // 热门游戏
     // 用于首页侧边展示
-    // XXX 热度算法，目前采用最简单的办法，最近一次的评价的时间和当前时间的越近，热度越高，后续会有更多因子影响的算法。
-    // XXX 尽量避免这种靠数据库来计算的方式
     fastify.get('/by-hot', async function (req, reply) {
         const { limit } = Pagination.parse(0, req.query.limit);
 
         const data = await fastify.caching.get(`apps_by_hot_${limit}`, async () => {
-            let apps = await fastify.db.$queryRaw`
-                SELECT a.*, am.image, am.thumbnail FROM
-                (SELECT a.*, max(r.updated_at) AS latest_updated FROM App a LEFT JOIN Review r ON a.id = r.app_id GROUP BY a.id LIMIT ${limit}) a
-                LEFT JOIN AppMedia am ON a.id = am.app_id WHERE a.is_visible=${true} AND am.usage = ${AppMedia.usage.landscape}
-                ORDER BY a.latest_updated DESC
-            `;
+            let apps = await fastify.app.getHotApps({ limit });
             // transform data
             apps = apps.map(item => {
                 return {

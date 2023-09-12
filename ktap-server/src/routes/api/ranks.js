@@ -5,21 +5,7 @@ const ranks = async (fastify, opts) => {
     const TOP_LIMIT = 100; // 缓存直接 100 个全取出来，数据量不大
 
     const getAppListOrderBy = async function (orderBy) {
-        const data = await fastify.db.app.findMany({
-            where: { isVisible: true, },
-            select: {
-                id: true, name: true, summary: true, score: true,
-                media: {
-                    where: { usage: AppMedia.usage.head },
-                    select: {
-                        image: true,
-                        thumbnail: true,
-                    },
-                },
-            },
-            orderBy,
-            take: TOP_LIMIT,
-        });
+        const data = await fastify.app.getAppsOrderBy({ orderBy, limit: TOP_LIMIT });
         data.forEach(app => {
             app.media = {
                 head: {

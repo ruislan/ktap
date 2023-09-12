@@ -1,4 +1,4 @@
-'use client';
+'use strict';
 
 const app = async (fastify, opts, next) => {
     fastify.decorate('timeline', {

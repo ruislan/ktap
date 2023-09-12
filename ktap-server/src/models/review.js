@@ -1,4 +1,4 @@
-'use client';
+'use strict';
 
 const review = async (fastify, opts, next) => {
     fastify.decorate('review', {

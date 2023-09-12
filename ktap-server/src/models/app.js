@@ -1,4 +1,6 @@
-'use client';
+'use strict';
+
+import { AppMedia } from '../constants.js';
 
 const app = async (fastify, opts, next) => {
     fastify.decorate('app', {
@@ -45,7 +47,36 @@ const app = async (fastify, opts, next) => {
                 { score: 5, count: Number(lData.l5) || 0 }
             ];
             return ratings;
-        }
+        },
+        // XXX 热度算法，目前采用最简单的办法，最近一次的评价的时间和当前时间的越近，热度越高，后续会有更多因子影响的算法。
+        async getHotApps({ limit }) {
+            let apps = await fastify.db.$queryRaw`
+                SELECT a.*, am.image, am.thumbnail FROM
+                (SELECT a.*, max(r.updated_at) AS latest_updated FROM App a LEFT JOIN Review r ON a.id = r.app_id GROUP BY a.id LIMIT ${limit}) a
+                LEFT JOIN AppMedia am ON a.id = am.app_id WHERE a.is_visible=${true} AND am.usage = ${AppMedia.usage.landscape}
+                ORDER BY a.latest_updated DESC
+            `;
+            return apps;
+        },
+        // XXX 可能需要更多的 opts 来赋予这个 getApps 更多的概括和应变能力
+        async getAppsOrderBy({ orderBy, limit }) {
+            const apps = await fastify.db.app.findMany({
+                where: { isVisible: true, },
+                select: {
+                    id: true, name: true, summary: true, score: true,
+                    media: {
+                        where: { usage: AppMedia.usage.head },
+                        select: {
+                            image: true,
+                            thumbnail: true,
+                        },
+                    },
+                },
+                orderBy,
+                take: limit,
+            });
+            return apps;
+        },
     });
     next();
 };

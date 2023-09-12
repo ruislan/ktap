@@ -1,4 +1,4 @@
-'use client';
+'use strict';
 
 import { Notification } from '../constants.js';
 

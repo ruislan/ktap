@@ -1,4 +1,4 @@
-'use client';
+'use strict';
 
 import sanitizeHtml from 'sanitize-html';
 import { Notification, Errors } from '../constants.js';

@@ -1,4 +1,5 @@
-'use client';
+'use strict';
+
 import fp from 'fastify-plugin';
 
 import app from './app.js';
