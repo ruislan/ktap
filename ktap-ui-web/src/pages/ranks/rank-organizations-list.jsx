@@ -35,7 +35,7 @@ function RankOrganizationsList({ apiUrl }) {
             {dataList && dataList.map((org, index) => {
                 return (
                     <Capsule key={index} href={`/organizations/${org.id}`}>
-                        <LabelLarge width='32px' alignSelf='center' marginRight='scale300' marginLeft='scale0' overrides={{
+                        <LabelLarge width='scale950' alignSelf='center' marginRight='scale300' marginLeft='scale0' overrides={{
                             Block: {
                                 style: {
                                     textAlign: 'center',
