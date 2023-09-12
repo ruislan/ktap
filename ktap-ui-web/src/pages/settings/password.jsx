@@ -56,7 +56,7 @@ function SettingsPassword() {
                         onChange={e => setForm({ ...form, newPassword: e.currentTarget.value })}
                     />
                 </FormControl>
-                <Block marginTop='scale600'><Button isLoading={isLoading} disabled={form.oldPassword.length < 6 || form.newPassword.length < 6 || form.oldPassword != form.newPassword} size='compact' type='submit' kind='secondary'>保存</Button></Block>
+                <Block marginTop='scale600'><Button isLoading={isLoading} disabled={form.oldPassword.length < 6 || form.newPassword.length < 6} size='compact' type='submit' kind='secondary'>保存</Button></Block>
             </form>
         </Block>
     );
