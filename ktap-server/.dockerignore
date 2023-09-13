@@ -4,6 +4,7 @@
 node_modules
 docs
 .git
+db
 prisma/*.db
 temp
 public/uploads

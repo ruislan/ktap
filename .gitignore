@@ -26,6 +26,8 @@ yarn-error.log*
 
 # folder
 temp
+db
+runtime
 uploads
 NOTE.md
 IDEA.md

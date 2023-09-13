@@ -25,6 +25,7 @@ function ContactItem({ href, title, target, icon, }) {
 }
 
 function OrganizationContact({ data }) {
+    if (!data?.site) return null;
     return (
         <Block backgroundColor='backgroundSecondary' marginBottom='scale800' padding='scale600' overrides={{
             Block: {
@@ -33,9 +34,8 @@ function OrganizationContact({ data }) {
                 })
             }
         }}>
-
             <Block display='flex' gridGap='scale100'>
-                {data?.site && <ContactItem href={data.site} title='官网' icon={<Earth width='32px' />} target='_blank' />}
+                <ContactItem href={data.site} title='官网' icon={<Earth width='32px' />} target='_blank' />
             </Block>
         </Block>
     );

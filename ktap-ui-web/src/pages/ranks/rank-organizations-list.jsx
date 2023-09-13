@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useStyletron } from 'baseui';
 import { Block } from "baseui/block";
+import { Hide as HideIcon } from 'baseui/icon';
 import { LabelMedium, LabelLarge, LabelXSmall } from 'baseui/typography';
 
 import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
@@ -47,7 +48,17 @@ function RankOrganizationsList({ apiUrl }) {
                             }
                         }}>{index + 1}</LabelLarge>
                         <Block width='72px' height='72px'>
-                            <img src={org.logo} className={css({ width: '100%', height: '100%', borderRadius: theme.sizing.scale100 })} />
+                            {
+                                org.logo ?
+                                    <img src={org.logo} className={css({ width: '100%', height: '100%', borderRadius: theme.sizing.scale100 })} /> :
+                                    <div className={css({
+                                        width: '100%', height: '100%', borderRadius: theme.sizing.scale100,
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center',
+                                        backgroundColor: 'rgba(41,41,41,.6)',
+                                    })}>
+                                        <HideIcon $size='scale800' />
+                                    </div>
+                            }
                         </Block>
                         <Block display='flex' alignSelf='center' flexDirection='column' paddingLeft='scale600' paddingRight='scale600'
                             paddingTop='scale100' flex={1} overflow='auto'

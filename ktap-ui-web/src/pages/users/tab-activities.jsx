@@ -86,7 +86,6 @@ function ActivityItem({ activity }) {
                                                 <LabelMedium marginBottom='scale100' color='primary100' overrides={{
                                                     Block: {
                                                         style: {
-                                                            inlineSize: '168px',
                                                             whiteSpace: 'break-spaces',
                                                         }
                                                     }

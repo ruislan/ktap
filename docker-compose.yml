@@ -16,6 +16,9 @@ services:
     container_name: ktap-server
     image: ktap-server:latest
     build: ./ktap-server
+    volumes:
+      - ./runtime/public:/app/public:rw
+      - ./runtime/prisma:/app/prisma:rw
     networks:
       - ktap
 

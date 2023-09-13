@@ -69,11 +69,9 @@ function CardListApp({ title, dataList, perViewSize = 4, }) {
                         <SwiperSlide key={index}>
                             <Link to={data.link}
                                 className={css({
-                                    display: 'flex',
-                                    flexDirection: 'column',
+                                    display: 'flex', flexDirection: 'column',
                                     borderRadius: theme.borders.radius300,
-                                    textDecoration: 'none',
-                                    color: 'inherit',
+                                    textDecoration: 'none', color: 'inherit',
                                 })}
                             >
                                 <Block display='flex'><img width='100%' src={data.image} className={css({ borderTopLeftRadius: theme.borders.radius300, borderTopRightRadius: theme.borders.radius300 })} /></Block>
@@ -87,7 +85,7 @@ function CardListApp({ title, dataList, perViewSize = 4, }) {
                                         }
                                     }}
                                 >
-                                    <LabelXSmall>{data.name}</LabelXSmall>
+                                    <LabelXSmall textOverflow='ellipsis' overflow='hidden' whiteSpace='nowrap'>{data.name}</LabelXSmall>
                                 </Block>
                             </Link>
                         </SwiperSlide>
