@@ -13,7 +13,7 @@ import GiftType from '@ktap/components/gift';
 import { useAuth } from '@ktap/hooks/use-auth';
 import Notification from '@ktap/components/notification';
 import { DateTime, Styles, runIfFn } from '@ktap/libs/utils';
-import { Hand, Quote, ThumbDown, Gift, ThumbUp, TrashBin, Update as UpdateIcon } from '@ktap/components/icons';
+import { Hand, Quote, ThumbDown, Gift, ThumbUp, TrashBin, Update as UpdateIcon, Icon } from '@ktap/components/icons';
 import '@ktap/assets/css/post.css';
 
 import UserBar from './user-bar';
@@ -146,26 +146,26 @@ function PostActions({ discussion, post, isFirst, actions, onQuoteClick, onUpdat
             <Block display='flex' flexDirection='column' width='100%' marginTop='scale600'>
                 <Block display='flex' width='100%' justifyContent='space-between' alignItems='center'>
                     <Block display='flex' gridGap='scale100'>
-                        {actions.thumb && <Button kind='secondary' size='mini' onClick={() => handleThumb('up')} startEnhancer={() => <ThumbUp width={16} height={16} />} overrides={Styles.Button.Act} isSelected={isActiveThumbUp} isLoading={isDoingThumbUp}>
+                        {actions.thumb && <Button kind='secondary' size='mini' onClick={() => handleThumb('up')} startEnhancer={() => <Icon><ThumbUp /></Icon>} overrides={Styles.Button.Act} isSelected={isActiveThumbUp} isLoading={isDoingThumbUp}>
                             赞 {post.meta?.ups || 0}
                         </Button>}
-                        {actions.thumb && <Button kind='secondary' size='mini' onClick={() => handleThumb('down')} overrides={Styles.Button.Act} isSelected={isActiveThumbDown} isLoading={isDoingThumbDown} startEnhancer={() => <ThumbDown width={16} height={16} />}>
+                        {actions.thumb && <Button kind='secondary' size='mini' onClick={() => handleThumb('down')} overrides={Styles.Button.Act} isSelected={isActiveThumbDown} isLoading={isDoingThumbDown} startEnhancer={() => <Icon><ThumbDown /></Icon>}>
                             踩 {post.meta?.downs || 0}
                         </Button>}
-                        {actions.gift && <Button kind='secondary' size='mini' onClick={() => handleOpenGiftModal()} overrides={Styles.Button.Act} startEnhancer={() => <Gift width={16} height={16} />}>
+                        {actions.gift && <Button kind='secondary' size='mini' onClick={() => handleOpenGiftModal()} overrides={Styles.Button.Act} startEnhancer={() => <Icon><Gift /></Icon>}>
                             赏 {post.meta?.gifts || 0}
                         </Button>}
                     </Block>
                     <Block display='flex' gridGap='scale100'>
-                        {actions.quote && !discussion.isClosed && <Button kind='secondary' size='mini' onClick={onQuoteClick} overrides={Styles.Button.Act} title='引用回复'><Quote width={16} height={16} /></Button>}
+                        {actions.quote && !discussion.isClosed && <Button kind='secondary' size='mini' onClick={onQuoteClick} overrides={Styles.Button.Act} title='引用回复'><Icon><Quote /></Icon></Button>}
                         {actions.report && !isReported && user && user.id !== post.user.id &&
-                            <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} overrides={Styles.Button.Act} title='举报'><Hand width={16} height={16} /></Button>
+                            <Button kind='secondary' size='mini' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} overrides={Styles.Button.Act} title='举报'><Icon><Hand /></Icon></Button>
                         }
                         {actions.update && operations.update && !discussion.isClosed &&
-                            <Button kind='secondary' size='mini' title='编辑' onClick={onUpdateClick}><UpdateIcon width={16} height={16} /></Button>
+                            <Button kind='secondary' size='mini' title='编辑' onClick={onUpdateClick}><Icon><UpdateIcon /></Icon></Button>
                         }
                         {actions.delete && operations.delete && !isFirst && !discussion.isClosed &&
-                            <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }}><TrashBin width={16} height={16} /></Button>
+                            <Button kind='secondary' size='mini' title='删除' onClick={() => { setIsOpenDeleteConfirmModal(true); }}><Icon><TrashBin /></Icon></Button>
                         }
                     </Block>
                 </Block>

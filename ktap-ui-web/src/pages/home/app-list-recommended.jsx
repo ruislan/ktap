@@ -5,7 +5,7 @@ import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelLarge, ParagraphMedium } from 'baseui/typography';
 
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 import Image from '@ktap/components/image';
 import Tag from '@ktap/components/tag';
 import { PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
@@ -56,7 +56,7 @@ function AppCard({ app }) {
                         }}>
                             {app.score}
                         </Block>
-                        <Star width='24px' height='24px' />
+                        <Icon $size='lg'><Star /></Icon>
                     </Block>
                 </LabelLarge>
                 <ParagraphMedium color='primary100' marginTop='0' marginBottom='0'>{app.summary}</ParagraphMedium>

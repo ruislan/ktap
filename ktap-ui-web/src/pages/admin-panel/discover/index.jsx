@@ -12,7 +12,7 @@ import { FormControl } from 'baseui/form-control';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 
 import { MOBILE_BREAKPOINT, PageWidget } from '@ktap/libs/utils';
-import { Eye } from '@ktap/components/icons';
+import { Eye, Icon } from '@ktap/components/icons';
 
 function DiscoverWidget({ widget, onChanged, onSaved, onDeleted }) {
     const { enqueue } = useSnackbar();
@@ -192,7 +192,7 @@ function AdminPanelDiscover() {
                 }
             }}>
                 <Block display='flex' alignItems='center' gridGap='scale300'>
-                    <Button kind='secondary' size='mini' shape='circle' $as='a' href='/discover' target='_blank' ><Eye width={16} height={16} title='查看' /></Button>
+                    <Button kind='secondary' size='mini' shape='circle' $as='a' href='/discover' target='_blank' ><Icon><Eye /></Icon></Button>
                 </Block>
             </Block>
             {isLoading ?

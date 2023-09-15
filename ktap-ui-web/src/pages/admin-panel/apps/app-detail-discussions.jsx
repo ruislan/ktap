@@ -12,7 +12,7 @@ import { Check, Delete, Plus } from 'baseui/icon';
 import { Button } from 'baseui/button';
 import { Select } from 'baseui/select';
 
-import { ChatAlt2 } from '@ktap/components/icons';
+import { ChatAlt2Outline, Icon } from '@ktap/components/icons';
 import Tag from '@ktap/components/tag';
 
 function AppDetailDiscussions({ data }) {
@@ -177,7 +177,7 @@ function AppDetailDiscussions({ data }) {
                                     : <div className={css({
                                         borderRadius: theme.borders.radius300, width: theme.sizing.scale1200, height: theme.sizing.scale1200,
                                     })} title={channel.name}>
-                                        <ChatAlt2 />
+                                        <Icon $size='full'><ChatAlt2Outline /></Icon>
                                     </div>
                                 }
                                 <Block display='flex' flexDirection='column' gridGap='scale100' width='calc(100% - 56px)'>

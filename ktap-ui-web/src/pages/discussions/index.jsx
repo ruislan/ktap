@@ -7,7 +7,7 @@ import { LabelXSmall, LabelSmall, LabelMedium, HeadingXLarge, ParagraphMedium } 
 import { Input } from 'baseui/input';
 import { ArrowRight } from 'baseui/icon';
 
-import { FatSearch } from '@ktap/components/icons';
+import { FatSearch, Icon } from '@ktap/components/icons';
 import { LAYOUT_DEFAULT, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import { ChatAlt2, User } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
@@ -103,7 +103,7 @@ function Discussions() {
                     }}>
                         <Input inputRef={keywordRef} size='default' placeholder='搜索感兴趣的游戏...'
                             onKeyUp={e => e.key === 'Enter' && fetchData()}
-                            startEnhancer={<FatSearch width='18px' height='18px' />}
+                            startEnhancer={<Icon><FatSearch /></Icon>}
                             endEnhancer={<ArrowRight cursor='pointer' onClick={() => fetchData()} size='scale800' />}
                         />
                     </Block>
@@ -154,8 +154,8 @@ function Discussions() {
                                 }}>{app.summary}</LabelSmall>
                             </Block>
                             <Block display='flex' justifyContent='space-between' alignItems='center' width='100%'>
-                                <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><User width='16px' height='16px' />{app?.meta?.users} 人参与</LabelXSmall>
-                                <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><ChatAlt2 width='16px' height='16px' /> {app?.meta?.discussions} 个讨论</LabelXSmall>
+                                <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><Icon><User /></Icon>{app?.meta?.users} 人参与</LabelXSmall>
+                                <LabelXSmall color='primary300' display='flex' alignItems='center' gridGap='scale0'><Icon><ChatAlt2 /></Icon> {app?.meta?.discussions} 个讨论</LabelXSmall>
                             </Block>
                         </div>
                     </Link>

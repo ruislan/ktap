@@ -11,7 +11,7 @@ import { Textarea } from 'baseui/textarea';
 import { Skeleton } from 'baseui/skeleton';
 import { StarRating } from 'baseui/rating';
 
-import { Photograph } from '@ktap/components/icons';
+import { Icon, Photograph } from '@ktap/components/icons';
 import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import { useAuth } from '@ktap/hooks/use-auth';
 import useScoreRemark from '@ktap/hooks/use-score-remark';
@@ -181,7 +181,7 @@ function TabReviewsUsersEditor({ app }) {
                                                     return { ...prev, files: [...prev.files, ...newFiles].slice(0, seats) };
                                                 });
                                             }} />
-                                            <Photograph width={20} height={20} />
+                                            <Icon $size='lg'><Photograph /></Icon>
                                             <LabelSmall color='inherit' marginLeft='scale0'>
                                                 <LabelSmall overrides={{
                                                     Block: {

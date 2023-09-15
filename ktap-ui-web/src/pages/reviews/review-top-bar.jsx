@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { LabelLarge, LabelMedium, LabelXSmall } from 'baseui/typography';
 
 import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 import AvatarSquare from '@ktap/components/avatar-square';
 import useScoreRemark from '@ktap/hooks/use-score-remark';
 import RouterLink from '@ktap/components/router-link';
@@ -51,7 +51,7 @@ const ReviewTopBar = React.memo(function ReviewTopBar({ user, score }) {
                         }}>
                             {score}
                         </LabelMedium>
-                        <Star width={28} height={28} />
+                        <Icon $size='xl'><Star /></Icon>
                     </Block>
                 </Block>
             </Block>

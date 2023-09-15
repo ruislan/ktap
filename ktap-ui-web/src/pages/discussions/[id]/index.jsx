@@ -7,7 +7,7 @@ import { HeadingXSmall, LabelSmall } from 'baseui/typography';
 
 import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
-import { Lock, Pin } from '@ktap/components/icons';
+import { Icon, Lock, Pin } from '@ktap/components/icons';
 
 import Post from './post';
 import Posts from './posts';
@@ -69,8 +69,8 @@ export default function Discussion() {
                 }}
             >
                 <HeadingXSmall margin='0' maxWidth='100%'>
-                    {discussion.isClosed && (<div className={css({ display: 'inline-flex', float: 'left', marginTop: theme.sizing.scale0, marginRight: theme.sizing.scale0, color: theme.colors.primary200 })}><Lock width='24px' height='24px' /></div>)}
-                    {discussion.isSticky && (<div className={css({ display: 'inline-flex', float: 'left', marginTop: theme.sizing.scale0, marginRight: theme.sizing.scale100, color: theme.colors.primary200 })}><Pin width='24px' height='24px' /></div>)}
+                    {discussion.isClosed && (<div className={css({ display: 'inline-flex', float: 'left', marginTop: theme.sizing.scale0, marginRight: theme.sizing.scale0, color: theme.colors.primary200 })}><Icon $size='xl'><Lock /></Icon></div>)}
+                    {discussion.isSticky && (<div className={css({ display: 'inline-flex', float: 'left', marginTop: theme.sizing.scale0, marginRight: theme.sizing.scale100, color: theme.colors.primary200 })}><Icon $size='xl'><Pin /></Icon></div>)}
                     {discussion.title}
                 </HeadingXSmall>
             </Block>

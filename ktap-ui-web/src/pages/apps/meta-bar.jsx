@@ -6,7 +6,7 @@ import { StatefulTooltip } from "baseui/tooltip";
 
 import useScoreRemark from '@ktap/hooks/use-score-remark';
 import { MOBILE_BREAKPOINT } from '@ktap/libs/utils';
-import { Question } from '@ktap/components/icons';
+import { Icon, Question } from '@ktap/components/icons';
 
 function MetaItem({ label, value, tips, title, }) {
     return (
@@ -25,7 +25,7 @@ function MetaItem({ label, value, tips, title, }) {
                 {title &&
                     <StatefulTooltip content={title} autoFocus returnFocus accessibilityType='tooltip' placement='top'>
                         <Block display='flex' justifyContent='center' alignItems='center'>
-                            <Question width='16' height='16' />
+                            <Icon><Question /></Icon>
                         </Block>
                     </StatefulTooltip>}
             </LabelMedium>

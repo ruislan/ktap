@@ -6,7 +6,7 @@ import { Button } from 'baseui/button';
 import { HeadingSmall, LabelSmall } from 'baseui/typography';
 import { Skeleton } from 'baseui/skeleton';
 
-import { Eye } from '@ktap/components/icons';
+import { Eye, Icon } from '@ktap/components/icons';
 import { DateTime, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import '@ktap/assets/css/post.css';
 
@@ -107,7 +107,7 @@ function NewsDetail() {
                             <Block display='flex' alignItems='center' marginBottom='scale1000'>
                                 <LabelSmall color='primary300'>{DateTime.formatCN(data.updatedAt)}</LabelSmall>
                                 <Block display='flex' alignItems='center' marginLeft='scale600'>
-                                    <LabelSmall display='flex' color='primary300'><Eye width='18px' height='18px' /></LabelSmall>
+                                    <LabelSmall display='flex' color='primary300'><Icon><Eye /></Icon></LabelSmall>
                                     <LabelSmall color='primary300' marginLeft='scale100'>{data.meta.views} 阅读</LabelSmall>
                                 </Block>
                             </Block>

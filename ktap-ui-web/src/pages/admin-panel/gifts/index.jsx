@@ -14,7 +14,7 @@ import { StatefulPopover } from 'baseui/popover';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 import { StyledLink } from 'baseui/link';
 
-import { EditLine, TrashBin, ExternalLink } from '@ktap/components/icons';
+import { EditLine, TrashBin, ExternalLink, Icon } from '@ktap/components/icons';
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
 
 function AdminPanelGifts() {
@@ -183,7 +183,7 @@ function AdminPanelGifts() {
                             {row =>
                                 <Block display='flex' alignItems='center' gridGap='scale300'>
                                     <LabelSmall whiteSpace='nowrap' textOverflow='ellipsis' width='160px' maxWidth='160px' overflow='hidden'>{row.url}</LabelSmall>
-                                    <Block display='flex'><StyledLink href={row.url} target='_blank'><ExternalLink width={16} /></StyledLink></Block>
+                                    <Block display='flex'><StyledLink href={row.url} target='_blank'><Icon><ExternalLink /></Icon></StyledLink></Block>
                                 </Block>
                             }
                         </TableBuilderColumn>
@@ -196,11 +196,11 @@ function AdminPanelGifts() {
                                     <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                         setGift({ id: row.id, name: row.name, description: row.description, price: row.price, url: row.url });
                                         setIsOpenEditModal(true);
-                                    }}><EditLine width={16} height={16} /></Button>
+                                    }}><Icon><EditLine /></Icon></Button>
                                     <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                         setSelectedId(row?.id);
                                         setIsOpenDeleteConfirmModal(true);
-                                    }}><TrashBin width={16} height={16} /></Button>
+                                    }}><Icon><TrashBin /></Icon></Button>
                                 </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

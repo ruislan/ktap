@@ -4,11 +4,11 @@ import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { LabelMedium, LabelSmall, ParagraphMedium, ParagraphSmall } from 'baseui/typography';
 
-import { Annotation, Bookmark, ChatAlt2, Star, Gift as GiftIcon } from '@ktap/components/icons';
+import { Annotation, Bookmark, Star, Gift as GiftIcon, Icon, ChatAlt2Outline } from '@ktap/components/icons';
 import RouterLink from '@ktap/components/router-link';
 import Gift from '@ktap/components/gift';
 import LoadMore from '@ktap/components/load-more';
-import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
+import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import '@ktap/assets/css/post.css';
 
 function LeftLine({ type }) {
@@ -29,10 +29,10 @@ function LeftLine({ type }) {
                     })
                 }
             }}>
-                {(type === 'Review' || type === 'Discussion') && <Annotation width='18px' height='18px' />}
-                {(type === 'ReviewComment' || type === 'DiscussionPost') && <ChatAlt2 width='18px' height='18px' />}
-                {(type === 'FollowApp' || type == 'FollowUser') && <Bookmark width='18px' height='18px' />}
-                {(type === 'ReviewGiftRef' || type === 'DiscussionPostGiftRef') && <GiftIcon width='18px' height='18px' />}
+                {(type === 'Review' || type === 'Discussion') && <Icon $size='lg'><Annotation /></Icon>}
+                {(type === 'ReviewComment' || type === 'DiscussionPost') && <Icon $size='lg'><ChatAlt2Outline /></Icon>}
+                {(type === 'FollowApp' || type == 'FollowUser') && <Icon $size='lg'><Bookmark /></Icon>}
+                {(type === 'ReviewGiftRef' || type === 'DiscussionPostGiftRef') && <Icon $size='lg'><GiftIcon /></Icon>}
             </Block>
             <Block height='100%' marginLeft='auto' marginRight='auto' marginTop='scale200' marginBottom='scale200'>
                 <Block overrides={{
@@ -86,7 +86,10 @@ function ActivityItem({ activity }) {
                                                 <LabelMedium marginBottom='scale100' color='primary100' overrides={{
                                                     Block: {
                                                         style: {
-                                                            whiteSpace: 'break-spaces',
+                                                            [MOBILE_BREAKPOINT]: {
+                                                                inlineSize: '168px',
+                                                                whiteSpace: 'break-spaces',
+                                                            }
                                                         }
                                                     }
                                                 }}>
@@ -94,7 +97,7 @@ function ActivityItem({ activity }) {
                                                 </LabelMedium>
                                                 <Block display='flex' alignItems='center'>
                                                     <LabelMedium marginRight='scale0' color='primary100'>{activity.data.app.score}</LabelMedium>
-                                                    <Star width='20px' height='20px' />
+                                                    <Icon><Star /></Icon>
                                                 </Block>
                                             </Block>
                                         </>
@@ -184,8 +187,10 @@ function ActivityItem({ activity }) {
                                         <LabelMedium marginBottom='scale100' overrides={{
                                             Block: {
                                                 style: {
-                                                    inlineSize: '168px',
-                                                    whiteSpace: 'break-spaces',
+                                                    [MOBILE_BREAKPOINT]: {
+                                                        inlineSize: '168px',
+                                                        whiteSpace: 'break-spaces',
+                                                    }
                                                 }
                                             }
                                         }}>
@@ -193,7 +198,7 @@ function ActivityItem({ activity }) {
                                         </LabelMedium>
                                         <Block display='flex' alignItems='center'>
                                             <LabelMedium marginRight='scale0' color='primary100'>{activity.data.score}</LabelMedium>
-                                            <Star width='20px' height='20px' />
+                                            <Icon><Star /></Icon>
                                         </Block>
                                     </Block>
                                 </>) :
@@ -230,8 +235,10 @@ function ActivityItem({ activity }) {
                                                 <LabelMedium marginBottom='scale100' color='primary100' overrides={{
                                                     Block: {
                                                         style: {
-                                                            inlineSize: '168px',
-                                                            whiteSpace: 'break-spaces',
+                                                            [MOBILE_BREAKPOINT]: {
+                                                                inlineSize: '168px',
+                                                                whiteSpace: 'break-spaces',
+                                                            }
                                                         }
                                                     }
                                                 }}>
@@ -239,7 +246,7 @@ function ActivityItem({ activity }) {
                                                 </LabelMedium>
                                                 <Block display='flex' alignItems='center'>
                                                     <LabelMedium marginRight='scale0' color='primary100'>{activity.data.app.score}</LabelMedium>
-                                                    <Star width='20px' height='20px' />
+                                                    <Icon><Star /></Icon>
                                                 </Block>
                                             </Block>
                                         </>

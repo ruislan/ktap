@@ -15,7 +15,7 @@ import { FormControl } from 'baseui/form-control';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 
 import { DateTime, MOBILE_BREAKPOINT, Organization, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { EditLine, Eye, TrashBin } from '@ktap/components/icons';
+import { EditLine, Eye, Icon, TrashBin } from '@ktap/components/icons';
 
 function AdminPanelOrganizations() {
     const limit = PAGE_LIMIT_SMALL;
@@ -188,16 +188,16 @@ function AdminPanelOrganizations() {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' $as='a' href={`/organizations/${row.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' $as='a' href={`/organizations/${row.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                                     e.preventDefault();
                                     setOrganization({ id: row.id, name: row.name, summary: row.summary, logo: row.logo, site: row.site, type: row.type, country: row.country, userId: row.userId });
                                     setIsOpenEditModal(true);
-                                }}><EditLine width={16} height={16} /></Button>
+                                }}><Icon><EditLine /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' disabled={(row.meta?.developed || 0 + row.meta?.published || 0) > 0} onClick={() => {
                                     setSelectedId(row.id);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

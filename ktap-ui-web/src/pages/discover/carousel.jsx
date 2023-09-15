@@ -6,13 +6,12 @@ import { Block } from 'baseui/block';
 import { LabelMedium, HeadingSmall, ParagraphMedium, LabelSmall } from 'baseui/typography';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, EffectFade } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import 'swiper/css';
-import "swiper/css/effect-fade";
 
 import Tag from '@ktap/components/tag';
 import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 
 function Carousel({ title, dataList }) {
     const navigate = useNavigate();
@@ -39,7 +38,7 @@ function Carousel({ title, dataList }) {
                 </Block>
             )}
             <Block>
-                <Swiper modules={[Autoplay, EffectFade]} effect='fade'
+                <Swiper modules={[Autoplay]} loop
                     autoplay={{
                         delay: 2500,
                         disableOnInteraction: true,
@@ -115,7 +114,7 @@ function Carousel({ title, dataList }) {
                                     }}>{data.name}</HeadingSmall>
                                     <Block display='flex' alignItems='center' justifyContent='flex-start'>
                                         <LabelMedium marginRight='scale0'>{data.score}</LabelMedium>
-                                        <Star width='20px' height='20px' />
+                                        <Icon><Star /></Icon>
                                     </Block>
                                     <ParagraphMedium marginTop='scale300' marginBottom='scale300' flex={1} overrides={{
                                         Block: {

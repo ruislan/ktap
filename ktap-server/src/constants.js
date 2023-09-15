@@ -101,19 +101,21 @@ export const TagCategory = {
 };
 
 export const SocialLinkBrands = {
-    site: { id: 'site', name: '官网' },
-    qq: { id: 'qq', name: 'QQ' },
-    wechat: { id: 'wechat', name: '微信' },
     bilibili: { id: 'bilibili', name: '哔哩哔哩' },
-    weibo: { id: 'weibo', name: '微博' },
-    zhihu: { id: 'zhihu', name: '知乎' },
     discord: { id: 'discord', name: 'Discord' },
-    youtube: { id: 'youtube', name: 'YouTube' },
-    twitch: { id: 'twitch', name: 'Twitch' },
     facebook: { id: 'facebook', name: 'Facebook' },
     instagram: { id: 'instagram', name: 'Instagram' },
-    twitter: { id: 'twitter', name: 'Twitter' },
+    qq: { id: 'qq', name: 'QQ' },
+    reddit: { id: 'reddit', name: 'Reddit' },
+    site: { id: 'site', name: '官网' },
+    skype: { id: 'skype', name: 'Skype' },
     steam: { id: 'steam', name: 'Steam' },
+    twitch: { id: 'twitch', name: 'Twitch' },
+    twitter: { id: 'twitter', name: 'Twitter' },
+    youtube: { id: 'youtube', name: 'YouTube' },
+    weibo: { id: 'weibo', name: '微博' },
+    wechat: { id: 'wechat', name: '微信' },
+    zhihu: { id: 'zhihu', name: '知乎' },
 };
 
 export const AppPlatform = {

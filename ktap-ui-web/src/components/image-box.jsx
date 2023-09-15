@@ -1,5 +1,5 @@
 import { Block } from 'baseui/block';
-import { TrashBin } from './icons';
+import { Icon, TrashBin } from './icons';
 
 function ImageBox({ src, isDeletable = false, onClickDelete, }) {
     return (
@@ -24,7 +24,7 @@ function ImageBox({ src, isDeletable = false, onClickDelete, }) {
                             })
                         }
                     }}>
-                    <TrashBin width='16px' height='16px' />
+                    <Icon><TrashBin /></Icon>
                 </Block>
             }
             <img width='100%' src={src}></img>

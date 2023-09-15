@@ -4,7 +4,7 @@ import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 import { Check } from 'baseui/icon';
 
-import { TrashBin, ListUnordered } from '@ktap/components/icons';
+import { TrashBin, ListUnordered, Icon } from '@ktap/components/icons';
 
 import { MENU_ITEMS } from './constants';
 import { LabelMedium } from 'baseui/typography';
@@ -40,7 +40,7 @@ function ClearButton({ type, onDone }) {
 
     return (
         <ActionButton color='inherit' title='全部清空' isLoading={isLoading} onClick={() => handleClick()}>
-            <TrashBin width='15px' height='15px' />
+            <Icon><TrashBin /></Icon>
         </ActionButton>
     );
 }
@@ -93,7 +93,7 @@ function TabBar({ activeIndex, onTabChange, onClear, onRead }) {
                 <Block display='flex' alignItems='center' color='primary300'>
                     <ClearButton type={MENU_ITEMS[activeIndex].type} onDone={() => onClear()} />
                     <ReadButton type={MENU_ITEMS[activeIndex].type} onDone={() => onRead()} />
-                    <ActionButton color='inherit' title='查看全部' onClick={() => navigate(activeIndex === 0 ? '/notifications' : `/notifications?type=${MENU_ITEMS[activeIndex].type}`)}><ListUnordered width='16px' height='16px' /></ActionButton>
+                    <ActionButton color='inherit' title='查看全部' onClick={() => navigate(activeIndex === 0 ? '/notifications' : `/notifications?type=${MENU_ITEMS[activeIndex].type}`)}><Icon><ListUnordered /></Icon></ActionButton>
                 </Block>
             </Block>
         </Block>

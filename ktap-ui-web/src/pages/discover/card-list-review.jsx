@@ -11,7 +11,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 import { MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 import AvatarSquare from '@ktap/components/avatar-square';
 import GenderLabel from '@ktap/components/gender-label';
 
@@ -116,7 +116,7 @@ function CardListReview({ title, dataList, perViewSize = 4, }) {
                                         </Block>
                                         <Block display='flex' alignItems='center'>
                                             <LabelMedium marginRight='scale0'>{data.score}</LabelMedium>
-                                            <Star width='20' />
+                                            <Icon><Star /></Icon>
                                         </Block>
                                     </Block>
                                 </Block>

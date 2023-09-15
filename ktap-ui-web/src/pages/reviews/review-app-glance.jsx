@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import { Button } from 'baseui/button';
 
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 
 function ReviewAppGlance({ app }) {
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ function ReviewAppGlance({ app }) {
                                     }}>{app.name}</LabelMedium>
                                     <Block display='flex' alignItems='center' justifyContent='flex-start'>
                                         <Block marginRight='scale0' font='font300'>{app.score}</Block>
-                                        <Star width='20px' height='20px' />
+                                        <Icon><Star /></Icon>
                                     </Block>
                                 </Block>
                             </Block>

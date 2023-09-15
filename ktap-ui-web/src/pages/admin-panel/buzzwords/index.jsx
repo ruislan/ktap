@@ -13,7 +13,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 import { ArrowLeft, ArrowRight, Plus, Check, Delete } from 'baseui/icon';
 
-import { EditLine, TrashBin } from '@ktap/components/icons';
+import { EditLine, Icon, TrashBin } from '@ktap/components/icons';
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
 
 function AdminPanelBuzzwords() {
@@ -182,11 +182,11 @@ function AdminPanelBuzzwords() {
                                     <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                         setBuzzword({ id: row.id, content: row.content, weight: row.weight });
                                         setIsOpenEditModal(true);
-                                    }}><EditLine width={16} height={16} /></Button>
+                                    }}><Icon><EditLine /></Icon></Button>
                                     <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                         setSelectedId(row?.id);
                                         setIsOpenDeleteConfirmModal(true);
-                                    }}><TrashBin width={16} height={16} /></Button>
+                                    }}><Icon><TrashBin /></Icon></Button>
                                 </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

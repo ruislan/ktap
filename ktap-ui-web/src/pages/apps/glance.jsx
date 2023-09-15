@@ -11,7 +11,7 @@ import { Input } from 'baseui/input';
 
 import { MOBILE_BREAKPOINT, AppMedia, DateTime } from '@ktap/libs/utils';
 import { useAuth } from '@ktap/hooks/use-auth';
-import { Linux, Mac, Win } from '@ktap/components/icons';
+import { Icon, Linux, Mac, Win, Apple, Android } from '@ktap/components/icons';
 import Tag from '@ktap/components/tag';
 import RouterLink from '@ktap/components/router-link';
 import Image from '@ktap/components/image';
@@ -274,16 +274,16 @@ function Glance({ data }) {
                                 {
                                     (() => {
                                         switch (platform.os) {
-                                            case 'Windows': return <Win width='20px' height='20px' />;
-                                            case 'Macos': return <Mac width='20px' height='20px' />;
-                                            case 'Linux': return <Linux width='20px' height='20px' />;
-                                            case 'iOS': return <Apple width='20px' height='20px' />;
-                                            case 'Android': return <Android width='20px' height='20px' />;
+                                            case 'Windows': return <Icon $size='xl'><Win /></Icon>;
+                                            case 'Macos': return <Icon $size='xl'><Mac /></Icon>;
+                                            case 'Linux': return <Icon $size='xl'><Linux /></Icon>;
+                                            case 'iOS': return <Icon $size='xl'><Apple /></Icon>;
+                                            case 'Android': return <Icon $size='xl'><Android /></Icon>;
                                             default: return <></>;
                                         }
                                     })()
                                 }
-                                <Block marginLeft='scale0'>{platform.os}</Block>
+                                <Block marginLeft='scale100'>{platform.os}</Block>
                             </Block>
                         )
                     } />

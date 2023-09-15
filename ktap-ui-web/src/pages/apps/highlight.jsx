@@ -10,7 +10,7 @@ import { FreeMode, Thumbs } from 'swiper/modules';
 
 import { AppMedia, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
-import { Play } from '@ktap/components/icons';
+import { Icon, Play } from '@ktap/components/icons';
 import '@ktap/assets/css/swiper.css';
 
 function Highlight({ data }) {
@@ -125,7 +125,7 @@ function Highlight({ data }) {
                                     {slide.type === 'video' && <div className={css({
                                         display: 'flex', alignItems: 'center', position: 'absolute',
                                         justifyContent: 'center', width: '100%', height: '100%',
-                                    })}><Play width={32} height={32} /></div>}
+                                    })}><Icon $size='3xl'><Play/></Icon></div>}
                                     <img className={css({
                                         display: 'block', objectFit: 'cover',
                                         width: '100%', height: '100%',

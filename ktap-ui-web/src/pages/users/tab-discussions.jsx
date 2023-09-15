@@ -5,7 +5,7 @@ import { Block } from 'baseui/block';
 import { LabelSmall, LabelMedium, ParagraphMedium } from 'baseui/typography';
 
 import RouterLink from '@ktap/components/router-link';
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
 import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 
@@ -83,7 +83,7 @@ function TabDiscussions({ theUser }) {
                                             </LabelMedium>
                                             <Block display='flex' alignItems='center'>
                                                 <LabelMedium marginRight='scale0' color='primary100'>{discussion.app.score}</LabelMedium>
-                                                <Star width='20px' height='20px' />
+                                                <Icon><Star /></Icon>
                                             </Block>
                                         </Block>
                                     </>

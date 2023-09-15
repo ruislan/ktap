@@ -5,7 +5,7 @@ import { Block } from 'baseui/block';
 import { LabelSmall } from 'baseui/typography';
 
 import SideBox from '@ktap/components/side-box';
-import { QQ, WeChat, Steam, BiliBili, Twitch, YouTube, Discord, Facebook, Instagram, Twitter, Earth } from '@ktap/components/icons';
+import { QQ, WeChat, Steam, BiliBili, Twitch, YouTube, Discord, Facebook, Instagram, Twitter, Earth, Icon, ZhiHu, WeiBo, Reddit, Skype } from '@ktap/components/icons';
 
 function getIcon(id) {
     id = id ? id.toLowerCase() : '';
@@ -20,6 +20,10 @@ function getIcon(id) {
         case 'facebook': return <Facebook />;
         case 'instagram': return <Instagram />;
         case 'twitter': return <Twitter />;
+        case 'zhihu': return <ZhiHu />;
+        case 'weibo': return <WeiBo />;
+        case 'reddit': return <Reddit />;
+        case 'skype': return <Skype />;
         default: return <Earth />;
     }
 }
@@ -45,12 +49,12 @@ function ContactItem({ icon, name, href, isBlank = true }) {
     });
     return href ? (
         <a href={href || '#'} target={isBlank ? '_blank' : '_top'} className={contractItemStyle} rel='noreferrer'>
-            <Block width='20px' height='20px' minWidth='20px'>{icon}</Block>
+            <Icon $size='lg'>{icon}</Icon>
             <LabelSmall marginLeft='scale100' overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis'>{name}</LabelSmall>
         </a>
     ) : (
         <div className={contractItemStyle}>
-            <Block width='20px' height='20px' minWidth='20px'>{icon}</Block>
+            <Icon $size='lg'>{icon}</Icon>
             <LabelSmall marginLeft='scale100' overflow='hidden' whiteSpace='nowrap' textOverflow='ellipsis'>{name}</LabelSmall>
         </div>
     );

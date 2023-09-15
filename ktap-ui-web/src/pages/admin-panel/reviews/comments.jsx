@@ -15,7 +15,7 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { useSnackbar } from 'baseui/snackbar';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { Eye, Rocket, TrashBin } from '@ktap/components/icons';
+import { Eye, Icon, Rocket, TrashBin } from '@ktap/components/icons';
 
 function AdminPanelReviewComments() {
     const limit = PAGE_LIMIT_SMALL;
@@ -124,7 +124,7 @@ function AdminPanelReviewComments() {
                     <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                         e.preventDefault();
                         setIsOpenMonkeyModal(true);
-                    }}><Rocket width={16} height={16} /></Button>
+                    }}><Icon><Rocket /></Icon></Button>
                     <Button size='mini' kind='secondary' shape='circle' isLoading={isLoading} disabled={!hasPrev}
                         onClick={() => setSkip(prev => prev - limit)}>
                         <ArrowLeft width={16} title='上一页' />
@@ -187,11 +187,11 @@ function AdminPanelReviewComments() {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' $as='a' href={`/reviews/${row.reviewId}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' $as='a' href={`/reviews/${row.reviewId}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                     setSelectedId(row?.id);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

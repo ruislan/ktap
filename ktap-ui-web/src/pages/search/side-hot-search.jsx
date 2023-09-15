@@ -5,7 +5,7 @@ import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
 
 import { Numbers } from '@ktap/libs/utils';
-import { Fire } from '@ktap/components/icons';
+import { Fire, Icon } from '@ktap/components/icons';
 import SideBox from '@ktap/components/side-box';
 import ListItem from '@ktap/components/list-item';
 
@@ -41,7 +41,7 @@ export default function SideHotSearch() {
                         <ListItem key={index} href={`/search?q=${content}`} replace={true}>
                             <LabelMedium>{content}</LabelMedium>
                             <Block display='flex' alignItems='center'>
-                                <Fire width='16px' height='16px' />
+                                <Icon><Fire /></Icon>
                                 <LabelSmall marginLeft='scale100'>{Numbers.abbreviate(hitCount)}</LabelSmall>
                             </Block>
                         </ListItem>

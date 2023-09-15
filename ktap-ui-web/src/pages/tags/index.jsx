@@ -9,7 +9,7 @@ import Tag from '@ktap/components/tag';
 import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import Tabs from '@ktap/components/tabs';
 import Capsule from '@ktap/components/capsule';
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 import LoadMore from '@ktap/components/load-more';
 
 import SideTags from './side-tags';
@@ -93,7 +93,7 @@ function TagContent() {
                                 }
                             }}>
                                 <LabelMedium marginRight='scale0'>{app.score}</LabelMedium>
-                                <Star width='20px' height='20px' />
+                                <Icon><Star /></Icon>
                             </Block>
                             <Block display='flex' overflow='auto' gridGap='scale300' alignItems='center' marginTop='scale300'>
                                 {app.tags && app.tags.map((tag, index) => <TagItem key={index} name={tag.name} />)}

@@ -9,7 +9,7 @@ import { LabelXSmall, LabelMedium } from 'baseui/typography';
 
 import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import Tag from '@ktap/components/tag';
-import { FatSearch, Star } from '@ktap/components/icons';
+import { FatSearch, Icon, Star } from '@ktap/components/icons';
 import Capsule from '@ktap/components/capsule';
 import LoadMore from '@ktap/components/load-more';
 
@@ -26,7 +26,7 @@ function SearchInput({ initKeyword = '' }) {
                         })
                     }
                 }}
-                startEnhancer={<FatSearch width='18px' height='18px' />}
+                startEnhancer={<Icon><FatSearch /></Icon>}
                 endEnhancer={<ArrowRight cursor='pointer' onClick={() => { navigate(`/search?q=${word}`, { replace: true }); }} size='scale800' />}
                 onChange={e => setWord(e.target.value)}
                 onKeyDown={e => {
@@ -119,7 +119,7 @@ function SearchPanel() {
                                 }
                             }}>
                                 <LabelMedium marginRight='scale0'>{app.score}</LabelMedium>
-                                <Star width='20px' height='20px' />
+                                <Icon><Star /></Icon>
                             </Block>
                             <Block display='flex' gridGap='scale300' overflow='auto' alignItems='center' marginTop='scale300'>
                                 {app.tags && app.tags.map((tag, index) => {

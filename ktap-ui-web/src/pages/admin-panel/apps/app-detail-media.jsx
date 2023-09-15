@@ -11,7 +11,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete } from 'baseui/icon';
 
 import { AppMedia, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
-import { TrashBin } from '@ktap/components/icons';
+import { Icon, TrashBin } from '@ktap/components/icons';
 
 function collectMediaItem(data, type) {
     return data.filter(item => item.usage === type).map(item => {
@@ -173,7 +173,7 @@ function GalleryBlock({ appId, galleryImages, galleryVideo, }) {
                                     return [...prev];
                                 });
                             }}>
-                                <TrashBin width={16} />
+                                <Icon><TrashBin /></Icon>
                             </Button>
                         </Block>
                         <FormControl label={<LabelSmall>视频</LabelSmall>}>
@@ -216,7 +216,7 @@ function GalleryBlock({ appId, galleryImages, galleryVideo, }) {
                                     return [...prev];
                                 });
                             }}>
-                                <TrashBin width={16} />
+                                <Icon><TrashBin /></Icon>
                             </Button>
                         </Block>
                         <FormControl label={<LabelSmall>原图</LabelSmall>} caption='2560x1440'>

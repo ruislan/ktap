@@ -18,7 +18,7 @@ import { StarRating } from 'baseui/rating';
 import { useAuth } from '../hooks/use-auth';
 import useScoreRemark from '../hooks/use-score-remark';
 import { DateTime, IMAGE_UPLOAD_SIZE_LIMIT, MOBILE_BREAKPOINT, Messages, PAGE_LIMIT_NORMAL, Styles } from '../libs/utils';
-import { ChevronRight, Gift, Hand, More, Photograph, Star, ThumbDown, ThumbUp, TrashBin } from './icons';
+import { ChevronRight, Gift, Hand, Icon, More, Photograph, Star, ThumbDown, ThumbUp, TrashBin } from './icons';
 import ImageBoxGallery from './image-box-gallery';
 import GiftType from './gift';
 import RouterLink from './router-link';
@@ -27,6 +27,7 @@ import AvatarSquare from './avatar-square';
 import ImageBox from './image-box';
 import LoadMore from './load-more';
 import Buzzword from './buzzword';
+import Notification from './notification';
 
 // 头部
 const Header = React.memo(function Header({ id, score = 0, }) {
@@ -55,7 +56,7 @@ const Header = React.memo(function Header({ id, score = 0, }) {
             <Block display='flex' alignItems='center'>
                 <Block display='flex' alignItems='center'>
                     <LabelMedium color='inherit' marginLeft='scale0' marginRight='scale100'>{score}</LabelMedium>
-                    <Star width={18} height={18} />
+                    <Icon><Star /></Icon>
                 </Block>
             </Block>
         </Link>
@@ -199,7 +200,7 @@ const Content = React.memo(function Content({ review, editable = false, afterUpd
                                 return { ...prev, files: [...prev.files, ...newFiles].slice(0, seats) };
                             });
                         }} />
-                        <Photograph width={20} height={20} />
+                        <Icon $size='lg'><Photograph /></Icon>
                         <LabelSmall color='inherit' marginLeft='scale0'>
                             <LabelSmall overrides={{
                                 Block: {
@@ -293,7 +294,7 @@ const Content = React.memo(function Content({ review, editable = false, afterUpd
                                 />
                             )}
                         >
-                            <Button kind='tertiary' size='mini' shape='circle'><More width='16px' height='16px' color='#a3a3a3' /></Button>
+                            <Button kind='tertiary' size='mini' shape='circle'><Icon $color='#a3a3a3'><More /></Icon></Button>
                         </StatefulPopover>
                         <Modal onClose={() => setIsOpenDeleteConfirmModal(false)}
                             closeable={false}
@@ -359,7 +360,7 @@ const ActionReport = function ({ reviewId, reviewUserId, initIsReported = true }
     return (
         <Block>
             <Button title='举报' onClick={() => { setIsOpenReportModal(true); setReportContent(''); setReportErr(null); }} kind='secondary' size='mini' overrides={Styles.Button.Act}>
-                <Hand width={16} height={16} />
+                <Icon><Hand /></Icon>
             </Button>
             <Modal onClose={() => setIsOpenReportModal(false)} closeable={false} isOpen={isOpenReportModal} animate autoFocus role={ROLE.alertdialog}>
                 <ModalHeader>举报评测</ModalHeader>
@@ -447,7 +448,7 @@ const Actions = function ({ review, actions }) {
             <Block display='flex' paddingTop='scale400' paddingBottom='scale300' justifyContent='space-between' alignItems='center'>
                 <Block display='grid' gridGap='scale100' gridAutoFlow='column'>
                     <Button kind='secondary' size='mini' onClick={() => handleThumb('up')}
-                        startEnhancer={() => <ThumbUp width={16} height={16} />}
+                        startEnhancer={() => <Icon><ThumbUp /></Icon>}
                         overrides={Styles.Button.Act}
                         isSelected={isActiveThumbUp}
                         isLoading={isDoingThumbUp}
@@ -455,7 +456,7 @@ const Actions = function ({ review, actions }) {
                         赞 {review.meta.ups}
                     </Button>
                     <Button kind='secondary' size='mini' onClick={() => handleThumb('down')}
-                        startEnhancer={() => <ThumbDown width={16} height={16} />}
+                        startEnhancer={() => <Icon><ThumbDown /></Icon>}
                         overrides={Styles.Button.Act}
                         isSelected={isActiveThumbDown}
                         isLoading={isDoingThumbDown}
@@ -463,7 +464,7 @@ const Actions = function ({ review, actions }) {
                         踩 {review.meta.downs}
                     </Button>
                     <Button kind='secondary' size='mini' onClick={() => handleGift()}
-                        startEnhancer={() => <Gift width={16} height={16} />}
+                        startEnhancer={() => <Icon><Gift /></Icon>}
                         overrides={Styles.Button.Act}
                     >
                         赏 {review.meta.gifts}
@@ -578,15 +579,17 @@ const AppInfo = React.memo(function AppInfo({ app }) {
                             <LabelMedium marginBottom='scale100' overrides={{
                                 Block: {
                                     style: {
-                                        inlineSize: '168px',
-                                        whiteSpace: 'break-spaces',
+                                        [MOBILE_BREAKPOINT]: {
+                                            inlineSize: '168px',
+                                            whiteSpace: 'break-spaces',
+                                        }
                                     }
                                 }
                             }}>{app?.name}</LabelMedium>
                         </RouterLink>
                         <Block display='flex' alignItems='center' justifyContent='flex-start'>
                             <Block marginRight='scale0' font='font300'>{app?.score}</Block>
-                            <Star width='20px' height='20px' />
+                            <Icon><Star /></Icon>
                         </Block>
                     </Block>
                 </>
@@ -645,7 +648,7 @@ const CommentsSummary = React.memo(function CommentsSummary({ id, comments, coun
                                 }
                             }
                         }}>全部 {count} 条回复</LabelSmall>
-                    <ChevronRight width={16} height={16} />
+                    <Icon><ChevronRight /></Icon>
                 </Block>
             )}
         </Block>
@@ -801,7 +804,7 @@ const CommentsList = function ({ reviewId, commentsCount, allowComment }) {
                         </Block>
                         {user?.id === comment.user.id &&
                             <Button kind='tertiary' size='mini' shape='circle' onClick={() => handleDeleteComment(comment)}>
-                                <TrashBin width='16px' height='16px' color='#a3a3a3' />
+                                <Icon $color='#a3a3a3'><TrashBin /></Icon>
                             </Button>
                         }
                     </Block>

@@ -9,7 +9,7 @@ import { FormControl } from 'baseui/form-control';
 import { LabelLarge, LabelSmall, ParagraphSmall } from 'baseui/typography';
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'baseui/modal';
 
-import { Message3, ChatAlt2, Settings } from '@ktap/components/icons';
+import { Message3, ChatAlt2, Settings, Icon } from '@ktap/components/icons';
 import Notification from '@ktap/components/notification';
 import { Messages } from '@ktap/libs/utils';
 
@@ -62,7 +62,7 @@ function Setting({ appId, channel, afterUpdated = () => { } }) {
                 setSettingForm({ id: channel.id, name: channel.name, icon: channel.icon, description: channel.description });
                 setIsOpenChannelSettingModal(true);
             }}>
-                <Settings width='20px' height='20px' />
+                <Icon $size='lg'><Settings/></Icon>
             </Block>
             <Modal onClose={() => setIsOpenChannelSettingModal(false)} closeable={false} isOpen={isOpenChannelSettingModal} role={ROLE.alertdialog} animate autoFocus>
                 <ModalHeader>设置频道</ModalHeader>
@@ -136,7 +136,7 @@ export default function Channels() {
                             : <div className={css({
                                 borderRadius: theme.borders.radius300, width: theme.sizing.scale800, height: theme.sizing.scale800,
                             })} title={channel.name}>
-                                <ChatAlt2 solid />
+                                <Icon $size='full'><ChatAlt2 /></Icon>
                             </div>
                         }
                         <LabelSmall color={isActive ? '' : 'primary100'}>{channel.name}</LabelSmall>
@@ -153,7 +153,7 @@ export default function Channels() {
                         <Block display='flex' alignItems='center' justifyContent='space-between' overflow='hidden'>
                             <Block display='flex' alignItems='center'>
                                 <Block display='flex' alignItems='center' gridGap='scale200' marginRight='scale900'>
-                                    <Message3 width='20px' height='20px' />
+                                    <Icon $size='lg'><Message3 /></Icon>
                                     <LabelSmall color='primary300'>
                                         {channel.meta?.discussions || 0} 个讨论
                                     </LabelSmall>

@@ -11,7 +11,7 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { useSnackbar } from 'baseui/snackbar';
 import { Check, Delete, Plus } from 'baseui/icon';
 
-import { TrashBin } from '@ktap/components/icons';
+import { Icon, TrashBin } from '@ktap/components/icons';
 
 function AppDetailProReviews({ data }) {
     const { enqueue } = useSnackbar();
@@ -115,7 +115,7 @@ function AppDetailProReviews({ data }) {
                             e.preventDefault();
                             setSelectedId(row.id);
                             setIsOpenDeleteConfirmModal(true);
-                        }}><TrashBin width={16} height={16} /></Button>
+                        }}><Icon><TrashBin /></Icon></Button>
                     </Block>)}
                 </TableBuilderColumn>
             </TableBuilder>

@@ -6,7 +6,7 @@ import { LabelLarge, LabelMedium, LabelSmall } from 'baseui/typography';
 
 import { DateTime, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import SplitBall from '@ktap/components/split-ball';
-import { Gift2, Message4, Pin, Reply } from '@ktap/components/icons';
+import { Gift2, Icon, Message4, Pin, Reply } from '@ktap/components/icons';
 import RouterLink from '@ktap/components/router-link';
 import LoadMore from '@ktap/components/load-more';
 
@@ -59,19 +59,19 @@ function TabDiscussions({ appId }) {
                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                 {discussion.isSticky &&
                                     <>
-                                        <Pin width='16px' height='16px' />
+                                        <Icon><Pin /></Icon>
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                     </>
                                 }
                                 <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
-                                    {discussion?.last?.user?.name && <Reply width='16px' height='16px' />}
+                                    {discussion?.last?.user?.name && <Icon><Reply /></Icon>}
                                     @{discussion?.last?.user ? discussion?.last?.user.name : discussion?.user?.name}
                                 </LabelSmall>
                                 <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                 {discussion?.meta?.posts > 0 &&
                                     <>
                                         <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
-                                            <Message4 width='16px' height='16px' />
+                                            <Icon><Message4 /></Icon>
                                             <LabelSmall color='inherit'>{discussion?.meta?.posts || 0}</LabelSmall>
                                         </Block>
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
@@ -80,7 +80,7 @@ function TabDiscussions({ appId }) {
                                 {discussion?.meta?.gifts > 0 &&
                                     <>
                                         <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
-                                            <Gift2 width='16px' height='16px' />
+                                            <Icon><Gift2/></Icon>
                                             <LabelSmall color='inherit'>{discussion?.meta?.gifts || 0}</LabelSmall>
                                         </Block>
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />

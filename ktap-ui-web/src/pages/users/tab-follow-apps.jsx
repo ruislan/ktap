@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { useStyletron } from 'baseui';
 import { LabelMedium } from 'baseui/typography';
 
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 import Capsule from '@ktap/components/capsule';
 import { MOBILE_BREAKPOINT, PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import LoadMore from '@ktap/components/load-more';
@@ -59,7 +59,7 @@ function TabFollowUsers({ theUser }) {
                         </LabelMedium>
                         <Block display='flex' alignItems='center'>
                             <LabelMedium marginRight='scale0'>{follow.app.score}</LabelMedium>
-                            <Star width='20px' height='20px' />
+                            <Icon><Star /></Icon>
                         </Block>
                     </Block>
                 </Capsule>

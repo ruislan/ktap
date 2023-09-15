@@ -15,7 +15,7 @@ import { useSnackbar } from 'baseui/snackbar';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
 import AvatarSquare from '@ktap/components/avatar-square';
-import { Eye, Rocket, TrashBin, Hand } from '@ktap/components/icons';
+import { Eye, Rocket, TrashBin, Hand, Icon } from '@ktap/components/icons';
 
 import ReviewMonkeyModal from './review-monkey-modal';
 
@@ -160,7 +160,7 @@ function AdminPanelReviews() {
                         <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                             e.preventDefault();
                             setIsOpenMonkeyModal(true);
-                        }}><Rocket width={16} height={16} /></Button>
+                        }}><Icon><Rocket /></Icon></Button>
                         <ReviewMonkeyModal isOpen={isOpenMonkeyModal} setIsOpen={setIsOpenMonkeyModal} onSuccess={() => fetchData()} />
                     </Block>
                     <Block>
@@ -271,15 +271,15 @@ function AdminPanelReviews() {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' $as='a' href={`/reviews/${row.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' $as='a' href={`/reviews/${row.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' disabled={!row.meta?.reports || row.meta.reports <= 0} size='mini' shape='circle' onClick={() => {
                                     setSelectedRow(row);
                                     setIsOpenReportsModal(true);
-                                }}><Hand width={16} height={16} /></Button>
+                                }}><Icon><Hand /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                     setSelectedRow(row);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

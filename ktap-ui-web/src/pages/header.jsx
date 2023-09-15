@@ -8,7 +8,7 @@ import { Delete, Menu } from 'baseui/icon';
 import { useAuth } from '@ktap/hooks/use-auth';
 import { useOutsideClick } from '@ktap/hooks/use-outside-click';
 import { LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT, MOBILE_BREAKPOINT_PX } from '@ktap/libs/utils';
-import { User as UserIcon, Coins, Bell, FatSearch } from '@ktap/components/icons';
+import { User as UserIcon, Coins, Bell, FatSearch, Icon } from '@ktap/components/icons';
 import { CompactView as Notifications } from '@ktap/pages/notifications';
 import useWindowSize from '@ktap/hooks/use-window-size';
 
@@ -137,7 +137,7 @@ const ActionMenu = function () {
                 color: theme.colors.primary100, gap: theme.sizing.scale100, fontWeight: 700,
                 marginRight: theme.sizing.scale200,
             })}>
-                <Coins width='24px' height='24px' />
+                <Icon $size='xl'><Coins /></Icon>
                 <span>{user?.balance || 0}</span>
             </div>}
             <UserMenu />
@@ -179,7 +179,7 @@ const SearchInput = function () {
                     e.preventDefault();
                     navigate('/search');
                 }}>
-                <FatSearch className={css({ [MOBILE_BREAKPOINT]: { width: '23px', height: '23px' } })} width='16px' height='16px' />
+                <Icon className={css({ [MOBILE_BREAKPOINT]: { width: '23px', height: '23px' } })} ><FatSearch /></Icon>
             </div>
             <input ref={keywordRef}
                 className={css({
@@ -222,7 +222,7 @@ const UserNotification = function () {
                     e.stopPropagation();
                     width > MOBILE_BREAKPOINT_PX ? setIsOpenContent(!isOpenContent) : navigate('/notifications');
                 }}>
-                <Bell width='24px' height='24px' />
+                <Icon $size='xl'><Bell /></Icon>
             </div>
             {isOpenContent && <div className={css({
                 zIndex: 666, minWidth: '10rem', outline: 'none',
@@ -306,7 +306,7 @@ const UserMenu = function () {
                         objectFit: 'cover',
                         borderRadius: theme.borders.radius300,
                     })} /> :
-                    <UserIcon color={theme.colors.primary} width='24px' height='24px' />
+                    <Icon $size='xl' $color={theme.colors.primary}><UserIcon /></Icon>
                 }
             </div>
             {/* user items menu */}

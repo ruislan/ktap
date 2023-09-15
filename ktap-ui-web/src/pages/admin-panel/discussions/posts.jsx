@@ -18,7 +18,7 @@ import { Textarea } from 'baseui/textarea';
 import { Checkbox } from 'baseui/checkbox';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_MINI, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { Eye, Rocket, TrashBin, Hand } from '@ktap/components/icons';
+import { Eye, Rocket, TrashBin, Hand, Icon } from '@ktap/components/icons';
 import AvatarSquare from '@ktap/components/avatar-square';
 
 function ReportsBlock({ postId }) {
@@ -54,8 +54,8 @@ function ReportsBlock({ postId }) {
                 })
             }
         }}>
-            {reports && reports.map((report) => (
-                <Block display='flex' gridGap='scale600'>
+            {reports && reports.map((report, index) => (
+                <Block key={index} display='flex' gridGap='scale600'>
                     <Block><AvatarSquare src={report.user?.avatar} size='scale1200' /></Block>
                     <Block display='flex' flexDirection='column' gridGap='scale100'>
                         <LabelXSmall>{report.user?.name}</LabelXSmall>
@@ -184,7 +184,7 @@ function AdminPanelPosts() {
                         <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                             e.preventDefault();
                             setIsOpenMonkeyModal(true);
-                        }}><Rocket width={16} height={16} /></Button>
+                        }}><Icon><Rocket /></Icon></Button>
                     </Block>
                     <Block>
                         <StatefulPopover
@@ -289,15 +289,15 @@ function AdminPanelPosts() {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' $as='a' href={`/discussions/${row.discussion?.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' $as='a' href={`/discussions/${row.discussion?.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' disabled={!row.meta?.reports || row.meta.reports <= 0} size='mini' shape='circle' onClick={() => {
                                     setSelectedRow(row);
                                     setIsOpenReportsModal(true);
-                                }}><Hand width={16} height={16} /></Button>
+                                }}><Icon><Hand /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                     setSelectedRow(row);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

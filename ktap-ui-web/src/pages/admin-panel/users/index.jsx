@@ -16,7 +16,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { Eye, Rocket } from '@ktap/components/icons';
+import { Eye, Icon, Rocket } from '@ktap/components/icons';
 
 function AdminPanelUsers() {
     const limit = PAGE_LIMIT_SMALL;
@@ -118,7 +118,7 @@ function AdminPanelUsers() {
                             e.preventDefault();
                             setIsOpenMonkeyModal(true);
                         }}>
-                        <Rocket width={16} title='用户乱入' />
+                        <Icon><Rocket /></Icon>
                     </Button>
                     <Block>
                         <StatefulPopover
@@ -229,7 +229,7 @@ function AdminPanelUsers() {
                                 </TableBuilderColumn>
                                 <TableBuilderColumn header='操作'>
                                     {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                        <Button kind='secondary' $as='a' href={`/users/${row.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                        <Button kind='secondary' $as='a' href={`/users/${row.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                         <Button kind='secondary' onClick={() => navigate(`/admin-panel/users/${row.id}`)} size='mini' shape='circle'><Overflow width={16} height={16} /></Button>
                                     </Block>)}
                                 </TableBuilderColumn>

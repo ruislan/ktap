@@ -7,6 +7,7 @@ import { ChevronRight } from 'baseui/icon';
 import { Skeleton } from 'baseui/skeleton';
 
 import RouterLink from '@ktap/components/router-link';
+import { Icon } from '@ktap/components/icons';
 
 function TabNews({ app }) {
     const appId = app?.id || 0;
@@ -46,11 +47,11 @@ function TabNews({ app }) {
                                         Content: {
                                             style: {
                                                 minHeight: '44px', paddingRight: '0px', marginLeft: '0px',
-                                                width: '300px',borderBottomColor: 'rgba(255, 255, 255, 0.12)',
+                                                width: '300px', borderBottomColor: 'rgba(255, 255, 255, 0.12)',
                                             }
                                         },
                                     }}
-                                    endEnhancer={() => <ChevronRight />}
+                                    endEnhancer={() => <Icon><ChevronRight /></Icon>}
                                 >
                                     <LabelMedium textOverflow='ellipsis' whiteSpace='nowrap' overflow='hidden' paddingRight='scale300'>{title}</LabelMedium>
                                 </ListItem>

@@ -18,7 +18,7 @@ import { RadioGroup, Radio } from "baseui/radio";
 import { Textarea } from 'baseui/textarea';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { Rocket, Eye } from '@ktap/components/icons';
+import { Rocket, Eye, Icon } from '@ktap/components/icons';
 
 function AdminPanelApps() {
     const limit = PAGE_LIMIT_SMALL;
@@ -141,7 +141,7 @@ function AdminPanelApps() {
                     <Block><Button title='抓取' kind='secondary' size='mini' shape='circle' onClick={e => {
                         e.preventDefault();
                         setIsOpenSteamModal(true);
-                    }}><Rocket title='抓取' width={16} height={16} /></Button></Block>
+                    }}><Icon><Rocket /></Icon></Button></Block>
                     <Block><Button title='新增' kind='secondary' size='mini' shape='circle' onClick={e => {
                         e.preventDefault();
                         setIsOpenNewModal(true);
@@ -242,8 +242,8 @@ function AdminPanelApps() {
                             <TableBuilderColumn header='操作'>
                                 {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
                                     {row.isVisible ?
-                                        <Button kind='secondary' $as='a' href={`/apps/${row.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
-                                        : <Button disabled kind='secondary' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                        <Button kind='secondary' $as='a' href={`/apps/${row.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
+                                        : <Button disabled kind='secondary' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                     }
                                     <Button kind='secondary' onClick={() => navigate(`/admin-panel/apps/${row.id}`)} size='mini' shape='circle'><Overflow width={16} height={16} /></Button>
                                 </Block>)}

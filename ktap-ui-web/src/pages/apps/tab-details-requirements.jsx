@@ -2,7 +2,7 @@ import { Block } from 'baseui/block';
 import { StatefulTabs, Tab } from 'baseui/tabs-motion';
 import { LabelLarge, LabelSmall } from 'baseui/typography';
 
-import { Android, Apple, Linux, Mac, Win } from '@ktap/components/icons';
+import { Android, Apple, Icon, Linux, Mac, Win } from '@ktap/components/icons';
 
 function RequirementItem({ name, content }) {
     return (
@@ -21,11 +21,11 @@ function TabDetailsRequirements({ app }) {
                 {app?.platforms && app.platforms.map((platform, index) => (
                     <Tab key={index} title={platform.os} artwork={() => {
                         switch (platform.os) {
-                            case 'Windows': return <Win width='18px' height='18px' />;
-                            case 'Macos': return <Mac width='18px' height='18px' />;
-                            case 'Linux': return <Linux width='18px' height='18px' />;
-                            case 'iOS': return <Apple width='18px' height='18px' />;
-                            case 'Android': return <Android width='18px' height='18px' />;
+                            case 'Windows': return <Icon $size='lg'><Win /></Icon>;
+                            case 'Macos': return <Icon $size='lg'><Mac /></Icon>;
+                            case 'Linux': return <Icon $size='lg'><Linux /></Icon>;
+                            case 'iOS': return <Icon $size='lg'><Apple /></Icon>;
+                            case 'Android': return <Icon $size='lg'><Android /></Icon>;
                             default: return <></>;
                         }
                     }}>

@@ -7,7 +7,7 @@ import { Button } from 'baseui/button';
 import { LabelMedium } from 'baseui/typography';
 
 import SideBox from '@ktap/components/side-box';
-import { Star } from '@ktap/components/icons';
+import { Icon, Star } from '@ktap/components/icons';
 
 const AppGlance = React.memo(function AppGlance({ app }) {
     const [css, theme] = useStyletron();
@@ -30,7 +30,7 @@ const AppGlance = React.memo(function AppGlance({ app }) {
                         }}>{app.name}</LabelMedium>
                         <Block display='flex' alignItems='center' justifyContent='flex-start'>
                             <Block marginRight='scale0' font='font300'>{app.score}</Block>
-                            <Star width='20px' height='20px' />
+                            <Icon><Star /></Icon>
                         </Block>
                     </Block>
                 </Block>

@@ -17,7 +17,7 @@ import { Checkbox } from 'baseui/checkbox';
 import { Textarea } from 'baseui/textarea';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { Eye, Rocket, TrashBin } from '@ktap/components/icons';
+import { Eye, Icon, Rocket, TrashBin } from '@ktap/components/icons';
 
 export default function Discussions() {
     const limit = PAGE_LIMIT_SMALL;
@@ -125,7 +125,7 @@ export default function Discussions() {
                         <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                             e.preventDefault();
                             setIsOpenMonkeyModal(true);
-                        }}><Rocket width={16} height={16} /></Button>
+                        }}><Icon><Rocket /></Icon></Button>
                     </Block>
                     <Button size='mini' kind='secondary' shape='circle' isLoading={isLoading} disabled={!hasPrev}
                         onClick={() => setSkip(prev => prev - limit)}>
@@ -189,11 +189,11 @@ export default function Discussions() {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' $as='a' href={`/discussions/${row.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' $as='a' href={`/discussions/${row.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                     setSelectedRow(row);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

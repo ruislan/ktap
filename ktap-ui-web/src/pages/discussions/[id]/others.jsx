@@ -7,7 +7,7 @@ import { Block } from 'baseui/block';
 import { Skeleton } from 'baseui/skeleton';
 import { LabelSmall } from 'baseui/typography';
 
-import { Message4 } from '@ktap/components/icons';
+import { Icon, Message4 } from '@ktap/components/icons';
 import SideBox from '@ktap/components/side-box';
 
 export default function Others({ discussionId }) {
@@ -45,7 +45,7 @@ export default function Others({ discussionId }) {
                         })}>
                             <LabelSmall color='primary100' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{discussion.title}</LabelSmall>
                             <Block display='flex' alignItems='center' gridGap='scale100'>
-                                <Message4 width='16px' height='16px' />
+                                <Icon><Message4 /></Icon>
                                 <LabelSmall color='inherit'>{discussion.meta.posts}</LabelSmall>
                             </Block>
                         </Link>

@@ -15,7 +15,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { FormControl } from 'baseui/form-control';
 
 import { DateTime, MOBILE_BREAKPOINT, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { EditLine, Eye, TrashBin } from '@ktap/components/icons';
+import { EditLine, Eye, Icon, TrashBin } from '@ktap/components/icons';
 
 function AdminPanelNews() {
     const limit = PAGE_LIMIT_SMALL;
@@ -179,17 +179,17 @@ function AdminPanelNews() {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' $as='a' href={`/news/${row.id}`} target='_blank' size='mini' shape='circle'><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' $as='a' href={`/news/${row.id}`} target='_blank' size='mini' shape='circle'><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                                     e.preventDefault();
                                     setNews({ id: row.id, title: row.title, summary: row.summary, head: row.head, banner: row.banner, content: row.content, appId: row.app.id });
                                     setIsOpenEditModal(true);
-                                }}><EditLine width={16} height={16} /></Button>
+                                }}><Icon><EditLine /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={e => {
                                     e.preventDefault();
                                     setSelectedId(row?.id);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>

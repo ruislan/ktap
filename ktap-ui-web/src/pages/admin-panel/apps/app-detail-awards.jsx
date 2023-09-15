@@ -11,7 +11,7 @@ import { useSnackbar } from 'baseui/snackbar';
 import { StyledLink } from 'baseui/link';
 import { Check, Delete, Plus } from 'baseui/icon';
 
-import { ExternalLink, TrashBin } from '@ktap/components/icons';
+import { ExternalLink, Icon, TrashBin } from '@ktap/components/icons';
 
 function AppDetailAwards({ data }) {
     const { enqueue } = useSnackbar();
@@ -97,7 +97,7 @@ function AppDetailAwards({ data }) {
                     {row =>
                         <Block display='flex' alignItems='center' gridGap='scale300'>
                             <LabelSmall whiteSpace='nowrap' textOverflow='ellipsis' width='220px' maxWidth='220px' overflow='hidden'>{row.image}</LabelSmall>
-                            <Block display='flex'><StyledLink href={row.image} target='_blank'><ExternalLink width={16} /></StyledLink></Block>
+                            <Block display='flex'><StyledLink href={row.image} target='_blank'><Icon><ExternalLink /></Icon></StyledLink></Block>
                         </Block>
                     }
                 </TableBuilderColumn>
@@ -105,7 +105,7 @@ function AppDetailAwards({ data }) {
                     {row =>
                         <Block display='flex' alignItems='center' gridGap='scale300'>
                             <LabelSmall whiteSpace='nowrap' textOverflow='ellipsis' width='220px' maxWidth='220px' overflow='hidden'>{row.url}</LabelSmall>
-                            {row.url && <Block display='flex'><StyledLink href={row.url} target='_blank'><ExternalLink width={16} /></StyledLink></Block>}
+                            {row.url && <Block display='flex'><StyledLink href={row.url} target='_blank'><Icon><ExternalLink /></Icon></StyledLink></Block>}
                         </Block>
                     }
                 </TableBuilderColumn>
@@ -115,7 +115,7 @@ function AppDetailAwards({ data }) {
                             e.preventDefault();
                             setSelectedId(row.id);
                             setIsOpenDeleteConfirmModal(true);
-                        }}><TrashBin width={16} height={16} /></Button>
+                        }}><Icon><TrashBin /></Icon></Button>
                     </Block>)}
                 </TableBuilderColumn>
             </TableBuilder>

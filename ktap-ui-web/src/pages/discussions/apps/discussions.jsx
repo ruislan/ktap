@@ -15,7 +15,7 @@ import SplitBall from "@ktap/components/split-ball";
 import Editor from "@ktap/components/editor";
 import Notification from "@ktap/components/notification";
 import RouterLink from "@ktap/components/router-link";
-import { Lock, Message4, Pin, Reply, Gift2, FatSearch } from "@ktap/components/icons";
+import { Lock, Message4, Pin, Reply, Gift2, FatSearch, Icon } from "@ktap/components/icons";
 
 
 export default function Discussions() {
@@ -104,7 +104,7 @@ export default function Discussions() {
                     }}>登录</Button>) : <Block></Block>}
                 <Block display='flex' alignItems='center' gridGap='scale300'>
                     <Input value={keyword} size='compact' placeholder='搜索' onChange={e => setKeyword(e.target.value)} onKeyUp={e => e.key === 'Enter' && fetchDiscussions(keyword)} />
-                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><FatSearch width='16px' height='16px' /></Button>
+                    <Button size='compact' kind='secondary' onClick={() => fetchDiscussions(keyword)}><Icon><FatSearch /></Icon></Button>
                 </Block>
                 <Modal onClose={() => setIsOpenEditorModal(false)} closeable={false} isOpen={isOpenEditorModal} role={ROLE.alertdialog} animate autoFocus>
                     <ModalHeader>发起新讨论</ModalHeader>
@@ -144,20 +144,20 @@ export default function Discussions() {
                                     <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                     {discussion.isSticky &&
                                         <>
-                                            <Pin width='16px' height='16px' />
+                                            <Icon><Pin /></Icon>
                                             <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                         </>
                                     }
                                     {discussion.isClosed &&
                                         <>
-                                            <Lock width='16px' height='16px' />
+                                            <Icon><Lock /></Icon>
                                             <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                         </>
                                     }
                                     {discussion?.meta?.posts > 0 &&
                                         <>
                                             <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
-                                                <Message4 width='16px' height='16px' />
+                                                <Icon><Message4 /></Icon>
                                                 <LabelSmall color='inherit'>{discussion?.meta?.posts || 0}</LabelSmall>
                                             </Block>
                                             <SplitBall color='rgb(151, 151, 151)' gap='6px' />
@@ -166,14 +166,14 @@ export default function Discussions() {
                                     {discussion?.meta?.gifts > 0 &&
                                         <>
                                             <Block display='flex' alignItems='center' gridGap='scale0' color='inherit'>
-                                                <Gift2 width='16px' height='16px' />
+                                                <Icon><Gift2 /></Icon>
                                                 <LabelSmall color='inherit'>{discussion?.meta?.gifts || 0}</LabelSmall>
                                             </Block>
                                             <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                         </>
                                     }
                                     <LabelSmall whiteSpace='nowrap' color='inherit' display='flex' alignItems='center' gridGap='scale0'>
-                                        {discussion?.lastPost?.user?.name && <Reply width='16px' height='16px' />}
+                                        {discussion?.lastPost?.user?.name && <Icon><Reply /></Icon>}
                                         @{discussion?.lastPost?.user ? discussion?.lastPost?.user.name : discussion?.user?.name}
                                     </LabelSmall>
                                     <SplitBall color='rgb(151, 151, 151)' gap='6px' />

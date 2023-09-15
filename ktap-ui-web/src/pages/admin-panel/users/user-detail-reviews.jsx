@@ -10,7 +10,7 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { useSnackbar } from 'baseui/snackbar';
 
 import { DateTime, PAGE_LIMIT_SMALL } from '@ktap/libs/utils';
-import { Eye, TrashBin } from '@ktap/components/icons';
+import { Eye, Icon, TrashBin } from '@ktap/components/icons';
 
 function UserDetailReviews({ data }) {
     const limit = PAGE_LIMIT_SMALL;
@@ -102,11 +102,11 @@ function UserDetailReviews({ data }) {
                         </TableBuilderColumn>
                         <TableBuilderColumn header='操作'>
                             {(row) => (<Block display='flex' alignItems='center' gridGap='scale300'>
-                                <Button kind='secondary' size='mini' shape='circle' onClick={() => window.open(`/reviews/${row.id}`)}><Eye width={16} height={16} /></Button>
+                                <Button kind='secondary' size='mini' shape='circle' onClick={() => window.open(`/reviews/${row.id}`)}><Icon><Eye /></Icon></Button>
                                 <Button kind='secondary' size='mini' shape='circle' onClick={() => {
                                     setSelectedId(row.id);
                                     setIsOpenDeleteConfirmModal(true);
-                                }}><TrashBin width={16} height={16} /></Button>
+                                }}><Icon><TrashBin /></Icon></Button>
                             </Block>)}
                         </TableBuilderColumn>
                     </TableBuilder>
