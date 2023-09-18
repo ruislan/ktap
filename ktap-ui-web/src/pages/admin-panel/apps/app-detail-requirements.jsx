@@ -29,7 +29,7 @@ function RequirementBlock({ platform, onChange }) {
                     <LabelMedium marginBottom='scale600'>最小配置</LabelMedium>
                     {platform?.requirements && platform?.requirements.map((requirement, index) => (
                         <FormControl key={index} label={<LabelSmall>{requirement.name}</LabelSmall>}>
-                            <Input size='compact' value={requirement.minimum} onChange={e => {
+                            <Input size='compact' value={requirement.minimum || ''} onChange={e => {
                                 e.preventDefault();
                                 requirement.minimum = e.target.value;
                                 onChange();
@@ -41,7 +41,7 @@ function RequirementBlock({ platform, onChange }) {
                     <LabelMedium marginBottom='scale600'>推荐配置</LabelMedium>
                     {platform?.requirements && platform?.requirements.map((requirement, index) => (
                         <FormControl key={index} label={<LabelSmall>{requirement.name}</LabelSmall>}>
-                            <Input size='compact' value={requirement.recommended} onChange={e => {
+                            <Input size='compact' value={requirement.recommended || ''} onChange={e => {
                                 e.preventDefault();
                                 requirement.recommended = e.target.value;
                                 onChange();

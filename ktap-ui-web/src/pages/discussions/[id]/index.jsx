@@ -8,12 +8,13 @@ import { HeadingXSmall, LabelSmall } from 'baseui/typography';
 import { LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT, LAYOUT_DEFAULT_SIDE, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
 import { Icon, Lock, Pin } from '@ktap/components/icons';
+import AppCardGlance from '@ktap/components/app-card-glance';
+import SideBox from '@ktap/components/side-box';
 
 import Post from './post';
 import Posts from './posts';
 import Meta from './meta';
 import Others from './others';
-import AppGlance from './app-glance';
 
 export default function Discussion() {
     const { appId, id, postId } = useParams();
@@ -90,7 +91,7 @@ export default function Discussion() {
                         if (close !== undefined) setDiscussion(prev => ({ ...prev, isClosed: close }));
                         if (title !== undefined) setDiscussion(prev => ({ ...prev, title }));
                     }} />}
-                    {<AppGlance app={discussion.app} />}
+                    {<SideBox><AppCardGlance app={discussion.app} /></SideBox>}
                     {<Others appId={appId} discussionId={discussion.id} />}
                 </Block>
             </Block>

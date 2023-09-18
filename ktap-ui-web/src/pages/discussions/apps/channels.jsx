@@ -70,13 +70,13 @@ function Setting({ appId, channel, afterUpdated = () => { } }) {
                     <Block display='flex' flexDirection='column'>
                         {submitErrorMessage && <Block><Notification kind='negative' message={submitErrorMessage} /></Block>}
                         <FormControl label={<LabelSmall>名称</LabelSmall>} caption={'最少一个字'}>
-                            <Input size='compact' required value={settingForm?.name} onChange={e => setSettingForm({ ...settingForm, name: e.target.value })}></Input>
+                            <Input size='compact' required value={settingForm?.name || ''} onChange={e => setSettingForm({ ...settingForm, name: e.target.value })}></Input>
                         </FormControl>
                         <FormControl label={<LabelSmall>图标</LabelSmall>} caption={'非必需'}>
-                            <Input size='compact' value={settingForm?.icon} onChange={e => setSettingForm({ ...settingForm, icon: e.target.value })}></Input>
+                            <Input size='compact' value={settingForm?.icon || ''} onChange={e => setSettingForm({ ...settingForm, icon: e.target.value })}></Input>
                         </FormControl>
                         <FormControl label={<LabelSmall>描述</LabelSmall>} caption={'非必需'}>
-                            <Input size='compact' value={settingForm?.description} onChange={e => setSettingForm({ ...settingForm, description: e.target.value })}></Input>
+                            <Input size='compact' value={settingForm?.description || ''} onChange={e => setSettingForm({ ...settingForm, description: e.target.value })}></Input>
                         </FormControl>
                     </Block>
                 </ModalBody>

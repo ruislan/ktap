@@ -108,7 +108,7 @@ function Discussions() {
                         />
                     </Block>
                 </Block>
-                {/* XXX 感觉这个位置应该再加个什么东西 */}
+
             </Block>
             <Block display='grid' gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))' gridGap='scale600'>
                 {dataList && dataList.map((app, index) => (

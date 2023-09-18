@@ -13,7 +13,7 @@ const reviews = async (fastify, opts) => {
                     select: {
                         id: true, name: true, score: true, isVisible: true,
                         media: {
-                            where: { OR: [{ usage: AppMedia.usage.head }, { usage: AppMedia.usage.portrait }] },
+                            where: { OR: [{ usage: AppMedia.usage.head }, { usage: AppMedia.usage.logo }] },
                             select: { image: true, thumbnail: true, usage: true },
                         },
                     }

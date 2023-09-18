@@ -5,8 +5,8 @@ import { Block } from 'baseui/block';
 
 import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import ReviewBox from '@ktap/components/review-box';
+import AppCardGlance from '@ktap/components/app-card-glance';
 
-import ReviewAppGlance from './review-app-glance';
 import ReviewTopBar from './review-top-bar';
 
 function Reviews() {
@@ -94,7 +94,7 @@ function Reviews() {
                             }
                         }
                     }}>
-                        <ReviewAppGlance app={review.app} />
+                        <AppCardGlance app={review.app} />
                     </Block>
                 </Block>
             </Block>
