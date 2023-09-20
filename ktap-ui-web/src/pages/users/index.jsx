@@ -6,6 +6,8 @@ import { Skeleton } from 'baseui/skeleton';
 
 import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import Tabs from '@ktap/components/tabs';
+import UserProfile from './user-profile';
+import UserAchievements from './user-achievements';
 
 const TabActivities = lazy(() => import('./tab-activities'));
 const TabReviews = lazy(() => import('./tab-reviews'));
@@ -14,7 +16,6 @@ const TabDiscussions = lazy(() => import('./tab-discussions'));
 const TabDiscussionPosts = lazy(() => import('./tab-discussion-posts'));
 const TabFollowApps = lazy(() => import('./tab-follow-apps'));
 const TabFollowUsers = lazy(() => import('./tab-follow-users'));
-const UserProfile = lazy(() => import('./user-profile'));
 
 function UserContent({ theUser }) {
     const [activeTab, setActiveTab] = React.useState(0);
@@ -106,9 +107,8 @@ function Users() {
                     }
                 }}
             >
-                <Suspense fallback={<Skeleton width="100%" height="410px" animation />}>
-                    <UserProfile theUser={theUser} theUserMeta={theUserMeta} />
-                </Suspense>
+                <UserProfile theUser={theUser} theUserMeta={theUserMeta} />
+                <UserAchievements theUser={theUser} />
             </Block>
         </Block>
     );

@@ -44,6 +44,7 @@ model User {
   discussionChannels    UserDiscussionChannelRef[] // 自己管理的讨论频道
   notifications         Notification[] // 通知
   setting               UserSetting? // 自己的配置信息
+  achievements          UserAchievementRef[] // 自己获得的成就
 }
 
 // 用户配置信息
@@ -601,3 +602,33 @@ model Notification {
 }
 
 // 通知 End
+
+// 成就 Start
+model Achievement {
+  id          Int      @id @default(autoincrement())
+  name        String //名称
+  description String //简介
+  icon        String //图片
+  criteria    Float // 达成条件总数，用于数量类型的成就，或者关键条件达成的成就
+  createdAt   DateTime @default(now()) @map("created_at") // 创建时间
+
+  // ref
+  users UserAchievementRef[]
+}
+
+// 成就用户多对多关系
+model UserAchievementRef {
+  userId        Int       @map("user_id")
+  achievementId Int       @map("achievement_id")
+  value         Float // 计数器，用于记录成就的数量，可以用于数量类型的处理
+  unlockedAt    DateTime? @map("unlocked_at") // 成就解锁时间
+  createdAt     DateTime  @default(now()) @map("created_at") // 创建时间，首次记录进度时间
+
+  // ref
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
+}
+
+// 成就 End

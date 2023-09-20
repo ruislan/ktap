@@ -2,63 +2,62 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Block } from 'baseui/block';
-import { LabelXSmall } from 'baseui/typography';
+import { LabelSmall, LabelXSmall } from 'baseui/typography';
 
-import { useAuth } from '@ktap/hooks/use-auth';
 import SideBox from '@ktap/components/side-box';
+import { useStyletron } from 'baseui';
 
-function Achievement({ src, name, progress }) {
+function Achievement({ icon, name, description, progress }) {
+    const [css, theme] = useStyletron();
     return (
-        <Block padding='scale100' overrides={{
-            Block: {
-                style: ({ $theme }) => ({
-                    borderRadius: $theme.borders.radius200,
-                    backgroundColor: $theme.colors.backgroundTertiary,
-                    border: 'solid 1px',
-                })
-            }
-        }}>
-            <Block padding='scale100'>
-                <img src={src} width='48px' height='48px' />
-            </Block>
-            <Block display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
-                <LabelXSmall>{name}</LabelXSmall>
+        <div className={css({
+            display: 'flex', alignItems: 'center', gap: theme.sizing.scale300,
+        })}>
+            <div className={css({
+                display: 'flex', alignItems: 'center', justifyContent: 'center', width: '52px', height: '52px',
+                padding: theme.sizing.scale100,
+                backgroundColor: theme.colors.backgroundTertiary,
+                borderRadius: theme.borders.radius100,
+            })}><img src={icon} width='100%' height='100%' /></div>
+            {/* <div className={css({
+                display: 'flex', flexDirection: 'column', flex: 1,
+            })}>
+                <LabelSmall>{name}</LabelSmall>
+                <LabelXSmall>{description}</LabelXSmall>
                 <LabelXSmall>{progress}</LabelXSmall>
-            </Block>
-        </Block>
+            </div> */}
+        </div>
     );
 }
 
 // 用户成就
-// V2或V3再实现，现在先放着
-function UserAchievements() {
-    let { user } = useAuth();
+function UserAchievements({ theUser }) {
     const { id } = useParams();
 
     React.useEffect(() => {
-        if (user && user.id === Number(id)) {
+        if (theUser && theUser.id === Number(id)) {
             console.log('load from server');
         }
-    }, [user, id]);
+    }, [theUser, id]);
 
     return (
         <SideBox title='成就'>
-            <Block backgroundColor='backgroundSecondary' padding='scale600' overrides={{
+            <Block backgroundColor='backgroundSecondary' paddingLeft='scale600' paddingRight='scale600' paddingBottom='scale600' overrides={{
                 Block: {
                     style: ({ $theme }) => ({
                         borderRadius: $theme.borders.radius300,
                     })
                 }
             }}>
-                <Block display='flex' flexWrap='wrap' gridGap='scale300' alignItems='baseline'>
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
-                    <Achievement name='初出茅庐' progress='达成' src='/public/img/achievements/a1.png' />
+                <Block display='flex' flexWrap gridGap='scale300'>
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='0/1000' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
+                    <Achievement name='初出茅庐' progress='达成' description='首次登陆' icon='/public/img/achievements/a1.png' />
                 </Block>
             </Block>
         </SideBox>
