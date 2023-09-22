@@ -17,7 +17,9 @@ export default function LoadMore({ size = 'default', isLoading, hasMore, skeleto
     if (isLoading) return (
         <Block marginTop={margin} marginBottom={margin}>
             <SkeletonLayout direction={skeletonDirection}>
-                {[...Array(skeletonRow)].map((_, index) => <Skeleton animation height={skeletonHeight} width='100%' key={index} />)}
+                {[...Array(skeletonRow)].map((_, index) => <Skeleton key={index} animation height={skeletonHeight} width='100%' overrides={{
+                    Root: { style: ({ $theme }) => ({ borderRadius: $theme.sizing.scale300 }) },
+                }} />)}
             </SkeletonLayout>
         </Block>
     );

@@ -1045,6 +1045,24 @@ const discussionChannels = [
     { appId: 4, name: '无聊灌水', description: '灌水就是艺术', icon: 'https://cdn.discordapp.com/icons/522681957373575168/653957c5315ff8cace5a50e675f29a5d.webp?size=80', },
 ].map((v, index) => { v.id = index + 1; return v; });
 
+// 成就
+const achievements = [
+    { icon: '/public/img/achievements/a2.png', name: '初出茅庐', description: '用户首次登陆', message: '欢迎进入 KTap 的世界，嘿，我们又多了一个好兄弟/姐妹！', criteria: 1 },
+    { icon: '/public/img/achievements/a3.png', name: '首露心声', description: '用户首次发表游戏评测', message: '你勇敢地表达了自己的游戏评测，呃，希望游戏厂商能够看到。', criteria: 1 },
+    { icon: '/public/img/achievements/a4.png', name: '声声不息', description: '用户发表 10 篇游戏评测', message: '有点爱上发表游戏评测了吗？', criteria: 10 },
+    { icon: '/public/img/achievements/a5.png', name: '坐而论道', description: '用户首次发表讨论', message: '你成功地抛出了一个讨论主题，快，让大家都来讨论。', criteria: 1 },
+    { icon: '/public/img/achievements/a6.png', name: '道道叨叨', description: '用户发表 10 次讨论', message: '有我在，你们就不会寂寞了。', criteria: 10 },
+    { icon: '/public/img/achievements/a7.png', name: '一朵小红花', description: '用户的讨论帖被置顶', message: '被表扬了？被表扬了！', criteria: 1 },
+].map((v, index) => { v.id = index + 1; return v; });
+
+const userAchievements = [
+    { userId: 1, achievementId: 1, accumulation: 1, unlockedAt: new Date() },
+    { userId: 1, achievementId: 2, accumulation: 1, unlockedAt: new Date() },
+    { userId: 1, achievementId: 3, accumulation: 3 },
+    { userId: 1, achievementId: 4, accumulation: 1, unlockedAt: new Date() },
+    { userId: 1, achievementId: 5, accumulation: 1 },
+    { userId: 1, achievementId: 6, accumulation: 1, unlockedAt: new Date() },
+];
 
 
 async function initForSteam() {
@@ -1224,6 +1242,16 @@ async function initForDev() {
     for (const item of discussionChannels) {
         const channel = await db.discussionChannel.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created discussion channel: ${channel.id}`);
+    }
+    // 成就
+    for (const item of achievements) {
+        const achievement = await db.achievement.upsert({ create: item, update: item, where: { id: item.id } });
+        console.log(`Created achievement id: ${achievement.id}`);
+    }
+    // 用户成就
+    for (const item of userAchievements) {
+        const ref = await db.userAchievementRef.upsert({ create: item, update: item, where: { userId_achievementId: { userId: item.userId, achievementId: item.achievementId } } });
+        console.log(`Created user achievement ref user id: ${ref.userId}`);
     }
 
     console.log(`Seeding finished.`);

@@ -2,7 +2,6 @@ import React, { Suspense, lazy } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { Block } from 'baseui/block';
-import { Skeleton } from 'baseui/skeleton';
 
 import { MOBILE_BREAKPOINT, LAYOUT_DEFAULT_CONTENT, LAYOUT_DEFAULT_SIDE } from '@ktap/libs/utils';
 import Tabs from '@ktap/components/tabs';
@@ -16,6 +15,7 @@ const TabDiscussions = lazy(() => import('./tab-discussions'));
 const TabDiscussionPosts = lazy(() => import('./tab-discussion-posts'));
 const TabFollowApps = lazy(() => import('./tab-follow-apps'));
 const TabFollowUsers = lazy(() => import('./tab-follow-users'));
+const TabAchievements = lazy(() => import('./tab-achievements'));
 
 function UserContent({ theUser }) {
     const [activeTab, setActiveTab] = React.useState(0);
@@ -24,7 +24,7 @@ function UserContent({ theUser }) {
             <Block display='flex' alignItems='center' marginBottom='scale600'>
                 <Tabs activeKey={activeTab}
                     onChange={(e) => setActiveTab(e.activeKey)}
-                    names={['活动', '评测', '评测回复', '讨论', '讨论发帖', '关注游戏', '关注用户']}
+                    names={['活动', '评测', '评测回复', '讨论', '讨论发帖', '关注游戏', '关注用户', '成就']}
                 />
             </Block>
             <Block paddingLeft='scale300' paddingRight='scale300' paddingBottom='scale300'>
@@ -36,6 +36,7 @@ function UserContent({ theUser }) {
                     {activeTab === 4 && theUser && <TabDiscussionPosts theUser={theUser} />}
                     {activeTab === 5 && theUser && <TabFollowApps theUser={theUser} />}
                     {activeTab === 6 && theUser && <TabFollowUsers theUser={theUser} />}
+                    {activeTab === 7 && theUser && <TabAchievements theUser={theUser} />}
                 </Suspense>
             </Block>
         </>

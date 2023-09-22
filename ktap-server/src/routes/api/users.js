@@ -417,6 +417,23 @@ const users = async (fastify, opts) => {
 
         return reply.code(200).send({ data: user, meta });
     });
+
+
+    // 成就
+    fastify.get('/:id/achievements', async function (req, reply) {
+        const userId = Number(req.params.id) || 0;
+        const { skip, limit } = Pagination.parse(req.query.skip, req.query.limit);
+        const count = await fastify.achievement.countAchievements();
+        const data = await fastify.achievement.getUserAchievements({ userId, skip, limit });
+        return reply.code(200).send({ data, skip, limit, count });
+    });
+    fastify.get('/:id/achievements/recent', async function (req, reply) {
+        const userId = Number(req.params.id) || 0;
+        const limit = Pagination.limit.small;
+        const data = await fastify.achievement.getUserRecentAchievements({ userId, limit });
+        return reply.code(200).send({ data });
+    });
+    // 成就 End
 };
 
 export default users;

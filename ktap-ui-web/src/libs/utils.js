@@ -227,6 +227,9 @@ export const Numbers = {
         if (num < 1000000) return (num / 1000).toFixed(1) + 'K';
         if (num < 1000000000) return (num / 1000000).toFixed(1) + 'M';
         return (num / 1000000000).toFixed(1) + 'B';
+    },
+    computePercent(current, total) {
+        return Math.round(current / total * 100).toFixed(2);
     }
 };
 

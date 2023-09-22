@@ -609,7 +609,8 @@ model Achievement {
   name        String //名称
   description String //简介
   icon        String //图片
-  criteria    Float // 达成条件总数，用于数量类型的成就，或者关键条件达成的成就
+  message     String // 解锁时的消息
+  criteria    Int      @default(1) // 达成条件总数，例如完成动作即达成的设置为 1，例如需要N个动作才能达成的设置为该数量
   createdAt   DateTime @default(now()) @map("created_at") // 创建时间
 
   // ref
@@ -620,7 +621,7 @@ model Achievement {
 model UserAchievementRef {
   userId        Int       @map("user_id")
   achievementId Int       @map("achievement_id")
-  value         Float // 计数器，用于记录成就的数量，可以用于数量类型的处理
+  accumulation  Int       @default(0) // 计数器，用于记录成就的进度数量， progress 可以通过 accumulation / Achievement.criteria 来计算
   unlockedAt    DateTime? @map("unlocked_at") // 成就解锁时间
   createdAt     DateTime  @default(now()) @map("created_at") // 创建时间，首次记录进度时间
 
