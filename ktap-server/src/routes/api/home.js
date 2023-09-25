@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { Errors, Keys, Gender, Trading, Pagination } from "../../constants.js";
+import { UserEvents } from '../../models/user.js';
 
 const home = async function (fastify, opts) {
     fastify.post('/register', {
@@ -38,6 +39,8 @@ const home = async function (fastify, opts) {
         });
         // 注册成功，赠送 100 余额
         await fastify.db.trading.create({ data: { userId: 0, target: 'User', targetId: user.id, amount, type: Trading.type.give, }, });
+        // send event
+        await fastify.pubsub.publish(UserEvents.Registered, { user: { ...user } });
 
         // XXX 给用户发激活email？ V2 or V3
         return reply.code(201).send();

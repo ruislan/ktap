@@ -320,6 +320,7 @@ model ReviewComment {
   id        Int      @id @default(autoincrement())
   reviewId  Int?     @map("review_id") // 不强制关联review，A用户的review被删除之后，B用户的Comment不需要删除，在B的Timeline中还能看到自己的Comment
   userId    Int      @map("user_id")
+  ip        String? // ip地址
   content   String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -605,7 +606,7 @@ model Notification {
 
 // 成就 Start
 model Achievement {
-  id          Int      @id @default(autoincrement())
+  id          Int      @id
   name        String //名称
   description String //简介
   icon        String //图片

@@ -9,15 +9,17 @@ import review from './review.js';
 import tag from './tag.js';
 import timeline from './timeline.js';
 import achievement from './achievement.js';
+import user from './user.js';
 
 const models = async (fastify, opts, next) => {
+    await fastify.register(fp(achievement));
     await fastify.register(fp(app));
     await fastify.register(fp(discussion));
     await fastify.register(fp(notification));
     await fastify.register(fp(review));
     await fastify.register(fp(tag));
     await fastify.register(fp(timeline));
-    await fastify.register(fp(achievement));
+    await fastify.register(fp(user));
     next();
 };
 

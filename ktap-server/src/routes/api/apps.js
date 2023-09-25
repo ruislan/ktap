@@ -1,5 +1,6 @@
 import { AppMedia, Notification, Pagination, REVIEW_CONTENT_LIMIT, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
 import { authenticate } from "../../lib/auth.js";
+import { ReviewEvents } from "../../models/review.js";
 
 const apps = async function (fastify, opts) {
     // app推荐列表
@@ -411,6 +412,7 @@ const apps = async function (fastify, opts) {
         let data = {
             content: (reqBody.content || '').slice(0, REVIEW_CONTENT_LIMIT),
             score: Number(reqBody.score) || 3,
+            ip: req.ip,
             allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
             images: {
                 create: reqBody.images.map(url => { return { url } }),
@@ -427,6 +429,9 @@ const apps = async function (fastify, opts) {
             title: Notification.getContent(Notification.action.reviewCreated, Notification.type.following),
             content: data.content.slice(0, 50), url: '/reviews/' + data.id,
         });
+
+        // 发送事件
+        await fastify.pubsub.publish(ReviewEvents.Created, { review: { ...data } });
 
         // reconstruct return data structure
         data.images = reqBody.images.map(url => { return { url } });

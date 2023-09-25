@@ -53,5 +53,6 @@ export default async function (fastify, opts, next) {
     // routes
     await fastify.register(apiRoutes, { prefix: '/api' });
     await fastify.register(adminRoutes, { prefix: '/admin' });
+
     next();
 };

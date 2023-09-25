@@ -110,7 +110,7 @@ const reviews = async (fastify, opts) => {
         if (content.length > 0) {
             const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true, userId: true } });
             if (review?.allowComment) {
-                data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, } });
+                data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, ip: req.ip } });
                 await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'ReviewComment', } });
 
                 // 发送通知

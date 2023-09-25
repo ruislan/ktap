@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import steam from '../src/lib/steam.js';
 import { parseArgs } from "node:util";
+import { AchievementTypes } from '../src/models/achievement.js';
 
 const db = new prisma.PrismaClient({ log: ['error', 'warn'] });
 await db.$connect();
@@ -1047,29 +1048,26 @@ const discussionChannels = [
 
 // 成就
 const achievements = [
-    { icon: '/public/img/achievements/a2.png', name: '初出茅庐', description: '用户首次登陆', message: '欢迎进入 KTap 的世界，嘿，我们又多了一个好兄弟/姐妹！', criteria: 1 },
-    { icon: '/public/img/achievements/a3.png', name: '首露心声', description: '用户首次发表游戏评测', message: '你勇敢地表达了自己的游戏评测，呃，希望游戏厂商能够看到。', criteria: 1 },
-    { icon: '/public/img/achievements/a4.png', name: '声声不息', description: '用户发表 10 篇游戏评测', message: '有点爱上发表游戏评测了吗？', criteria: 10 },
-    { icon: '/public/img/achievements/a5.png', name: '坐而论道', description: '用户首次发表讨论', message: '你成功地抛出了一个讨论主题，快，让大家都来讨论。', criteria: 1 },
-    { icon: '/public/img/achievements/a6.png', name: '道道叨叨', description: '用户发表 10 次讨论', message: '有我在，你们就不会寂寞了。', criteria: 10 },
-    { icon: '/public/img/achievements/a7.png', name: '一朵小红花', description: '用户的讨论帖被置顶', message: '被表扬了？被表扬了！', criteria: 1 },
-].map((v, index) => { v.id = index + 1; return v; });
-
-const userAchievements = [
-    { userId: 1, achievementId: 1, accumulation: 1, unlockedAt: new Date() },
-    { userId: 1, achievementId: 2, accumulation: 1, unlockedAt: new Date() },
-    { userId: 1, achievementId: 3, accumulation: 3 },
-    { userId: 1, achievementId: 4, accumulation: 1, unlockedAt: new Date() },
-    { userId: 1, achievementId: 5, accumulation: 1 },
-    { userId: 1, achievementId: 6, accumulation: 1, unlockedAt: new Date() },
+    { id: AchievementTypes.UserJoin, icon: '/public/img/achievements/a2.png', name: '初出茅庐', description: '用户首次登陆', message: '欢迎进入 KTap 的世界，嘿，我们又多了一个好兄弟/姐妹！', criteria: 1 },
+    { id: AchievementTypes.FirstReview, icon: '/public/img/achievements/a3.png', name: '首露心声', description: '用户首次发表游戏评测', message: '你勇敢地表达了自己的游戏评测，呃，希望游戏厂商能够看到。', criteria: 1 },
+    { id: AchievementTypes.TenReviews, icon: '/public/img/achievements/a4.png', name: '声声不息', description: '用户发表 10 篇游戏评测', message: '有点爱上发表游戏评测了吗？', criteria: 10 },
+    { id: AchievementTypes.FirstDiscussion, icon: '/public/img/achievements/a5.png', name: '坐而论道', description: '用户首次发表讨论', message: '你成功地抛出了一个讨论主题，快，让大家都来讨论。', criteria: 1 },
+    { id: AchievementTypes.TenDiscussions, icon: '/public/img/achievements/a6.png', name: '道道叨叨', description: '用户发表 10 次讨论', message: '有我在，你们就不会寂寞了。', criteria: 10 },
+    { id: AchievementTypes.FirstSticky, icon: '/public/img/achievements/a7.png', name: '一朵小红花', description: '用户的讨论首次被置顶', message: '被表扬了？被表扬了！', criteria: 1 },
 ];
 
+const userAchievements = [
+    { userId: 1, achievementId: AchievementTypes.UserJoin, accumulation: 1, unlockedAt: new Date() },
+    { userId: 1, achievementId: AchievementTypes.FirstReview, accumulation: 1, unlockedAt: new Date() },
+    { userId: 1, achievementId: AchievementTypes.TenReviews, accumulation: 3 },
+    { userId: 1, achievementId: AchievementTypes.FirstDiscussion, accumulation: 1, unlockedAt: new Date() },
+    { userId: 1, achievementId: AchievementTypes.TenDiscussions, accumulation: 1 },
+    { userId: 1, achievementId: AchievementTypes.FirstSticky, accumulation: 1, unlockedAt: new Date() },
+];
 
-async function initForSteam() {
-    console.log(`Start seeding for steam ...`);
-    console.log(`初始化用户...`);
-    const user = await db.user.upsert({ create: users[0], update: users[0], where: { id: users[0].id } });
-    console.log(`Created user with id: ${user.id}`);
+// 基础数据初始化
+async function baseInit() {
+    console.log(`Start base seeding ...`);
 
     // 流行语
     console.log(`初始化流行语...`);
@@ -1083,6 +1081,20 @@ async function initForSteam() {
         const gift = await db.gift.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created gift id: ${gift.id}`);
     }
+    // 成就
+    for (const item of achievements) {
+        const achievement = await db.achievement.upsert({ create: item, update: item, where: { id: item.id } });
+        console.log(`Created achievement id: ${achievement.id}`);
+    }
+
+    console.log(`base seeding finished.`);
+}
+
+async function initForSteam() {
+    console.log(`Start seeding for steam ...`);
+    console.log(`初始化用户...`);
+    const user = await db.user.upsert({ create: users[0], update: users[0], where: { id: users[0].id } });
+    console.log(`Created user with id: ${user.id}`);
 
     console.log(`开始初始化搜索页面组件...`);
     for (const item of discoverPageWidgets) {
@@ -1109,7 +1121,7 @@ async function initForSteam() {
             console.log(`已初始化游戏 [${steamAppId}] ${gameData[steamAppId].data.name}`);
         }
     }
-    console.log(`初始化数据完成.`);
+    console.log(`Seeding finished.`);
 }
 
 async function initForDev() {
@@ -1218,16 +1230,6 @@ async function initForDev() {
         const reviewComment = await db.reviewComment.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created review comment with id: ${reviewComment.id}`);
     }
-    // 流行语
-    for (const item of buzzwords) {
-        const buzzword = await db.buzzword.upsert({ create: item, update: item, where: { id: item.id } });
-        console.log(`Created buzzword id: ${buzzword.id}`);
-    }
-    // 礼物
-    for (const item of gifts) {
-        const gift = await db.gift.upsert({ create: item, update: item, where: { id: item.id } });
-        console.log(`Created gift id: ${gift.id}`);
-    }
     // 礼物关系
     for (const item of reviewGiftRefs) {
         const reviewGiftRef = await db.reviewGiftRef.upsert({ create: item, update: item, where: { id: item.id } });
@@ -1243,22 +1245,17 @@ async function initForDev() {
         const channel = await db.discussionChannel.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created discussion channel: ${channel.id}`);
     }
-    // 成就
-    for (const item of achievements) {
-        const achievement = await db.achievement.upsert({ create: item, update: item, where: { id: item.id } });
-        console.log(`Created achievement id: ${achievement.id}`);
-    }
     // 用户成就
     for (const item of userAchievements) {
         const ref = await db.userAchievementRef.upsert({ create: item, update: item, where: { userId_achievementId: { userId: item.userId, achievementId: item.achievementId } } });
         console.log(`Created user achievement ref user id: ${ref.userId}`);
     }
-
     console.log(`Seeding finished.`);
 }
 
 async function main() {
     const { values } = parseArgs({ options: { environment: { type: 'string', }, } });
+    baseInit();
     switch (values.environment) {
         case "steam":
         case "production":

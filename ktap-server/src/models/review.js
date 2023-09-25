@@ -1,5 +1,9 @@
 'use strict';
 
+export const ReviewEvents = {
+    Created: 'review.created',
+};
+
 const review = async (fastify, opts, next) => {
     fastify.decorate('review', {
         async deleteReview({ id, userId, isByAdmin = false, }) {

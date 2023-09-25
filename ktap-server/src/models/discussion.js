@@ -3,7 +3,12 @@
 import sanitizeHtml from 'sanitize-html';
 import { Notification, Errors } from '../constants.js';
 
-const cleanContent = (content) => {
+export const DiscussionEvents = {
+    Created: 'discussion.created',
+    Sticky: 'discussion.sticky',
+}
+
+function cleanContent(content) {
     return sanitizeHtml(content, {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
         allowedAttributes: {
@@ -13,7 +18,7 @@ const cleanContent = (content) => {
 };
 
 // 去掉所有的html标签，只保留文本
-const textContent = (content) => {
+function cleanHtmlTags(content) {
     return content.replace(/<[^>]+>/g, '');
 };
 
@@ -92,6 +97,8 @@ const discussion = async (fastify, opts, next) => {
                 title: Notification.getContent(Notification.action.discussionCreated, Notification.type.following),
                 content: result.discussion.title, url: '/discussions/' + result.discussion.id,
             });
+            // send event
+            await fastify.pubsub.publish(DiscussionEvents.Created, { discussion: { ...result.discussion, post: { ...result.post } } });
             return result;
         },
         async updateDiscussion({ id, title, operator }) {
@@ -136,6 +143,8 @@ const discussion = async (fastify, opts, next) => {
             let canSticky = await fastify.discussion.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'sticky' });
             if (!canSticky) throw Errors.forbidden();
             await fastify.db.discussion.updateMany({ where: { id, }, data: { isSticky } });
+            // send event
+            await fastify.pubsub.publish(DiscussionEvents.Sticky, { discussion: { ...discussion } });
         },
         async closeDiscussion({ id, operator, isClosed = false }) {
             const discussion = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
@@ -185,7 +194,7 @@ const discussion = async (fastify, opts, next) => {
             // add notification
             const notification = {
                 action: Notification.action.postCreated, target: Notification.target.User, targetId: userId,
-                content: textContent(result.content).slice(0, 50), url: `/discussions/${result.discussionId}/posts/${result.id}`,
+                content: cleanHtmlTags(result.content).slice(0, 50), url: `/discussions/${result.discussionId}/posts/${result.id}`,
             };
             await fastify.notification.addFollowingNotification({
                 ...notification,
