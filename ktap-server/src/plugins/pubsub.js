@@ -6,7 +6,7 @@ const pubsub = {
     provider: new EventEmitter(),
     publish: async (event, data) => pubsub.provider.emit(event, data),
     on: async (event, callback) => pubsub.provider.on(event, callback),
-    removeEventListener: async (event) => pubsub.provider.removeAllListeners(event),
+    removeAllListeners: async (event) => pubsub.provider.removeAllListeners(event),
 };
 
 const pubsubPlugin = async (fastify, opts, next) => {

@@ -12,7 +12,7 @@ const TopTitle = React.memo(function TopTitle() {
         <Block display='flex' alignItems='center' justifyContent='space-between'
             paddingLeft='scale600' paddingRight='scale600' paddingTop='scale600' paddingBottom='scale300'>
             <LabelSmall>通知中心</LabelSmall>
-            <RouterLink href='/settings/notifications'><LabelXSmall color='primary300'>设置</LabelXSmall></RouterLink>
+            <RouterLink href='/settings/notification'><LabelXSmall color='primary300'>设置</LabelXSmall></RouterLink>
         </Block>
     );
 });

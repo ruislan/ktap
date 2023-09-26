@@ -65,6 +65,13 @@ const main = async () => {
             .then(() => server.log.info('server is closed.'))
             .finally(() => process.exit());
     }));
+    // handle unexpected process errors, avoid crashing the server
+    process.on('uncaughtException', (err) => {
+        server.log.error(err);
+    });
+    process.on('unhandledRejection', (reason, p) => {
+        server.log.error(reason, p);
+    });
 
     // print routes
     server.ready(() => {
