@@ -14,7 +14,12 @@ const app = async (fastify, opts, next) => {
             `;
         },
         // 当前热力指数计算非常简单，通过加权算法来计算最近 1 周的数值，关注*2 + 评测*10 + 评测回复*1 + 讨论*5 + 讨论回复*1
-        // TODO 将以下这些行为做成 Event，根据 Event 来异步刷新热力值，而且需要保证在系统崩溃的时候能够得到保证事件完成
+        // XXX 将以下这些行为做成 Event，根据 Event 来异步刷新热力值。思考一下异步刷新热力值的必要性，
+        // XXX 如果一个 App 很热，又很多人写评测，又有很多人评论，是不是写入就会很频繁，就会产生很多的事件（如果消息队列的话，会有大量消息产生）。
+        // XXX 而这么多的事件，其实就一个事儿，刷新热力值，所以这里有两个思路：
+        // XXX 1. 依然是访问的时候直接计算，而过热访问可以使用缓存技术来处理。
+        // XXX 2. 获取到计算事件的时候，不立刻计算，而是等待一段时间（例如 60 秒），或者固定长度（例如 1000 个）事件，然后合并同类计算，这样来避免计算
+        // XXX 这里简单为上选择第一个。而第二思路可能未来会去实现，因为这个操作可以适用很多非即时性的计算。
         async computeAppPopular({ appId }) {
             const limitDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             const hotOriginData = (await fastify.db.$queryRaw`
@@ -29,7 +34,6 @@ const app = async (fastify, opts, next) => {
             return popular;
         },
         // 计算 App 的计分占比
-        // TODO 根据 ReviewEvent 来异步刷新热力值，而且需要保证在系统崩溃的时候能够得到保证事件完成
         async computeAppScoreRatio({ appId }) {
             const lData = (await fastify.db.$queryRaw`
                 SELECT l1.cnt AS l1, l2.cnt AS l2, l3.cnt AS l3, l4.cnt AS l4, l5.cnt AS l5 FROM

@@ -226,10 +226,10 @@ const apps = async function (fastify, opts) {
         // get meta
         // 统计评测中的几个分段和分段占比
         const meta = {};
-        meta.reviews = await fastify.db.review.count({ where: { appId: id, } }); // TODO 后面通过异步计算，直接读取
-        meta.follows = await fastify.db.followApp.count({ where: { appId: id, } }); // TODO 后面通过异步计算，直接读取
-        meta.ratings = await fastify.app.computeAppScoreRatio({ appId: id });// TODO 后面通过异步计算，直接读取
-        meta.popular = await fastify.app.computeAppPopular({ appId: id, }); // 热力指数, TODO 后面通过异步计算，直接读取
+        meta.reviews = await fastify.db.review.count({ where: { appId: id, } }); // XXX 可选：通过异步计算写入数据库字段，直接读取
+        meta.follows = await fastify.db.followApp.count({ where: { appId: id, } }); // XXX 可选：通过异步计算写入数据库字段，直接读取
+        meta.ratings = await fastify.app.computeAppScoreRatio({ appId: id }); // XXX 可选：通过异步计算写入数据库字段，直接读取
+        meta.popular = await fastify.app.computeAppPopular({ appId: id, }); // 热力指数
         return reply.code(200).send({ data, meta });
     });
 
