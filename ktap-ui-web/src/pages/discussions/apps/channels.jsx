@@ -121,7 +121,7 @@ export default function Channels() {
             {isLoading && <Skeleton width='100%' rows={3} height='144px' animation overrides={{ Row: { style: { height: '40px', borderRadius: theme.sizing.scale300 } } }} />}
             {dataList?.map((channel, index) => {
                 const isActive = channel.id == channelId;
-                const canSetting = user?.isAdmin || channel.moderators?.some(moderator => moderator.id === user.id);
+                const canSetting = user && (user.isAdmin || channel.moderators?.some(moderator => moderator.id === user.id));
                 return (<Link key={index} className={css({
                     display: 'flex', flexDirection: 'column', gap: theme.sizing.scale300, overflow: 'hidden',
                     cursor: 'pointer', position: 'relative', padding: theme.sizing.scale300,
