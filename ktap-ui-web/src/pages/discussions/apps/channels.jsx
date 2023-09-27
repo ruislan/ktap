@@ -12,6 +12,7 @@ import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE } from 'b
 import { Message3, ChatAlt2, Settings, Icon } from '@ktap/components/icons';
 import Notification from '@ktap/components/notification';
 import { Messages } from '@ktap/libs/utils';
+import { useAuth } from '@ktap/hooks/use-auth';
 
 function Setting({ appId, channel, afterUpdated = () => { } }) {
     const [, theme] = useStyletron();
@@ -62,7 +63,7 @@ function Setting({ appId, channel, afterUpdated = () => { } }) {
                 setSettingForm({ id: channel.id, name: channel.name, icon: channel.icon, description: channel.description });
                 setIsOpenChannelSettingModal(true);
             }}>
-                <Icon $size='lg'><Settings/></Icon>
+                <Icon $size='lg'><Settings /></Icon>
             </Block>
             <Modal onClose={() => setIsOpenChannelSettingModal(false)} closeable={false} isOpen={isOpenChannelSettingModal} role={ROLE.alertdialog} animate autoFocus>
                 <ModalHeader>设置频道</ModalHeader>
@@ -91,6 +92,7 @@ function Setting({ appId, channel, afterUpdated = () => { } }) {
 
 export default function Channels() {
     const { appId, channelId = 0 } = useParams();
+    const { user } = useAuth();
     const [css, theme] = useStyletron();
     const navigate = useNavigate();
 
@@ -119,6 +121,7 @@ export default function Channels() {
             {isLoading && <Skeleton width='100%' rows={3} height='144px' animation overrides={{ Row: { style: { height: '40px', borderRadius: theme.sizing.scale300 } } }} />}
             {dataList?.map((channel, index) => {
                 const isActive = channel.id == channelId;
+                const canSetting = user?.isAdmin || channel.moderators?.some(moderator => moderator.id === user.id);
                 return (<Link key={index} className={css({
                     display: 'flex', flexDirection: 'column', gap: theme.sizing.scale300, overflow: 'hidden',
                     cursor: 'pointer', position: 'relative', padding: theme.sizing.scale300,
@@ -141,7 +144,7 @@ export default function Channels() {
                         }
                         <LabelSmall color={isActive ? '' : 'primary100'}>{channel.name}</LabelSmall>
                     </Block>
-                    {isActive && channelId > 0 && <Setting appId={appId} channel={channel} afterUpdated={(data) => {
+                    {isActive && channelId > 0 && canSetting && <Setting appId={appId} channel={channel} afterUpdated={(data) => {
                         setDataList(prev => {
                             const index = prev.findIndex(channel => channel.id == data.id);
                             prev[index] = { ...prev[index], ...data };
