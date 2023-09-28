@@ -9,9 +9,10 @@ WORKDIR /app
 COPY . .
 
 RUN yarn install
-RUN yarn prisma db push
+# RUN yarn prisma db push
+RUN yarn prisma migrate deploy
 RUN yarn seed
-RUN yarn seed:steam
+# RUN yarn seed:steam
 
 EXPOSE 8000
 ENTRYPOINT ["node", "server.js"]
