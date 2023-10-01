@@ -14,20 +14,20 @@ const passwordHash = await bcrypt.hash('123123', 10);
 const users = [
     {
         id: 1, name: 'admin', email: 'admin@ktap.com', phone: '123456789', password: passwordHash, isActivated: true, gender: 'MAN',
-        avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285',
+        avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=admin&size=256',
         bio: 'I am the admin', birthday: new Date(), createdAt: new Date(), updatedAt: new Date(),
         isAdmin: true,
         balance: 1000,
     },
     {
         id: 2, name: 'user1', email: 'user1@ktap.com', phone: '123456789', password: passwordHash, isActivated: true, gender: 'MAN',
-        avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285',
+        avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=user1&size=256',
         bio: 'I am user2 and I am rich', birthday: new Date(), createdAt: new Date(), updatedAt: new Date(),
         balance: 1000,
     },
     {
         id: 3, name: 'user2', email: 'user2@ktap.com', phone: '123456789', password: passwordHash, isActivated: true, gender: 'MAN',
-        avatar: 'https://avatars.dicebear.com/api/adventurer-neutral/1231231.svg?width=285',
+        avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=user2&size=256',
         bio: 'I am user3 and I am rich', birthday: new Date(), createdAt: new Date(), updatedAt: new Date(),
         balance: 0,
     }

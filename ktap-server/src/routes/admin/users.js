@@ -98,7 +98,7 @@ const users = async function (fastify, opts) {
         const nowStr = '' + Date.now();
         await fastify.db.user.update({
             where: { id },
-            data: { avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${nowStr.substring(nowStr.length - 7)}.svg?width=285`, }
+            data: { avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${nowStr.substring(nowStr.length - 7)}&size=256`, }
         });
         return reply.code(204).send();
     });
