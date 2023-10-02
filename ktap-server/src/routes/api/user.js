@@ -96,13 +96,9 @@ const user = async (fastify, opts) => {
         const id = Number(req.params.id) || 0;
         if (id > 0) {
             if (req.params.type === 'user') {
-                if (followerId !== id) { // 自己不能关注自己
-                    const data = await fastify.db.followUser.create({ data: { followerId, userId: id } });
-                    await fastify.db.timeline.create({ data: { userId: followerId, targetId: data.id, target: 'FollowUser', } });
-                }
+                await fastify.follow.followUser({ followerId, followingId: id });
             } else {
-                const data = await fastify.db.followApp.create({ data: { followerId, appId: id } });
-                await fastify.db.timeline.create({ data: { userId: followerId, targetId: data.id, target: 'FollowApp', } });
+                await fastify.follow.followApp({ followerId, followingId: id });
             }
         }
         return reply.code(200).send();
@@ -114,11 +110,9 @@ const user = async (fastify, opts) => {
         const id = Number(req.params.id) || 0;
         if (id > 0) {
             if (req.params.type === 'user') {
-                const data = await fastify.db.followUser.delete({ where: { followerId_userId: { followerId, userId: id }, } });
-                await fastify.db.timeline.deleteMany({ where: { target: 'FollowUser', targetId: data.id, userId: followerId } });
+                await fastify.follow.unFollowUser({ followerId, followingId: id });
             } else {
-                const data = await fastify.db.followApp.delete({ where: { followerId_appId: { followerId, appId: id }, } });
-                await fastify.db.timeline.deleteMany({ where: { target: 'FollowApp', targetId: data.id, userId: followerId } });
+                await fastify.follow.unFollowApp({ followerId, followerId: id});
             }
         }
         return reply.code(204).send();
@@ -193,7 +187,7 @@ const user = async (fastify, opts) => {
     fastify.delete('/notifications', async function (req, reply) {
         const userId = req.user.id;
         const type = req.query.type || Notification.type.system;
-        await fastify.db.notification.deleteMany({ where: { userId, type }, });
+        await fastify.notification.clearUserNotifications({ userId, type });
         return reply.code(204).send();
     });
 
@@ -201,10 +195,7 @@ const user = async (fastify, opts) => {
     fastify.put('/notifications/read', async function (req, reply) {
         const userId = req.user.id;
         const type = req.query.type || Notification.type.system;
-        await fastify.db.notification.updateMany({
-            where: { userId, type },
-            data: { isRead: true },
-        });
+        await fastify.notification.markReadUserNotifications({ userId, type });
         return reply.code(204).send();
     });
 
@@ -212,10 +203,8 @@ const user = async (fastify, opts) => {
     fastify.put('/notifications/:id/read', async function (req, reply) {
         const userId = req.user.id;
         const id = Number(id) || 0;
-        await fastify.db.notification.update({
-            where: { id, userId },
-            data: { isRead: true },
-        });
+        await fastify.notification.markReadUserNotification({ id, userId });
+        return reply.code(204).send();
     });
     // 通知end
 };

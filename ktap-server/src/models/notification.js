@@ -12,6 +12,19 @@ const notification = async (fastify, opts, next) => {
             });
         },
 
+        // 清空整个通知分类
+        async clearUserNotifications({ userId, type = Notification.type.system }) {
+            await fastify.db.notification.deleteMany({ where: { userId, type }, });
+        },
+        // 整个通知分类标记已读
+        async markReadUserNotifications({ userId, type = Notification.type.system }) {
+            await fastify.db.notification.updateMany({ where: { userId, type }, data: { isRead: true } });
+        },
+        // 单个通知标记已读
+        async markReadUserNotification({ id, userId }) {
+            await fastify.db.notification.update({ where: { id, userId }, data: { isRead: true }, });
+        },
+
         // 反馈通知，只针对某个人进行通知，也只需要查询当前这个人的设置，然后根据这个行动查看是是否需要通知
         async addReactionNotification({ action, userId, target, targetId, title = '通知', content, url }) {
             const setting = await fastify.db.userSetting.findUnique({ where: { userId } });
