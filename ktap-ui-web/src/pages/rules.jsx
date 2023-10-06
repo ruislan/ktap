@@ -1,10 +1,7 @@
-/* eslint-disable  */
-import React from 'react';
-import { Block } from 'baseui/block';
-import { DisplayMedium, LabelMedium, HeadingSmall, ParagraphMedium } from 'baseui/typography';
+
+import { Block } from 'baseui/block';import { DisplayMedium, LabelMedium, HeadingSmall, ParagraphMedium } from 'baseui/typography';
 
 function Rules() {
-    throw new Error();
     return (
         <Block display='flex' alignItems='center' flexDirection='column' maxWidth='664px' margin='48px auto' padding='scale600'>
             <DisplayMedium marginBottom='scale600'>规则手册</DisplayMedium>
