@@ -17,7 +17,7 @@ function PasswordReset() {
     const [errorMessage, setErrorMessage] = React.useState(null);
     const [isVerified, setIsVerified] = React.useState(false);
     const [isSuccess, setIsSuccess] = React.useState(false);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(false);
     const handleResetPassword = async () => {
         setIsLoading(true);
         setErrorMessage(null);
@@ -27,7 +27,10 @@ function PasswordReset() {
             if (res.ok) {
                 setIsSuccess(true);
             } else if (res.status === 400) {
-                setErrorMessage('重置密码错误，重置地址过期或者密码格式不对。');
+                const json = await res.json();
+                setErrorMessage(json.message);
+            } else {
+                setErrorMessage(Messages.unknownError);
             }
         } finally {
             setIsLoading(false);
@@ -44,7 +47,10 @@ function PasswordReset() {
                     if (res.ok) {
                         setIsVerified(true);
                     } else if (res.status === 400) {
-                        setErrorMessage('您的重置地址已经过期，请您重新重置密码');
+                        const json = await res.json();
+                        setErrorMessage(json);
+                    } else {
+                        setErrorMessage(Messages.unknownError);
                     }
                 } finally {
                     setIsLoading(false);

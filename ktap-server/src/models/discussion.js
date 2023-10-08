@@ -1,7 +1,12 @@
 'use strict';
 
 import sanitizeHtml from 'sanitize-html';
-import { Notification, Errors } from '../constants.js';
+import { Notification } from '../constants.js';
+
+export const DiscussionErrors = {
+    notFound: '内容不存在',
+    forbidden: '无操作权限',
+};
 
 export const DiscussionEvents = {
     Created: 'discussion.created',
@@ -69,9 +74,9 @@ const discussion = async (fastify, opts, next) => {
         },
         async updateDiscussionChannel({ id, name, icon, description, appId, operator }) {
             const channel = await fastify.db.discussionChannel.findUnique({ where: { id }, include: { moderators: { select: { userId: true, } } } });
-            if (!channel) throw Errors.notFound();
+            if (!channel) throw new Error(DiscussionErrors.notFound);
             let canUpdate = await fastify.discussion.canOperate({ obj: channel, objType: 'DiscussionChannel', operator, operation: 'update' });
-            if (!canUpdate) throw Errors.forbidden();
+            if (!canUpdate) throw new Error(DiscussionErrors.forbidden);
             await fastify.db.discussionChannel.update({ where: { id }, data: { name, icon, description, appId }, });
         },
         async createDiscussion({ title, content, appId, channelId, userId, ip }) {
@@ -104,10 +109,10 @@ const discussion = async (fastify, opts, next) => {
         async updateDiscussion({ id, title, operator }) {
             const discussion = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
             // 主题锁定的情况下，都不能编辑
-            if (!discussion || discussion.isClosed) throw Errors.notFound();
+            if (!discussion || discussion.isClosed) throw new Error(DiscussionErrors.notFound);
 
             let canUpdate = await fastify.discussion.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'update' });
-            if (!canUpdate) throw Errors.forbidden();
+            if (!canUpdate) throw new Error(DiscussionErrors.forbidden);
 
             await fastify.db.discussion.update({ where: { id: discussion.id }, data: { title } });
         },
@@ -116,10 +121,10 @@ const discussion = async (fastify, opts, next) => {
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussion({ id, operator }) {
             const discussion = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
-            if (!discussion) throw Errors.notFound();
+            if (!discussion) throw new Error(DiscussionErrors.notFound);
 
             let canDelete = await fastify.discussion.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'delete' });
-            if (!canDelete) throw Errors.forbidden();
+            if (!canDelete) throw new Error(DiscussionErrors.forbidden);
 
             await fastify.db.$transaction([
                 fastify.db.$queryRaw`
@@ -139,18 +144,18 @@ const discussion = async (fastify, opts, next) => {
         },
         async stickyDiscussion({ id, operator, isSticky = false }) {
             const discussion = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
-            if (!discussion) throw Errors.notFound();
+            if (!discussion) throw new Error(DiscussionErrors.notFound);
             let canSticky = await fastify.discussion.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'sticky' });
-            if (!canSticky) throw Errors.forbidden();
+            if (!canSticky) throw new Error(DiscussionErrors.forbidden);
             await fastify.db.discussion.updateMany({ where: { id, }, data: { isSticky } });
             // send event
             await fastify.pubsub.publish(DiscussionEvents.Sticky, { discussion: { ...discussion } });
         },
         async closeDiscussion({ id, operator, isClosed = false }) {
             const discussion = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: false });
-            if (!discussion) throw Errors.notFound();
+            if (!discussion) throw new Error(DiscussionErrors.notFound);
             let canSticky = await fastify.discussion.canOperate({ obj: discussion, objType: 'Discussion', operator, operation: 'close' });
-            if (!canSticky) throw Errors.forbidden();
+            if (!canSticky) throw new Error(DiscussionErrors.forbidden);
             await fastify.db.discussion.updateMany({ where: { id, }, data: { isClosed } });
         },
         // 统计某个讨论的礼物数量
@@ -215,10 +220,10 @@ const discussion = async (fastify, opts, next) => {
         async updateDiscussionPost({ id, content, ip, operator }) {
             const post = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
             // 讨论如果处于关闭状态，则不能修改
-            if (!post || !post.discussion || post.discussion.isClosed) throw Errors.notFound();
+            if (!post || !post.discussion || post.discussion.isClosed) throw new Error(DiscussionErrors.notFound);
 
             let canUpdate = await fastify.discussion.canOperate({ obj: post, objType: 'Post', operator, operation: 'update' });
-            if (!canUpdate) throw Errors.forbidden();
+            if (!canUpdate) throw new Error(DiscussionErrors.forbidden);
 
             await fastify.db.discussionPost.update({ where: { id }, data: { content: cleanContent(content), ip } });
         },
@@ -228,10 +233,10 @@ const discussion = async (fastify, opts, next) => {
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
         async deleteDiscussionPost({ id, operator }) {
             const post = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
-            if (!post) throw Errors.notFound();
+            if (!post) throw new Error(DiscussionErrors.notFound);
 
             let canDelete = await fastify.discussion.canOperate({ obj: post, objType: 'Post', operator, operation: 'delete' });
-            if (!canDelete) throw Errors.forbidden();
+            if (!canDelete) throw new Error(DiscussionErrors.forbidden);
 
             await fastify.db.$transaction(async (tx) => {
                 const lastPost = await tx.discussionPost.findFirst({ where: { discussionId: post.discussion.id, id: { not: id } }, orderBy: { createdAt: 'desc' }, });

@@ -61,7 +61,7 @@ function AuthProvider({ children }) {
             if (res.ok) {
                 window.location.href = from;
             } else {
-                if (res.status === 403) {
+                if (res.status === 400) {
                     const json = await res.json();
                     throw new Error(json.message);
                 } else throw new Error();

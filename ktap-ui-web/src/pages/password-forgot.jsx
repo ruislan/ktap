@@ -7,7 +7,7 @@ import { Button } from 'baseui/button';
 import { FormControl } from "baseui/form-control";
 import { Input } from 'baseui/input';
 
-import { LAYOUT_DEFAULT_CONTENT, MOBILE_BREAKPOINT } from '@ktap/libs/utils';
+import { LAYOUT_DEFAULT_CONTENT, MOBILE_BREAKPOINT, Messages } from '@ktap/libs/utils';
 import RouterLink from '@ktap/components/router-link';
 
 function PasswordForgot() {
@@ -23,10 +23,13 @@ function PasswordForgot() {
             const res = await fetch('/api/password/forgot', { method: 'POST', body: JSON.stringify({ email }), headers: { 'Content-Type': 'application/json' } });
             if (res.ok) {
                 setIsSuccess(true);
-            } else if (res.status === 400) {
-                setErrorMessage('您输入的邮箱地址不正确或者您还不是网站用户');
-            } else if (res.status === 500) {
-                setErrorMessage('邮件发送失败，请稍后再尝试');
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setErrorMessage(json.message);
+                } else {
+                    setErrorMessage(Messages.unknownError);
+                }
             }
         } finally {
             setIsLoading(false);

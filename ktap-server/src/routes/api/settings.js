@@ -1,23 +1,19 @@
 import { authenticate } from '../../lib/auth.js';
-import { Errors, Notification, USER_CHANGE_NAME_INTERVAL } from "../../constants.js";
+import { Notification } from "../../constants.js";
+import { UserErrors } from '../../models/user.js';
 
-const settings = async (fastify, opts) => {
+const settings = async (fastify) => {
     fastify.addHook('onRequest', authenticate);
 
     // 用户头像
     fastify.post('/avatar', async function (req, reply) {
         try {
             const data = await req.file();
-            const buffer = await data.toBuffer();
-            let uri = await fastify.storage.store(data.filename, buffer);
-            await fastify.db.user.update({
-                where: { id: req.user.id },
-                data: { avatar: uri }
-            });
+            const uri = await fastify.user.updateAvatar({ userId: req.user.id, file: data });
             return reply.code(200).send({ avatar: uri });
         } catch (err) {
             fastify.log.warn(err);
-            throw fastify.httpErrors.badRequest(Errors.message.userAvatarUploadFailed);
+            return reply.code(400).send({ message: UserErrors.userAvatarUploadFailed });
         }
     });
 
@@ -35,47 +31,14 @@ const settings = async (fastify, opts) => {
             }
         }
     }, async function (req, reply) {
-        const { email, name } = req.body;
-        const user = await fastify.db.user.findUnique({ where: { id: req.user.id } });
-        if (user.name === name && user.email === email) return reply.code(200).send();
-        // want to change name?
-        if (user.name !== name && user.lastUpdatedNameAt) {
-            const lastUpdatedNameAt = new Date(user.lastUpdatedNameAt).getTime();
-            const now = new Date().getTime();
-            if ((now - lastUpdatedNameAt) < USER_CHANGE_NAME_INTERVAL) {
-                throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userNameNotYet);
-            }
+        try {
+            const { email, name } = req.body;
+            await fastify.user.updateGeneral({ userId: req.user.id, email, name });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-
-        const existsName = await fastify.db.user.count({
-            where: {
-                AND: [
-                    { name },
-                    { id: { not: user.id } }
-                ]
-            }
-        }) > 0;
-        if (existsName) throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userNameDuplicated);
-
-        const existsEmail = await fastify.db.user.count({
-            where: {
-                AND: [
-                    { email },
-                    { id: { not: user.id } }
-                ]
-            }
-        }) > 0;
-        if (existsEmail) throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userEmailDuplicated);
-
-        await fastify.db.user.update({
-            where: { id: user.id },
-            data: {
-                email,
-                name,
-                lastUpdatedNameAt: new Date(),
-            },
-        });
-        return reply.code(204).send();
     });
 
     // 用户信息
@@ -94,12 +57,14 @@ const settings = async (fastify, opts) => {
             }
         }
     }, async function (req, reply) {
-        const { gender, bio, location, birthday } = req.body;
-        await fastify.db.user.update({
-            where: { id: req.user.id },
-            data: { gender, bio, location, birthday: new Date(birthday) },
-        });
-        return reply.code(204).send();
+        try {
+            const { gender, bio, location, birthday } = req.body;
+            await fastify.user.updateProfile({ userId: req.user.id, gender, bio, location, birthday: new Date(birthday) });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 用户密码
@@ -116,19 +81,14 @@ const settings = async (fastify, opts) => {
             }
         },
     }, async function (req, reply) {
-        const { oldPassword, newPassword } = req.body;
-        const user = await fastify.db.user.findUnique({ where: { id: req.user.id } });
-        if (!user) throw fastify.httpErrors.createError(Errors.code.authentication, Errors.message.authenticationFailed);
-
-        const isPasswordMatched = await fastify.bcrypt.compare(oldPassword, user.password);
-        if (!isPasswordMatched) throw fastify.httpErrors.createError(Errors.code.validation, Errors.message.userOldPasswordWrong);
-
-        const newPasswordHash = await fastify.bcrypt.hash(newPassword);
-        await fastify.db.user.update({
-            where: { id: req.user.id },
-            data: { password: newPasswordHash }
-        });
-        return reply.code(204).send();
+        try {
+            const { oldPassword, newPassword } = req.body;
+            await fastify.user.updatePassword({ userId: req.user.id, oldPassword, newPassword });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 通知信息

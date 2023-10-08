@@ -106,7 +106,9 @@ function SettingsForm({ setNotification }) {
                 />
             </FormControl>
             <FormControl label={<LabelSmall>生日</LabelSmall>}>
-                <RdPicker mode='single' value={new Date(form.birthday)} onSelect={(date) => setForm({ ...form, birthday: DateTime.formatShort(date) })} />
+                <RdPicker mode='single' value={new Date(form.birthday)} onSelect={(date) => {
+                    if (date) setForm({ ...form, birthday: DateTime.formatShort(date) })
+                }} />
             </FormControl>
             <FormControl label={<LabelSmall>简介</LabelSmall>} counter={{ length: form.bio.length, maxLength: 255 }}>
                 <Textarea size='compact' value={form.bio} error={form.bio.length > 255}

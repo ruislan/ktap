@@ -1,24 +1,3 @@
-export const Errors = {
-    forbidden(message = '') { return { code: 403, message } },
-    notFound(message = '') { return { code: 404, message } },
-    code: {
-        validation: 400,
-        authentication: 401,
-        forbidden: 403,
-    },
-    message: {
-        authenticationFailed: '认证失败',
-        userIsLocked: '用户已经被锁定',
-        userAgreeRequired: '需要同意 服务协议 和 隐私政策',
-        userNameDuplicated: '昵称和别人冲突啦',
-        userNameNotYet: '昵称不要换得太频繁啦，更换时间间隔为 30 天',
-        userEmailDuplicated: '邮箱已经被使用了哟，如果您确定这是您的邮箱，那就尝试找回密码吧',
-        userOldPasswordWrong: '旧密码错误，温馨提示：注意大小写和空格哟',
-        userAvatarUploadFailed: '头像上传失败，请稍后再试，温馨提示：注意文件大小和格式，以及网络情况哟',
-    }
-};
-
-export const USER_CHANGE_NAME_INTERVAL = 1000 * 60 * 60 * 24 * 30; // 30 days
 export const REVIEW_IMAGE_COUNT_LIMIT = 3; // 3 images
 export const REVIEW_CONTENT_LIMIT = 8000; // 8000个字
 
@@ -146,14 +125,9 @@ export const AppLanguages = {
     ]
 }
 
-export const Gender = {
-    MAN: 'MAN',
-    WOMAN: 'WOMAN',
-    GENDERLESS: 'GENDERLESS'
-};
-
 export const Keys = {
     cookie: {
         token: 'token',
+        userId: 'user_id',
     }
 };

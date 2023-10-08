@@ -192,7 +192,7 @@ export const PageWidget = {
 };
 
 export const Messages = {
-    authFail: '您输入的邮箱或密码不正确',
+    authFail: '邮箱或密码不正确',
     requireAgreePrivacy: '需要同意 服务协议 和 隐私政策',
     ok: '操作成功',
     unknownError: '未知错误',
