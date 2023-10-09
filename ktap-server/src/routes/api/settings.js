@@ -92,6 +92,23 @@ const settings = async (fastify) => {
     });
 
     // 通知信息
+    fastify.put('/notifications', async function (req, reply) {
+        try {
+            const notificationSettings = {
+                [Notification.settings.followingUserChanged]: req.body.followingUserChanged,
+                [Notification.settings.followingAppChanged]: req.body.followingAppChanged,
+                [Notification.settings.reactionReplied]: req.body.reactionReplied,
+                [Notification.settings.reactionThumbed]: req.body.reactionThumbed,
+                [Notification.settings.reactionGiftSent]: req.body.reactionGiftSent,
+            };
+            await fastify.user.updateNotificationSettings({ userId: req.user.id, notificationSettings });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
+    });
+
     fastify.get('/notifications', async function (req, reply) {
         const settings = await fastify.db.userSetting.findUnique({ where: { userId: req.user.id } });
         let data = {};
@@ -100,26 +117,6 @@ const settings = async (fastify) => {
             data = { ...jsonData?.notification };
         }
         return reply.code(200).send({ data });
-    });
-
-    fastify.put('/notifications', async function (req, reply) {
-        const notificationSettings = {};
-        notificationSettings[Notification.settings.followingUserChanged] = req.body.followingUserChanged;
-        notificationSettings[Notification.settings.followingAppChanged] = req.body.followingAppChanged;
-        notificationSettings[Notification.settings.reactionReplied] = req.body.reactionReplied;
-        notificationSettings[Notification.settings.reactionThumbed] = req.body.reactionThumbed;
-        notificationSettings[Notification.settings.reactionGiftSent] = req.body.reactionGiftSent;
-
-        const settings = await fastify.db.userSetting.findUnique({ where: { userId: req.user.id } });
-        const options = settings?.options ? JSON.parse(settings.options) : {};
-        const newOptions = JSON.stringify({
-            ...options,
-            notification: notificationSettings,
-        });
-        const item = { userId: req.user.id, options: newOptions };
-
-        await fastify.db.userSetting.upsert({ where: { userId: req.user.id }, create: item, update: item });
-        return reply.code(204).send();
     });
 };
 

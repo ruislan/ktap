@@ -191,7 +191,18 @@ const user = async (fastify, opts, next) => {
                 where: { id: userId },
                 data: { password: newPasswordHash }
             });
-        }
+        },
+        async updateNotificationSettings({ userId, notificationSettings }) {
+            const settings = await fastify.db.userSetting.findUnique({ where: { userId } });
+            const options = settings?.options ? JSON.parse(settings.options) : {};
+            const newOptions = JSON.stringify({
+                ...options, // copy other settings,
+                notification: notificationSettings, // update notification settings
+            });
+            const item = { userId, options: newOptions };
+
+            await fastify.db.userSetting.upsert({ where: { userId }, create: item, update: item });
+        },
     });
     next();
 };
