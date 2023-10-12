@@ -1,11 +1,162 @@
 'use strict';
 
+import { Notification } from '../constants.js';
+
+export const REVIEW_IMAGE_COUNT_LIMIT = 3; // 3 images
+export const REVIEW_CONTENT_LIMIT = 8000; // 8000个字
+
+// domain errors
+export const ReviewErrors = {
+    reviewAlreadyExists: '已经评测过了',
+    reviewNotFound: '评测不存在',
+    reviewImageSaveFailed: '评测图片保存失败',
+    commentFailed: '回复评测失败',
+    reviewContentEmpty: '评测内容为空',
+};
+
 export const ReviewEvents = {
     Created: 'review.created',
 };
 
 const review = async (fastify, opts, next) => {
     fastify.decorate('review', {
+        async createReview({ userId, appId, content, score, ip, allowComment, imagesToSave }) {
+            const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
+            if (review) throw new Error(ReviewErrors.reviewAlreadyExists); // 已经创建了，则不会继续处理了，前端正常调用下不会出现此情况
+
+            // save images to db
+            const savedImages = [];
+            try {
+                for await (const image of imagesToSave) {
+                    const url = await fastify.storage.store(image.filename, image.buffer);
+                    savedImages.push({ url }); // should object
+                }
+            } catch (err) {
+                throw new Error(ReviewErrors.reviewImageSaveFailed);
+            }
+            // save to db
+            const data = await fastify.db.$transaction(async (tx) => {
+                const data = await tx.review.create({ data: { appId, userId, content, score, ip, allowComment, images: { create: savedImages } } });
+                await tx.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } }); // 创建 timeline
+                return data;
+            });
+
+            try {
+                await fastify.app.computeAndUpdateAppScore({ appId }); // 更新评分
+                await fastify.notification.addFollowingNotification({
+                    action: Notification.action.reviewCreated, target: Notification.target.User, targetId: userId,
+                    title: Notification.getContent(Notification.action.reviewCreated, Notification.type.following),
+                    content: data.content.slice(0, 50), url: '/reviews/' + data.id,
+                }); // 发送通知
+                await fastify.pubsub.publish(ReviewEvents.Created, { review: { ...data } }); // 发送事件
+            } catch (err) {
+                // ignore
+            }
+
+            // reconstruct return data structure
+            data.images = savedImages;
+            delete data.appId;
+            delete data.userId;
+            return data;
+        },
+        async updateReview({ id, userId, content, score, allowComment, imagesToSave, imagesToDelete }) {
+            const review = (await fastify.db.review.findFirst({ where: { userId, id } })); // is my review?
+            if (!review) throw new Error(ReviewErrors.reviewNotFound);
+
+            const data = { content: content.slice(0, REVIEW_CONTENT_LIMIT), score, allowComment, };
+
+            // 计算删除了多少图片，还有多少空位
+            const oldImageCount = await fastify.db.reviewImage.count({ where: { reviewId: id } });
+            const imagesToSaveCount = imagesToSave.length;
+            const imagesToDeleteCount = imagesToDelete.length;
+            const saveLimit = Math.min(REVIEW_IMAGE_COUNT_LIMIT + imagesToDeleteCount - oldImageCount, imagesToSaveCount);// 保留最小的那个
+
+            // 首先保存新的文件
+            if (imagesToSaveCount > 0) {
+                data.images = { create: [] };
+                // write buffer to LocalStorage
+                for (let i = 0; i < saveLimit; i++) {
+                    try {
+                        const { filename, buffer } = imagesToSave[i];
+                        const url = await fastify.storage.store(filename, buffer);
+                        data.images.create.push({ url }); // append new images to data for cascade creating
+                    } catch (err) {
+                        fastify.log.warn('save file error: ' + err);
+                        // 不能保存文件，必然更新失败了，已经保存的文件没有进入数据库会形成碎片数据，不过无所谓，后面版本会专门来处理
+                        throw new Error(ReviewErrors.reviewImageSaveFailed);
+                    }
+                }
+                // clear all buffer
+                for (const image of imagesToSave) {
+                    try {
+                        image.buffer?.clear();
+                    } catch (err) {
+                        // ignore
+                    }
+                }
+            }
+
+            // 然后进行数据库处理，更新
+            const toDeleteFiles = await fastify.db.$transaction(async (tx) => {
+                let toDeleteFiles = [];
+                for (const toDeleteId of imagesToDelete) {
+                    const toDeleteFile = await tx.reviewImage.delete({ where: { id: toDeleteId } });
+                    toDeleteFiles.push(toDeleteFile);
+                }
+                await tx.review.update({ data, where: { id } });
+                return toDeleteFiles;
+            });
+
+            // 最后删除已经不在数据库中的图片，删除失败也无所谓，与上面一样，后面会专门处理
+            for (const toDelete of toDeleteFiles) {
+                if (toDelete.url && toDelete.url.startsWith('/')) { // Is LocalStorage
+                    try {
+                        await fastify.storage.delete(toDelete.url);
+                    } catch (err) {
+                        // ignore
+                    }
+                }
+            }
+
+            // XXX 或许应该改为定时刷新App的评分或者异步请求更新？
+            try {
+                await fastify.app.computeAndUpdateAppScore({ appId: review.appId });
+            } catch (err) {
+                fastify.log.warn('compute and update app score error: ' + err);
+            }
+        },
+        async commentReview({ reviewId, content, userId, ip }) {
+            let data = {};
+            const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true, userId: true } });
+            if (review?.allowComment) {
+                data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, ip } });
+                await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'ReviewComment', } });
+                // 发送通知
+                const notification = {
+                    action: Notification.action.commentCreated, target: Notification.target.User, targetId: userId,
+                    content: content.slice(0, 50), url: '/reviews/' + reviewId + '/comments/' + data.id,
+                };
+                await fastify.notification.addFollowingNotification({
+                    ...notification,
+                    title: Notification.getContent(Notification.action.commentCreated, Notification.type.following)
+                });
+                // 自己给自己回不用发反馈通知
+                if (review.userId !== userId) {
+                    await fastify.notification.addReactionNotification({
+                        ...notification,
+                        userId: review.userId, // 反馈通知的对象
+                        title: Notification.getContent(Notification.action.commentCreated, Notification.type.reaction)
+                    });
+                }
+            }
+            return data;
+        },
+        async deleteComment({ reviewId, commentId, userId }) {
+            await fastify.db.$transaction(async (tx) => {
+                const comment = await tx.reviewComment.deleteMany({ where: { id: commentId, reviewId, userId, } }); // is my review?
+                if (comment?.id) await tx.timeline.deleteMany({ where: { target: 'ReviewComment', targetId: commentId, userId } });
+            });
+        },
         async deleteReview({ id, userId, isByAdmin = false, }) {
             const whereCondition = { id };
             if (!isByAdmin) whereCondition.userId = userId; // isAdmin or is my review?

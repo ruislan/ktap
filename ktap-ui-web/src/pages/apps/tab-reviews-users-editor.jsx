@@ -176,9 +176,8 @@ function TabReviewsUsersEditor({ app }) {
                                                     file.src = URL.createObjectURL(file);
                                                     return file;
                                                 });
-                                                const seats = draftReviewFilesLimit - draftReview.files.length;
                                                 setDraftReview(prev => {
-                                                    return { ...prev, files: [...prev.files, ...newFiles].slice(0, seats) };
+                                                    return { ...prev, files: [...prev.files, ...newFiles].slice(0, draftReviewFilesLimit) };
                                                 });
                                             }} />
                                             <Icon $size='lg'><Photograph /></Icon>

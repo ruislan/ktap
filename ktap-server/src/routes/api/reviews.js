@@ -1,5 +1,6 @@
-import { AppMedia, Pagination, REVIEW_IMAGE_COUNT_LIMIT, REVIEW_CONTENT_LIMIT, Trading, Notification } from '../../constants.js';
+import { AppMedia, Pagination, Trading, Notification } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
+import { ReviewErrors } from '../../models/review.js';
 
 const reviews = async (fastify, opts) => {
     // 获取评测
@@ -106,33 +107,15 @@ const reviews = async (fastify, opts) => {
         const reviewId = Number(req.params.id);
         const userId = req.user.id;
         const content = req.body.content || '';
-        let data = {};
-        if (content.length > 0) {
-            const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { allowComment: true, userId: true } });
-            if (review?.allowComment) {
-                data = await fastify.db.reviewComment.create({ data: { reviewId, content, userId, ip: req.ip } });
-                await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'ReviewComment', } });
-
-                // 发送通知
-                const notification = {
-                    action: Notification.action.commentCreated, target: Notification.target.User, targetId: userId,
-                    content: content.slice(0, 50), url: '/reviews/' + reviewId + '/comments/' + data.id,
-                };
-                await fastify.notification.addFollowingNotification({
-                    ...notification,
-                    title: Notification.getContent(Notification.action.commentCreated, Notification.type.following)
-                });
-                // 自己给自己回不用发反馈通知
-                if (review.userId !== userId) {
-                    await fastify.notification.addReactionNotification({
-                        ...notification,
-                        userId: review.userId, // 反馈通知的对象
-                        title: Notification.getContent(Notification.action.commentCreated, Notification.type.reaction)
-                    });
-                }
-            }
+        try {
+            let data = {};
+            if (content.length > 0) data = await fastify.review.commentReview({ reviewId, userId, content, ip: req.ip });
+            return reply.code(200).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: ReviewErrors.commentFailed });
         }
-        return reply.code(200).send({ data });
+
     });
 
     // 删除某条回复
@@ -142,11 +125,13 @@ const reviews = async (fastify, opts) => {
         const reviewId = Number(req.params.reviewId);
         const id = Number(req.params.id);
         const userId = req.user.id;
-
-        await fastify.db.reviewComment.deleteMany({ where: { id, reviewId, userId, } }); // is my review?
-        await fastify.db.timeline.deleteMany({ where: { target: 'ReviewComment', targetId: id, userId } });
-
-        return reply.code(204).send();
+        try {
+            await fastify.review.deleteComment({ reviewId, commentId: id, userId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 修改评测
@@ -155,67 +140,33 @@ const reviews = async (fastify, opts) => {
     }, async function (req, reply) {
         const userId = req.user.id;
         const id = Number(req.params.id);
-        const review = (await fastify.db.review.findMany({ where: { userId, id } }))[0]; // is my review?
-        if (review) {
-            const parts = req.parts();
-            const reqBody = { images: [] };
-            for await (const part of parts) {
-                if (part.file) {
-                    const buffer = await part.toBuffer();
-                    reqBody.images.push({ filename: part.filename, buffer });
-                } else {
-                    reqBody[part.fieldname] = part.value;
-                }
+
+        // handle request params
+        const parts = req.parts();
+        const reqBody = { imagesToSave: [] };
+        for await (const part of parts) {
+            if (part.file) {
+                const buffer = await part.toBuffer();
+                reqBody.imagesToSave.push({ filename: part.filename, buffer });
+            } else {
+                reqBody[part.fieldname] = part.value;
             }
-
-            const data = {
-                content: (reqBody.content || '').slice(0, REVIEW_CONTENT_LIMIT),
-                score: Number(reqBody.score) || 3,
-                allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
-            };
-
-            // delete images
-            reqBody.imagesToDelete = reqBody.imagesToDelete?.split(',').filter(v => v.length > 0).map(v => Number(v));
-            if (reqBody.imagesToDelete.length > 0) {
-                for (const toDeleteId of reqBody.imagesToDelete) {
-                    const toDelete = await fastify.db.reviewImage.delete({ where: { id: toDeleteId } });
-                    if (toDelete.url && toDelete.url.startsWith('/')) { // Is LocalStorage
-                        try {
-                            await fastify.storage.delete(toDelete.url);
-                        } catch (e) {
-                            fastify.log.warn('delete file error: ' + e);
-                        }
-                    }
-                }
-            }
-
-            // images have deleted and we count the new image limit
-            if (reqBody.images.length > 0) {
-                const imageCount = await fastify.db.reviewImage.count({ where: { reviewId: id } });
-                const limit = Math.min(REVIEW_IMAGE_COUNT_LIMIT - imageCount, reqBody.images.length);
-                data.images = { create: [] };
-                // write buffer to LocalStorage
-                for (let i = 0; i < limit; i++) {
-                    const { filename, buffer } = reqBody.images[i];
-                    const url = await fastify.storage.store(filename, buffer);
-                    data.images.create.push({ url }); // append new images to data for cascade creating
-                }
-                // clear all buffer
-                for (const image of reqBody.images) {
-                    try {
-                        image.buffer?.clear();
-                    } catch (e) {
-                        // ignore
-                    }
-                }
-            }
-
-            await fastify.db.review.update({ data, where: { id } });
-
-            // XXX 非必每次评测都更新，定时刷新App的评分或者异步请求更新
-            await fastify.app.computeAndUpdateAppScore({ appId: review.appId });
         }
-        return reply.code(204).send();
+        const content = reqBody.content || '';
+        const score = Number(reqBody.score) || 3;
+        const allowComment = 'true' === (reqBody.allowComment || 'false').toLowerCase();
+        const imagesToDelete = reqBody.imagesToDelete?.split(',').filter(v => v.length > 0).map(v => Number(v));
+        const imagesToSave = reqBody.imagesToSave;
+        if (content.length === 0) return reply.code(400).send({ message: ReviewErrors.reviewContentEmpty });
+
+        // handle logic
+        try {
+            await fastify.review.updateReview({ id, userId, content, score, allowComment, imagesToSave, imagesToDelete });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 点赞或点踩

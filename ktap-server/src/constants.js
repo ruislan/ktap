@@ -1,6 +1,3 @@
-export const REVIEW_IMAGE_COUNT_LIMIT = 3; // 3 images
-export const REVIEW_CONTENT_LIMIT = 8000; // 8000个字
-
 export const Pagination = {
     limit: {
         min: 1,

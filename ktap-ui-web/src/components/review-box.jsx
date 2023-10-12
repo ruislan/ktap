@@ -191,13 +191,14 @@ const Content = React.memo(function Content({ review, editable = false, afterUpd
                         }}
                     >
                         <input type='file' accept='image/*' hidden multiple ref={draftReviewFileInput} onChange={(e) => {
-                            const newFiles = [...e.target.files].map(file => {
+                            // 计算还可以存储多少图片
+                            const seats = draftReviewFilesLimit - draftReview.images.length - draftReview.files.length;
+                            const newFiles = [...e.target.files].slice(0, seats).map(file => {
                                 file.src = URL.createObjectURL(file);
                                 return file;
                             });
-                            const seats = draftReviewFilesLimit - draftReview.images.length + draftReview.files.length;
                             setDraftReview(prev => {
-                                return { ...prev, files: [...prev.files, ...newFiles].slice(0, seats) };
+                                return { ...prev, files: [...prev.files, ...newFiles] };
                             });
                         }} />
                         <Icon $size='lg'><Photograph /></Icon>

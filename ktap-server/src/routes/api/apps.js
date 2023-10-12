@@ -1,6 +1,6 @@
-import { AppMedia, Notification, Pagination, REVIEW_CONTENT_LIMIT, REVIEW_IMAGE_COUNT_LIMIT, TagCategory } from "../../constants.js";
+import { AppMedia, Pagination, TagCategory } from "../../constants.js";
 import { authenticate } from "../../lib/auth.js";
-import { ReviewEvents } from "../../models/review.js";
+import { REVIEW_CONTENT_LIMIT, REVIEW_IMAGE_COUNT_LIMIT } from "../../models/review.js";
 
 const apps = async function (fastify, opts) {
     // app推荐列表
@@ -392,52 +392,32 @@ const apps = async function (fastify, opts) {
     }, async function (req, reply) {
         const appId = Number(req.params.id) || 0;
         const userId = req.user.id;
+
+        // handle params
         const parts = req.parts();
-
-        const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
-        if (review) return reply.code(400).send(); // 已经创建了，则不会继续处理了，前端正常调用下不会出现此情况
-
-        const reqBody = { images: [] };
+        const reqBody = { imagesToSave: [] };
         for await (const part of parts) {
             if (part.file) {
                 const buffer = await part.toBuffer();
-                const url = await fastify.storage.store(part.filename, buffer);
-                reqBody.images.push(url);
+                reqBody.imagesToSave.push({ filename: part.filename, buffer });
             } else {
                 reqBody[part.fieldname] = part.value;
             }
         }
-        // 处理一下超过三张图片的情况
-        if (reqBody.images.length > REVIEW_IMAGE_COUNT_LIMIT) reqBody.images = reqBody.images.slice(0, REVIEW_IMAGE_COUNT_LIMIT);
-        let data = {
-            content: (reqBody.content || '').slice(0, REVIEW_CONTENT_LIMIT),
-            score: Number(reqBody.score) || 3,
-            ip: req.ip,
-            allowComment: 'true' === (reqBody.allowComment || 'false').toLowerCase(),
-            images: {
-                create: reqBody.images.map(url => { return { url } }),
-            }
-        };
-        data = await fastify.db.review.create({ data: { appId, userId, ...data, } });
+        const content = (reqBody.content || '').slice(0, REVIEW_CONTENT_LIMIT);
+        const score = Number(reqBody.score) || 3;
+        const ip = req.ip;
+        const allowComment = 'true' === (reqBody.allowComment || 'false').toLowerCase();
+        const imagesToSave = reqBody.imagesToSave.slice(0, REVIEW_IMAGE_COUNT_LIMIT); // 处理一下超过三张图片的情况
 
-        await fastify.app.computeAndUpdateAppScore({ appId }); // 更新评分
-        await fastify.db.timeline.create({ data: { userId, targetId: data.id, target: 'Review', } }); // 创建 timeline
-
-        // 发送通知
-        await fastify.notification.addFollowingNotification({
-            action: Notification.action.reviewCreated, target: Notification.target.User, targetId: userId,
-            title: Notification.getContent(Notification.action.reviewCreated, Notification.type.following),
-            content: data.content.slice(0, 50), url: '/reviews/' + data.id,
-        });
-
-        // 发送事件
-        await fastify.pubsub.publish(ReviewEvents.Created, { review: { ...data } });
-
-        // reconstruct return data structure
-        data.images = reqBody.images.map(url => { return { url } });
-        delete data.appId;
-        delete data.userId;
-        return reply.code(200).send({ data });
+        try {
+            // handle logic
+            const data = await fastify.review.createReview({ userId, appId, content, score, ip, allowComment, imagesToSave });
+            return reply.code(200).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 获取热门评测内容
