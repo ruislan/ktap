@@ -73,8 +73,13 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const userId = req.user.id;
         const { title, content, appId, channelId, } = req.body;
-        await fastify.discussion.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
-        return reply.code(200).send();
+        try {
+            await fastify.discussion.createDiscussion({ title, content, appId, channelId, userId, ip: req.ip });
+            return reply.code(200).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 某个 App 的讨论频道
@@ -166,12 +171,18 @@ const discussions = async (fastify, opts) => {
         const appId = Number(req.params.appId) || 0;
         const channelId = Number(req.params.channelId) || 0;
         const { name, icon, description } = req.body;
-        if (channelId > 0) {
-            await fastify.discussion.updateDiscussionChannel({
-                id: channelId, name, icon, description, appId, operator: req.user,
-            });
+
+        try {
+            if (channelId > 0) {
+                await fastify.discussion.updateDiscussionChannel({
+                    id: channelId, name, icon, description, appId, operator: req.user,
+                });
+            }
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
 
     fastify.get('/:id', async function (req, reply) {
@@ -284,8 +295,14 @@ const discussions = async (fastify, opts) => {
         const id = Number(req.params.id);
         const userId = req.user.id;
         const { content } = req.body;
-        const data = await fastify.discussion.createDiscussionPost({ content, discussionId: id, userId, ip: req.ip });
-        return reply.code(200).send({ data });
+
+        try {
+            const data = await fastify.discussion.createDiscussionPost({ content, discussionId: id, userId, ip: req.ip });
+            return reply.code(200).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 置顶或者取消置顶
@@ -295,8 +312,14 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id);
         const isSticky = req.body.sticky === true;
-        await fastify.discussion.stickyDiscussion({ id, operator: req.user, isSticky });
-        return reply.code(204).send();
+
+        try {
+            await fastify.discussion.stickyDiscussion({ id, operator: req.user, isSticky });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.put('/:id/close', {
@@ -305,8 +328,14 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id) || 0;
         const isClosed = req.body.close === true;
-        await fastify.discussion.closeDiscussion({ id, operator: req.user, isClosed });
-        return reply.code(204).send();
+
+        try {
+            await fastify.discussion.closeDiscussion({ id, operator: req.user, isClosed });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.put('/:id', {
@@ -324,8 +353,14 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const id = Number(req.params.id) || 0;
         const { title } = req.body;
-        await fastify.discussion.updateDiscussion({ id, title, operator: req.user });
-        return reply.code(204).send();
+
+        try {
+            await fastify.discussion.updateDiscussion({ id, title, operator: req.user });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.delete('/:id', {
@@ -333,8 +368,13 @@ const discussions = async (fastify, opts) => {
         errorHandler: bizErrorHandler,
     }, async function (req, reply) {
         const id = Number(req.params.id) || 0;
-        await fastify.discussion.deleteDiscussion({ id, operator: req.user });
-        return reply.code(204).send();
+        try {
+            await fastify.discussion.deleteDiscussion({ id, operator: req.user });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.put('/:id/posts/:postId', {
@@ -348,8 +388,14 @@ const discussions = async (fastify, opts) => {
     }, async function (req, reply) {
         const postId = Number(req.params.postId);
         const { content } = req.body;
-        await fastify.discussion.updateDiscussionPost({ id: postId, content, ip: req.ip, operator: req.user });
-        return reply.code(204).send();
+
+        try {
+            await fastify.discussion.updateDiscussionPost({ id: postId, content, ip: req.ip, operator: req.user });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.delete('/:id/posts/:postId', {
@@ -357,8 +403,13 @@ const discussions = async (fastify, opts) => {
         errorHandler: bizErrorHandler,
     }, async function (req, reply) {
         const postId = Number(req.params.postId);
-        await fastify.discussion.deleteDiscussionPost({ id: postId, operator: req.user });
-        return reply.code(204).send();
+        try {
+            await fastify.discussion.deleteDiscussionPost({ id: postId, operator: req.user });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     // 取这个帖子日期后面的 Limit 个
@@ -400,32 +451,14 @@ const discussions = async (fastify, opts) => {
         const postId = Number(req.params.postId);
         const userId = req.user.id;
         let direction = ((req.params.direction || 'up').toLowerCase()) === 'down' ? 'down' : 'up'; // only up or down
-
-        const toDelete = await fastify.db.discussionPostThumb.findUnique({ where: { postId_userId: { postId, userId, } } });
-        // 直接删除当前的赞或者踩
-        // 如果新的点踩或者点赞与删除的不同，则重新创建
-        if (toDelete) await fastify.db.discussionPostThumb.delete({ where: { postId_userId: { postId, userId, } } });
-        if (!toDelete || toDelete.direction !== direction) {
-            await fastify.db.discussionPostThumb.create({ data: { postId, userId, direction } });
+        try {
+            await fastify.discussion.thumbDiscussionPost({ postId, userId, direction });
+            const data = await fastify.discussion.getDiscussionPostThumbs({ id: postId }); // 重新取当前赞踩数据
+            return reply.code(200).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-
-        // 如果是新创建的点赞，而且不是自己给自己点赞，则发出反馈通知
-        if (direction === 'up' && !toDelete) {
-            const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
-            if (post.userId !== userId) {
-                await fastify.notification.addReactionNotification({
-                    action: Notification.action.postThumbed,
-                    userId: post.userId, // 反馈通知的对象
-                    target: Notification.target.User, targetId: userId,
-                    content: Notification.getContent(Notification.action.postThumbed, Notification.type.reaction),
-                    url: `/discussions/${post.discussionId}/posts/${post.id}`,
-                });
-            }
-        }
-
-        // 重新取当前赞踩数据
-        const data = await fastify.discussion.getDiscussionPostThumbs({ id: postId });
-        return reply.code(200).send({ data });
     });
 
     fastify.post('/:id/posts/:postId/gifts/:giftId', {
@@ -434,37 +467,14 @@ const discussions = async (fastify, opts) => {
         const userId = req.user.id;
         const postId = Number(req.params.postId);
         const giftId = Number(req.params.giftId);
-
-        await fastify.db.$transaction(async (tx) => {
-            const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
-            // 减去balance
-            const updatedUser = await tx.user.update({
-                where: { id: userId },
-                data: { balance: { decrement: gift.price, } }
-            });
-            if (updatedUser.balance < 0) throw new Error('insufficient balance'); // 检查余额， 有问题就回滚事务
-            await tx.trading.create({ data: { userId, target: 'Gift', targetId: giftId, amount: gift.price, type: Trading.type.buy } }); // 生成交易
-            const giftRef = await tx.discussionPostGiftRef.create({ data: { userId, giftId, postId } }); // 创建关系
-            await tx.timeline.create({ data: { userId, target: 'DiscussionPostGiftRef', targetId: giftRef.id } }); // 创建动态
-        });
-        // XXX 这里没有包裹事务出错的错误，直接扔给框架以500形式抛出了，后续需要更柔性处理
-
-        // 发送通知
-        const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
-        if (post.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
-            await fastify.notification.addReactionNotification({
-                action: Notification.action.postGiftSent,
-                userId: post.userId, // 反馈通知的对象
-                target: Notification.target.User, targetId: userId,
-                content: Notification.getContent(Notification.action.postGiftSent, Notification.type.reaction),
-                url: `/discussions/${post.discussionId}/posts/${post.id}`,
-            });
+        try {
+            await fastify.discussion.sendDiscussionPostGift({ postId, userId, giftId });
+            const gifts = await fastify.discussion.getDiscussionPostGifts({ id: postId }); // 读取最新的礼物情况
+            return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-
-        // 读取最新的礼物情况
-        // fetch gifts
-        const gifts = await fastify.discussion.getDiscussionPostGifts({ id: postId });
-        return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
     });
 
     // 举报
@@ -484,9 +494,13 @@ const discussions = async (fastify, opts) => {
         const userId = req.user.id;
         const postId = Number(req.params.postId);
         const content = req.body.content;
-        const exists = (await fastify.db.discussionPostReport.count({ where: { postId, userId } })) > 0;
-        if (!exists) await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
-        return reply.code(200).send();
+        try {
+            await fastify.discussion.reportDiscussionPost({ postId, userId, content });
+            return reply.code(200).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 };
 

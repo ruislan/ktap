@@ -1,4 +1,4 @@
-import { AppMedia, Pagination, Trading, Notification } from '../../constants.js';
+import { AppMedia, Pagination } from '../../constants.js';
 import { authenticate } from '../../lib/auth.js';
 import { ReviewErrors } from '../../models/review.js';
 
@@ -176,32 +176,14 @@ const reviews = async (fastify, opts) => {
         const reviewId = Number(req.params.id);
         const userId = req.user.id;
         let direction = ((req.params.direction || 'up').toLowerCase()) === 'down' ? 'down' : 'up'; // only up or down
-
-        const toDelete = await fastify.db.reviewThumb.findUnique({ where: { reviewId_userId: { reviewId, userId, } } });
-        // 直接删除当前的赞或者踩
-        // 如果新的点踩或者点赞与删除的不同，则重新创建
-        if (toDelete) await fastify.db.reviewThumb.delete({ where: { reviewId_userId: { reviewId, userId, } } });
-        if (!toDelete || toDelete.direction !== direction) {
-            await fastify.db.reviewThumb.create({ data: { reviewId, userId, direction } });
+        try {
+            await fastify.review.thumbReview({ reviewId, userId, direction });
+            const data = await fastify.review.getReviewThumbs({ id: reviewId }); // 重新取当前review的数据
+            return reply.code(200).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-
-        // 如果是新创建的点赞，而且不是自己给自己点赞，则发出反馈通知
-        if (direction === 'up' && !toDelete) {
-            const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { id: true, userId: true } });
-            if (review.userId !== userId) {
-                await fastify.notification.addReactionNotification({
-                    action: Notification.action.reviewThumbed,
-                    userId: review.userId, // 反馈通知的对象
-                    target: Notification.target.User, targetId: userId,
-                    content: Notification.getContent(Notification.action.reviewThumbed, Notification.type.reaction),
-                    url: '/reviews/' + review.id,
-                });
-            }
-        }
-
-        // 重新取当前review的数据
-        const data = await fastify.review.getReviewThumbs({ id: reviewId });
-        return reply.code(200).send({ data });
     });
 
     // 送礼物
@@ -211,42 +193,14 @@ const reviews = async (fastify, opts) => {
         const userId = req.user.id;
         const reviewId = Number(req.params.id);
         const giftId = Number(req.params.giftId);
-
-        await fastify.db.$transaction(async (tx) => {
-            const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
-            // 减去balance
-            const updatedUser = await tx.user.update({
-                where: { id: userId },
-                data: {
-                    balance: {
-                        decrement: gift.price,
-                    }
-                }
-            });
-            // 检查余额， 有问题就回滚事务
-            if (updatedUser.balance < 0) throw new Error('insufficient balance');
-            await tx.trading.create({ data: { userId, target: 'Gift', targetId: giftId, amount: gift.price, type: Trading.type.buy } }); // 生成交易
-            const giftRef = await tx.reviewGiftRef.create({ data: { userId, giftId, reviewId } }); // 创建关系
-            await tx.timeline.create({ data: { userId, target: 'ReviewGiftRef', targetId: giftRef.id } }); // 创建动态
-        });
-        // XXX 这里没有包裹事务出错的错误，直接扔给框架以500形式抛出了，后续需要更柔性处理
-
-        // 发送通知
-        const review = await fastify.db.review.findUnique({ where: { id: reviewId }, select: { id: true, userId: true } });
-        if (review.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
-            await fastify.notification.addReactionNotification({
-                action: Notification.action.reviewGiftSent,
-                userId: review.userId, // 反馈通知的对象
-                target: Notification.target.User, targetId: userId,
-                content: Notification.getContent(Notification.action.reviewGiftSent, Notification.type.reaction),
-                url: '/reviews/' + review.id,
-            });
+        try {
+            await fastify.review.sendReviewGift({ reviewId, userId, giftId });
+            const gifts = await fastify.review.getReviewGifts({ id: reviewId }); // 读取最新的礼物情况
+            return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-
-        // 读取最新的礼物情况
-        // fetch gifts
-        const gifts = await fastify.review.getReviewGifts({ id: reviewId });
-        return reply.code(200).send({ data: gifts.gifts, count: gifts.count });
     });
 
     // 举报
@@ -266,8 +220,14 @@ const reviews = async (fastify, opts) => {
         const userId = req.user.id;
         const reviewId = Number(req.params.id);
         const content = req.body.content;
-        await fastify.db.reviewReport.create({ data: { userId, reviewId, content } });
-        return reply.code(200).send();
+
+        try {
+            await fastify.review.reportReview({ reviewId, userId, content });
+            return reply.code(200).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 };
 

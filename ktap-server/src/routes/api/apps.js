@@ -369,10 +369,13 @@ const apps = async function (fastify, opts) {
         const appId = Number(req.params.id) || 0;
         const userId = req.user.id;
         const { name } = req.body;
-        const theTag = await fastify.db.tag.upsert({ create: { name, category: TagCategory.normal }, update: {}, where: { name } });
-        // 用户可能输入了类型或者功能相同的词，要排除掉，这些词是不需要标记的
-        if (theTag.category === TagCategory.normal) await fastify.db.appUserTagRef.upsert({ create: { appId, userId, tagId: theTag.id }, update: {}, where: { appId_userId_tagId: { userId, appId, tagId: theTag.id } } });
-        return reply.code(200).send();
+        try {
+            await fastify.app.tagApp({ appId, userId, name });
+            return reply.code(200).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.delete('/:id/tags/:name', {

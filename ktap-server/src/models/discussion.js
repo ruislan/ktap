@@ -1,11 +1,13 @@
 'use strict';
 
 import sanitizeHtml from 'sanitize-html';
-import { Notification } from '../constants.js';
+import { Notification, Trading } from '../constants.js';
 
 export const DiscussionErrors = {
     notFound: '内容不存在',
     forbidden: '无操作权限',
+    giftNotFound: '礼物不存在',
+    insufficientBalance: '余额不足',
 };
 
 export const DiscussionEvents = {
@@ -215,7 +217,6 @@ const discussion = async (fastify, opts, next) => {
             }
             return result;
         },
-
         // 修改帖子,修改只能改内容
         async updateDiscussionPost({ id, content, ip, operator }) {
             const post = await fastify.discussion.getDiscussionOrPostWithChannelModerators({ id, isPost: true });
@@ -227,7 +228,6 @@ const discussion = async (fastify, opts, next) => {
 
             await fastify.db.discussionPost.update({ where: { id }, data: { content: cleanContent(content), ip } });
         },
-
         // 是否能够删除帖子？
         // a: 讨论处于开放状态：是管理员 或者 频道管理员 或者 发帖人
         // b: 讨论处于关闭状态：是管理员 或者 频道管理员
@@ -247,6 +247,57 @@ const discussion = async (fastify, opts, next) => {
                 await tx.discussionPost.delete({ where: { id: id } });
                 await tx.timeline.deleteMany({ where: { target: 'DiscussionPost', targetId: id, userId: post.userId } });
             });
+        },
+        async thumbDiscussionPost({ userId, postId, direction }) {
+            const toDelete = await fastify.db.discussionPostThumb.findUnique({ where: { postId_userId: { postId, userId, } } });
+            // 直接删除当前的赞或者踩
+            // 如果新的点踩或者点赞与删除的不同，则重新创建
+            if (toDelete) await fastify.db.discussionPostThumb.delete({ where: { postId_userId: { postId, userId, } } });
+            if (!toDelete || toDelete.direction !== direction) {
+                await fastify.db.discussionPostThumb.create({ data: { postId, userId, direction } });
+            }
+            // 如果是新创建的点赞，而且不是自己给自己点赞，则发出反馈通知
+            if (direction === 'up' && !toDelete) {
+                const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
+                if (post.userId !== userId) {
+                    await fastify.notification.addReactionNotification({
+                        action: Notification.action.postThumbed,
+                        userId: post.userId, // 反馈通知的对象
+                        target: Notification.target.User, targetId: userId,
+                        content: Notification.getContent(Notification.action.postThumbed, Notification.type.reaction),
+                        url: `/discussions/${post.discussionId}/posts/${post.id}`,
+                    });
+                }
+            }
+        },
+        async sendDiscussionPostGift({ userId, postId, giftId }) {
+            const gift = await fastify.db.gift.findUnique({ where: { id: giftId } });
+            if (!gift) throw new Error(DiscussionErrors.giftNotFound);
+            await fastify.db.$transaction(async (tx) => {
+                const updatedUser = await tx.user.update({
+                    where: { id: userId },
+                    data: { balance: { decrement: gift.price, } }
+                }); // user 减去balance
+                if (updatedUser.balance < 0) throw new Error(DiscussionErrors.insufficientBalance); // 检查余额， 有问题就回滚事务
+                await tx.trading.create({ data: { userId, target: 'Gift', targetId: giftId, amount: gift.price, type: Trading.type.buy } }); // 生成交易
+                const giftRef = await tx.discussionPostGiftRef.create({ data: { userId, giftId, postId } }); // 创建关系
+                await tx.timeline.create({ data: { userId, target: 'DiscussionPostGiftRef', targetId: giftRef.id } }); // 创建动态
+            });
+            // 发送通知
+            const post = await fastify.db.discussionPost.findUnique({ where: { id: postId }, select: { id: true, userId: true, discussionId: true } });
+            if (post.userId !== userId) { // 如果不是自己给自己发礼物，则发出反馈通知
+                await fastify.notification.addReactionNotification({
+                    action: Notification.action.postGiftSent,
+                    userId: post.userId, // 反馈通知的对象
+                    target: Notification.target.User, targetId: userId,
+                    content: Notification.getContent(Notification.action.postGiftSent, Notification.type.reaction),
+                    url: `/discussions/${post.discussionId}/posts/${post.id}`,
+                });
+            }
+        },
+        async reportDiscussionPost({ postId, userId, content }) {
+            const exists = (await fastify.db.discussionPostReport.count({ where: { postId, userId } })) > 0;
+            if (!exists) await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
         },
     });
     next();

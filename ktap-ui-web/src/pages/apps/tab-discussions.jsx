@@ -86,7 +86,7 @@ function TabDiscussions({ appId }) {
                                         <SplitBall color='rgb(151, 151, 151)' gap='6px' />
                                     </>
                                 }
-                                <LabelSmall whiteSpace='nowrap' color='inherit'>{DateTime.fromNow(discussion?.createdAt)}</LabelSmall>
+                                <LabelSmall whiteSpace='nowrap' color='inherit'>{DateTime.fromNow(discussion?.updatedAt)}</LabelSmall>
                             </Block>
                         </Block>
                     </Block>

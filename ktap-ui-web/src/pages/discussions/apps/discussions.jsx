@@ -177,7 +177,7 @@ export default function Discussions() {
                                         @{discussion?.lastPost?.user ? discussion?.lastPost?.user.name : discussion?.user?.name}
                                     </LabelSmall>
                                     <SplitBall color='rgb(151, 151, 151)' gap='6px' />
-                                    <LabelSmall whiteSpace='nowrap' color='inherit'>{DateTime.fromNow(discussion?.createdAt)}</LabelSmall>
+                                    <LabelSmall whiteSpace='nowrap' color='inherit'>{DateTime.fromNow(discussion?.updatedAt)}</LabelSmall>
                                 </Block>
                             </Block>
                         </Block>

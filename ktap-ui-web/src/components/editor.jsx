@@ -1,10 +1,12 @@
 import React from 'react';
+
 import { useStyletron } from 'baseui';
 import { StatefulPopover } from 'baseui/popover';
 import { Block } from 'baseui/block';
 import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
 import { Check } from 'baseui/icon';
+
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Color } from '@tiptap/extension-color';
@@ -12,6 +14,8 @@ import Image from '@tiptap/extension-image'
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+
+import { BlockQuote, Bold, BulletList, Heading1, Heading2, Heading3, Italic, OrderedList, Strike, TextColor, Underline as UnderlineIcon, Image as ImageIcon } from './icons';
 import '../assets/css/editor.css';
 
 function EditorButton({ disabled, onClick, isActive, children }) {
@@ -19,7 +23,7 @@ function EditorButton({ disabled, onClick, isActive, children }) {
     return (
         <button onClick={onClick} disabled={disabled}
             className={css({
-                borderRadius: '8px', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
+                borderRadius: theme.sizing.scale300, outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
                 display: 'flex', justifyContent: 'center', alignItems: 'center',
                 border: 'unset', margin: 0,
                 padding: theme.sizing.scale100, width: theme.sizing.scale900, height: theme.sizing.scale900,
@@ -50,45 +54,28 @@ function MenuBar({ editor }) {
                 disabled={!editor.can().chain().focus().toggleBold().run()}
                 isActive={editor.isActive('bold')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6z"></path>
-                    <path d="M13 12h1a3.5 3.5 0 0 1 0 7h-7v-7"></path>
-                </svg>
+                <Bold />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 disabled={!editor.can().chain().focus().toggleItalic().run()}
                 isActive={editor.isActive('italic')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M11 5l6 0"></path>
-                    <path d="M7 19l6 0"></path>
-                    <path d="M14 5l-4 14"></path>
-                </svg>
+                <Italic />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 isActive={editor.isActive('strike')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M5 12l14 0"></path>
-                    <path d="M16 6.5a4 2 0 0 0 -4 -1.5h-1a3.5 3.5 0 0 0 0 7h2a3.5 3.5 0 0 1 0 7h-1.5a4 2 0 0 1 -4 -1.5"></path>
-                </svg>
+                <Strike />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
                 disabled={!editor.can().chain().focus().toggleUnderline().run()}
                 isActive={editor.isActive('underline')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M7 5v5a5 5 0 0 0 10 0v-5"></path>
-                    <path d="M5 19h14"></path>
-                </svg>
+                <UnderlineIcon />
             </EditorButton>
             <StatefulPopover
                 content={({ close }) => (
@@ -120,7 +107,7 @@ function MenuBar({ editor }) {
             >
                 <button
                     className={css({
-                        borderRadius: '50%', outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
+                        borderRadius: theme.sizing.scale300, outline: 'none', appearance: 'none', boxShadow: 'none', cursor: 'pointer',
                         display: 'flex', justifyContent: 'center', alignItems: 'center', border: 'unset', margin: 0,
                         padding: theme.sizing.scale100, width: theme.sizing.scale900, height: theme.sizing.scale900,
                         backgroundColor: 'transparent', color: theme.colors.contentSecondary,
@@ -128,104 +115,45 @@ function MenuBar({ editor }) {
                             backgroundColor: theme.colors.backgroundTertiary,
                         },
                     })}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke='currentColor' fill="none" strokeLinecap="round" strokeLinejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M9 15v-7a3 3 0 0 1 6 0v7"></path>
-                        <path d="M9 11h6"></path>
-                        <path d="M5 19h14" stroke={editor.getAttributes('textStyle').color}></path>
-                    </svg>
+                    <TextColor color={editor.getAttributes('textStyle').color} />
                 </button>
             </StatefulPopover>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                 isActive={editor.isActive('heading', { level: 1 })}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M19 18v-8l-2 2"></path>
-                    <path d="M4 6v12"></path>
-                    <path d="M12 6v12"></path>
-                    <path d="M11 18h2"></path>
-                    <path d="M3 18h2"></path>
-                    <path d="M4 12h8"></path>
-                    <path d="M3 6h2"></path>
-                    <path d="M11 6h2"></path>
-                </svg>
+                <Heading1 />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                 isActive={editor.isActive('heading', { level: 2 })}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M17 12a2 2 0 1 1 4 0c0 .591 -.417 1.318 -.816 1.858l-3.184 4.143l4 0"></path>
-                    <path d="M4 6v12"></path>
-                    <path d="M12 6v12"></path>
-                    <path d="M11 18h2"></path>
-                    <path d="M3 18h2"></path>
-                    <path d="M4 12h8"></path>
-                    <path d="M3 6h2"></path>
-                    <path d="M11 6h2"></path>
-                </svg>
+                <Heading2 />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                 isActive={editor.isActive('heading', { level: 3 })}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M19 14a2 2 0 1 0 -2 -2"></path>
-                    <path d="M17 16a2 2 0 1 0 2 -2"></path>
-                    <path d="M4 6v12"></path>
-                    <path d="M12 6v12"></path>
-                    <path d="M11 18h2"></path>
-                    <path d="M3 18h2"></path>
-                    <path d="M4 12h8"></path>
-                    <path d="M3 6h2"></path>
-                    <path d="M11 6h2"></path>
-                </svg>
+                <Heading3 />
             </EditorButton>
 
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 isActive={editor.isActive('bulletList')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M9 6l11 0"></path>
-                    <path d="M9 12l11 0"></path>
-                    <path d="M9 18l11 0"></path>
-                    <path d="M5 6l0 .01"></path>
-                    <path d="M5 12l0 .01"></path>
-                    <path d="M5 18l0 .01"></path>
-                </svg>
+                <BulletList />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 isActive={editor.isActive('orderedList')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M11 6h9"></path>
-                    <path d="M11 12h9"></path>
-                    <path d="M12 18h8"></path>
-                    <path d="M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4"></path>
-                    <path d="M6 10v-6l-2 2"></path>
-                </svg>
+                <OrderedList />
             </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBlockquote().run()}
                 isActive={editor.isActive('blockquote')}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M6 15h15"></path>
-                    <path d="M21 19h-15"></path>
-                    <path d="M15 11h6"></path>
-                    <path d="M21 7h-6"></path>
-                    <path d="M9 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
-                    <path d="M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
-                </svg>
+                <BlockQuote />
             </EditorButton>
             <StatefulPopover
                 content={({ close }) => (
@@ -252,13 +180,7 @@ function MenuBar({ editor }) {
                             backgroundColor: theme.colors.backgroundTertiary,
                         },
                     })}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M15 8h.01"></path>
-                        <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"></path>
-                        <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
-                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
-                    </svg>
+                    <ImageIcon />
                 </button>
             </StatefulPopover>
             {/* XXX 后面来处理引用 App 这需要扩展tiptap */}
