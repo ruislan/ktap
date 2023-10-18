@@ -1,9 +1,9 @@
-import React from 'react';
-import { LabelLarge, LabelSmall } from 'baseui/typography';
 import { Block } from 'baseui/block';
+import { LabelLarge, LabelSmall } from 'baseui/typography';
 
-function TabDetailsLanguages({ app }) {
-    const { text, audio } = app.languages;
+export default function TabDetailsLanguages({ app }) {
+    const { text, audio } = app?.languages || { text: '', audio: '' };
+
     return (
         <Block marginTop='scale600' marginBottom='scale600' font='font300'>
             <Block marginTop='scale300' marginBottom='scale600'>
@@ -30,4 +30,3 @@ function TabDetailsLanguages({ app }) {
         </Block>
     );
 }
-export default TabDetailsLanguages;

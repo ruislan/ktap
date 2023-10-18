@@ -11,7 +11,7 @@ import Achievement from '@ktap/components/achievement';
 function Award({ achievement }) {
     const [css, theme] = useStyletron();
     return (
-        <StatefulPopover placement='top' triggerType='click' content={() => <Achievement achievement={achievement} />}>
+        <StatefulPopover placement='topRight' triggerType='hover' content={() => <Achievement achievement={achievement} />}>
             <div className={css({
                 display: 'flex', alignItems: 'center', justifyContent: 'center', width: '52px', height: '52px',
                 padding: theme.sizing.scale100, cursor: 'pointer',

@@ -13,8 +13,7 @@
 .rdp-day_selected,
 .rdp-day_selected:focus-visible,
 .rdp-day_selected:hover {
-    color           : inherit;
+    color           : black;
     opacity         : 1;
-    border: 2px solid white;
-    background-color: transparent;
+    background-color: white;
 }

@@ -34,57 +34,46 @@ const apps = async function (fastify, opts) {
     // 头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）
     // 其他的可以直接进入详情页面自行更改
     fastify.post('', async (req, reply) => {
-        const newApp = await fastify.db.app.create({
-            data: {
-                name: req.body.name,
-                isVisible: false, // 初始为不可见，操作完成之后再可见
-                media: {
-                    create: [
-                        { type: AppMedia.type.image, usage: AppMedia.usage.head, image: 'https://placehold.co/460x215/png', thumbnail: 'https://placehold.co/292x136/png' },
-                        { type: AppMedia.type.image, usage: AppMedia.usage.landscape, image: 'https://placehold.co/2560x1440/png', thumbnail: 'https://placehold.co/616x353/png' },
-                        { type: AppMedia.type.image, usage: AppMedia.usage.portrait, image: 'https://placehold.co/1200x1600/png', thumbnail: 'https://placehold.co/374x448/png' },
-                        { type: AppMedia.type.image, usage: AppMedia.usage.logo, image: 'https://placehold.co/400x400/png', thumbnail: 'https://placehold.co/128x128/png' }
-                    ]
-                }
-            },
-        });
-        return reply.code(201).send({ data: { id: newApp.id } });
+        try {
+            const newApp = await fastify.app.createApp({ name: req.body.name });
+            return reply.code(201).send({ data: { id: newApp.id } });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.put('/:id/basis', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        await fastify.db.app.update({
-            where: { id },
-            data: {
-                isVisible: req.body.isVisible,
-                score: Number(req.body.score)
-            }
-        });
-        return reply.code(204).send();
+        const score = Number(req.body.score);
+        const isVisible = req.body.isVisible;
+        try {
+            await fastify.app.updateAppBasis({ appId: id, isVisible, score });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.put('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { app } = req.body;
-        if (app) {
-            await fastify.db.app.update({
-                where: { id },
-                data: {
-                    name: app.name,
-                    slogan: app.slogan,
-                    summary: app.summary,
-                    description: app.description,
-                    score: app.score,
-                    releasedAt: app.releasedAt,
-                    downloadUrl: app.downloadUrl,
-                    legalText: app.legalText,
+        try {
+            if (app) {
+                await fastify.app.updateApp({
+                    appId: id, name: app.name, slogan: app.slogan,
+                    summary: app.summary, description: app.description,
+                    score: app.score, releasedAt: app.releasedAt,
+                    downloadUrl: app.downloadUrl, legalText: app.legalText,
                     legalUrl: app.legalUrl,
-                }
-            });
+                });
+            }
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
-
 
     fastify.get('/:id', async (req, reply) => {
         const id = Number(req.params.id) || 0;
@@ -101,38 +90,19 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/media/:usage', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const usage = req.params.usage;
-        if (usage !== AppMedia.usage.gallery) {
-            const { image, thumbnail } = req.body;
-            await fastify.db.appMedia.updateMany({ where: { appId: id, usage, type: AppMedia.type.image }, data: { image, thumbnail } });
-        } else {
-            const { video, images } = req.body;
-            const deleteOld = fastify.db.appMedia.deleteMany({ where: { appId: id, usage: AppMedia.usage.gallery } });
-            const createNewVideo = video.map(item =>
-                fastify.db.appMedia.create({
-                    data: {
-                        appId: id,
-                        image: item.image,
-                        thumbnail: item.thumbnail,
-                        video: item.video,
-                        usage: AppMedia.usage.gallery,
-                        type: AppMedia.type.video
-                    }
-                })
-            );
-            const createNewImages = images.map(item =>
-                fastify.db.appMedia.create({
-                    data: {
-                        appId: id,
-                        image: item.image,
-                        thumbnail: item.thumbnail,
-                        usage: AppMedia.usage.gallery,
-                        type: AppMedia.type.image,
-                    }
-                })
-            );
-            await fastify.db.$transaction([deleteOld, ...createNewVideo, ...createNewImages]);
+        try {
+            if (usage !== AppMedia.usage.gallery) {
+                const { image, thumbnail } = req.body;
+                await fastify.app.updateAppMediaExcludeGallery({ appId: id, usage, image, thumbnail });
+            } else {
+                const { video, images } = req.body;
+                await fastify.app.updateAppMediaGallery({ appId: id, usage, video, images });
+            }
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
 
     fastify.get('/:id/social-links', async (req, reply) => {
@@ -149,18 +119,24 @@ const apps = async function (fastify, opts) {
     fastify.post('/:id/social-links', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { name, url, brand } = req.body;
-        const data = await fastify.db.appSocialLink.create({
-            data: { appId: id, name, brand, url, }
-        });
-        return reply.code(201).send({ data });
+        try {
+            const data = await fastify.app.createAppSocialLink({ appId: id, name, url, brand });
+            return reply.code(201).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.delete('/:id/social-links/:socialLinkId', async (req, reply) => {
         const socialLinkId = Number(req.params.socialLinkId) || 0;
-        await fastify.db.appSocialLink.delete({
-            where: { id: socialLinkId },
-        });
-        return reply.code(204).send();
+        try {
+            await fastify.app.deleteAppSocialLink({ socialLinkId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.get('/:id/publishers', async (req, reply) => {
@@ -180,14 +156,14 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/publishers', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { publishers } = req.body;
-        if (publishers) {
-            const deleteOld = fastify.db.appPublisherRef.deleteMany({ where: { appId: id } });
-            const createNew = publishers.map(organizationId => fastify.db.appPublisherRef.create({ data: { appId: id, organizationId } }));
-            await fastify.db.$transaction([deleteOld, ...createNew]);
+        try {
+            await fastify.app.updateAppPublishers({ appId: id, publishers });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
-
 
     fastify.get('/:id/developers', async (req, reply) => {
         const id = Number(req.params.id) || 0;
@@ -206,12 +182,13 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/developers', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { developers } = req.body;
-        if (developers) {
-            const deleteOld = fastify.db.appDeveloperRef.deleteMany({ where: { appId: id } });
-            const createNew = developers.map(organizationId => fastify.db.appDeveloperRef.create({ data: { appId: id, organizationId } }));
-            await fastify.db.$transaction([deleteOld, ...createNew]);
+        try {
+            await fastify.app.updateAppDevelopers({ appId: id, developers });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
 
     fastify.get('/:id/features', async (req, reply) => {
@@ -231,18 +208,25 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/features', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { features } = req.body;
-        if (features) {
-            const createNewRefs = features.map(featureId => fastify.db.appFeatureRef.create({ data: { appId: id, tagId: featureId } }));
-            await fastify.db.$transaction(createNewRefs);
+        try {
+            await fastify.app.updateAppFeatures({ appId: id, features });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
 
     fastify.delete('/:id/features/:featureId', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const featureId = Number(req.params.featureId) || 0;
-        await fastify.db.appFeatureRef.deleteMany({ where: { appId: id, tagId: featureId } });
-        return reply.code(204).send();
+        try {
+            await fastify.app.deleteAppFeature({ appId: id, featureId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.get('/:id/genres', async (req, reply) => {
@@ -262,18 +246,25 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/genres', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { genres } = req.body;
-        if (genres) {
-            const createNewRefs = genres.map(genreId => fastify.db.appGenreRef.create({ data: { appId: id, tagId: genreId } }));
-            await fastify.db.$transaction(createNewRefs);
+        try {
+            await fastify.app.updateAppGenres({ appId: id, genres });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
 
     fastify.delete('/:id/genres/:genreId', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const genreId = Number(req.params.genreId) || 0;
-        await fastify.db.appGenreRef.deleteMany({ where: { appId: id, tagId: genreId } });
-        return reply.code(204).send();
+        try {
+            await fastify.app.deleteAppGenre({ appId: id, genreId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.get('/:id/tags', async (req, reply) => {
@@ -307,8 +298,13 @@ const apps = async function (fastify, opts) {
     fastify.delete('/:id/tags/:tagId', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const tagId = Number(req.params.tagId) || 0;
-        await fastify.db.appUserTagRef.deleteMany({ where: { appId: id, tagId } }); // all users' relationships will be deleted
-        return reply.code(204).send();
+        try {
+            await fastify.app.deleteAppTag({ appId: id, tagId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.get('/:id/platforms', async (req, reply) => {
@@ -321,20 +317,13 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/platforms', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { platforms } = req.body;
-        if (platforms) {
-            const deleteOld = fastify.db.appPlatform.deleteMany({ where: { appId: id } });
-            const createNewPlatforms = platforms.map(platform =>
-                fastify.db.appPlatform.create({
-                    data: {
-                        appId: id,
-                        os: platform.os,
-                        requirements: JSON.stringify(platform.requirements),
-                    }
-                })
-            );
-            await fastify.db.$transaction([deleteOld, ...createNewPlatforms]);
+        try {
+            await fastify.app.updateAppPlatforms({ appId: id, platforms });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
         }
-        return reply.code(204).send();
     });
 
     fastify.get('/:id/pro-reviews', async (req, reply) => {
@@ -345,22 +334,25 @@ const apps = async function (fastify, opts) {
 
     fastify.post('/:id/pro-reviews', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const data = await fastify.db.proReview.create({
-            data: {
-                name: req.body.name,
-                url: req.body.url,
-                summary: req.body.url,
-                score: req.body.score,
-                appId: id,
-            }
-        });
-        return reply.code(201).send({ data });
+        const { name, url, summary, score } = req.body;
+        try {
+            const data = await fastify.review.createProReview({ appId: id, name, url, summary, score });
+            return reply.code(201).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.delete('/:id/pro-reviews/:proReviewId', async (req, reply) => {
         const proReviewId = Number(req.params.proReviewId) || 0;
-        await fastify.db.proReview.delete({ where: { id: proReviewId } });
-        return reply.code(204).send();
+        try {
+            await fastify.review.deleteProReview({ proReviewId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.get('/:id/awards', async (req, reply) => {
@@ -371,20 +363,26 @@ const apps = async function (fastify, opts) {
 
     fastify.post('/:id/awards', async (req, reply) => {
         const id = Number(req.params.id) || 0;
-        const data = await fastify.db.appAward.create({
-            data: {
-                image: req.body.image,
-                url: req.body.url,
-                appId: id,
-            }
-        });
-        return reply.code(201).send({ data });
+        const { image, url } = req.body;
+        try {
+            const data = await fastify.app.createAppAward({ appId: id, image, url });
+            return reply.code(201).send({ data });
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.delete('/:id/awards/:awardId', async (req, reply) => {
+        const id = Number(req.params.id) || 0;
         const awardId = Number(req.params.awardId) || 0;
-        await fastify.db.appAward.delete({ where: { id: awardId } });
-        return reply.code(204).send();
+        try {
+            await fastify.app.deleteAppAward({ appId: id, awardId });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.get('/:id/languages', async (req, reply) => {
@@ -396,8 +394,13 @@ const apps = async function (fastify, opts) {
     fastify.put('/:id/languages', async (req, reply) => {
         const id = Number(req.params.id) || 0;
         const { text, audio, caption } = req.body;
-        await fastify.db.appLanguages.upsert({ where: { appId: id }, create: { text, audio, caption, appId: id }, update: { text, audio, caption } });
-        return reply.code(204).send();
+        try {
+            await fastify.app.updateAppLanguages({ appId: id, text, audio, caption });
+            return reply.code(204).send();
+        } catch (err) {
+            fastify.log.warn(err);
+            return reply.code(400).send({ message: err.message });
+        }
     });
 
     fastify.post('/monkey/steam', async (req, reply) => {

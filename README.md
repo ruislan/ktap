@@ -20,15 +20,15 @@ KTap是一个时尚的游戏社区平台。
     <tr>
         <td><img src="./docs/screenshots/index.png"/></td>
         <td><img src="./docs/screenshots/discover.png"/></td>
-        <td><img src="./docs/screenshots/rank.png"/></td>
         <td><img src="./docs/screenshots/news.png"/></td>
+        <td><img src="./docs/screenshots/rank.png"/></td>
         <td><img src="./docs/screenshots/discussions.png"/></td>
     </tr>
     <tr>
         <td><img src="./docs/screenshots/app-detail.png"/></td>
         <td><img src="./docs/screenshots/review.png"/></td>
-        <td><img src="./docs/screenshots/news-detail.png"/></td>
         <td><img src="./docs/screenshots/user-center.png"/></td>
+        <td><img src="./docs/screenshots/user-achievements.png"/></td>
         <td><img src="./docs/screenshots/discussion-posts.png"/></td>
     </tr>
 </table>
@@ -105,13 +105,14 @@ SQLite仅仅作为开发、演示和独立小规模运营是非常棒的，甚�
 
 ## 接下来
 
-* 增加专题专栏（例如节日专题，打折专题，新品专题等等）
+接下来可能会研发的功能...
+
 * 增加 App 活动事件（线上或者线下活动）
 * 增加组织管理（组织所有人自己管理自己的组织）
+* 增加专题专栏（例如节日专题，打折专题，新品专题等等）
 * 增加商城和充值（余额购买虚拟或者实体商品）
 * 增加搜索引擎，改进搜索、相关性算法
 * 数据库支持MySQL或PG
-* 持续重构和优化
 
 ## 致敬
 

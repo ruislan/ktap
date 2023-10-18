@@ -220,9 +220,9 @@ function FeaturesBlock({ data }) {
                 </Block>
 
             </form>
-            <Block marginTop='scale600'>
+            <Block marginTop='scale600' display='flex' alignItems='center' gridGap='scale300' flexWrap>
                 {features && features.map((feature, index) => (
-                    <Tag key={index} kind='primary' size='small' closeable variant='solid' onActionClick={(e) => {
+                    <Tag key={index} closeable onCloseClick={(e) => {
                         e.preventDefault();
                         handleDelete(feature.id);
                     }}>{feature.name}</Tag>
@@ -284,7 +284,7 @@ function TagsBlock({ data }) {
             </Block>
             <Block marginTop='scale600' display='flex' flexWrap='wrap' gridGap='scale300'>
                 {tags && tags.map((tag, index) => (
-                    <Tag key={index} kind='primary' size='small' closeable variant='solid' onActionClick={(e) => {
+                    <Tag key={index} closeable onCloseClick={(e) => {
                         e.preventDefault();
                         handleDelete(tag.id);
                     }}>{tag.name}</Tag>

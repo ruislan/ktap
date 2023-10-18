@@ -1,6 +1,6 @@
 'use strict';
 
-import { AppMedia } from '../constants.js';
+import { AppMedia, TagCategory } from '../constants.js';
 
 const app = async (fastify, opts, next) => {
     fastify.decorate('app', {
@@ -86,6 +86,122 @@ const app = async (fastify, opts, next) => {
             // 用户可能输入了类型或者功能相同的词，要排除掉，这些词是不需要标记的
             if (theTag.category === TagCategory.normal) await fastify.db.appUserTagRef.upsert({ create: { appId, userId, tagId: theTag.id }, update: {}, where: { appId_userId_tagId: { userId, appId, tagId: theTag.id } } });
         },
+
+        // these actions for admin
+        async createApp({ name }) {
+            const newApp = await fastify.db.app.create({
+                data: {
+                    name,
+                    isVisible: false, // 初始为不可见，操作完成之后再可见
+                    media: {
+                        create: [
+                            { type: AppMedia.type.image, usage: AppMedia.usage.head, image: 'https://placehold.co/460x215/png', thumbnail: 'https://placehold.co/292x136/png' },
+                            { type: AppMedia.type.image, usage: AppMedia.usage.landscape, image: 'https://placehold.co/2560x1440/png', thumbnail: 'https://placehold.co/616x353/png' },
+                            { type: AppMedia.type.image, usage: AppMedia.usage.portrait, image: 'https://placehold.co/1200x1600/png', thumbnail: 'https://placehold.co/374x448/png' },
+                            { type: AppMedia.type.image, usage: AppMedia.usage.logo, image: 'https://placehold.co/400x400/png', thumbnail: 'https://placehold.co/128x128/png' }
+                        ]
+                    }
+                },
+            });
+            return newApp;
+        },
+        async updateAppBasis({ appId, isVisible, score }) {
+            await fastify.db.app.update({
+                where: { id: appId },
+                data: { isVisible, score }
+            });
+        },
+        async updateApp({ appId, name, slogan, summary, description, score, releasedAt, downloadUrl, legalText, legalUrl }) {
+            await fastify.db.app.update({
+                where: { id: appId },
+                data: { name, slogan, summary, description, score, releasedAt, downloadUrl, legalText, legalUrl }
+            });
+        },
+        async updateAppMediaExcludeGallery({ appId, usage, image, thumbnail }) {
+            await fastify.db.appMedia.updateMany({ where: { appId, usage, type: AppMedia.type.image }, data: { image, thumbnail } });
+        },
+        async updateAppMediaGallery({ appId, video, images }) {
+            const deleteOld = fastify.db.appMedia.deleteMany({ where: { appId, usage: AppMedia.usage.gallery } });
+            const createNewVideo = video.map(item =>
+                fastify.db.appMedia.create({
+                    data: {
+                        appId, image: item.image, thumbnail: item.thumbnail, video: item.video, usage: AppMedia.usage.gallery, type: AppMedia.type.video
+                    }
+                })
+            );
+            const createNewImages = images.map(item =>
+                fastify.db.appMedia.create({
+                    data: {
+                        appId, image: item.image, thumbnail: item.thumbnail, usage: AppMedia.usage.gallery, type: AppMedia.type.image,
+                    }
+                })
+            );
+            await fastify.db.$transaction([deleteOld, ...createNewVideo, ...createNewImages]);
+        },
+        async createAppSocialLink({ appId, name, brand, url }) {
+            const data = await fastify.db.appSocialLink.create({ data: { appId, name, brand, url } });
+            return data;
+        },
+        async deleteAppSocialLink({ socialLinkId }) {
+            await fastify.db.appSocialLink.delete({ where: { id: socialLinkId } });
+        },
+        async updateAppPublishers({ appId, publishers }) {
+            if (!publishers || publishers.length === 0) return;
+            const deleteOld = fastify.db.appPublisherRef.deleteMany({ where: { appId } });
+            const createNew = publishers.map(organizationId => fastify.db.appPublisherRef.create({ data: { appId, organizationId } }));
+            await fastify.db.$transaction([deleteOld, ...createNew]);
+        },
+        async updateAppDevelopers({ appId, developers }) {
+            if (!developers || developers.length === 0) return;
+            const deleteOld = fastify.db.appDeveloperRef.deleteMany({ where: { appId } });
+            const createNew = developers.map(organizationId => fastify.db.appDeveloperRef.create({ data: { appId, organizationId } }));
+            await fastify.db.$transaction([deleteOld, ...createNew]);
+        },
+        async updateAppFeatures({ appId, features }) {
+            if (!features || features.length === 0) return;
+            const createNewRefs = features.map(featureId => fastify.db.appFeatureRef.create({ data: { appId, tagId: featureId } }));
+            await fastify.db.$transaction(createNewRefs);
+        },
+        async deleteAppFeature({ appId, featureId }) {
+            await fastify.db.appFeatureRef.deleteMany({ where: { appId, tagId: featureId } });
+        },
+        async updateAppGenres({ appId, genres }) {
+            if (!genres || genres.length === 0) return;
+            const createNewRefs = genres.map(genreId => fastify.db.appGenreRef.create({ data: { appId, tagId: genreId } }));
+            await fastify.db.$transaction(createNewRefs);
+        },
+        async deleteAppGenre({ appId, genreId }) {
+            await fastify.db.appGenreRef.deleteMany({ where: { appId, tagId: genreId } });
+        },
+        async deleteAppTag({ appId, tagId }) {
+            await fastify.db.appUserTagRef.deleteMany({ where: { appId, tagId } }); // all users' tag relationships will be deleted
+        },
+        async updateAppPlatforms({ appId, platforms }) {
+            if (!platforms || platforms.length === 0) return;
+            const deleteOld = fastify.db.appPlatform.deleteMany({ where: { appId } });
+            const createNewPlatforms = platforms.map(platform =>
+                fastify.db.appPlatform.create({
+                    data: {
+                        appId,
+                        os: platform.os,
+                        requirements: JSON.stringify(platform.requirements),
+                    }
+                })
+            );
+            await fastify.db.$transaction([deleteOld, ...createNewPlatforms]);
+        },
+        async createAppAward({ appId, image, url }) {
+            const data = await fastify.db.appAward.create({
+                data: { appId, image, url }
+            });
+            return data;
+        },
+        async deleteAppAward({ appId, awardId }) {
+            await fastify.db.appAward.delete({ where: { id: awardId, appId, } });
+        },
+        async updateAppLanguages({ appId, text, audio, caption }) {
+            await fastify.db.appLanguages.upsert({ where: { appId }, create: { text, audio, caption, appId }, update: { text, audio, caption } });
+        }
     });
     next();
 };

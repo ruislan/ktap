@@ -262,6 +262,15 @@ const review = async (fastify, opts, next) => {
                 (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${id}) AS downs
             `)[0];
         },
+        async createProReview({ appId, name, url, summary, score }) {
+            const data = await fastify.db.proReview.create({
+                data: { appId, name, url, summary, score }
+            });
+            return data;
+        },
+        async deleteProReview({ proReviewId }) {
+            await fastify.db.proReview.delete({ where: { id: proReviewId } });
+        },
     });
     next();
 };

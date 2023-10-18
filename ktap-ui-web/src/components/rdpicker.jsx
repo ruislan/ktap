@@ -20,7 +20,7 @@ function RdPicker({ mode, value, onSelect = () => { } }) {
     const [css, theme] = useStyletron();
     return (
         <StatefulPopover content={
-            <DayPicker mode={mode} locale={zh} defaultMonth={value} selected={value} onSelect={onSelect} />
+            <DayPicker captionLayout='dropdown-buttons' fromYear={1970} toYear={2070} mode={mode} locale={zh} defaultMonth={value} selected={value} onDayClick={onSelect} />
         } placement='top'>
             <div className={css({
                 border: '2px solid transparent', borderRadius: theme.sizing.scale300,

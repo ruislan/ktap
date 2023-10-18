@@ -63,7 +63,7 @@ function AppDetailInfo({ data, onChanged }) {
                     <Textarea size='compact' placeholder='详细介绍游戏内容' rows={10} value={app.description} onChange={e => setApp(prev => { return { ...prev, description: e.target.value } })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>发布于</LabelSmall>}>
-                    <RdPicker mode='single' value={new Date(app.releasedAt)} onSelect={(date) => setApp(prev => { return { ...prev, releasedAt: date } })} />
+                    <RdPicker value={new Date(app.releasedAt || Date.now())} onSelect={(date) => setApp(prev => { return { ...prev, releasedAt: date } })} />
                 </FormControl>
                 <FormControl label={<LabelSmall>下载链接</LabelSmall>}>
                     <Input size='compact' value={app.downloadUrl} type='text' onChange={e => setApp(prev => { return { ...prev, downloadUrl: e.target.value } })} />

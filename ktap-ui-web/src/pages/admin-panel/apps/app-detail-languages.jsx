@@ -21,9 +21,9 @@ function AppDetailLanguages({ data }) {
             const res = await fetch(`/admin/apps/${data.id}/languages`);
             if (res.ok) {
                 const json = await res.json();
-                setText(json.data.text);
-                setAudio(json.data.audio);
-                setCaption(json.data.caption);
+                setText(json.data?.text || '');
+                setAudio(json.data?.audio || '');
+                setCaption(json.data?.caption || '');
             }
         } finally {
             setIsLoading(false);
