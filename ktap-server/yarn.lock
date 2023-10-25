@@ -251,22 +251,22 @@
     "@node-rs/jieba-win32-ia32-msvc" "1.7.2"
     "@node-rs/jieba-win32-x64-msvc" "1.7.2"
 
-"@prisma/client@^5.4.2":
-  version "5.4.2"
-  resolved "https://registry.npmmirror.com/@prisma/client/-/client-5.4.2.tgz#786f9c1d8f06d955933004ac638d14da4bf14025"
-  integrity sha512-2xsPaz4EaMKj1WS9iW6MlPhmbqtBsXAOeVttSePp8vTFTtvzh2hZbDgswwBdSCgPzmmwF+tLB259QzggvCmJqA==
+"@prisma/client@^5.5.1":
+  version "5.5.1"
+  resolved "https://registry.npmmirror.com/@prisma/client/-/client-5.5.1.tgz#a8d337c2caea1e7e03f8b58a37193a197d9c1d8a"
+  integrity sha512-Yvcwx1/Q0nIdv2jvH/4pyTRl5I+76/ef0C3xCrAkBKTIjXHiRptbyyK/+CWEaBY9yE98MIdi9gwZcR3C22eTuQ==
   dependencies:
-    "@prisma/engines-version" "5.4.1-2.ac9d7041ed77bcc8a8dbd2ab6616b39013829574"
+    "@prisma/engines-version" "5.5.0-19.475c616176945d72f4330c92801f0c5e6398dc0f"
 
-"@prisma/engines-version@5.4.1-2.ac9d7041ed77bcc8a8dbd2ab6616b39013829574":
-  version "5.4.1-2.ac9d7041ed77bcc8a8dbd2ab6616b39013829574"
-  resolved "https://registry.npmmirror.com/@prisma/engines-version/-/engines-version-5.4.1-2.ac9d7041ed77bcc8a8dbd2ab6616b39013829574.tgz#ff14f2926890edee47e8f1d08df7b4f392ee34bf"
-  integrity sha512-wvupDL4AA1vf4TQNANg7kR7y98ITqPsk6aacfBxZKtrJKRIsWjURHkZCGcQliHdqCiW/hGreO6d6ZuSv9MhdAA==
+"@prisma/engines-version@5.5.0-19.475c616176945d72f4330c92801f0c5e6398dc0f":
+  version "5.5.0-19.475c616176945d72f4330c92801f0c5e6398dc0f"
+  resolved "https://registry.npmmirror.com/@prisma/engines-version/-/engines-version-5.5.0-19.475c616176945d72f4330c92801f0c5e6398dc0f.tgz#c3ddca62ee65158a20ce194c2492791f506f4bfc"
+  integrity sha512-/1orOUq7I54ISYBJockYB15FmF/VkCBeFzYYkWyLtBl2tLlJWHmA3NEUBM+wSmXGLK78BmuSNHrLbf8bmXkukQ==
 
-"@prisma/engines@5.4.2":
-  version "5.4.2"
-  resolved "https://registry.npmmirror.com/@prisma/engines/-/engines-5.4.2.tgz#ba2b7faeb227c76e423e88f962afe6a031319f3f"
-  integrity sha512-fqeucJ3LH0e1eyFdT0zRx+oETLancu5+n4lhiYECyEz6H2RDskPJHJYHkVc0LhkU4Uv7fuEnppKU3nVKNzMh8g==
+"@prisma/engines@5.5.1":
+  version "5.5.1"
+  resolved "https://registry.npmmirror.com/@prisma/engines/-/engines-5.5.1.tgz#58937a9e7e42d6b098ec09c677e0035ace1e0a03"
+  integrity sha512-6P4bTYb7WCWwHW50tsJvZTeZIM7HotuwDEY61wAX46b69eMbuXTsNB9dquEmwKaiG7ggk+igOoH8chSO3+/VkQ==
 
 abbrev@1:
   version "1.1.1"
@@ -712,10 +712,10 @@ fastify-plugin@^4.0.0, fastify-plugin@^4.2.1:
   resolved "https://registry.npmmirror.com/fastify-plugin/-/fastify-plugin-4.5.1.tgz#44dc6a3cc2cce0988bc09e13f160120bbd91dbee"
   integrity sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==
 
-fastify@^4.24.2:
-  version "4.24.2"
-  resolved "https://registry.npmmirror.com/fastify/-/fastify-4.24.2.tgz#fad5d42b1abd112aac6ee699e40fec13a2bcbfa8"
-  integrity sha512-V/7fdhFas7HoAyjD8ha8wPCeiRLUzPgwwM5dSSUx/eBUv7GvG61YzjggqOchMOsa7Sw32MNN4uCCoFrl+9ccJA==
+fastify@^4.24.3:
+  version "4.24.3"
+  resolved "https://registry.npmmirror.com/fastify/-/fastify-4.24.3.tgz#bf97a3f5158ff7f78af949d483cac4e6115fb651"
+  integrity sha512-6HHJ+R2x2LS3y1PqxnwEIjOTZxFl+8h4kSC/TuDPXtA+v2JnV9yEtOsNSKK1RMD7sIR2y1ZsA4BEFaid/cK5pg==
   dependencies:
     "@fastify/ajv-compiler" "^3.5.0"
     "@fastify/error" "^3.4.0"
@@ -1268,12 +1268,12 @@ postcss@^8.3.11:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-prisma@^5.4.2:
-  version "5.4.2"
-  resolved "https://registry.npmmirror.com/prisma/-/prisma-5.4.2.tgz#7eac9276439ec7073ec697c6c0dfa259d96e955e"
-  integrity sha512-GDMZwZy7mysB2oXU+angQqJ90iaPFdD0rHaZNkn+dio5NRkGLmMqmXs31//tg/qXT3iB0cTQwnGGQNuirhSTZg==
+prisma@^5.5.1:
+  version "5.5.1"
+  resolved "https://registry.npmmirror.com/prisma/-/prisma-5.5.1.tgz#88071d6778b42ecbd83fdd21dbed4ea38630ce7a"
+  integrity sha512-6oln3L3/9kB9GqngIbSCpoXaZAk65y7hqEOj9g+9pkTYi/fVxCQzQ6ivnePVUoFhp/M1BBjexQepw1ODqnAC5Q==
   dependencies:
-    "@prisma/engines" "5.4.2"
+    "@prisma/engines" "5.5.1"
 
 process-warning@^2.0.0, process-warning@^2.2.0:
   version "2.2.0"
