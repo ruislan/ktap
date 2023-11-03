@@ -13,20 +13,20 @@ const passwordHash = await bcrypt.hash('123123', 10);
 
 const users = [
     {
-        id: 1, name: 'admin', email: 'admin@ktap.com', phone: '123456789', password: passwordHash, isActivated: true, gender: 'MAN',
+        id: 1, name: 'admin', email: 'admin@ktap.com', phone: '12345678901', password: passwordHash, isActivated: true, gender: 'MAN',
         avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=admin&size=256',
         bio: 'I am the admin', birthday: new Date(), createdAt: new Date(), updatedAt: new Date(),
         isAdmin: true,
         balance: 1000,
     },
     {
-        id: 2, name: 'user1', email: 'user1@ktap.com', phone: '123456789', password: passwordHash, isActivated: true, gender: 'MAN',
+        id: 2, name: 'user1', email: 'user1@ktap.com', phone: '12345678902', password: passwordHash, isActivated: true, gender: 'MAN',
         avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=user1&size=256',
         bio: 'I am user2 and I am rich', birthday: new Date(), createdAt: new Date(), updatedAt: new Date(),
         balance: 1000,
     },
     {
-        id: 3, name: 'user2', email: 'user2@ktap.com', phone: '123456789', password: passwordHash, isActivated: true, gender: 'MAN',
+        id: 3, name: 'user2', email: 'user2@ktap.com', phone: '12345678903', password: passwordHash, isActivated: true, gender: 'WOMAN',
         avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=user2&size=256',
         bio: 'I am user3 and I am rich', birthday: new Date(), createdAt: new Date(), updatedAt: new Date(),
         balance: 0,
@@ -1066,7 +1066,7 @@ const userAchievements = [
 ];
 
 // 基础数据初始化
-async function baseInit() {
+async function initBase() {
     console.log(`Start base seeding ...`);
 
     // 流行语
@@ -1090,7 +1090,7 @@ async function baseInit() {
     console.log(`base seeding finished.`);
 }
 
-async function initForSteam() {
+async function initSteam() {
     console.log(`Start seeding for steam ...`);
     console.log(`初始化用户...`);
     const user = await db.user.upsert({ create: users[0], update: users[0], where: { id: users[0].id } });
@@ -1124,7 +1124,7 @@ async function initForSteam() {
     console.log(`Seeding finished.`);
 }
 
-async function initForDev() {
+async function initDev() {
     // 开始初始化
     console.log(`Start seeding for Dev ...`);
     // 用户
@@ -1254,15 +1254,15 @@ async function initForDev() {
 }
 
 async function main() {
-    const { values } = parseArgs({ options: { environment: { type: 'string', }, } });
-    baseInit();
-    switch (values.environment) {
+    const { values } = parseArgs({ options: { cmd: { type: 'string', }, } });
+    await initBase();
+    switch (values.cmd) {
         case "steam":
         case "production":
-            initForSteam();
+            initSteam();
             break;
         default:
-            initForDev();
+            initDev();
             break;
     }
 }

@@ -165,7 +165,7 @@ const discussion = async (fastify, opts, next) => {
             return (await fastify.db.$queryRaw`
                 SELECT COUNT(*) AS gifts FROM DiscussionPostGiftRef dpgr
                 JOIN DiscussionPost dp ON dpgr.post_id = dp.id
-                JOIN discussion d ON dp.discussion_id = d.id
+                JOIN Discussion d ON dp.discussion_id = d.id
                 WHERE d.id = ${id};
             `)[0]?.gifts || 0;
         },

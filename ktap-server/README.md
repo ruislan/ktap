@@ -1,6 +1,6 @@
 # 说明
 
-这是一个纯个人兴趣爱好做的项目，所以会有一些解决方案会很随意。不过本项目是典型的读多写少且大部分都只需要最终一致性的场景，所以后续如果出现性能问题，可以从异步、缓存、读写分离、索引等方向优化。
+本项目是典型的读多写少且大部分都只需要最终一致性的场景，所以后续如果出现性能问题，可以从异步、缓存、读写分离、索引等方向优化。
 
 ## 关于JWT
 
@@ -27,3 +27,56 @@ V2开始榜单列表是动态的，同时榜单内容可以在后台添加当前
 通常情况下，GET返回200，POST都返回201，PUT和DELETE成功都返回204。
 
 值得注意的是reply.code(204).send({...})是错误的，将挂起返回（根据HTTP协议，204响应不应该包含消息体），所以如果用204只能采用reply.code(204).send()
+
+## Performance
+
+MacBook Pro 16 inch. CPU i9 8 cores. MEM 16G.
+
+测试的 API 会从数据库读取条件查询推荐的 Apps，同时还有 join 查询 Tag 等。
+
+```shell
+❯ hey -n 10000 -c 20 -m GET http://localhost:8000/api/apps/recommended
+
+Summary:
+  Total:        1.8696 secs
+  Slowest:      0.0425 secs
+  Fastest:      0.0002 secs
+  Average:      0.0036 secs
+  Requests/sec: 5348.6316
+
+  Total data:   30950000 bytes
+  Size/request: 3095 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.004 [8628]  |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.009 [1202]  |■■■■■■
+  0.013 [120]   |■
+  0.017 [20]    |
+  0.021 [9]     |
+  0.026 [4]     |
+  0.030 [2]     |
+  0.034 [1]     |
+  0.038 [0]     |
+  0.042 [13]    |
+
+
+Latency distribution:
+  10% in 0.0027 secs
+  25% in 0.0029 secs
+  50% in 0.0031 secs
+  75% in 0.0037 secs
+  90% in 0.0053 secs
+  95% in 0.0064 secs
+  99% in 0.0099 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0002 secs, 0.0425 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0024 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0052 secs
+  resp wait:    0.0036 secs, 0.0002 secs, 0.0425 secs
+  resp read:    0.0000 secs, 0.0000 secs, 0.0046 secs
+
+Status code distribution:
+  [200] 10000 responses
+```

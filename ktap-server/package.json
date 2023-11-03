@@ -8,8 +8,9 @@
     "scripts": {
         "dev": "NODE_ENV=dev node server.js",
         "start": "NODE_ENV=production node server.js",
-        "seed:steam": "npx prisma db push --force-reset & npx prisma db seed -- --environment steam",
-        "seed": "npx prisma db push --force-reset & npx prisma db seed"
+        "seed:clean": "npx prisma db push --force-reset",
+        "seed:dev": "npx prisma db seed -- --cmd dev",
+        "seed:steam": "npx prisma db push --force-reset & npx prisma db seed -- --cmd steam"
     },
     "prisma": {
         "seed": "node prisma/seed.js"

@@ -34,7 +34,7 @@
         "swiper": "^10.3.1"
     },
     "devDependencies": {
-        "@types/react": "^18.2.15",
+        "@types/react": "^18.2.34",
         "@types/react-dom": "^18.2.14",
         "@vitejs/plugin-react-swc": "^3.4.1",
         "eslint": "^8.52.0",

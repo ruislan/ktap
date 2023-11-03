@@ -3,25 +3,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite" // 注意：sqlite 还不支持 BigInt 的autoincrement，也不支持Json Type 以及 Full-text Search
+  // 注意：sqlite 还不支持 BigInt 的autoincrement，也不支持Json Type 以及 Full-text Search
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 // 用户
 model User {
-  id                Int       @id @default(autoincrement())
-  email             String    @unique
-  name              String    @unique
-  password          String
-  phone             String?
-  avatar            String?
-  title             String?   @default("普通用户") //称号
-  gender            String?
-  bio               String?
-  location          String?
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  email             String    @unique @db.VarChar(256)
+  name              String    @unique @db.VarChar(64)
+  password          String    @db.VarChar(256)
+  phone             String?   @unique @db.VarChar(32)
+  avatar            String?   @db.VarChar(2048)
+  title             String?   @default("普通用户") @db.VarChar(64) //称号
+  gender            String?   @db.VarChar(16)
+  bio               String?   @db.VarChar(512)
+  location          String?   @db.VarChar(256)
   birthday          DateTime?
-  balance           BigInt    @default(0) // 余额
-  pwdResetCode      String?   @map("pwd_reset_code") // 重置密码
+  balance           BigInt    @default(0) @db.UnsignedBigInt // 余额
+  pwdResetCode      String?   @map("pwd_reset_code") @db.VarChar(256) // 重置密码
   pwdResetExpireAt  DateTime? @map("pwd_reset_expire_at") // 重置密码过期时间
   lastUpdatedNameAt DateTime? @map("last_updated_name_at")
   isActivated       Boolean   @default(false) @map("is_activated")
@@ -49,8 +50,8 @@ model User {
 
 // 用户配置信息
 model UserSetting {
-  userId  Int    @id @unique
-  options String @default("{}") // 用户设置，JSON 格式
+  userId  Int    @id @unique @db.UnsignedInt
+  options String @db.Text // 用户设置，JSON 格式
   // ref
   user    User   @relation(fields: [userId], references: [id])
 }
@@ -60,27 +61,27 @@ model UserSetting {
 // 没有物流环节，也不存在订单和账户概念，没有交易对手，这里只和系统交易
 // 暂时也不支持退货
 model Trading {
-  id       Int    @id @default(autoincrement())
-  userId   Int    @map("user_id") // 付款人
-  target   String // 付款对象，User/Gift/Gear/...
-  targetId Int // 付款对象Id
-  amount   BigInt // 交易总金额
-  type     String // 交易类型 购买/赠送
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  userId   Int    @map("user_id") @db.UnsignedInt // 付款人
+  target   String @db.VarChar(64) // 付款对象，User/Gift/Gear/...
+  targetId Int    @db.UnsignedInt // 付款对象Id
+  amount   BigInt @db.UnsignedBigInt // 交易总金额
+  type     String @db.VarChar(64) // 交易类型 购买/赠送
 
   createdAt DateTime @default(now()) @map("created_at")
 }
 
 model App {
-  id          Int       @id @default(autoincrement())
-  name        String // 名称 并非唯一，很多游戏的名字可能是一样的
-  slogan      String? // 标语 长度应该不能超过10个字符
-  summary     String? //简短说明 长度应该不能超过200个字符
-  description String? //详细介绍，支持html 长度应该不能超过5000个字符
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  name        String    @db.VarChar(64) // 名称 并非唯一，很多游戏的名字可能是一样的
+  slogan      String?   @db.VarChar(64) // 标语 长度应该不能超过10个字符
+  summary     String?   @db.VarChar(256) //简短说明 长度应该不能超过200个字符
+  description String?   @db.Text //详细介绍，支持html 长度应该不能超过5000个字符
   score       Float     @default(3.0) // 评分，默认3.0，根据评论的打分汇总评分到这里
   releasedAt  DateTime? @map("released_at") //发布时间
-  legalText   String?   @map("legal_text") //法律声明
-  legalUrl    String?   @map("legal_url") //法律声明链接
-  downloadUrl String?   @map("download_url") // 下载链接
+  legalText   String?   @map("legal_text") @db.Text //法律声明
+  legalUrl    String?   @map("legal_url") @db.VarChar(2048) //法律声明链接
+  downloadUrl String?   @map("download_url") @db.VarChar(2048) // 下载链接
   isVisible   Boolean   @default(false) @map("is_visible")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
@@ -106,11 +107,11 @@ model App {
 
 // 支持的语言
 model AppLanguages {
-  id        Int      @id @default(autoincrement())
-  appId     Int      @unique
-  text      String   @default("") // 文本，用","分割，例如：中文,English,……
-  audio     String   @default("") // 音频，用","分割，例如：中文,English,……
-  caption   String   @default("") // 字幕，用","分割，例如：中文,English,……
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId     Int      @unique @db.UnsignedInt
+  text      String   @db.Text // 文本，用","分割，例如：中文,English,……
+  audio     String   @db.Text // 音频，用","分割，例如：中文,English,……
+  caption   String   @db.Text // 字幕，用","分割，例如：中文,English,……
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -120,14 +121,14 @@ model AppLanguages {
 
 // 应用的媒体资源
 model AppMedia {
-  id        Int      @id @default(autoincrement())
-  appId     Int      @map("app_id")
-  image     String // 图片地址/video海报地址
-  video     String? // 视频地址
-  thumbnail String? // 缩略图地址
-  usage     String // 媒体用途：头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）、截图（screenshot）
-  type      String   @default("image") // image, video
-  size      Int      @default(0)
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId     Int      @map("app_id") @db.UnsignedInt
+  image     String   @db.VarChar(2048) // 图片地址/video海报地址
+  video     String?  @db.VarChar(2048) // 视频地址
+  thumbnail String?  @db.VarChar(2048) // 缩略图地址
+  usage     String   @db.VarChar(64) // 媒体用途：头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）、截图（screenshot）
+  type      String   @default("image") @db.VarChar(64) // image, video
+  size      Int      @default(0) @db.UnsignedInt
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -136,10 +137,10 @@ model AppMedia {
 }
 
 model Tag {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  category  String   @default("normal") // 标签分类：normal（自定义标签), genre(游戏类型，角色扮演，射击...)，feature(游戏功能，多人，单人，跨平台合作……)
-  colorHex  String?  @map("color_hex") // 标签颜色
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  name      String   @unique @db.VarChar(64)
+  category  String   @default("normal") @db.VarChar(64) // 标签分类：normal（自定义标签), genre(游戏类型，角色扮演，射击...)，feature(游戏功能，多人，单人，跨平台合作……)
+  colorHex  String?  @map("color_hex") @db.VarChar(64) // 标签颜色
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -151,8 +152,8 @@ model Tag {
 
 // 应用类型多对多关系
 model AppGenreRef {
-  appId Int @map("app_id")
-  tagId Int @map("tag_id")
+  appId Int @map("app_id") @db.UnsignedInt
+  tagId Int @map("tag_id") @db.UnsignedInt
 
   // ref
   app App @relation(fields: [appId], references: [id])
@@ -163,8 +164,8 @@ model AppGenreRef {
 
 // 应用功能多对多关系
 model AppFeatureRef {
-  appId Int @map("app_id")
-  tagId Int @map("tag_id")
+  appId Int @map("app_id") @db.UnsignedInt
+  tagId Int @map("tag_id") @db.UnsignedInt
 
   // ref
   app App @relation(fields: [appId], references: [id])
@@ -175,9 +176,9 @@ model AppFeatureRef {
 
 // 用户为应用打的标签
 model AppUserTagRef {
-  userId Int @map("user_id")
-  appId  Int @map("app_id")
-  tagId  Int @map("tag_id")
+  userId Int @map("user_id") @db.UnsignedInt
+  appId  Int @map("app_id") @db.UnsignedInt
+  tagId  Int @map("tag_id") @db.UnsignedInt
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -190,14 +191,14 @@ model AppUserTagRef {
 }
 
 model Organization {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique // 名称
-  type      String   @default("company") //类型， 个人/工作室/公司 individual/studio/company
-  summary   String? //简介
-  logo      String? // 品牌图片
-  site      String? //官网
-  country   String? // 地区，ISO 3166-1 三位字母代码，例如：中国 CHN
-  userId    Int?     @map("user_id") // 组织所有人，也可以不属于任何人
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  name      String   @unique @db.VarChar(64) // 名称
+  type      String   @default("company") @db.VarChar(64) //类型， 个人/工作室/公司 individual/studio/company
+  summary   String?  @db.VarChar(512) //简介
+  logo      String?  @db.VarChar(2048) // 品牌图片
+  site      String?  @db.VarChar(2048) //官网
+  country   String?  @db.VarChar(64) // 地区，ISO 3166-1 三位字母代码，例如：中国 CHN
+  userId    Int?     @map("user_id") @db.UnsignedInt // 组织所有人，也可以不属于任何人
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -209,8 +210,8 @@ model Organization {
 
 // 应用与发行商多对多关系
 model AppPublisherRef {
-  appId          Int          @map("app_id")
-  organizationId Int          @map("organization_id")
+  appId          Int          @map("app_id") @db.UnsignedInt
+  organizationId Int          @map("organization_id") @db.UnsignedInt
   app            App          @relation(fields: [appId], references: [id])
   organization   Organization @relation(fields: [organizationId], references: [id])
 
@@ -219,21 +220,23 @@ model AppPublisherRef {
 
 // 应用与组织多对多关系
 model AppDeveloperRef {
-  appId          Int          @map("app_id")
-  organizationId Int          @map("organization_id")
-  app            App          @relation(fields: [appId], references: [id])
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  appId          Int @map("app_id") @db.UnsignedInt
+  organizationId Int @map("organization_id") @db.UnsignedInt
+
+  // ref
+  app          App          @relation(fields: [appId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
 
   @@id([appId, organizationId])
 }
 
 // 应用的社交链接
 model AppSocialLink {
-  id        Int      @id @default(autoincrement())
-  appId     Int      @map("app_id")
-  brand     String // 品牌：site, qq、wechat、github等等
-  name      String // 展示名称，例如：1群: xxxxxx；或者 公众号：xxxxx;
-  url       String
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId     Int      @map("app_id") @db.UnsignedInt
+  brand     String   @db.VarChar(64) // 品牌：site, qq、wechat、github等等
+  name      String   @db.VarChar(64) // 展示名称，例如：1群: xxxxxx；或者 公众号：xxxxx;
+  url       String   @db.VarChar(2048)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -243,10 +246,10 @@ model AppSocialLink {
 
 // 应用平台
 model AppPlatform {
-  id           Int      @id @default(autoincrement())
-  appId        Int      @map("app_id")
-  os           String // Windows, Macos, Linux, Android, iOS
-  requirements String // 为了方便变化和简单处理，直接存储JSON数据
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId        Int      @map("app_id") @db.UnsignedInt
+  os           String   @db.VarChar(64) // Windows, Macos, Linux, Android, iOS
+  requirements String   @db.Text // 为了方便变化和简单处理，直接存储JSON数据
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -255,10 +258,10 @@ model AppPlatform {
 }
 
 model AppAward {
-  id        Int      @id @default(autoincrement())
-  appId     Int      @map("app_id")
-  image     String // 图片地址
-  url       String? // 跳转地址
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId     Int      @map("app_id") @db.UnsignedInt
+  image     String   @db.VarChar(2048) // 图片地址
+  url       String?  @db.VarChar(2048) // 跳转地址
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -268,12 +271,12 @@ model AppAward {
 
 // 专业评测
 model ProReview {
-  id      Int     @id @default(autoincrement())
-  appId   Int     @map("app_id")
-  name    String // 评测机构名称
-  score   String // just for display
-  summary String // 评测总结或者内容概要
-  url     String? // 评测原文地址
+  id      Int     @id @default(autoincrement()) @db.UnsignedInt
+  appId   Int     @map("app_id") @db.UnsignedInt
+  name    String  @db.VarChar(64) // 评测机构名称
+  score   String  @db.VarChar(64) // just for display
+  summary String  @db.VarChar(512) // 评测总结或者内容概要
+  url     String? @db.VarChar(2048) // 评测原文地址
 
   // ref
   app App @relation(fields: [appId], references: [id])
@@ -283,12 +286,12 @@ model ProReview {
 
 // 评测
 model Review {
-  id           Int      @id @default(autoincrement())
-  appId        Int      @map("app_id")
-  userId       Int?     @map("user_id")
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId        Int      @map("app_id") @db.UnsignedInt
+  userId       Int?     @map("user_id") @db.UnsignedInt
   score        Float // 评分
-  content      String
-  ip           String? // ip地址
+  content      String   @db.Text
+  ip           String?  @db.VarChar(64) // ip地址
   allowComment Boolean  @default(true) @map("allow_comment") // 允许回复？
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -306,9 +309,9 @@ model Review {
 
 // 评测图片
 model ReviewImage {
-  id        Int      @id @default(autoincrement())
-  url       String
-  reviewId  Int      @map("review_id")
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  url       String   @db.VarChar(2048)
+  reviewId  Int      @map("review_id") @db.UnsignedInt
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   // ref
@@ -317,11 +320,11 @@ model ReviewImage {
 
 // 评测回复
 model ReviewComment {
-  id        Int      @id @default(autoincrement())
-  reviewId  Int?     @map("review_id") // 不强制关联review，A用户的review被删除之后，B用户的Comment不需要删除，在B的Timeline中还能看到自己的Comment
-  userId    Int      @map("user_id")
-  ip        String? // ip地址
-  content   String
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  reviewId  Int?     @map("review_id") @db.UnsignedInt // 不强制关联review，A用户的review被删除之后，B用户的Comment不需要删除，在B的Timeline中还能看到自己的Comment
+  userId    Int      @map("user_id") @db.UnsignedInt
+  ip        String?  @db.VarChar(64) // ip地址
+  content   String   @db.Text
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -332,10 +335,10 @@ model ReviewComment {
 
 // 评测举报
 model ReviewReport {
-  id        Int      @id @default(autoincrement())
-  reviewId  Int      @map("review_id")
-  userId    Int      @map("user_id")
-  content   String
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  reviewId  Int      @map("review_id") @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
+  content   String   @db.Text
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
@@ -345,9 +348,9 @@ model ReviewReport {
 
 // 赞和踩
 model ReviewThumb {
-  reviewId  Int      @map("review_id") //
-  userId    Int      @map("user_id")
-  direction String   @default("up") //方向 up赞，down踩
+  reviewId  Int      @map("review_id") @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
+  direction String   @default("up") @db.VarChar(16) //方向 up赞，down踩
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
@@ -356,10 +359,10 @@ model ReviewThumb {
 
 // 评测礼物多对多关系，用户可以对同一个review，多次送礼物
 model ReviewGiftRef {
-  id       Int  @id @default(autoincrement())
-  reviewId Int? @map("review_id")
-  giftId   Int  @map("gift_id")
-  userId   Int  @map("user_id")
+  id       Int  @id @default(autoincrement()) @db.UnsignedInt
+  reviewId Int? @map("review_id") @db.UnsignedInt
+  giftId   Int  @map("gift_id") @db.UnsignedInt
+  userId   Int  @map("user_id") @db.UnsignedInt
 
   // ref
   review Review? @relation(fields: [reviewId], references: [id]) // 为空则表示这个被送过的 Review 被删除了
@@ -371,11 +374,11 @@ model ReviewGiftRef {
 
 // 礼物
 model Gift {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String // 描述
-  price       BigInt // 平台币单价
-  url         String // 礼物的图片地址
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  name        String   @db.VarChar(64)
+  description String   @db.VarChar(512) // 描述
+  price       BigInt   @db.UnsignedBigInt // 平台币单价
+  url         String   @db.VarChar(2048) // 礼物的图片地址
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -386,14 +389,14 @@ model Gift {
 
 // 应用的新闻
 model News {
-  id        Int      @id @default(autoincrement())
-  appId     Int      @map("app_id") // which app
-  title     String
-  summary   String
-  head      String? // 头图
-  banner    String? // 横幅
-  content   String
-  viewCount Int      @default(0) // 观看次数
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  appId     Int      @map("app_id") @db.UnsignedInt // which app
+  title     String   @db.VarChar(256)
+  summary   String   @db.VarChar(512)
+  head      String?  @db.VarChar(2048) // 头图
+  banner    String?  @db.VarChar(2048) // 横幅
+  content   String   @db.Text
+  viewCount Int      @default(0) @db.UnsignedInt // 观看次数
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -403,18 +406,18 @@ model News {
 
 // 热搜
 model HotSearch {
-  id        Int      @id @default(autoincrement())
-  content   String   @unique // 搜索词语
-  hitCount  Int      @map("hit_count") // 搜索计数
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  content   String   @unique @db.VarChar(64) // 搜索词语
+  hitCount  Int      @map("hit_count") @db.UnsignedInt // 搜索计数
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 // 关注的游戏
 model FollowApp {
-  id         Int      @id @default(autoincrement())
-  followerId Int      @map("follower_id")
-  appId      Int      @map("app_id")
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  followerId Int      @map("follower_id") @db.UnsignedInt
+  appId      Int      @map("app_id") @db.UnsignedInt
   createdAt  DateTime @default(now()) @map("created_at")
 
   // ref
@@ -425,9 +428,9 @@ model FollowApp {
 
 // 关注的人
 model FollowUser {
-  id         Int      @id @default(autoincrement())
-  followerId Int      @map("follower_id")
-  userId     Int      @map("user_id")
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  followerId Int      @map("follower_id") @db.UnsignedInt
+  userId     Int      @map("user_id") @db.UnsignedInt
   createdAt  DateTime @default(now()) @map("created_at")
 
   // ref
@@ -438,38 +441,38 @@ model FollowUser {
 
 // 流行语
 model Buzzword {
-  id        Int      @id @default(autoincrement())
-  content   String // 内容
-  weight    Int      @default(0) // 权重
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  content   String   @db.VarChar(256) // 内容
+  weight    Int      @default(0) @db.UnsignedInt // 权重
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 // 用户动态时间线
 model Timeline {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  target    String // 动态对象：评论、回复、关注
-  targetId  Int      @map("target_id") // 动态对象的ID
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
+  target    String   @db.VarChar(64) // 动态对象：评论、回复、关注
+  targetId  Int      @map("target_id") @db.UnsignedInt // 动态对象的ID
   createdAt DateTime @default(now()) @map("created_at") // 发生时间
 }
 
 // 页面组件
 model PageWidget {
-  id        Int      @id @default(autoincrement())
-  page      String // 所属页面， 目前就只有discover
-  title     String
-  type      String // CardList / TextList / Carousel
-  style     String   @default("Standard") // Standard(Four) / Two
-  target    String // 数据对象：App / Review
-  targetIds String // 对象的ID e.g. 1,2,3...
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  page      String   @db.VarChar(64) // 所属页面， 目前就只有discover
+  title     String   @db.VarChar(256)
+  type      String   @db.VarChar(64) // CardList / TextList / Carousel
+  style     String   @default("Standard") @db.VarChar(64) // Standard(Four) / Two
+  target    String   @db.VarChar(64) // 数据对象：App / Review
+  targetIds String   @db.Text // 对象的ID e.g. 1,2,3...
   createdAt DateTime @default(now()) @map("created_at") // 发生时间
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 // Token的黑名单
 model TokenBlackList {
-  token     String   @id
+  token     String   @id @db.VarChar(256)
   createdAt DateTime @default(now()) @map("created_at")
 }
 
@@ -480,11 +483,11 @@ model TokenBlackList {
 
 // 讨论频道
 model DiscussionChannel {
-  id          Int      @id @default(autoincrement())
-  name        String // 名称
-  description String? // 描述
-  icon        String? // 可以是游戏 icon，也可以是额外的
-  appId       Int?     @map("app_id") // 所属游戏，不一定都属于游戏
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  name        String   @db.VarChar(64) // 名称
+  description String?  @db.VarChar(512) // 描述
+  icon        String?  @db.VarChar(2048) // 可以是游戏 icon，也可以是额外的
+  appId       Int?     @map("app_id") @db.UnsignedInt // 所属游戏，不一定都属于游戏
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -496,8 +499,8 @@ model DiscussionChannel {
 
 // 用户频道多对多关系，版主们
 model UserDiscussionChannelRef {
-  userId              Int               @map("user_id")
-  discussionChannelId Int               @map("discussion_channel_id")
+  userId              Int               @map("user_id") @db.UnsignedInt
+  discussionChannelId Int               @map("discussion_channel_id") @db.UnsignedInt
   // ref
   user                User              @relation(fields: [userId], references: [id])
   channel             DiscussionChannel @relation(fields: [discussionChannelId], references: [id])
@@ -507,16 +510,16 @@ model UserDiscussionChannelRef {
 
 // 讨论
 model Discussion {
-  id                  Int      @id @default(autoincrement())
-  title               String //主题，重点
+  id                  Int      @id @default(autoincrement()) @db.UnsignedInt
+  title               String   @db.VarChar(256) //主题，重点
   isSticky            Boolean  @default(false) @map("is_sticky") // 是否置顶
   isClosed            Boolean  @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
-  discussionChannelId Int      @map("discussion_channel_id") // XXX 帖子是否一定要属于某个频道？
+  discussionChannelId Int      @map("discussion_channel_id") @db.UnsignedInt // XXX 帖子是否一定要属于某个频道？
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
-  lastPostId          Int?     @unique @map("last_post_id")
-  userId              Int      @map("user_id")
-  appId               Int?     @map("app_id")
+  lastPostId          Int?     @unique @map("last_post_id") @db.UnsignedInt
+  userId              Int      @map("user_id") @db.UnsignedInt
+  appId               Int?     @map("app_id") @db.UnsignedInt
 
   // ref
   channel  DiscussionChannel @relation(fields: [discussionChannelId], references: [id]) // 所属频道
@@ -528,13 +531,13 @@ model Discussion {
 
 // 讨论帖子
 model DiscussionPost {
-  id           Int      @id @default(autoincrement())
-  content      String //内容
-  ip           String? // ip地址
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  content      String   @db.Text //内容
+  ip           String?  @db.VarChar(64) // ip地址
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
-  discussionId Int      @map("discussion_id")
-  userId       Int      @map("user_id")
+  discussionId Int      @map("discussion_id") @db.UnsignedInt
+  userId       Int      @map("user_id") @db.UnsignedInt
 
   // ref
   lastPostDiscussion Discussion?             @relation(name: "lastPost") // one to one，XXX：有点怪怪的
@@ -546,9 +549,9 @@ model DiscussionPost {
 
 // 帖子的赞和踩
 model DiscussionPostThumb {
-  postId    Int      @map("post_id")
-  userId    Int      @map("user_id")
-  direction String   @default("up") //方向 up赞，down踩
+  postId    Int      @map("post_id") @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
+  direction String   @default("up") @db.VarChar(16) //方向 up赞，down踩
   createdAt DateTime @default(now()) @map("created_at")
 
   @@id([postId, userId]) // 一个用户一个帖子只能有一个赞或者踩
@@ -556,10 +559,10 @@ model DiscussionPostThumb {
 
 // 帖子举报
 model DiscussionPostReport {
-  id        Int      @id @default(autoincrement())
-  postId    Int      @map("post_id")
-  userId    Int      @map("user_id")
-  content   String
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  postId    Int      @map("post_id") @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
+  content   String   @db.Text
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
@@ -569,10 +572,10 @@ model DiscussionPostReport {
 
 // 帖子礼物多对多关系，用户可以对同一个帖子多次送礼物
 model DiscussionPostGiftRef {
-  id        Int      @id @default(autoincrement())
-  postId    Int?     @map("post_id")
-  giftId    Int      @map("gift_id")
-  userId    Int      @map("user_id")
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  postId    Int?     @map("post_id") @db.UnsignedInt
+  giftId    Int      @map("gift_id") @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
@@ -585,15 +588,15 @@ model DiscussionPostGiftRef {
 
 // 通知
 model Notification {
-  id        Int       @id @default(autoincrement())
-  userId    Int       @map("user_id") // 通知接收人
-  type      String    @default("system") // 通知类型，系统 / 关注 following / 互动 reaction / 消息 inbox
-  target    String? // 发起对象，系统 / 游戏 / 用户, 如果是系统可直接留空
-  targetId  Int?      @map("target_id") // 发起对象 Id，如果是系统可直接留空
-  title     String // 通知文本的标题
-  content   String // 通知文本内容
-  url       String? // 跳转的链接
-  extra     String    @default("{}") // 附加内容，json data，用于更加详细和丰富的展现可能需要的不同的内容用于呈现
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  userId    Int       @map("user_id") @db.UnsignedInt // 通知接收人
+  type      String    @default("system") @db.VarChar(64) // 通知类型，系统 / 关注 following / 互动 reaction / 消息 inbox
+  target    String?   @db.VarChar(64) // 发起对象，系统 / 游戏 / 用户, 如果是系统可直接留空
+  targetId  Int?      @map("target_id") @db.UnsignedInt // 发起对象 Id，如果是系统可直接留空
+  title     String    @db.VarChar(256) // 通知文本的标题
+  content   String    @db.Text // 通知文本内容
+  url       String?   @db.VarChar(2048) // 跳转的链接
+  extra     String    @db.Text // 附加内容，json data，用于更加详细和丰富的展现可能需要的不同的内容用于呈现
   isRead    Boolean   @default(false) @map("is_read") // 是否已读
   readAt    DateTime? @map("read_at") // 已读时间
   createdAt DateTime  @default(now()) @map("created_at") // 创建时间
@@ -606,12 +609,12 @@ model Notification {
 
 // 成就 Start
 model Achievement {
-  id          Int      @id
-  name        String //名称
-  description String //简介
-  icon        String //图片
-  message     String // 解锁时的消息
-  criteria    Int      @default(1) // 达成条件总数，例如完成动作即达成的设置为 1，例如需要N个动作才能达成的设置为该数量
+  id          Int      @id @db.UnsignedInt
+  name        String   @db.VarChar(64) //名称
+  description String   @db.VarChar(512) //简介
+  icon        String   @db.VarChar(2048) //图片
+  message     String   @db.VarChar(512) // 解锁时的消息
+  criteria    Int      @default(1) @db.UnsignedInt // 达成条件总数，例如完成动作即达成的设置为 1，例如需要N个动作才能达成的设置为该数量
   createdAt   DateTime @default(now()) @map("created_at") // 创建时间
 
   // ref
@@ -620,9 +623,9 @@ model Achievement {
 
 // 成就用户多对多关系
 model UserAchievementRef {
-  userId        Int       @map("user_id")
-  achievementId Int       @map("achievement_id")
-  accumulation  Int       @default(0) // 计数器，用于记录成就的进度数量， progress 可以通过 accumulation / Achievement.criteria 来计算
+  userId        Int       @map("user_id") @db.UnsignedInt
+  achievementId Int       @map("achievement_id") @db.UnsignedInt
+  accumulation  Int       @default(0) @db.UnsignedInt // 计数器，用于记录成就的进度数量， progress 可以通过 accumulation / Achievement.criteria 来计算
   unlockedAt    DateTime? @map("unlocked_at") // 成就解锁时间
   createdAt     DateTime  @default(now()) @map("created_at") // 创建时间，首次记录进度时间
 

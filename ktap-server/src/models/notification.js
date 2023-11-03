@@ -7,7 +7,7 @@ const notification = async (fastify, opts, next) => {
         async addSystemNotification({ userId, title = '系统', content }) {
             await fastify.db.notification.create({
                 data: {
-                    userId, type: Notification.type.system, title, content,
+                    userId, type: Notification.type.system, title, content, extra: '',
                 }
             });
         },
@@ -54,7 +54,7 @@ const notification = async (fastify, opts, next) => {
             await fastify.db.notification.create({
                 data: {
                     type: Notification.type.reaction,
-                    userId, title, content,
+                    userId, title, content, extra: '',
                     target, targetId, url
                 }
             });
@@ -75,7 +75,7 @@ const notification = async (fastify, opts, next) => {
                     WHERE FollowUser.user_id = ${targetId} AND FollowUser.follower_id = User.id;
                 `;
             }
-            const followerSettings = await fastify.db.userSetting.findMany({ where: { userId: { in: followers.map(f => f.id) } } });
+            const followerSettings = await fastify.db.userSetting.findMany({ where: { userId: { in: followers.map(f => Number(f.id)) } } });
 
             const dataList = [];
             for (const followerSetting of followerSettings) { // 没有配置的follower就不需要通知
@@ -95,7 +95,7 @@ const notification = async (fastify, opts, next) => {
                         break;
                 }
                 if (!canNotify) continue;
-                dataList.push({ userId: followerSetting.userId, type: Notification.type.following, target, targetId, url, title, content, });
+                dataList.push({ userId: followerSetting.userId, type: Notification.type.following, target, targetId, url, title, content, extra: '' });
             }
             // Prisma 虽然不支持 SQLite createMany，但是如果放在同一个 transaction 中，性能会好很多 https://sqlite.org/faq.html#q19
             await fastify.db.$transaction(dataList.map(data => fastify.db.notification.create({ data })));
