@@ -4,9 +4,9 @@ import { Block } from 'baseui/block';
 import { Checkbox } from 'baseui/checkbox';
 import { Spinner } from 'baseui/spinner';
 import { HeadingSmall, LabelLarge } from 'baseui/typography';
+import { Button } from 'baseui/button';
 
 import Notification from '@ktap/components/notification';
-import { Button } from 'baseui/button';
 import { Messages } from '@ktap/libs/utils';
 
 function Form({ initData }) {

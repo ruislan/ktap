@@ -1,5 +1,5 @@
-
-import { Block } from 'baseui/block';import { DisplayMedium, LabelMedium, HeadingSmall, ParagraphMedium } from 'baseui/typography';
+import { Block } from 'baseui/block';
+import { DisplayMedium, LabelMedium, HeadingSmall, ParagraphMedium } from 'baseui/typography';
 
 function Rules() {
     return (

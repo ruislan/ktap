@@ -1,4 +1,3 @@
-import React from 'react';
 import { Block } from 'baseui/block';
 import { DisplayMedium, ParagraphLarge } from 'baseui/typography';
 import { Button } from 'baseui/button';

@@ -1,8 +1,7 @@
-import React from 'react';
 import { Block } from 'baseui/block';
 import { DisplayMedium, HeadingSmall, LabelMedium, ParagraphMedium, } from 'baseui/typography';
 
-export default function () {
+export default function About() {
 
     return (
         <Block display='flex' alignItems='center' flexDirection='column' maxWidth='664px' margin='48px auto' padding='scale600'>

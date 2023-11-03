@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useStyletron } from 'baseui';
 import { Block } from 'baseui/block';
 

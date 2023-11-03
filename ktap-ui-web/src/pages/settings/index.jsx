@@ -1,9 +1,9 @@
-import { useStyletron } from 'baseui';
 import { Outlet } from 'react-router-dom';
+import { useStyletron } from 'baseui';
 
 import { Block } from 'baseui/block';
 
-import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_SIDE, LAYOUT_SETTINGS_CONTENT } from '../../libs/utils';
+import { MOBILE_BREAKPOINT, LAYOUT_SETTINGS_SIDE, LAYOUT_SETTINGS_CONTENT } from '@ktap/libs/utils';
 
 import SideBar from './side-bar';
 import TopBar from './top-bar';

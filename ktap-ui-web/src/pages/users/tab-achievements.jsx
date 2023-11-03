@@ -1,11 +1,7 @@
 import React from 'react';
 
 import { Block } from 'baseui/block';
-import { LabelLarge, LabelXSmall } from 'baseui/typography';
 
-import AvatarSquare from '@ktap/components/avatar-square';
-import Capsule from '@ktap/components/capsule';
-import GenderLabel from '@ktap/components/gender-label';
 import { PAGE_LIMIT_NORMAL } from '@ktap/libs/utils';
 import LoadMore from '@ktap/components/load-more';
 import Achievement from '@ktap/components/achievement';
