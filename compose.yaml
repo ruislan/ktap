@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:latest
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./runtime/database:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=passwd
+    restart: always
+    networks:
+      - ktap
+
+  ktap-ui-web:
+    image: ktap-ui-web:latest
+    build: ./ktap-ui-web
+    ports:
+      - 5173:80
+    depends_on:
+      - ktap-server
+    networks:
+      - ktap
+
+  ktap-server:
+    image: ktap-server:latest
+    build:
+      context: ./ktap-server
+    env_file:
+      - ./ktap-server/.env
+    environment:
+      - DATABASE_URL=mysql://root:passwd@db:3306/ktap?useUnicode=true&autoReconnect=true
+    depends_on:
+      - db
+    volumes:
+      - ./runtime/public:/app/public:rw
+    networks:
+      - ktap
+
+networks:
+  ktap:
+    driver: bridge

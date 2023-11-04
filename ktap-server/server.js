@@ -1,5 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
+import prisma from '@prisma/client';
 import fastify from 'fastify';
 import ajvErrors from 'ajv-errors';
 import fastifyStatic from '@fastify/static';
@@ -16,10 +17,7 @@ import restService from './src/index.js';
 // avoid JSON bigint serialize error
 BigInt.prototype.toJSON = function () { return Number(this); };
 
-const main = async () => {
-    // setup env
-    dotenv.config();
-
+async function startServer() {
     // setup server
     const server = fastify({
         logger: {
@@ -78,6 +76,11 @@ const main = async () => {
             server.log.error(err);
             process.exit();
         });
+}
+
+async function main() {
+    dotenv.config(); // setup env
+    await startServer();
 };
 
 main();

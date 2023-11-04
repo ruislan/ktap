@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import fs from 'fs';
 import path from 'path';
 import steam from '../src/lib/steam.js';
-import { parseArgs } from "node:util";
+import { parseArgs } from 'node:util';
 import { AchievementTypes } from '../src/models/achievement.js';
 
 const db = new prisma.PrismaClient({ log: ['error', 'warn'] });
@@ -35,10 +35,10 @@ const users = [
 
 // 添加组织
 const organizations = [
-    { id: 1, name: "早哈哈独立开发者", summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'individual', userId: 1 },
-    { id: 2, name: "玩哈哈游戏工作室", summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'studio', userId: 2 },
-    { id: 3, name: "富哈哈游戏公司", summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'company', userId: 3 },
-    { id: 4, name: "多哈哈游戏发行公司", summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'company', userId: 1 },
+    { id: 1, name: '早哈哈独立开发者', summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'individual', userId: 1 },
+    { id: 2, name: '玩哈哈游戏工作室', summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'studio', userId: 2 },
+    { id: 3, name: '富哈哈游戏公司', summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'company', userId: 3 },
+    { id: 4, name: '多哈哈游戏发行公司', summary: '没啥说的，就是强', logo: 'https://avatars.st.dl.eccdnx.com/5f4b7a6439548f5513fc72968dae2217309e3d54_full.jpg', site: 'https://store.steampowered.com/publisher/valve/', type: 'company', userId: 1 },
 ];
 
 // App应用
@@ -57,13 +57,13 @@ const apps = [
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
@@ -84,13 +84,13 @@ const apps = [
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
@@ -111,13 +111,13 @@ const apps = [
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
@@ -138,13 +138,13 @@ const apps = [
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
@@ -165,13 +165,13 @@ const apps = [
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
             或做个自由散人，巧遇福地机缘，逍遥天下；或自立山头，与好友开宗立派，称霸天下。</p>
             <h2>非常新鲜的玩法</h2>
-            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625"></img>
+            <img src='https://cdn.cloudflare.steamstatic.com/steam/apps/289070/ss_cf53258cb8c4d283e52cf8dce3edf8656f83adc6.600x338.jpg?t=1643315625'></img>
             <p>开局先选修炼方向，崇尚极致武道选炼体，追求天地五行则选修法。确定修炼方向后，就算正式踏上长生路了。
             自此，你跟着师父一起，习神通集古宝，御灵兽种灵植。去各大秘境历练，挑战上古妖兽，切磋同门兄弟。仙丹灵器自己炼，一日筑基成功，三日突破元婴！
             待到合适之时，便可下山闯荡。
@@ -699,16 +699,16 @@ const news = [
         各位玩家好！今日为大家带来《光明记忆：无限》2023春节版本。新增“第三人称观赏模式”。游戏设置 - 图像 - 观赏模式 即可打开。“观赏模式”适用于移动以及射击，使用部分技能时会临时切换至第一人称。
         </h2>
         <br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg'><br><br>
         <h3>  本次还为舒雅新增两套DLC皮肤“赛博兔 / 学院兔”，并增加了卡通渲染功能，在游戏中按“Home键”可切换主角的卡通渲染效果。</h3><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg"><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg'><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg'><br><br>
         <h3>【增加内容】：</h3>
         1.新增 第三人称视角切换。<br>（仅适用于玩家的移动及射击，使用技能时将临时过渡回第一人称视角）<br>
         2.新增 DLC“学院兔 - 舒雅”角色皮肤。<br>
         3.新增 DLC“赛博兔 - 舒雅”角色皮肤。<br>
-        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、"主菜单”老虎玩偶为兔子。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png">
+        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、'主菜单”老虎玩偶为兔子。<br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png'>
         <br><br>
         <h3>【优化内容】：</h3>
         1.对游戏中NPC模型重新制作LOD，提升游戏帧率。<br>
@@ -719,7 +719,7 @@ const news = [
         6.优化“主菜单 - 皮肤”选项排序，新推出的DLC皮肤会靠前显示。<br>
         7.优化“主菜单 - 皮肤”展示界面中舒雅左手臂的位置，优化手臂太靠近身体内侧的问题。<br>
         8.优化“主菜单 - 皮肤”展示界面的灯光亮度和色调。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg">
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg'>
         <br><br>
         <h3>【修复内容】：</h3>
         1.修复当设置“隐藏准心”后按下“武器检视”，玩家将永远无法开火或拾取道具的问题。<br>
@@ -737,16 +737,16 @@ const news = [
         各位玩家好！今日为大家带来《光明记忆：无限》2023春节版本。新增“第三人称观赏模式”。游戏设置 - 图像 - 观赏模式 即可打开。“观赏模式”适用于移动以及射击，使用部分技能时会临时切换至第一人称。
         </h2>
         <br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg'><br><br>
         <h3>  本次还为舒雅新增两套DLC皮肤“赛博兔 / 学院兔”，并增加了卡通渲染功能，在游戏中按“Home键”可切换主角的卡通渲染效果。</h3><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg"><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg'><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg'><br><br>
         <h3>【增加内容】：</h3>
         1.新增 第三人称视角切换。<br>（仅适用于玩家的移动及射击，使用技能时将临时过渡回第一人称视角）<br>
         2.新增 DLC“学院兔 - 舒雅”角色皮肤。<br>
         3.新增 DLC“赛博兔 - 舒雅”角色皮肤。<br>
-        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、"主菜单”老虎玩偶为兔子。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png">
+        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、'主菜单”老虎玩偶为兔子。<br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png'>
         <br><br>
         <h3>【优化内容】：</h3>
         1.对游戏中NPC模型重新制作LOD，提升游戏帧率。<br>
@@ -757,7 +757,7 @@ const news = [
         6.优化“主菜单 - 皮肤”选项排序，新推出的DLC皮肤会靠前显示。<br>
         7.优化“主菜单 - 皮肤”展示界面中舒雅左手臂的位置，优化手臂太靠近身体内侧的问题。<br>
         8.优化“主菜单 - 皮肤”展示界面的灯光亮度和色调。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg">
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg'>
         <br><br>
         <h3>【修复内容】：</h3>
         1.修复当设置“隐藏准心”后按下“武器检视”，玩家将永远无法开火或拾取道具的问题。<br>
@@ -775,16 +775,16 @@ const news = [
         各位玩家好！今日为大家带来《光明记忆：无限》2023春节版本。新增“第三人称观赏模式”。游戏设置 - 图像 - 观赏模式 即可打开。“观赏模式”适用于移动以及射击，使用部分技能时会临时切换至第一人称。
         </h2>
         <br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg'><br><br>
         <h3>  本次还为舒雅新增两套DLC皮肤“赛博兔 / 学院兔”，并增加了卡通渲染功能，在游戏中按“Home键”可切换主角的卡通渲染效果。</h3><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg"><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg'><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg'><br><br>
         <h3>【增加内容】：</h3>
         1.新增 第三人称视角切换。<br>（仅适用于玩家的移动及射击，使用技能时将临时过渡回第一人称视角）<br>
         2.新增 DLC“学院兔 - 舒雅”角色皮肤。<br>
         3.新增 DLC“赛博兔 - 舒雅”角色皮肤。<br>
-        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、"主菜单”老虎玩偶为兔子。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png">
+        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、'主菜单”老虎玩偶为兔子。<br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png'>
         <br><br>
         <h3>【优化内容】：</h3>
         1.对游戏中NPC模型重新制作LOD，提升游戏帧率。<br>
@@ -795,7 +795,7 @@ const news = [
         6.优化“主菜单 - 皮肤”选项排序，新推出的DLC皮肤会靠前显示。<br>
         7.优化“主菜单 - 皮肤”展示界面中舒雅左手臂的位置，优化手臂太靠近身体内侧的问题。<br>
         8.优化“主菜单 - 皮肤”展示界面的灯光亮度和色调。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg">
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg'>
         <br><br>
         <h3>【修复内容】：</h3>
         1.修复当设置“隐藏准心”后按下“武器检视”，玩家将永远无法开火或拾取道具的问题。<br>
@@ -813,16 +813,16 @@ const news = [
         各位玩家好！今日为大家带来《光明记忆：无限》2023春节版本。新增“第三人称观赏模式”。游戏设置 - 图像 - 观赏模式 即可打开。“观赏模式”适用于移动以及射击，使用部分技能时会临时切换至第一人称。
         </h2>
         <br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg'><br><br>
         <h3>  本次还为舒雅新增两套DLC皮肤“赛博兔 / 学院兔”，并增加了卡通渲染功能，在游戏中按“Home键”可切换主角的卡通渲染效果。</h3><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg"><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg'><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg'><br><br>
         <h3>【增加内容】：</h3>
         1.新增 第三人称视角切换。<br>（仅适用于玩家的移动及射击，使用技能时将临时过渡回第一人称视角）<br>
         2.新增 DLC“学院兔 - 舒雅”角色皮肤。<br>
         3.新增 DLC“赛博兔 - 舒雅”角色皮肤。<br>
-        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、"主菜单”老虎玩偶为兔子。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png">
+        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、'主菜单”老虎玩偶为兔子。<br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png'>
         <br><br>
         <h3>【优化内容】：</h3>
         1.对游戏中NPC模型重新制作LOD，提升游戏帧率。<br>
@@ -833,7 +833,7 @@ const news = [
         6.优化“主菜单 - 皮肤”选项排序，新推出的DLC皮肤会靠前显示。<br>
         7.优化“主菜单 - 皮肤”展示界面中舒雅左手臂的位置，优化手臂太靠近身体内侧的问题。<br>
         8.优化“主菜单 - 皮肤”展示界面的灯光亮度和色调。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg">
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg'>
         <br><br>
         <h3>【修复内容】：</h3>
         1.修复当设置“隐藏准心”后按下“武器检视”，玩家将永远无法开火或拾取道具的问题。<br>
@@ -851,16 +851,16 @@ const news = [
         各位玩家好！今日为大家带来《光明记忆：无限》2023春节版本。新增“第三人称观赏模式”。游戏设置 - 图像 - 观赏模式 即可打开。“观赏模式”适用于移动以及射击，使用部分技能时会临时切换至第一人称。
         </h2>
         <br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg'><br><br>
         <h3>  本次还为舒雅新增两套DLC皮肤“赛博兔 / 学院兔”，并增加了卡通渲染功能，在游戏中按“Home键”可切换主角的卡通渲染效果。</h3><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg"><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg'><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg'><br><br>
         <h3>【增加内容】：</h3>
         1.新增 第三人称视角切换。<br>（仅适用于玩家的移动及射击，使用技能时将临时过渡回第一人称视角）<br>
         2.新增 DLC“学院兔 - 舒雅”角色皮肤。<br>
         3.新增 DLC“赛博兔 - 舒雅”角色皮肤。<br>
-        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、"主菜单”老虎玩偶为兔子。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png">
+        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、'主菜单”老虎玩偶为兔子。<br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png'>
         <br><br>
         <h3>【优化内容】：</h3>
         1.对游戏中NPC模型重新制作LOD，提升游戏帧率。<br>
@@ -871,7 +871,7 @@ const news = [
         6.优化“主菜单 - 皮肤”选项排序，新推出的DLC皮肤会靠前显示。<br>
         7.优化“主菜单 - 皮肤”展示界面中舒雅左手臂的位置，优化手臂太靠近身体内侧的问题。<br>
         8.优化“主菜单 - 皮肤”展示界面的灯光亮度和色调。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg">
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg'>
         <br><br>
         <h3>【修复内容】：</h3>
         1.修复当设置“隐藏准心”后按下“武器检视”，玩家将永远无法开火或拾取道具的问题。<br>
@@ -889,16 +889,16 @@ const news = [
         各位玩家好！今日为大家带来《光明记忆：无限》2023春节版本。新增“第三人称观赏模式”。游戏设置 - 图像 - 观赏模式 即可打开。“观赏模式”适用于移动以及射击，使用部分技能时会临时切换至第一人称。
         </h2>
         <br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/419f497e106cc6de2d954e7331884f0180d45e38.jpg'><br><br>
         <h3>  本次还为舒雅新增两套DLC皮肤“赛博兔 / 学院兔”，并增加了卡通渲染功能，在游戏中按“Home键”可切换主角的卡通渲染效果。</h3><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg"><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg"><br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/d199a14b6da3f87fbdd887d42cbab53d822b3945.jpg'><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/04dcb7b0c1a227cd783e2722f61f9123910b6855.jpg'><br><br>
         <h3>【增加内容】：</h3>
         1.新增 第三人称视角切换。<br>（仅适用于玩家的移动及射击，使用技能时将临时过渡回第一人称视角）<br>
         2.新增 DLC“学院兔 - 舒雅”角色皮肤。<br>
         3.新增 DLC“赛博兔 - 舒雅”角色皮肤。<br>
-        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、"主菜单”老虎玩偶为兔子。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png">
+        4.新增“角色卡通渲染”（游戏中按Home键切换）。<br>5.替换“汽车驾驶室内”、'主菜单”老虎玩偶为兔子。<br><br>
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/2c73d8aaecec8fd7230925f1379d93b690ba432f.png'>
         <br><br>
         <h3>【优化内容】：</h3>
         1.对游戏中NPC模型重新制作LOD，提升游戏帧率。<br>
@@ -909,7 +909,7 @@ const news = [
         6.优化“主菜单 - 皮肤”选项排序，新推出的DLC皮肤会靠前显示。<br>
         7.优化“主菜单 - 皮肤”展示界面中舒雅左手臂的位置，优化手臂太靠近身体内侧的问题。<br>
         8.优化“主菜单 - 皮肤”展示界面的灯光亮度和色调。<br><br>
-        <img src="https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg">
+        <img src='https://media.st.dl.eccdnx.com/steamcommunity/public/images/clans//36381617/6c26ddf0b5fc8a521486a91b91e0ecce9db8d76e.jpg'>
         <br><br>
         <h3>【修复内容】：</h3>
         1.修复当设置“隐藏准心”后按下“武器检视”，玩家将永远无法开火或拾取道具的问题。<br>
@@ -1257,12 +1257,14 @@ async function main() {
     const { values } = parseArgs({ options: { cmd: { type: 'string', }, } });
     await initBase();
     switch (values.cmd) {
-        case "steam":
-        case "production":
-            initSteam();
+        case 'steam':
+        case 'prod':
+            await initSteam();
+            break;
+        case 'dev':
+            await initDev();
             break;
         default:
-            initDev();
             break;
     }
 }

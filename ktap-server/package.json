@@ -7,7 +7,9 @@
     "type": "module",
     "scripts": {
         "dev": "NODE_ENV=dev node server.js",
+        "dev:seed": "npx prisma db push && npx prisma db seed -- --cmd dev && node server.js",
         "start": "NODE_ENV=production node server.js",
+        "seed:base": "npx prisma db seed -- --cmd base",
         "seed:clean": "npx prisma db push --force-reset",
         "seed:dev": "npx prisma db seed -- --cmd dev",
         "seed:steam": "npx prisma db push --force-reset & npx prisma db seed -- --cmd steam"

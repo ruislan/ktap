@@ -48,35 +48,36 @@ KTap是一个时尚的游戏社区平台。
 ktap-server为服务端代码，进入目录后输入以下指令启动：
 
 ```bash
-yarn install
-yarn prisma db push
-yarn seed
-yarn dev
+pnpm install
+pnpm prisma db push
+pnpm seed:dev
+pnpm dev
 ```
+
+关于 Seed ：
+
+* 通过命令"pnpm seed:dev" 进行数据初始化。将初始化少量数据，但是涵盖了几乎所有用到的场景，例如用户、游戏、评测、回复、标签、礼物等等等等。可以用于开发和测试功能。
+* 通过命令"pnpm seed:steam" 进行数据初始化，将初始化的内容包括基础数据和用户以及gameList中所有的steam游戏(通过steam api下载)，并且在服务启动后，通过/admin-panel，在管理站点，在用户、评测、回复等管理页面下，可以看到一个🚀的按钮，点击即可进行疯狂的数据生成，首先可以生成几十万用户，然后选择几个用户生成几十万个评测，再生成上百万个回复。这样网站看起来就生机勃勃，可以用于各种玩耍。
+
+注意：seed:steam 会清空数据库并重新初始化。
 
 ktap-ui-web为前端代码，进入目录后输入以下指令启动：
 
 ```bash
-yarn install
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 完成后访问 [http://localhost:5173](http://localhost:5173)即可开始探索之旅。登录用户和密码可以在seed.js文件中查看。
 
 ### Docker启动
 
-可直接采用docker-compose启动快速启动或者部署
+可直接采用docker-compose启动快速启动或者部署，首先启动db，待db启动完成之后，停止启动（保证db相关数据已经初始化）。然后启动全部服务。
 
 ```bash
-docker-compose up
+docker-compose up db
+docker-compose up -d
 ```
-
-### 两个数据初始化方式
-
-* 通过命令"yarn seed" 进行数据初始化。将初始化少量数据，但是涵盖了几乎所有用到的场景，例如用户、游戏、评测、回复、标签、礼物等等等等。可以用于开发和测试功能。
-* 通过命令"yarn seed:steam" 进行数据初始化，将初始化的内容包括基础数据和用户以及gameList中所有的steam游戏(通过steam api下载)，并且在服务启动后，通过/admin-panel，在管理站点，在用户、评测、回复等管理页面下，可以看到一个🚀的按钮，点击即可进行疯狂的数据生成，首先可以生成几十万用户，然后选择几个用户生成几十万个评测，再生成上百万个回复。这样网站看起来就生机勃勃，可以用于各种玩耍。
-
-注意：两种数据初始化都会清空数据库并重新初始化。
 
 ### 跨域问题
 
