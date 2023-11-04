@@ -45,9 +45,10 @@ KTap是一个时尚的游戏社区平台。
 
 ### 手动启动
 
-ktap-server为服务端代码，进入目录后输入以下指令启动：
+首先启动mysql服务，然后启动服务端ktap-server，进入目录后输入以下指令启动：
 
 ```bash
+cd ktap-server
 pnpm install
 pnpm prisma db push
 pnpm seed:dev
@@ -64,6 +65,7 @@ pnpm dev
 ktap-ui-web为前端代码，进入目录后输入以下指令启动：
 
 ```bash
+cd ktap-ui-web
 pnpm install
 pnpm dev
 ```
@@ -72,10 +74,9 @@ pnpm dev
 
 ### Docker启动
 
-可直接采用docker-compose启动快速启动或者部署，首先启动db，待db启动完成之后，停止启动（保证db相关数据已经初始化）。然后启动全部服务。
+可直接采用docker-compose快速启动。
 
 ```bash
-docker-compose up db
 docker-compose up -d
 ```
 

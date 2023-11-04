@@ -33,9 +33,18 @@ services:
     environment:
       - DATABASE_URL=mysql://root:passwd@db:3306/ktap?useUnicode=true&autoReconnect=true
     depends_on:
-      - db
+      wait-for-db:
+        condition: service_completed_successfully
     volumes:
       - ./runtime/public:/app/public:rw
+    networks:
+      - ktap
+
+  wait-for-db:
+    image: atkrad/wait4x
+    depends_on:
+      - db
+    command: tcp db:3306 -t 15s -i 500ms
     networks:
       - ktap
 
