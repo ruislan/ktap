@@ -90,7 +90,7 @@ docker-compose up -d
 * Web Framework: Fastify
 * Front Framework: ReactJS
 * Styling: BaseWeb UI
-* Database: SQLite
+* Database: SQLite(v1.2.0) MySQL(^v1.5.0)
 * ORM: Prisma
 * Other Libs:
   * day-fns: date helper
@@ -103,7 +103,9 @@ docker-compose up -d
   * node-cache: simple cache
   * node-cron: simple schedule
 
-SQLite仅仅作为开发、演示和独立小规模运营是非常棒的，甚至性能也非常好。不过，如果要正式运营，推荐使用MySQL或者PostgreSQL（当然，有些代码要做针对性的调整）。
+从 v1.5.0 版本开始，数据库使用 MySQL ，并不再支持 SQLite。 MySQL 有许多 SQLite不具备的属性（最实用的一个就是SQLite不支持createMany）和使用人数。 所以v1.5.0之后的版本将不兼容前续版本。
+
+SQLite仅仅作为开发、演示、本地存储和个人Play是非常非常棒的，效率高、性能好。
 
 ## 接下来
 

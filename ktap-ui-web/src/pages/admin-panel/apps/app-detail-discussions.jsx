@@ -81,7 +81,6 @@ function AppDetailDiscussions({ data }) {
                     const json = await res.json();
                     enqueue({ message: json.message, startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
                 } else {
-                    setIsOpenEditModal(false);
                     enqueue({ message: '保存失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
                 }
             }
@@ -102,11 +101,16 @@ function AppDetailDiscussions({ data }) {
             if (res.ok) {
                 enqueue({ message: '删除成功', startEnhancer: ({ size }) => <Check size={size} color='positive' />, });
                 fetchData();
+                setIsOpenDeleteModal(false);
             } else {
-                enqueue({ message: '删除失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
+                if (res.status === 400) {
+                    const json = await res.json();
+                    enqueue({ message: json.message, startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
+                } else {
+                    enqueue({ message: '保存失败，稍后再试，或者请联系技术人员处理', startEnhancer: ({ size }) => <Delete size={size} color='negative' />, });
+                }
             }
         } finally {
-            setIsOpenDeleteModal(false);
             setIsDeleting(false);
         }
     };
@@ -189,7 +193,15 @@ function AppDetailDiscussions({ data }) {
                                 <Button kind='secondary' size='mini' onClick={() => window.open(`/discussions/apps/${data.id}/channels/${channel.id}`)}>查看</Button>
                                 <Button kind='secondary' size='mini' onClick={() => { setForm({ ...channel }); setModeratorIds(''); setIsOpenModeratorModal(true); }}>版主</Button>
                                 <Button kind='secondary' size='mini' onClick={() => { setForm({ ...channel }); setIsOpenEditModal(true); }}>修改</Button>
-                                <Button kind='secondary' size='mini' onClick={() => { setForm({ ...channel }); setTransferChannel([dataList.filter(channel => channel.id !== form.id)[0]]); setIsOpenDeleteModal(true); }}>删除</Button>
+                                <Button kind='secondary' size='mini' onClick={() => {
+                                    setForm({ ...channel });
+                                    let transferChannel = dataList.filter(c => c.id !== channel.id)[0];
+                                    if (!transferChannel) transferChannel = { ...channel };
+                                    setTransferChannel([transferChannel]);
+                                    setIsOpenDeleteModal(true);
+                                }}>
+                                    删除
+                                </Button>
                             </Block>
                         </div>
                     ))}
@@ -254,7 +266,7 @@ function AppDetailDiscussions({ data }) {
                 <ModalHeader>删除 {form.name}</ModalHeader>
                 <ModalBody>
                     <FormControl label={<LabelSmall>选择一个频道进行转移</LabelSmall>} caption={'如果只剩下一个频道，且频道中还有讨论，则无法被删除'}>
-                        <Select placeholder='' size='compact' clearable={false}
+                        <Select placeholder='' searchable={false} size='compact' clearable={false}
                             options={dataList.filter(channel => channel.id !== form.id)}
                             labelKey='name' valueKey='id'
                             onChange={params => setTransferChannel(params.value)}

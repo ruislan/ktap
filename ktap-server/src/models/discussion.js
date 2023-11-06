@@ -8,6 +8,8 @@ export const DiscussionErrors = {
     forbidden: '无操作权限',
     giftNotFound: '礼物不存在',
     insufficientBalance: '余额不足',
+    channelNotFound: '频道不存在',
+    lastChannelIsNotEmpty: '最后一个频道还有帖子',
 };
 
 export const DiscussionEvents = {
@@ -299,6 +301,60 @@ const discussion = async (fastify, opts, next) => {
             const exists = (await fastify.db.discussionPostReport.count({ where: { postId, userId } })) > 0;
             if (!exists) await fastify.db.discussionPostReport.create({ data: { userId, postId, content } });
         },
+        // 讨论频道
+        async createDiscussionChannel({ appId, name, icon, description }) {
+            await fastify.db.discussionChannel.create({ data: { appId, name, icon, description } });
+        },
+        async updateDiscussionChannel({ channelId, appId, name, icon, description }) {
+            await fastify.db.discussionChannel.updateMany({ where: { id: channelId, appId }, data: { name, icon, description } });
+        },
+        // 如果还有多的channel，则删除需要选择一个可以移动的频道才可以
+        // 如果只有这个channel，则该channel下不能有posts才可以删除
+        async deleteDiscussionChannel({ channelId, appId, toId }) {
+            await fastify.db.$transaction(async (tx) => {
+                const channelCount = await fastify.db.discussionChannel.count({ where: { appId, id: { not: channelId } } });
+                const postCount = await fastify.db.discussion.count({ where: { discussionChannelId: channelId, appId } });
+                if (channelCount === 0 && postCount > 0) throw new Error(DiscussionErrors.lastChannelIsNotEmpty); // 只剩它自己，而且还有posts，不能删除
+                if (channelCount > 0) { // 还有channel，做一个转移
+                    const toCount = await fastify.db.discussionChannel.count({ where: { id: toId, appId } });
+                    if (toCount === 0) throw new Error(DiscussionErrors.channelNotFound); // 转移的 channel 不存在
+                    await tx.discussion.updateMany({ where: { discussionChannelId: channelId, appId }, data: { discussionChannelId: toId } });
+                }
+                await tx.userDiscussionChannelRef.deleteMany({ where: { discussionChannelId: channelId } });
+                await tx.discussionChannel.deleteMany({ where: { id: channelId, appId } });
+            });
+        },
+        async createModerators({ channelId, userIds }) {
+            if (!channelId || !userIds) return;
+            await fastify.db.$transaction(
+                userIds.map(id => {
+                    const userId = Number(id) || 0;
+                    return fastify.db.userDiscussionChannelRef.upsert({
+                        create: {
+                            userId,
+                            discussionChannelId: channelId,
+                        },
+                        update: {},
+                        where: {
+                            userId_discussionChannelId: {
+                                userId,
+                                discussionChannelId: channelId,
+                            }
+                        },
+                    });
+                })
+            );
+        },
+        async deleteModerator({ channelId, userId }) {
+            await fastify.db.userDiscussionChannelRef.delete({
+                where: {
+                    userId_discussionChannelId: {
+                        userId,
+                        discussionChannelId: channelId,
+                    }
+                },
+            });
+        }
     });
     next();
 };

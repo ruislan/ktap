@@ -58,11 +58,12 @@ async function startServer() {
     await server.register(restService);
 
     // add shutdown hook
-    ['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => process.on(signal, () => {
-        server.close()
-            .then(() => server.log.info('server is closed.'))
-            .finally(() => process.exit());
-    }));
+    const shutdownHook = () => server.close().finally(() => {
+        server.log.info('server is closed.')
+        process.exit(0);
+    });
+    process.on('SIGINT', shutdownHook);
+    process.on('SIGTERM', shutdownHook);
 
     // print routes
     server.ready(() => {
