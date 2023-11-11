@@ -1,20 +1,8 @@
 # KTap
 
-KTap是一个时尚的游戏社区平台。
+KTap is a modern gaming community platform. [中文](./README.zh-CN.md)
 
-## 功能列表
-
-* 用户：注册、登录、个人中心、动态、成就等。
-* 游戏：评测、回复、礼物、赞踩、新闻等
-* 讨论：发帖、回帖、改贴、删帖、礼物、赞踩、置顶、锁帖（开锁）、举报等。
-* 探索
-* 排行榜
-* 搜索
-* 通知：系统、关注、反馈
-* 运营后台管理：用户、游戏、评测、讨论、标签……
-* ……
-
-## 截图
+## Screenshots
 
 <table>
     <tr>
@@ -33,19 +21,27 @@ KTap是一个时尚的游戏社区平台。
     </tr>
 </table>
 
-注意：截图可能落后于最新的。
+Here is a [DEMO](https://ktap.ruislan.com) for preview. Minimum cloud configuration, please be gentle~, and data may be cleared at any time.
 
-这里弄了一个 [DEMO](https://ktap.ruislan.com)，可以快速预览和玩起来。（最低云配置，请轻一点～，同时可能会不定时清理数据）。
+## Features
 
-## 快速开始
+* Users: Register, Login, User Center, Activity, Achievement, ...
+* Gaming: Review, Comment, Gift, Like, News, ...
+* Discussion：Post, Reply, Gift, Like, Sticky, Lock, Report, Moderator, ...
+* Others: Discover，Notification，Search, Rank, Tags, Admin Dashboard, ...
 
-### 环境设置
+## Running Locally
 
-下载代码之后，首先修改.env.example，将其改为.env，然后按照自己的需要修改.env中的内容，以“MAILER_”开头的为邮件服务，你需要查询你的邮件供应商的配置，然后配置到.env文件中，发送邮件的lib是nodemailer，你也可以查看其文档来做一个深入了解。开发时默认用的是outlook，你也可以临时申请一个新的邮箱，不配置也行，就是找回密码功能不能使用。
+### Setup
 
-### 手动启动
+1. Modify .env.example to .env
+2. Config your email in .env, the properties starting with "MAILER_"
+3. Config other properties
+4. Start Mysql Server
 
-首先启动mysql服务，然后启动服务端ktap-server，进入目录后输入以下指令启动：
+### Running
+
+Start backend
 
 ```bash
 cd ktap-server
@@ -55,14 +51,7 @@ pnpm seed:dev
 pnpm dev
 ```
 
-关于 Seed ：
-
-* 通过命令"pnpm seed:dev" 进行数据初始化。将初始化少量数据，但是涵盖了几乎所有用到的场景，例如用户、游戏、评测、回复、标签、礼物等等等等。可以用于开发和测试功能。
-* 通过命令"pnpm seed:steam" 进行数据初始化，将初始化的内容包括基础数据和用户以及gameList中所有的steam游戏(通过steam api下载)，并且在服务启动后，通过/admin-panel，在管理站点，在用户、评测、回复等管理页面下，可以看到一个🚀的按钮，点击即可进行疯狂的数据生成，首先可以生成几十万用户，然后选择几个用户生成几十万个评测，再生成上百万个回复。这样网站看起来就生机勃勃，可以用于各种玩耍。
-
-注意：seed:steam 会清空数据库并重新初始化。
-
-ktap-ui-web为前端代码，进入目录后输入以下指令启动：
+Start frontend
 
 ```bash
 cd ktap-ui-web
@@ -70,23 +59,22 @@ pnpm install
 pnpm dev
 ```
 
-完成后访问 [http://localhost:5173](http://localhost:5173)即可开始探索之旅。登录用户和密码可以在seed.js文件中查看。
+visit [http://localhost:5173](http://localhost:5173) and enjoy.
 
-### Docker启动
+### About Seed
 
-可直接采用docker-compose快速启动。
+* Initialize data through the command "pnpm seed:dev", A small amount of data will be initialized, but it covers almost all used scenarios, such as users, games, comments, replies, tags, gifts, etc. Can be used to develop and test functionality.
+* Initialize the data through the command "pnpm seed:steam". The initialized content includes basic data and users and all steam games in the gameList (downloaded through the steam api). After the service is started, enter the url "/admin-panel", you can see a 🚀 button in some pages. Click it to generate a huge amount of data, like users, reviews, comments and so on. !!!Note, this command will clear database and re-initialize it.
+
+### Docker
 
 ```bash
 docker-compose up -d
 ```
 
-### 跨域问题
+## Build with
 
-默认是在同origin下，在开发环境下，采用了proxy方式。如果要分开部署（例如：api.example.com和example.com）请自行修改代码（注意cookie跨域）。
-
-## 环境与工具
-
-* Language: NodeJS v18
+* Language: NodeJS v20
 * Web Framework: Fastify
 * Front Framework: ReactJS
 * Styling: BaseWeb UI
@@ -98,29 +86,29 @@ docker-compose up -d
   * swiper
   * tiptap: amazing editor
   * sanitize-html
-  * nodejieba: 中文分词
+  * nodejieba: Chinese word segmentation
   * nodemailer: email helper
   * node-cache: simple cache
   * node-cron: simple schedule
 
-从 v1.5.0 版本开始，数据库使用 MySQL ，并不再支持 SQLite。 MySQL 有许多 SQLite不具备的属性（最实用的一个就是SQLite不支持createMany）和使用人数。 所以v1.5.0之后的版本将不兼容前续版本。
+Note: from version v1.5.0 the database was changed from SQLite to MySQL. There are many differences between SQLite and MySQL, Therefore, versions after v1.5.0 will not be compatible with previous versions.
 
-SQLite仅仅作为开发、演示、本地存储和个人Play是非常非常棒的，效率高、性能好。
+By the way. SQLite is great for development, demonstration, local storage and personal play, with high efficiency and good performance.
 
-## 接下来
+## Next
 
-接下来可能会研发的功能...
+Features that may be developed...
 
-* 增加 App 活动事件（线上或者线下活动）
-* 增加组织管理（组织所有人自己管理自己的组织）
-* 增加专题专栏（例如节日专题，打折专题，新品专题等等）
-* 增加商城和充值（余额购买虚拟或者实体商品）
-* 增加搜索引擎，改进搜索、相关性算法
-* 数据库支持MySQL或PG
+* Gaming events (Online or Offline)
+* Organization owners can mange their own organizations
+* Collections (Such as holiday, Discount, New gaming, etc)
+* Shopping mall (Virtual Products)
+* Improve search, (add search engine and improve relevance algorithms)
+* ...
 
-## 致敬
+## Thanks
 
-感谢以下几个网站给我的灵感，向你们致敬。
+Thanks to the following websites for inspiring me.
 
 * [Taptap](https://taptap.cn/)
 * [Steam](https://store.steampowered.com/)
