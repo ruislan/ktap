@@ -26,7 +26,11 @@ function Form({ initData }) {
                 setTip({ kind: 'positive', message: Messages.updated });
             } else {
                 const json = await res.json();
-                setTip({ kind: 'negative', message: json.message });
+                if (res.status === 401 || res.status === 403) {
+                    setTip({ kind: 'negative', message: Messages.noPermission });
+                } else {
+                    throw new Error(json.message);
+                }
             }
         } catch (e) {
             setTip({ kind: 'negative', message: Messages.unknownError });

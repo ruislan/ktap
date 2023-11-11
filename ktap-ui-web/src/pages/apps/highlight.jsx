@@ -38,11 +38,17 @@ function Highlight({ data }) {
                     thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                     modules={[FreeMode, Thumbs]}
                     className={css({ marginBottom: theme.sizing.scale600, })}
+                    onSlideChange={() => {
+                        const videoElements = document.querySelectorAll('.swiper-slide video');
+                        videoElements.forEach((videoElement) => videoElement.pause());
+                    }}
                 >
                     {slides.map((slide, index) => (
                         <SwiperSlide key={index}>
                             {slide.type === 'video' ? (
-                                <video controls
+                                <video
+                                    playsInline
+                                    controls
                                     className={css({
                                         display: 'block',
                                         width: '100%',
@@ -125,7 +131,7 @@ function Highlight({ data }) {
                                     {slide.type === 'video' && <div className={css({
                                         display: 'flex', alignItems: 'center', position: 'absolute',
                                         justifyContent: 'center', width: '100%', height: '100%',
-                                    })}><Icon $size='3xl'><Play/></Icon></div>}
+                                    })}><Icon $size='3xl'><Play /></Icon></div>}
                                     <img className={css({
                                         display: 'block', objectFit: 'cover',
                                         width: '100%', height: '100%',

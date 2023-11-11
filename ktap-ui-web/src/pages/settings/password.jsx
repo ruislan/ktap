@@ -28,7 +28,11 @@ function SettingsPassword() {
                 setNotification({ kind: 'positive', message: Messages.updated });
             } else {
                 const data = await res.json();
-                setNotification({ kind: 'negative', message: data.message });
+                if (res.status === 401 || res.status === 403) {
+                    setNotification({ kind: 'negative', message: Messages.noPermission });
+                } else {
+                    throw new Error(data.message);
+                }
             }
         } catch (e) {
             setNotification({ kind: 'negative', message: Messages.unknownError });

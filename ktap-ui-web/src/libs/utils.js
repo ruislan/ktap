@@ -193,6 +193,7 @@ export const PageWidget = {
 
 export const Messages = {
     authFail: '邮箱或密码不正确',
+    noPermission: '你没有权限或者已经被管理员封禁',
     requireAgreePrivacy: '需要同意 服务协议 和 隐私政策',
     ok: '操作成功',
     unknownError: '未知错误',

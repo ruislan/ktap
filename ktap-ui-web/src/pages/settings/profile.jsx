@@ -39,7 +39,11 @@ function SettingsAvatar({ setNotification }) {
                     setUser({ ...user, avatar: data.avatar });
                     setNotification({ kind: 'positive', message: Messages.updated });
                 } else {
-                    setNotification({ kind: 'negative', message: data.message });
+                    if (res.status === 401 || res.status === 403) {
+                        setNotification({ kind: 'negative', message: Messages.noPermission });
+                    } else {
+                        throw new Error(data.message);
+                    }
                 }
             } catch (e) {
                 setNotification({ kind: 'negative', message: Messages.unknownError });

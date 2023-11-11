@@ -13,7 +13,7 @@ export const UserGender = {
 
 export const UserErrors = {
     userNotFound: '用户不存在',
-    userIsLocked: '用户已经被锁定',
+    userIsLocked: '用户已经被管理员封禁',
     userAgreeRequired: '需要同意 服务协议 和 隐私政策',
     authenticationFailed: '邮箱或密码不正确',
     userOldPasswordWrong: '旧密码错误，温馨提示：注意大小写和空格哟',
