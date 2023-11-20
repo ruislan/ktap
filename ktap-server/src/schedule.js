@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import ms from 'ms';
 
 const schedule = async (fastify, opts, next) => {
-    const cronExpressionForProcessExpiredNotifications = '0 0 5 * * *'; // every day at 2:00
+    const cronExpressionForProcessExpiredNotifications = '0 0 5 * * *'; // every day at 5:00
     const jobForProcessExpiredNotifications = cron.schedule(cronExpressionForProcessExpiredNotifications,
         async () => {
             fastify.log.info(`Start deleting each user's notifications...`);
