@@ -150,6 +150,10 @@ const home = async function (fastify) {
         const data = await fastify.db.gift.findMany({});
         return reply.code(200).send({ data });
     });
+
+    fastify.get('/', async function (req, reply) {
+        return reply.code(200).send({ version: '1.2.0' });
+    });
 };
 
 export default home;
