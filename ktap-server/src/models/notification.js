@@ -2,7 +2,7 @@
 
 import { Notification } from '../constants.js';
 
-const notification = async (fastify, opts, next) => {
+async function notification(fastify, opts) {
     fastify.decorate('notification', {
         async addSystemNotification({ userId, title = '系统', content }) {
             await fastify.db.notification.create({
@@ -119,6 +119,5 @@ const notification = async (fastify, opts, next) => {
             return resultCount;
         }
     });
-    next();
 };
 export default notification;

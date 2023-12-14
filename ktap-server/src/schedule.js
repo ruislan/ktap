@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import ms from 'ms';
 
-const schedule = async (fastify, opts, next) => {
+const schedule = async (fastify, opts) => {
     const cronExpressionForProcessExpiredNotifications = '0 0 5 * * *'; // every day at 5:00
     const jobForProcessExpiredNotifications = cron.schedule(cronExpressionForProcessExpiredNotifications,
         async () => {
@@ -53,8 +53,6 @@ const schedule = async (fastify, opts, next) => {
         jobForProcessExpiredNotifications.stop();
         fastify.log.info('The schedule job for [Process expired notifications] stopped.');
     });
-
-    next();
 };
 
 export default schedule;

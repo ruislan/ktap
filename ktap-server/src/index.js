@@ -14,7 +14,7 @@ import schedule from './schedule.js';
 import jsonSchema from './json-schema.js';
 import models from './models/index.js';
 
-export default async function (fastify, opts, next) {
+export default async function (fastify, opts) {
     // config
     await fastify.setSchemaErrorFormatter(function (errors, dataVar) {
         const errorMessage = errors.map(error => error.message).join('\n');
@@ -53,6 +53,4 @@ export default async function (fastify, opts, next) {
     // routes
     await fastify.register(apiRoutes, { prefix: '/api' });
     await fastify.register(adminRoutes, { prefix: '/admin' });
-
-    next();
 };

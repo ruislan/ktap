@@ -2,7 +2,7 @@
 
 import { AppMedia, TagCategory } from '../constants.js';
 
-const app = async (fastify, opts, next) => {
+async function app(fastify, opts) {
     fastify.decorate('app', {
         // 计算并更新 App 的评分
         async computeAndUpdateAppScore({ appId }) {
@@ -203,7 +203,6 @@ const app = async (fastify, opts, next) => {
             await fastify.db.appLanguages.upsert({ where: { appId }, create: { text, audio, caption, appId }, update: { text, audio, caption } });
         }
     });
-    next();
 };
 
 export default app;

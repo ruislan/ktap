@@ -31,7 +31,7 @@ function cleanHtmlTags(content) {
     return content.replace(/<[^>]+>/g, '');
 };
 
-const discussion = async (fastify, opts, next) => {
+async function discussion(fastify, opts) {
     fastify.decorate('discussion', {
         async canOperate({ obj, objType, operator, operation }) {
             if (!operator || !obj) return false;
@@ -356,7 +356,6 @@ const discussion = async (fastify, opts, next) => {
             });
         }
     });
-    next();
 };
 
 export default discussion;

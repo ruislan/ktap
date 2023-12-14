@@ -2,7 +2,7 @@
 import fp from 'fastify-plugin';
 import prisma from '@prisma/client';
 
-const prismaPlugin = async (fastify, opts, next) => {
+async function prismaPlugin(fastify, opts) {
     const logOptions = ['error', 'warn'];
     if (process.env.NODE_ENV === 'dev') logOptions.push('query');
     const db = new prisma.PrismaClient({ log: logOptions });
@@ -12,8 +12,8 @@ const prismaPlugin = async (fastify, opts, next) => {
         await fastify.db.$disconnect();
         fastify.log.info('disconnecting Prisma from DB');
     });
-
-    next();
 };
 
-export default fp(prismaPlugin);
+export default fp(prismaPlugin, {
+    name: 'prisma',
+});

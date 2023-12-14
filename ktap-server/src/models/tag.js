@@ -3,7 +3,7 @@
 import { Prisma } from '@prisma/client'
 import { Pagination } from '../constants.js';
 
-const tag = async (fastify, opts, next) => {
+async function tag(fastify, opts) {
     fastify.decorate('tag', {
         async getTagsByHot({ id, limit = Pagination.limit.default, type = '' }) {
             type = type.toLowerCase();
@@ -21,6 +21,5 @@ const tag = async (fastify, opts, next) => {
             return tags;
         },
     });
-    next();
 };
 export default tag;

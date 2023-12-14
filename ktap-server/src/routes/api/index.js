@@ -12,7 +12,7 @@ import apiOrganizations from './organizations.js';
 import apiDiscover from './discover.js';
 import apiDiscussions from './discussions.js';
 
-const apiRoutes = async (fastify, opts, next) => {
+const apiRoutes = async (fastify, opts) => {
     // routes
     await fastify.register(apiHome);
     await fastify.register(apiUser, { prefix: '/user' });
@@ -27,7 +27,6 @@ const apiRoutes = async (fastify, opts, next) => {
     await fastify.register(apiOrganizations, { prefix: '/organizations' });
     await fastify.register(apiDiscover, { prefix: '/discover' });
     await fastify.register(apiDiscussions, { prefix: '/discussions' });
-    next();
 };
 
 export default apiRoutes;

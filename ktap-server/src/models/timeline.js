@@ -1,6 +1,6 @@
 'use strict';
 
-const app = async (fastify, opts, next) => {
+async function timeline(fastify, opts) {
     fastify.decorate('timeline', {
         // 删除过期的timeline
         async deleteExpiredTimeline() {
@@ -15,7 +15,6 @@ const app = async (fastify, opts, next) => {
         }
 
     });
-    next();
 };
 
-export default app;
+export default timeline;

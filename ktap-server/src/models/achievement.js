@@ -31,7 +31,7 @@ export const AchievementTypes = {
 };
 
 // 成就
-const achievement = async (fastify, opts, next) => {
+async function achievement(fastify, opts) {
     fastify.decorate('achievement', {
         // 获得某个用户已经获得的成就
         // 会将所有的成就都读出来，然后用户已经完成的会排在前面
@@ -183,8 +183,6 @@ const achievement = async (fastify, opts, next) => {
     await fastify.pubsub.on(ReviewEvents.Created, fastify.achievement.onReviewCreated);
     await fastify.pubsub.on(DiscussionEvents.Created, fastify.achievement.onDiscussionCreated);
     await fastify.pubsub.on(DiscussionEvents.Sticky, fastify.achievement.onDiscussionSticky);
-
-    next();
 };
 
 export default achievement;

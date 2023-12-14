@@ -12,7 +12,7 @@ import achievement from './achievement.js';
 import user from './user.js';
 import follow from './follow.js';
 
-const models = async (fastify, opts, next) => {
+async function models(fastify, opts) {
     await fastify.register(fp(achievement));
     await fastify.register(fp(app));
     await fastify.register(fp(discussion));
@@ -22,7 +22,6 @@ const models = async (fastify, opts, next) => {
     await fastify.register(fp(tag));
     await fastify.register(fp(timeline));
     await fastify.register(fp(user));
-    next();
 };
 
 export default fp(models); // add fp for global scope

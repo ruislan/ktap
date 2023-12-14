@@ -13,9 +13,10 @@ const crypto = {
     },
 };
 
-const bcryptPlugin = async (fastify, opts, next) => {
+async function bcryptPlugin(fastify, opts) {
     fastify.decorate('bcrypt', crypto);
-    next();
 };
 
-export default fp(bcryptPlugin);
+export default fp(bcryptPlugin, {
+    name: 'bcrypt',
+});

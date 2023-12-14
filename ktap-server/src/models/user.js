@@ -29,7 +29,7 @@ export const UserEvents = {
     Registered: 'user.registered',
 }
 
-const user = async (fastify, opts, next) => {
+async function user(fastify, opts) {
     fastify.decorate('user', {
         async register({ email, password, name, agree }) {
             if (!agree) throw new Error(UserErrors.userAgreeRequired);
@@ -204,7 +204,6 @@ const user = async (fastify, opts, next) => {
             await fastify.db.userSetting.upsert({ where: { userId }, create: item, update: item });
         },
     });
-    next();
 };
 
 export default user;

@@ -9,14 +9,15 @@ const pubsub = {
     removeAllListeners: async (event) => pubsub.provider.removeAllListeners(event),
 };
 
-const pubsubPlugin = async (fastify, opts, next) => {
+async function pubsubPlugin(fastify, opts) {
     pubsub.on('error', (err) => fastify.log.error(err)); // add error handler, callback method should use async
     fastify.decorate('pubsub', pubsub);
     fastify.addHook('onClose', async (fastify) => {
         fastify.log.info('waiting for pubsub to complete...');
-        // TODO implements
+        // XXX implements
     });
-    next();
 };
 
-export default fp(pubsubPlugin);
+export default fp(pubsubPlugin, {
+    name: 'pubsub',
+});

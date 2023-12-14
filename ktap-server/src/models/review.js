@@ -20,7 +20,7 @@ export const ReviewEvents = {
     Created: 'review.created',
 };
 
-const review = async (fastify, opts, next) => {
+async function review(fastify, opts) {
     fastify.decorate('review', {
         async createReview({ userId, appId, content, score, ip, allowComment, imagesToSave }) {
             const review = await fastify.db.review.findFirst({ where: { appId, userId }, select: { id: true } });
@@ -272,7 +272,6 @@ const review = async (fastify, opts, next) => {
             await fastify.db.proReview.delete({ where: { id: proReviewId } });
         },
     });
-    next();
 };
 
 export default review;

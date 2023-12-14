@@ -5,10 +5,11 @@ import jieba from '@node-rs/jieba';
 /*
 * 结巴分词的Plugin
 */
-const jiebaPlugin = async (fastify, opts, next) => {
+async function jiebaPlugin(fastify, opts) {
     jieba.load();
     fastify.decorate('jieba', { extract: jieba.extract, cut: jieba.cut, tag: jieba.tag });
-    next();
 };
 
-export default fp(jiebaPlugin);
+export default fp(jiebaPlugin, {
+    name: 'jieba',
+});

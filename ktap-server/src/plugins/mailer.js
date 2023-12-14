@@ -16,7 +16,7 @@ options: {
     }
 }
 */
-const mailerPlugin = async (fastify, opts, next) => {
+async function mailerPlugin(fastify, opts) {
     const { defaults, transport, } = opts;
     transport.port = Number(transport.port);
     transport.secure = transport.secure === 'true';
@@ -26,8 +26,8 @@ const mailerPlugin = async (fastify, opts, next) => {
         transporter.close();
         fastify.log.info('closing email transporter');
     });
-
-    next();
 };
 
-export default fp(mailerPlugin);
+export default fp(mailerPlugin, {
+    name: 'mailer',
+});

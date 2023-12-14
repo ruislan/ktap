@@ -1,7 +1,7 @@
 
-const follow = async (fastify, opts, next) => {
+async function follow(fastify, opts) {
     fastify.decorate('follow', {
-        async  followUser({ followerId, followingId }) {
+        async followUser({ followerId, followingId }) {
             if (followerId === followingId) return; // 自己不能关注自己
             const data = await fastify.db.followUser.create({ data: { followerId, userId: followingId } });
             await fastify.db.timeline.create({ data: { userId: followerId, targetId: data.id, target: 'FollowUser', } });
@@ -19,6 +19,5 @@ const follow = async (fastify, opts, next) => {
             await fastify.db.timeline.deleteMany({ where: { target: 'FollowApp', targetId: data.id, userId: followerId } });
         },
     });
-    next();
 };
 export default follow;

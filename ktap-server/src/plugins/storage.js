@@ -32,10 +32,11 @@ class LocalStorage {
     }
 }
 
-const storagePlugin = async (fastify, opts, next) => {
+async function storagePlugin(fastify, opts) {
     const storage = new LocalStorage(opts);
     fastify.decorate('storage', storage);
-    next();
 };
 
-export default fp(storagePlugin);
+export default fp(storagePlugin, {
+    name: 'storage',
+});

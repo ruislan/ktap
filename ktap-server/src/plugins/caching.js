@@ -48,9 +48,10 @@ const cache = {
 /*
 * 这里我们使用的是 ttl cache
 */
-const cachingPlugin = async (fastify, opts, next) => {
+async function cachingPlugin(fastify, opts) {
     fastify.decorate('caching', cache);
-    next();
 };
 
-export default fp(cachingPlugin);
+export default fp(cachingPlugin, {
+    name: 'caching',
+});
