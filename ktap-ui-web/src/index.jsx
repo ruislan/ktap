@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Route, createBrowserRouter, createRoutesFromChildren, RouterProvider } from 'react-router-dom';
-import { Client as Styletron } from 'styletron-engine-atomic';
+import { Client as Styletron } from 'styletron-engine-monolithic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { DarkTheme, BaseProvider } from 'baseui';
 import './assets/css/globals.css';

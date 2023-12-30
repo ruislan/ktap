@@ -86,7 +86,7 @@ docker-compose up -d
 * Web Framework: Fastify
 * Front Framework: ReactJS
 * Styling: BaseWeb UI
-* Database: SQLite(v1.2.0) MySQL(^v1.5.0)
+* Database: SQLite/MySQL
 * ORM: Prisma
 * Other Libs:
   * day-fns: date helper
@@ -107,12 +107,12 @@ SQLite仅仅作为开发、演示、本地存储和个人Play是非常非常棒�
 
 接下来可能会研发的功能...
 
+* [规划] 使用其他的 UI 替换掉当前的 BaseWeb
 * [规划] 增加 App 活动事件（线上或者线下活动）
 * [规划] 增加搜索引擎，改进搜索、相关性算法
 * [规划] 增加组织管理（组织所有人自己管理自己的组织）
 * [规划] 增加专题专栏（例如节日专题，打折专题，新品专题等等）
 * [想法] 使用 React-Query 重构整个前端体系
-* [想法] 使用其他的 UI 替换掉当前的 BaseWeb
 * [想法] 增加商城和充值（余额购买虚拟或者实体商品）
 
 ## 致敬

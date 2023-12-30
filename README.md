@@ -78,7 +78,7 @@ docker-compose up -d
 * Web Framework: Fastify
 * Front Framework: ReactJS
 * Styling: BaseWeb UI
-* Database: SQLite(v1.2.0) MySQL(^v1.5.0)
+* Database: SQLite/MySQL
 * ORM: Prisma
 * Other Libs:
   * day-fns: date helper
