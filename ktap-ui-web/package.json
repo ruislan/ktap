@@ -11,14 +11,14 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tiptap/extension-color": "^2.1.13",
-        "@tiptap/extension-image": "^2.1.13",
-        "@tiptap/extension-list-item": "^2.1.13",
-        "@tiptap/extension-text-style": "^2.1.13",
-        "@tiptap/extension-underline": "^2.1.13",
-        "@tiptap/pm": "^2.1.13",
-        "@tiptap/react": "^2.1.13",
-        "@tiptap/starter-kit": "^2.1.13",
+        "@tiptap/extension-color": "^2.1.15",
+        "@tiptap/extension-image": "^2.1.15",
+        "@tiptap/extension-list-item": "^2.1.15",
+        "@tiptap/extension-text-style": "^2.1.15",
+        "@tiptap/extension-underline": "^2.1.15",
+        "@tiptap/pm": "^2.1.15",
+        "@tiptap/react": "^2.1.15",
+        "@tiptap/starter-kit": "^2.1.15",
         "baseui": "0.0.0-next-186f23406",
         "compressorjs": "^1.2.1",
         "date-fns": "^2.30.0",
@@ -34,7 +34,7 @@
         "swiper": "^10.3.1"
     },
     "devDependencies": {
-        "@types/react": "^18.2.46",
+        "@types/react": "^18.2.47",
         "@types/react-dom": "^18.2.18",
         "@vitejs/plugin-react-swc": "^3.5.0",
         "eslint": "^8.56.0",

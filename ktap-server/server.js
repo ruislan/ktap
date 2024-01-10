@@ -59,7 +59,7 @@ async function startServer() {
 
     // add shutdown hook
     const shutdownHook = () => server.close().finally(() => {
-        server.log.info('server is closed.')
+        server.log.info('🟢 Server is closed.');
         process.exit(0);
     });
     process.on('SIGINT', shutdownHook);
@@ -67,8 +67,9 @@ async function startServer() {
 
     // print routes
     server.ready(() => {
-        server.log.info('Server plugins: \n' + server.printPlugins());
-        server.log.info('Server routes: \n' + server.printRoutes({ commonPrefix: false }));
+        server.log.info('🤖 Server Environments: ' + process.env.NODE_ENV);
+        server.log.info('🚀 Server plugins: \n' + server.printPlugins());
+        server.log.info('🌍 Server routes: \n' + server.printRoutes({ commonPrefix: false }));
     });
 
     // start server

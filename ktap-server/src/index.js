@@ -10,9 +10,9 @@ import { Keys } from './constants.js';
 
 import apiRoutes from './routes/api/index.js';
 import adminRoutes from './routes/admin/index.js';
-import schedule from './schedule.js';
 import jsonSchema from './json-schema.js';
 import models from './models/index.js';
+import jobs from './jobs/index.js';
 
 export default async function (fastify, opts) {
     // config
@@ -43,12 +43,10 @@ export default async function (fastify, opts) {
 
     // json schema
     await jsonSchema(fastify);
-
     // models
     await fastify.register(models);
-
-    // schedule
-    await fastify.register(schedule);
+    // schedule jobs
+    await fastify.register(jobs);// setup jobs
 
     // routes
     await fastify.register(apiRoutes, { prefix: '/api' });

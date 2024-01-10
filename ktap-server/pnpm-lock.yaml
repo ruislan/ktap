@@ -18,8 +18,8 @@ dependencies:
     specifier: ^7.2.4
     version: 7.2.4
   '@fastify/multipart':
-    specifier: ^8.0.0
-    version: 8.0.0
+    specifier: ^8.1.0
+    version: 8.1.0
   '@fastify/sensible':
     specifier: ^5.5.0
     version: 5.5.0
@@ -27,11 +27,11 @@ dependencies:
     specifier: ^6.12.0
     version: 6.12.0
   '@node-rs/jieba':
-    specifier: ^1.8.1
-    version: 1.8.1
+    specifier: ^1.9.0
+    version: 1.9.0
   '@prisma/client':
-    specifier: ^5.7.1
-    version: 5.7.1(prisma@5.7.1)
+    specifier: ^5.8.0
+    version: 5.8.0(prisma@5.8.0)
   ajv-errors:
     specifier: ^3.0.0
     version: 3.0.0(ajv@8.12.0)
@@ -71,8 +71,8 @@ devDependencies:
     specifier: ^3.5.3
     version: 3.5.3
   prisma:
-    specifier: ^5.7.1
-    version: 5.7.1
+    specifier: ^5.8.0
+    version: 5.8.0
 
 packages:
 
@@ -137,7 +137,7 @@ packages:
   /@fastify/fast-json-stringify-compiler@4.3.0:
     resolution: {integrity: sha512-aZAXGYo6m22Fk1zZzEUKBvut/CIIQe/BapEORnxiD5Qr0kPHqqI69NtEMCme74h+at72sPhbkb4ZrLd1W3KRLA==}
     dependencies:
-      fast-json-stringify: 5.9.2
+      fast-json-stringify: 5.10.0
     dev: false
 
   /@fastify/helmet@11.1.1:
@@ -157,19 +157,15 @@ packages:
       steed: 1.1.3
     dev: false
 
-  /@fastify/multipart@8.0.0:
-    resolution: {integrity: sha512-xaH1pGIqYnIJjYs5qG6ryhPSFnWuJIfSXYqEUtzmcyREkMk0SwONd2y+SZ9JXfDmETAC/Ogtc/SRbz+AjZhCkw==}
+  /@fastify/multipart@8.1.0:
+    resolution: {integrity: sha512-sRX9X4ZhAqRbe2kDvXY2NK7i6Wf1Rm2g/CjpGYYM7+Np8E6uWQXcj761j08qPfPO8PJXM+vJ7yrKbK1GPB+OeQ==}
     dependencies:
       '@fastify/busboy': 1.2.1
       '@fastify/deepmerge': 1.3.0
       '@fastify/error': 3.4.1
-      '@fastify/swagger': 8.13.0
-      '@fastify/swagger-ui': 1.10.2
       fastify-plugin: 4.5.1
       secure-json-parse: 2.7.0
       stream-wormhole: 1.1.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /@fastify/send@2.1.0:
@@ -205,28 +201,6 @@ packages:
       p-limit: 3.1.0
     dev: false
 
-  /@fastify/swagger-ui@1.10.2:
-    resolution: {integrity: sha512-f2mRqtblm6eRAFQ3e8zSngxVNEtiYY7rISKQVjPA++ZsWc5WYlPVTb6Bx0G/zy0BIoucNqDr/Q2Vb/kTYkOq1A==}
-    dependencies:
-      '@fastify/static': 6.12.0
-      fastify-plugin: 4.5.1
-      openapi-types: 12.1.3
-      rfdc: 1.3.0
-      yaml: 2.3.4
-    dev: false
-
-  /@fastify/swagger@8.13.0:
-    resolution: {integrity: sha512-N6+qcJ5CwLC7PUMge8rc4y/3pc2y26srNb6bYAJ94Nx7QIrGws8Oe0sExj0eRXeSPBqL2L1O0zVSIz4JQwL/BA==}
-    dependencies:
-      fastify-plugin: 4.5.1
-      json-schema-resolver: 2.0.0
-      openapi-types: 12.1.3
-      rfdc: 1.3.0
-      yaml: 2.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /@lukeed/ms@2.0.2:
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
@@ -250,8 +224,8 @@ packages:
       - supports-color
     dev: false
 
-  /@node-rs/jieba-android-arm-eabi@1.8.1:
-    resolution: {integrity: sha512-LQdmjOJ1yGaDgJJTbmcWetPDJBa0NkgUzTWegxZL/0/fgBm7+8wh/5r/bCGx5H00J/v0gLQ79A6CRLH8D4lC1g==}
+  /@node-rs/jieba-android-arm-eabi@1.9.0:
+    resolution: {integrity: sha512-j607Ek68XQXpelU0JIYfHwjPRzE7ziGsa9wl2KsBFoOkV8GACgVe2niHuxKWUKowRoiFYxGAF0eBadJfW5mrMw==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [android]
@@ -259,8 +233,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-android-arm64@1.8.1:
-    resolution: {integrity: sha512-F/E95teA/3X+dolC/4ai18An38aneFs6xqaqgfzJwEuvypcOnFGyouhSHh/oEhT69m/RFgPuqG85WgfmKHCBzA==}
+  /@node-rs/jieba-android-arm64@1.9.0:
+    resolution: {integrity: sha512-+Ny9H8G85SVwnXXVQtQlVNxhj0z0n86TO8Lic0eE3g+JfaPqHCwyeCaGUR8nPXn9QwOphvlexvdgHjfim7YQJg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [android]
@@ -268,8 +242,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-darwin-arm64@1.8.1:
-    resolution: {integrity: sha512-J5Zt25XlVyXQ8qkxCDLmACoBZYQqmXr4kTLcT16Q1xyN4FXoZe3Aq0QnBkDJLPHk3AngLOicG7FZci6q0LHgow==}
+  /@node-rs/jieba-darwin-arm64@1.9.0:
+    resolution: {integrity: sha512-VpACbeXbtOW2yBNUZCZCUr9OgQ3lUQam69IrPQPhRNvA2ppiZvi+seFyOoZwtL8OerIkY8u2RWI2a7uK4ILHbQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -277,8 +251,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-darwin-x64@1.8.1:
-    resolution: {integrity: sha512-cUuEpx6L4rdLSvpIuuoN2UBh0gKjjeQt/xc7TbDWhUEkFh4bn1zvRFksUUMZpNOJ3OKDLk76oVwwA87P9PzlUA==}
+  /@node-rs/jieba-darwin-x64@1.9.0:
+    resolution: {integrity: sha512-ZSNcfmANzt2zJDaajvTsYZgXKWBP4oiDNuVHFEcwccCMStNlvmbqRTs/N69ao54hFG9Kd6hjFLWZLERVHTPzYw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -286,8 +260,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-freebsd-x64@1.8.1:
-    resolution: {integrity: sha512-KCVqKTeiP03eGh/Xt/kMG/PAirq3tStw2YNeICKPG4L6rhCKPZc8wBW5+y3zSDsQolWB8+r89ZAJWEN/H1AGRw==}
+  /@node-rs/jieba-freebsd-x64@1.9.0:
+    resolution: {integrity: sha512-sr1tmTTQt1KUHz8fHKNHgzJsY3oEo9ysQfc0Dx8Fp9kAn1rR7DM9vQ4X5kgBLId9zpWd37lffP3xRsLmKI7BhA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [freebsd]
@@ -295,8 +269,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-arm-gnueabihf@1.8.1:
-    resolution: {integrity: sha512-xEbzUrHnoEi6kpeBBNz7ZrJkPPBYasdXuH/RHyN9aoEre9Lg4UUbuRNns1nq7D4o8bV2EsULHsJyvKuS2TifIQ==}
+  /@node-rs/jieba-linux-arm-gnueabihf@1.9.0:
+    resolution: {integrity: sha512-TeEOi519TlBhy03uDCvK5sl9rMuyGym18odx3eqbrCRzxkh5BF83fG4QX7rRD7f+zD7tjF11GUXYsTMQCqsWOQ==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
@@ -304,8 +278,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-arm64-gnu@1.8.1:
-    resolution: {integrity: sha512-NnUEBTuMrii6KvbsFHNX3IsEdYLHSS4sJHsh/HfgrqJUjWjbjD+QhzmgISCluxOTEGMrZmLsMMBHfN4t/hWMTA==}
+  /@node-rs/jieba-linux-arm64-gnu@1.9.0:
+    resolution: {integrity: sha512-zM0h+Hcz9GpzQEqm86LrVZzz/c1nGvRwK1nYV7ATbnXQEryxIOM0HWbWIH+TT+Sdj4L3OSzmMhp/CpOGgGPyXg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -314,8 +288,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-arm64-musl@1.8.1:
-    resolution: {integrity: sha512-Tgo8FO18THofQx4ZGUVFbsEHbaQyC3MfiQQFA6vDIGHBQFB4vXgpxJCA9dFCOrmCpsg6Uurrz1G8S+ZVmmvjkQ==}
+  /@node-rs/jieba-linux-arm64-musl@1.9.0:
+    resolution: {integrity: sha512-auXuJi308uWPPYARBtDsoh7OswTq5nvTBSbClJI6zKcK74JtLZAy4zr5FUAS4O7XBMGxtr50TuPaOvZEeX/WFQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -324,8 +298,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-x64-gnu@1.8.1:
-    resolution: {integrity: sha512-py5StersiDn5DdzWtybzvmicPLGHUykFWebpUu3MkY8vkypA3t//0yFFHMaw8V5ebuPw68iUnYTDcUycVszc7Q==}
+  /@node-rs/jieba-linux-x64-gnu@1.9.0:
+    resolution: {integrity: sha512-X/4jBHBefnyoJWoS4RnMe98GFejQwP1tScacgvRRvjcGLo5vCCHSElmsts6zapBtTJtWx+/EioWw1l4+H+3gZA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -334,8 +308,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-x64-musl@1.8.1:
-    resolution: {integrity: sha512-eW2lwqKrw4DWm51BX+/huWMKgfltJgPWAAnbX05st2Ayw14PFT3rVe9NK4Wc5Pkioux82VUa1w68yxymrYeWWQ==}
+  /@node-rs/jieba-linux-x64-musl@1.9.0:
+    resolution: {integrity: sha512-j+u3+a50Se3iGUWjMN+gNQdSKz7QINfXzoCNMsEYcO9agosOoFmWW+BRp7g9XCQAojNBlyiX1ViCdAlre2yJsw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -344,19 +318,21 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-wasm32-wasi@1.8.1:
-    resolution: {integrity: sha512-3qZiNOuuoJia7S/mDslcp2ijK5WpP0zrRsqemJhQWLALXFt08Epfq1o+BQ7nMj176fki+PxmVG+VmS0WzetHAg==}
+  /@node-rs/jieba-wasm32-wasi@1.9.0:
+    resolution: {integrity: sha512-fcxrSQGfiby5i2G2iRziLXIppz1jAGYg/ZbRDxRqkw0vkOdiViBYeUtSYG4lJ8H0/jLdj79SLG0O1tCgXwwI3g==}
     engines: {node: '>=14.0.0'}
     cpu: [wasm32]
     requiresBuild: true
     dependencies:
       '@emnapi/core': 0.45.0
       '@emnapi/runtime': 0.45.0
+      '@tybys/wasm-util': 0.8.1
+      memfs-browser: 3.5.10301
     dev: false
     optional: true
 
-  /@node-rs/jieba-win32-arm64-msvc@1.8.1:
-    resolution: {integrity: sha512-gr6i+7Ys2GJTWGXZVhvX/qp4cajQPMw3dhIpx3mwC6Pvcdgm4z6HOyoWoKD77uFmzKROaIoOeFKFIfcF63H3Bw==}
+  /@node-rs/jieba-win32-arm64-msvc@1.9.0:
+    resolution: {integrity: sha512-qgiwOoM37JWGdjn5qaZZKMAQMnxvqq1yV8B6L13WR9SaM1NH+HP81pGHVa33gjdJbB0oXVOhJNnEWMJdu0bjxA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -364,8 +340,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-win32-ia32-msvc@1.8.1:
-    resolution: {integrity: sha512-i9uIK1E1M2vy7jtLvZRpXbh8enCZJPGn2JDy9NiYkbTR/u8WifSMDjOVEl88iziHp2R7uNiqNsuKexWe+pqXIA==}
+  /@node-rs/jieba-win32-ia32-msvc@1.9.0:
+    resolution: {integrity: sha512-Q+jnhGXdjlRTombMVhsDGoOtbIKbtqZ9Z5OBHZuegp0Hq1yAKUdG4N7XMwKW3acSMmTis5dNRLjorbJbIJo9kQ==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
@@ -373,8 +349,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-win32-x64-msvc@1.8.1:
-    resolution: {integrity: sha512-IP2wkDJBLJ3T+P78NkBgy864uAccrG1WtbJclRw3lu0xjLf8TLfn96ScM7GcFQMWh++EsX/L1t000mbWy25jrQ==}
+  /@node-rs/jieba-win32-x64-msvc@1.9.0:
+    resolution: {integrity: sha512-LbYnCQiUzzfPcAcOMAGtW/ygSA0jQmk+bjp1G2NlE2XPQ+g+RaqTpo4q2HfqOSrrSa5Wck83/Q3tfewf+a8kbg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -382,28 +358,28 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba@1.8.1:
-    resolution: {integrity: sha512-eLk1ArIT8H3uGJCsOS2nDHkThILRu08IQO9SgKZnJ9F6gviszX+CneImIaeYaARdsNk6WsRVNFW9Ynk8/LNTyA==}
+  /@node-rs/jieba@1.9.0:
+    resolution: {integrity: sha512-0Qk3Mccmwo1Y4OiLsxVxFn1aqDXMyntDB4KXqa9czpKwOtLFbfwm3CK6Uhk16XWDLIMnTU7lDZiprjJHzF4gWQ==}
     engines: {node: '>= 10'}
     optionalDependencies:
-      '@node-rs/jieba-android-arm-eabi': 1.8.1
-      '@node-rs/jieba-android-arm64': 1.8.1
-      '@node-rs/jieba-darwin-arm64': 1.8.1
-      '@node-rs/jieba-darwin-x64': 1.8.1
-      '@node-rs/jieba-freebsd-x64': 1.8.1
-      '@node-rs/jieba-linux-arm-gnueabihf': 1.8.1
-      '@node-rs/jieba-linux-arm64-gnu': 1.8.1
-      '@node-rs/jieba-linux-arm64-musl': 1.8.1
-      '@node-rs/jieba-linux-x64-gnu': 1.8.1
-      '@node-rs/jieba-linux-x64-musl': 1.8.1
-      '@node-rs/jieba-wasm32-wasi': 1.8.1
-      '@node-rs/jieba-win32-arm64-msvc': 1.8.1
-      '@node-rs/jieba-win32-ia32-msvc': 1.8.1
-      '@node-rs/jieba-win32-x64-msvc': 1.8.1
+      '@node-rs/jieba-android-arm-eabi': 1.9.0
+      '@node-rs/jieba-android-arm64': 1.9.0
+      '@node-rs/jieba-darwin-arm64': 1.9.0
+      '@node-rs/jieba-darwin-x64': 1.9.0
+      '@node-rs/jieba-freebsd-x64': 1.9.0
+      '@node-rs/jieba-linux-arm-gnueabihf': 1.9.0
+      '@node-rs/jieba-linux-arm64-gnu': 1.9.0
+      '@node-rs/jieba-linux-arm64-musl': 1.9.0
+      '@node-rs/jieba-linux-x64-gnu': 1.9.0
+      '@node-rs/jieba-linux-x64-musl': 1.9.0
+      '@node-rs/jieba-wasm32-wasi': 1.9.0
+      '@node-rs/jieba-win32-arm64-msvc': 1.9.0
+      '@node-rs/jieba-win32-ia32-msvc': 1.9.0
+      '@node-rs/jieba-win32-x64-msvc': 1.9.0
     dev: false
 
-  /@prisma/client@5.7.1(prisma@5.7.1):
-    resolution: {integrity: sha512-TUSa4nUcC4nf/e7X3jyO1pEd6XcI/TLRCA0KjkA46RDIpxUaRsBYEOqITwXRW2c0bMFyKcCRXrH4f7h4q9oOlg==}
+  /@prisma/client@5.8.0(prisma@5.8.0):
+    resolution: {integrity: sha512-QxO6C4MaA/ysTIbC+EcAH1aX/YkpymhXtO6zPdk+FvA7+59tNibIYpd+7koPdViLg2iKES4ojsxWNUGNJaEcbA==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -412,35 +388,43 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.7.1
+      prisma: 5.8.0
     dev: false
 
-  /@prisma/debug@5.7.1:
-    resolution: {integrity: sha512-yrVSO/YZOxdeIxcBtZ5BaNqUfPrZkNsAKQIQg36cJKMxj/VYK3Vk5jMKkI+gQLl0KReo1YvX8GWKfV788SELjw==}
+  /@prisma/debug@5.8.0:
+    resolution: {integrity: sha512-ZqPpkvbovu/kQJ1bvy57NO4dw97fpQGcbQSCtsqlwSE1UNKJP75R3BKxdznk8ZPMY+GJdMRetWNv4oAvSbWn8Q==}
 
-  /@prisma/engines-version@5.7.1-1.0ca5ccbcfa6bdc81c003cf549abe4269f59c41e5:
-    resolution: {integrity: sha512-dIR5IQK/ZxEoWRBDOHF87r1Jy+m2ih3Joi4vzJRP+FOj5yxCwS2pS5SBR3TWoVnEK1zxtLI/3N7BjHyGF84fgw==}
+  /@prisma/engines-version@5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848:
+    resolution: {integrity: sha512-cXcoVweYbnv8xRfkWq9oj8BECOdzHUazrSpYCa0ehp5TNz4l5Spa8jbq/VROCTzj3ZncH5D9Q2TmySYTOUeKlw==}
 
-  /@prisma/engines@5.7.1:
-    resolution: {integrity: sha512-R+Pqbra8tpLP2cvyiUpx+SIKglav3nTCpA+rn6826CThviQ8yvbNG0s8jNpo51vS9FuZO3pOkARqG062vKX7uA==}
+  /@prisma/engines@5.8.0:
+    resolution: {integrity: sha512-Qhqm9WWLujNEC13AuZlUO14SQ15tNLe5puaz+tOk7UqINqJ3PtqMmuSuzomiw2diGVqZ+HYiSQzlR3+pPucVHA==}
     requiresBuild: true
     dependencies:
-      '@prisma/debug': 5.7.1
-      '@prisma/engines-version': 5.7.1-1.0ca5ccbcfa6bdc81c003cf549abe4269f59c41e5
-      '@prisma/fetch-engine': 5.7.1
-      '@prisma/get-platform': 5.7.1
+      '@prisma/debug': 5.8.0
+      '@prisma/engines-version': 5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848
+      '@prisma/fetch-engine': 5.8.0
+      '@prisma/get-platform': 5.8.0
 
-  /@prisma/fetch-engine@5.7.1:
-    resolution: {integrity: sha512-9ELauIEBkIaEUpMIYPRlh5QELfoC6pyHolHVQgbNxglaINikZ9w9X7r1TIePAcm05pCNp2XPY1ObQIJW5nYfBQ==}
+  /@prisma/fetch-engine@5.8.0:
+    resolution: {integrity: sha512-1CAuE+JoYsPNggMEn6qk0zos06Uc9bYZBJ0VBPHD6R7REL05614koAbOCmn52IaYz3nobb7f25hqW6AY7rLkIw==}
     dependencies:
-      '@prisma/debug': 5.7.1
-      '@prisma/engines-version': 5.7.1-1.0ca5ccbcfa6bdc81c003cf549abe4269f59c41e5
-      '@prisma/get-platform': 5.7.1
+      '@prisma/debug': 5.8.0
+      '@prisma/engines-version': 5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848
+      '@prisma/get-platform': 5.8.0
 
-  /@prisma/get-platform@5.7.1:
-    resolution: {integrity: sha512-eDlswr3a1m5z9D/55Iyt/nZqS5UpD+DZ9MooBB3hvrcPhDQrcf9m4Tl7buy4mvAtrubQ626ECtb8c6L/f7rGSQ==}
+  /@prisma/get-platform@5.8.0:
+    resolution: {integrity: sha512-Nk3rhTFZ1LYkFZJnpSvQcLPCaBWgJQfteHII6UEENOOkYlmP0k3FuswND54tzzEr4qs39wOdV9pbXKX9U2lv7A==}
     dependencies:
-      '@prisma/debug': 5.7.1
+      '@prisma/debug': 5.8.0
+
+  /@tybys/wasm-util@0.8.1:
+    resolution: {integrity: sha512-GSsTwyBl4pIzsxAY5wroZdyQKyhXk0d8PCRZtrSZ2WEB1cBdrp2EgGBwHOGCZtIIPun/DL3+AykCv+J6fyRH4Q==}
+    requiresBuild: true
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+    optional: true
 
   /abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -823,8 +807,8 @@ packages:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
     dev: false
 
-  /fast-json-stringify@5.9.2:
-    resolution: {integrity: sha512-SwHnT5PL2BawF0ccL+8b800QovvopUPgV/qzhBY+vw5ZniDH9boewbzBXYox+SetfD2dlxAgeZKSnELzrA+2hg==}
+  /fast-json-stringify@5.10.0:
+    resolution: {integrity: sha512-fu1BhzPzgOdvK+sVhSPFzm06DQl0Dwbo+NQxWm21k03ili2wsJExXbGZ9qsD4Lsn7zFGltF8h9I1fuhk4JPnrQ==}
     dependencies:
       '@fastify/deepmerge': 1.3.0
       ajv: 8.12.0
@@ -884,7 +868,7 @@ packages:
       abstract-logging: 2.0.1
       avvio: 8.2.1
       fast-content-type-parse: 1.1.0
-      fast-json-stringify: 5.9.2
+      fast-json-stringify: 5.10.0
       find-my-way: 7.7.0
       light-my-request: 5.11.0
       pino: 8.17.2
@@ -893,7 +877,7 @@ packages:
       rfdc: 1.3.0
       secure-json-parse: 2.7.0
       semver: 7.5.4
-      toad-cache: 3.4.1
+      toad-cache: 3.7.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -945,6 +929,12 @@ packages:
     dependencies:
       minipass: 3.3.6
     dev: false
+
+  /fs-monkey@1.0.5:
+    resolution: {integrity: sha512-8uMbBjrhzW76TYgEV27Y5E//W2f/lTFmx78P2w19FZSxarhI/798APGQyuGCwmkNxgwGRhrLfvWyLBvNtuOmew==}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
@@ -1113,17 +1103,6 @@ packages:
       fast-deep-equal: 3.1.3
     dev: false
 
-  /json-schema-resolver@2.0.0:
-    resolution: {integrity: sha512-pJ4XLQP4Q9HTxl6RVDLJ8Cyh1uitSs0CzDBAz1uoJ4sRD/Bk7cFSXL1FUXDW3zJ7YnfliJx6eu8Jn283bpZ4Yg==}
-    engines: {node: '>=10'}
-    dependencies:
-      debug: 4.3.4
-      rfdc: 1.3.0
-      uri-js: 4.4.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
     dev: false
@@ -1154,6 +1133,23 @@ packages:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
     dev: false
+
+  /memfs-browser@3.5.10301:
+    resolution: {integrity: sha512-Cd2nk8zlANvsyT5285agNtaQGR3zxLS2I95h9kjqkQXEZnZEtjIu0DTxeP3HJ27umSPY+BzG+llLUnoFsLui1g==}
+    requiresBuild: true
+    dependencies:
+      memfs: 3.5.3
+    dev: false
+    optional: true
+
+  /memfs@3.5.3:
+    resolution: {integrity: sha512-UERzLsxzllchadvbPs5aolHh65ISpKpM+ccLbOJ8/vvpBKmAWf+la7dXFy7Mr0ySHbdHrFv5kGFCUHHe6GFEmw==}
+    engines: {node: '>= 4.0.0'}
+    requiresBuild: true
+    dependencies:
+      fs-monkey: 1.0.5
+    dev: false
+    optional: true
 
   /mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
@@ -1322,10 +1318,6 @@ packages:
       wrappy: 1.0.2
     dev: false
 
-  /openapi-types@12.1.3:
-    resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
-    dev: false
-
   /p-limit@3.1.0:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
     engines: {node: '>=10'}
@@ -1387,7 +1379,7 @@ packages:
       pump: 3.0.0
       readable-stream: 4.5.2
       secure-json-parse: 2.7.0
-      sonic-boom: 3.7.0
+      sonic-boom: 3.8.0
       strip-json-comments: 3.1.1
     dev: false
 
@@ -1408,7 +1400,7 @@ packages:
       quick-format-unescaped: 4.0.4
       real-require: 0.2.0
       safe-stable-stringify: 2.4.3
-      sonic-boom: 3.7.0
+      sonic-boom: 3.8.0
       thread-stream: 2.4.1
     dev: false
 
@@ -1421,13 +1413,13 @@ packages:
       source-map-js: 1.0.2
     dev: false
 
-  /prisma@5.7.1:
-    resolution: {integrity: sha512-ekho7ziH0WEJvC4AxuJz+ewRTMskrebPcrKuBwcNzVDniYxx+dXOGcorNeIb9VEMO5vrKzwNYvhD271Ui2jnNw==}
+  /prisma@5.8.0:
+    resolution: {integrity: sha512-hDKoEqPt2qEUTH5yGO3l27CBnPtwvte0CGMKrpCr9+/A919JghfqJ3qgCGgMbOwdkXUOzdho0RH9tyUF3UhpMw==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.7.1
+      '@prisma/engines': 5.8.0
 
   /process-warning@2.3.2:
     resolution: {integrity: sha512-n9wh8tvBe5sFmsqlg+XQhaQLumwpqoAUruLwjCopgTmUBjJ/fjtBsJzKleCaIGBOMXYEhp1YfKl4d7rJ5ZKJGA==}
@@ -1587,8 +1579,8 @@ packages:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: false
 
-  /sonic-boom@3.7.0:
-    resolution: {integrity: sha512-IudtNvSqA/ObjN97tfgNmOKyDOs4dNcg4cUUsHDebqsgb8wGBBwb31LIgShNO8fye0dFI52X1+tFoKKI6Rq1Gg==}
+  /sonic-boom@3.8.0:
+    resolution: {integrity: sha512-ybz6OYOUjoQQCQ/i4LU8kaToD8ACtYP+Cj5qd2AO36bwbdewxWJ3ArmJ2cr6AvxlL2o0PqnCcPGUgkILbfkaCA==}
     dependencies:
       atomic-sleep: 1.0.0
     dev: false
@@ -1679,8 +1671,8 @@ packages:
       is-number: 7.0.0
     dev: true
 
-  /toad-cache@3.4.1:
-    resolution: {integrity: sha512-T0m3MxP3wcqW0LaV3dF1mHBU294sgYSm4FOpa5eEJaYO7PqJZBOjZEQI1y4YaKNnih1FXCEYTWDS9osCoTUefg==}
+  /toad-cache@3.7.0:
+    resolution: {integrity: sha512-/m8M+2BJUpoJdgAHoG+baCwBT+tf2VraSfkBgl0Y00qIWt41DJ8R5B8nsEw0I58YwF5IZH6z24/2TobDKnqSWw==}
     engines: {node: '>=12'}
     dev: false
 
@@ -1760,11 +1752,6 @@ packages:
 
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
-    dev: false
-
-  /yaml@2.3.4:
-    resolution: {integrity: sha512-8aAvwVUSHpfEqTQ4w/KMlf3HcRdt50E5ODIQJBw1fQ5RL34xabzxtUlzTXVqc4rkZsPbvrXKWnABCD7kWSmocA==}
-    engines: {node: '>= 14'}
     dev: false
 
   /yocto-queue@0.1.0:

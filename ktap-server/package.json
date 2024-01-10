@@ -22,11 +22,11 @@
         "@fastify/cors": "^8.5.0",
         "@fastify/helmet": "^11.1.1",
         "@fastify/jwt": "^7.2.4",
-        "@fastify/multipart": "^8.0.0",
+        "@fastify/multipart": "^8.1.0",
         "@fastify/sensible": "^5.5.0",
         "@fastify/static": "^6.12.0",
-        "@node-rs/jieba": "^1.8.1",
-        "@prisma/client": "^5.7.1",
+        "@node-rs/jieba": "^1.9.0",
+        "@prisma/client": "^5.8.0",
         "ajv-errors": "^3.0.0",
         "bcrypt": "^5.1.1",
         "cheerio": "1.0.0-rc.12",
@@ -41,6 +41,6 @@
     },
     "devDependencies": {
         "chokidar": "^3.5.3",
-        "prisma": "^5.7.1"
+        "prisma": "^5.8.0"
     }
 }
