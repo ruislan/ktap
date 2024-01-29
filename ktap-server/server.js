@@ -67,7 +67,7 @@ async function startServer() {
 
     // print routes
     server.ready(() => {
-        server.log.info('🤖 Server Environments: ' + process.env.NODE_ENV);
+        server.log.info('🤖 Server Environment: ' + process.env.NODE_ENV);
         server.log.info('🚀 Server plugins: \n' + server.printPlugins());
         server.log.info('🌍 Server routes: \n' + server.printRoutes({ commonPrefix: false }));
     });

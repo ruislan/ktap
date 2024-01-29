@@ -11,14 +11,14 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tiptap/extension-color": "^2.1.15",
-        "@tiptap/extension-image": "^2.1.15",
-        "@tiptap/extension-list-item": "^2.1.15",
-        "@tiptap/extension-text-style": "^2.1.15",
-        "@tiptap/extension-underline": "^2.1.15",
-        "@tiptap/pm": "^2.1.15",
-        "@tiptap/react": "^2.1.15",
-        "@tiptap/starter-kit": "^2.1.15",
+        "@tiptap/extension-color": "^2.1.16",
+        "@tiptap/extension-image": "^2.1.16",
+        "@tiptap/extension-list-item": "^2.1.16",
+        "@tiptap/extension-text-style": "^2.1.16",
+        "@tiptap/extension-underline": "^2.1.16",
+        "@tiptap/pm": "^2.1.16",
+        "@tiptap/react": "^2.1.16",
+        "@tiptap/starter-kit": "^2.1.16",
         "baseui": "0.0.0-next-186f23406",
         "compressorjs": "^1.2.1",
         "date-fns": "^2.30.0",
@@ -28,13 +28,13 @@
         "react-day-picker": "^8.10.0",
         "react-dom": "^18.2.0",
         "react-error-boundary": "^4.0.12",
-        "react-router-dom": "^6.21.1",
+        "react-router-dom": "^6.21.3",
         "styletron-engine-monolithic": "^1.0.0",
         "styletron-react": "^6.1.1",
         "swiper": "^10.3.1"
     },
     "devDependencies": {
-        "@types/react": "^18.2.47",
+        "@types/react": "^18.2.48",
         "@types/react-dom": "^18.2.18",
         "@vitejs/plugin-react-swc": "^3.5.0",
         "eslint": "^8.56.0",
@@ -42,6 +42,6 @@
         "eslint-plugin-react": "^7.33.2",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.5",
-        "vite": "^5.0.11"
+        "vite": "^5.0.12"
     }
 }
