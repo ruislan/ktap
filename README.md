@@ -21,8 +21,6 @@ KTap is a modern gaming community platform. [中文](./README.zh-CN.md)
     </tr>
 </table>
 
-Here is a [DEMO](https://ktap.ruislan.com) for preview. Minimum cloud configuration, please be gentle~, and data may be cleared at any time.
-
 ## Features
 
 * Users: Register, Login, User Center, Activity, Achievement, ...
@@ -99,7 +97,8 @@ By the way. SQLite is great for development, demonstration, local storage and pe
 
 Features that may be developed...
 
-* Gaming events (Online or Offline)
+* New UI Components
+* Events (Online or Offline)
 * Organization owners can mange their own organizations
 * Collections (Such as holiday, Discount, New gaming, etc)
 * Shopping mall (Virtual Products)

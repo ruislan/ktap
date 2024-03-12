@@ -27,11 +27,11 @@ dependencies:
     specifier: ^6.12.0
     version: 6.12.0
   '@node-rs/jieba':
-    specifier: ^1.9.2
-    version: 1.9.2
+    specifier: ^1.10.0
+    version: 1.10.0
   '@prisma/client':
-    specifier: ^5.9.1
-    version: 5.9.1(prisma@5.9.1)
+    specifier: ^5.10.2
+    version: 5.10.2(prisma@5.10.2)
   ajv-errors:
     specifier: ^3.0.0
     version: 3.0.0(ajv@8.12.0)
@@ -42,11 +42,11 @@ dependencies:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
   dotenv:
-    specifier: ^16.4.3
-    version: 16.4.3
+    specifier: ^16.4.5
+    version: 16.4.5
   fastify:
-    specifier: ^4.26.1
-    version: 4.26.1
+    specifier: ^4.26.2
+    version: 4.26.2
   ms:
     specifier: ^2.1.3
     version: 2.1.3
@@ -54,14 +54,14 @@ dependencies:
     specifier: ^3.0.3
     version: 3.0.3
   nodemailer:
-    specifier: ^6.9.9
-    version: 6.9.9
+    specifier: ^6.9.12
+    version: 6.9.12
   pino-pretty:
     specifier: ^9.4.1
     version: 9.4.1
   sanitize-html:
-    specifier: ^2.11.0
-    version: 2.11.0
+    specifier: ^2.12.1
+    version: 2.12.1
   uuid:
     specifier: ^9.0.1
     version: 9.0.1
@@ -71,8 +71,8 @@ devDependencies:
     specifier: ^3.6.0
     version: 3.6.0
   prisma:
-    specifier: ^5.9.1
-    version: 5.9.1
+    specifier: ^5.10.2
+    version: 5.10.2
 
 packages:
 
@@ -240,8 +240,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-android-arm-eabi@1.9.2:
-    resolution: {integrity: sha512-FbgUDCvek/KI4mJe5wqbbJi9kDE788YVvsA7DLTE0up+Tb/A7pNIJXq4Pg7zhsgHTVL7EfHHsyd89k+YoSU7Wg==}
+  /@node-rs/jieba-android-arm-eabi@1.10.0:
+    resolution: {integrity: sha512-bzusJSLHm7I0qL8aQXGLt7IQ51Px35yGGEcQ/Ps4SEt0AxRSJ2/rxNET/8mlwBpOCZ5xiKE3BOBRfQajiPiI3g==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [android]
@@ -249,8 +249,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-android-arm64@1.9.2:
-    resolution: {integrity: sha512-o6cZz5APAUVBCTG9tNK3XEcLunjGo7Oon1N8+1EHOHPlx4Twzhn1msBtQ+VCgboHUOI+QgZzlY/sTXGfh8IuIA==}
+  /@node-rs/jieba-android-arm64@1.10.0:
+    resolution: {integrity: sha512-g89Oq5U2RPmtlvuQhjNj8YZc5Gq033ODb7Ot4Z/OdIHvg2WMxi2M1GQhcdKu60dO79/tazc53W6I8/y691DUfQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [android]
@@ -258,8 +258,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-darwin-arm64@1.9.2:
-    resolution: {integrity: sha512-68Pk5phmgn/k5w6nzZWYkDHwJ5wYagprVaSf/WgcPVucw9kAzVMZasGxXo2+Kqn2kMWhD7Dm2NT1TAromQq8Eg==}
+  /@node-rs/jieba-darwin-arm64@1.10.0:
+    resolution: {integrity: sha512-IhR5r+XxFcfhVsF93zQ3uCJy8ndotRntXzoW/JCyKqOahUo/ITQRT6vTKHKMyD9xNmjl222OZonBSo2+mlI2fQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -267,8 +267,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-darwin-x64@1.9.2:
-    resolution: {integrity: sha512-TXms+q4l7/0a7T+O9t5fQ0m6Qi+4XKgtaRmg089iYbvSp4JfX+XIg+ZLJG+9uc25oWpOgpt+z4bsz9rrHnW/6Q==}
+  /@node-rs/jieba-darwin-x64@1.10.0:
+    resolution: {integrity: sha512-MBIs8ixKY4FPnifdZ7eTx6ht85TXE4kFBK4c8A/VDAbnmzBzpEyuV7tHUA2wAdfR0muC9j7/5FB4kQGZgYfc8g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -276,8 +276,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-freebsd-x64@1.9.2:
-    resolution: {integrity: sha512-U4p8PSm+1onheBJUKlEyP4VRE42UrH+gXDYMJlWiJDqriAjZLvA+MdF5xiqeppH0dWc/tQu/ECLoj1WXkJKfvg==}
+  /@node-rs/jieba-freebsd-x64@1.10.0:
+    resolution: {integrity: sha512-MuY+1QEXONxo3I/uFLFju0/pSN5bzQORhJkIdP8CYv+jZaVB4Uz6rC7A5HrgjiAXOna6QsKlRgx2bYyHfaBUrA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [freebsd]
@@ -285,8 +285,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-arm-gnueabihf@1.9.2:
-    resolution: {integrity: sha512-pelyUy0uFzR7dsnleN8A+4yiNRIRQYFDufbOapP9qkgpEOSvJaD6zYOi3HDm4GdXD5jD0UFNEYMCbi2+Ed2zIg==}
+  /@node-rs/jieba-linux-arm-gnueabihf@1.10.0:
+    resolution: {integrity: sha512-QfSBnwISdVuTqsi4iThAO1LSbKRSqSsIWiIJgCduhYsTDDiG9+pHyfiZtcTwSf73SDXHZ400QuBNONWLQ/dSag==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
@@ -294,8 +294,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-arm64-gnu@1.9.2:
-    resolution: {integrity: sha512-qgrEyYbzXyqoIcl2iLXMvIv4PC1Z84O5TGCGKwGibblHAOpWIVQzkquDhty/aE9Ju1OSJiNZGtE9ISlJXB/PJA==}
+  /@node-rs/jieba-linux-arm64-gnu@1.10.0:
+    resolution: {integrity: sha512-vzA2tX/6dReEd/7tZ9927glWQmKDausM6R9S5CqZx4BA4NSaWAK0xFdWsz0K7np459FXqNavLdNB5FVFJb4zzA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -304,8 +304,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-arm64-musl@1.9.2:
-    resolution: {integrity: sha512-FMl9EYCJSKCfJb8rrk+9mmi44SwDyNCMLvxMzG/va59D0BRItmm4EP9Zd2QoKnGawV6Bw4BAXIrNhSg9gWedxg==}
+  /@node-rs/jieba-linux-arm64-musl@1.10.0:
+    resolution: {integrity: sha512-gxqoAVOQsn9sgYK6mFO9dsMZ/yOMvVecLZW5rGvLErjiugVvYUlESXIvCqxp2GSws8RtTqJj6p9u/lBmCCuvaw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -314,8 +314,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-x64-gnu@1.9.2:
-    resolution: {integrity: sha512-+7wcz5+3HzOH8+PbNwOPuelTo6ik5jgrz8SFbd+JL6sZLap2pjpKWol5nJyNYNv90yRq1A6p8TrhFXCtVZujFA==}
+  /@node-rs/jieba-linux-x64-gnu@1.10.0:
+    resolution: {integrity: sha512-rS5Shs8JITxJjFIjoIZ5a9O+GO21TJgKu03g2qwFE3QaN5ZOvXtz+/AqqyfT4GmmMhCujD83AGqfOGXDmItF9w==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -324,8 +324,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-linux-x64-musl@1.9.2:
-    resolution: {integrity: sha512-ims1jOq99zTvcwcUXKuD+WT36KHHVNTq9Fm663YzMMBO+5sqLleQtQkZgbh0BHJI25jvW9IrBCvuS1ZwKZ6kOA==}
+  /@node-rs/jieba-linux-x64-musl@1.10.0:
+    resolution: {integrity: sha512-BvSiF2rR8Birh2oEVHcYwq0WGC1cegkEdddWsPrrSmpKmukJE2zyjcxaOOggq2apb8fIRsjyeeUh6X3R5AgjvA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -334,8 +334,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-wasm32-wasi@1.9.2:
-    resolution: {integrity: sha512-h/lWDJCYlsH3VUNWBCO2exite7VDPgjpOmaQgTQ6aNI5x8rR3NEkyXfmy/yWIev63tdMr9nD3sXw38QQp4ddIA==}
+  /@node-rs/jieba-wasm32-wasi@1.10.0:
+    resolution: {integrity: sha512-EzeAAbRrFTdYw61rd8Mfwdp/fA21d58z9vLY06CDbI+dqANfMFn1IUdwzKWi8S5J/MRhvbzonbbh3yHlz6F43Q==}
     engines: {node: '>=14.0.0'}
     cpu: [wasm32]
     requiresBuild: true
@@ -344,8 +344,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-win32-arm64-msvc@1.9.2:
-    resolution: {integrity: sha512-a3BkMcvW9sedSA1XlYvGEQSNQQrK4kUMULKTXmqboLjFbwI9v6flpDCiJyw2pXYs+1WT6XjTHvEyVsoGCVMRlQ==}
+  /@node-rs/jieba-win32-arm64-msvc@1.10.0:
+    resolution: {integrity: sha512-eZjRLFUAvq1/E5+xXfJRqIB99Gu6BA+6+EXf/rCLuvEjXrDQuUunhmrSoOL5MjmUXTtazS+bXq9PXV5EFYyOPw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -353,8 +353,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-win32-ia32-msvc@1.9.2:
-    resolution: {integrity: sha512-k8xPkEOMJM3ic4UzvmvKELjPQsIFSo7mw1wx4tNrUN5mu5ANIhk1Fq0zXOcTbpIe7jHPsWaB5jYtBeeJ0h09iA==}
+  /@node-rs/jieba-win32-ia32-msvc@1.10.0:
+    resolution: {integrity: sha512-DrfbeCN7UcLN+MiocZabWo74XZIjfpQsJ/WMOItZzVbU2gDcJSkSyAhML9+OqId66DhGCMFFlGinocElM8iIAw==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
@@ -362,8 +362,8 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba-win32-x64-msvc@1.9.2:
-    resolution: {integrity: sha512-wIseuWUK+WdikhMFPLvr80D0I4wQJSdFsRIljiUhKwnNQESG20zIxSYE1qy7BNBd7s8fAn1BC6PGeg7S/2KliQ==}
+  /@node-rs/jieba-win32-x64-msvc@1.10.0:
+    resolution: {integrity: sha512-RjBkBmjjHmj+bofiq5/han8wzbCkDk24OAPJ+YX8PX20GFSHmdjCiWapv3AooN8/RiKqlBfgodjS1JUngNWo5g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -371,28 +371,28 @@ packages:
     dev: false
     optional: true
 
-  /@node-rs/jieba@1.9.2:
-    resolution: {integrity: sha512-H7/Pv9RBEgzcxVAM4yg6L4G10ZoiqVnNcUCs01yV9XIRwLmShUkdthkTqG8heyx2dAMRua+kofd28JtDWBHMfA==}
+  /@node-rs/jieba@1.10.0:
+    resolution: {integrity: sha512-9oZMCvZVnrAMeWTSnEjJ0OSw7YcV4dJJKSioqq80oUNf3eYLGdEXsgYwCe1AYEMcfUfNVgvjznItJKrsoud0IA==}
     engines: {node: '>= 10'}
     optionalDependencies:
-      '@node-rs/jieba-android-arm-eabi': 1.9.2
-      '@node-rs/jieba-android-arm64': 1.9.2
-      '@node-rs/jieba-darwin-arm64': 1.9.2
-      '@node-rs/jieba-darwin-x64': 1.9.2
-      '@node-rs/jieba-freebsd-x64': 1.9.2
-      '@node-rs/jieba-linux-arm-gnueabihf': 1.9.2
-      '@node-rs/jieba-linux-arm64-gnu': 1.9.2
-      '@node-rs/jieba-linux-arm64-musl': 1.9.2
-      '@node-rs/jieba-linux-x64-gnu': 1.9.2
-      '@node-rs/jieba-linux-x64-musl': 1.9.2
-      '@node-rs/jieba-wasm32-wasi': 1.9.2
-      '@node-rs/jieba-win32-arm64-msvc': 1.9.2
-      '@node-rs/jieba-win32-ia32-msvc': 1.9.2
-      '@node-rs/jieba-win32-x64-msvc': 1.9.2
+      '@node-rs/jieba-android-arm-eabi': 1.10.0
+      '@node-rs/jieba-android-arm64': 1.10.0
+      '@node-rs/jieba-darwin-arm64': 1.10.0
+      '@node-rs/jieba-darwin-x64': 1.10.0
+      '@node-rs/jieba-freebsd-x64': 1.10.0
+      '@node-rs/jieba-linux-arm-gnueabihf': 1.10.0
+      '@node-rs/jieba-linux-arm64-gnu': 1.10.0
+      '@node-rs/jieba-linux-arm64-musl': 1.10.0
+      '@node-rs/jieba-linux-x64-gnu': 1.10.0
+      '@node-rs/jieba-linux-x64-musl': 1.10.0
+      '@node-rs/jieba-wasm32-wasi': 1.10.0
+      '@node-rs/jieba-win32-arm64-msvc': 1.10.0
+      '@node-rs/jieba-win32-ia32-msvc': 1.10.0
+      '@node-rs/jieba-win32-x64-msvc': 1.10.0
     dev: false
 
-  /@prisma/client@5.9.1(prisma@5.9.1):
-    resolution: {integrity: sha512-caSOnG4kxcSkhqC/2ShV7rEoWwd3XrftokxJqOCMVvia4NYV/TPtJlS9C2os3Igxw/Qyxumj9GBQzcStzECvtQ==}
+  /@prisma/client@5.10.2(prisma@5.10.2):
+    resolution: {integrity: sha512-ef49hzB2yJZCvM5gFHMxSFL9KYrIP9udpT5rYo0CsHD4P9IKj473MbhU1gjKKftiwWBTIyrt9jukprzZXazyag==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -401,35 +401,35 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.9.1
+      prisma: 5.10.2
     dev: false
 
-  /@prisma/debug@5.9.1:
-    resolution: {integrity: sha512-yAHFSFCg8KVoL0oRUno3m60GAjsUKYUDkQ+9BA2X2JfVR3kRVSJFc/GpQ2fSORi4pSHZR9orfM4UC9OVXIFFTA==}
+  /@prisma/debug@5.10.2:
+    resolution: {integrity: sha512-bkBOmH9dpEBbMKFJj8V+Zp8IZHIBjy3fSyhLhxj4FmKGb/UBSt9doyfA6k1UeUREsMJft7xgPYBbHSOYBr8XCA==}
 
-  /@prisma/engines-version@5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64:
-    resolution: {integrity: sha512-HFl7275yF0FWbdcNvcSRbbu9JCBSLMcurYwvWc8WGDnpu7APxQo2ONtZrUggU3WxLxUJ2uBX+0GOFIcJeVeOOQ==}
+  /@prisma/engines-version@5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9:
+    resolution: {integrity: sha512-uCy/++3Jx/O3ufM+qv2H1L4tOemTNqcP/gyEVOlZqTpBvYJUe0tWtW0y3o2Ueq04mll4aM5X3f6ugQftOSLdFQ==}
 
-  /@prisma/engines@5.9.1:
-    resolution: {integrity: sha512-gkdXmjxQ5jktxWNdDA5aZZ6R8rH74JkoKq6LD5mACSvxd2vbqWeWIOV0Py5wFC8vofOYShbt6XUeCIUmrOzOnQ==}
+  /@prisma/engines@5.10.2:
+    resolution: {integrity: sha512-HkSJvix6PW8YqEEt3zHfCYYJY69CXsNdhU+wna+4Y7EZ+AwzeupMnUThmvaDA7uqswiHkgm5/SZ6/4CStjaGmw==}
     requiresBuild: true
     dependencies:
-      '@prisma/debug': 5.9.1
-      '@prisma/engines-version': 5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64
-      '@prisma/fetch-engine': 5.9.1
-      '@prisma/get-platform': 5.9.1
+      '@prisma/debug': 5.10.2
+      '@prisma/engines-version': 5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9
+      '@prisma/fetch-engine': 5.10.2
+      '@prisma/get-platform': 5.10.2
 
-  /@prisma/fetch-engine@5.9.1:
-    resolution: {integrity: sha512-l0goQOMcNVOJs1kAcwqpKq3ylvkD9F04Ioe1oJoCqmz05mw22bNAKKGWuDd3zTUoUZr97va0c/UfLNru+PDmNA==}
+  /@prisma/fetch-engine@5.10.2:
+    resolution: {integrity: sha512-dSmXcqSt6DpTmMaLQ9K8ZKzVAMH3qwGCmYEZr/uVnzVhxRJ1EbT/w2MMwIdBNq1zT69Rvh0h75WMIi0mrIw7Hg==}
     dependencies:
-      '@prisma/debug': 5.9.1
-      '@prisma/engines-version': 5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64
-      '@prisma/get-platform': 5.9.1
+      '@prisma/debug': 5.10.2
+      '@prisma/engines-version': 5.10.0-34.5a9203d0590c951969e85a7d07215503f4672eb9
+      '@prisma/get-platform': 5.10.2
 
-  /@prisma/get-platform@5.9.1:
-    resolution: {integrity: sha512-6OQsNxTyhvG+T2Ksr8FPFpuPeL4r9u0JF0OZHUBI/Uy9SS43sPyAIutt4ZEAyqWQt104ERh70EZedkHZKsnNbg==}
+  /@prisma/get-platform@5.10.2:
+    resolution: {integrity: sha512-nqXP6vHiY2PIsebBAuDeWiUYg8h8mfjBckHh6Jezuwej0QJNnjDiOq30uesmg+JXxGk99nqyG3B7wpcOODzXvg==}
     dependencies:
-      '@prisma/debug': 5.9.1
+      '@prisma/debug': 5.10.2
 
   /@tybys/wasm-util@0.8.1:
     resolution: {integrity: sha512-GSsTwyBl4pIzsxAY5wroZdyQKyhXk0d8PCRZtrSZ2WEB1cBdrp2EgGBwHOGCZtIIPun/DL3+AykCv+J6fyRH4Q==}
@@ -678,8 +678,8 @@ packages:
     engines: {node: '>=6.6.0'}
     dev: false
 
-  /cookie@0.5.0:
-    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
+  /cookie@0.6.0:
+    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
     dev: false
 
@@ -760,8 +760,8 @@ packages:
       domhandler: 5.0.3
     dev: false
 
-  /dotenv@16.4.3:
-    resolution: {integrity: sha512-II98GFrje5psQTSve0E7bnwMFybNLqT8Vu8JIFWRjsE3khyNUm/loZupuy5DVzG2IXf/ysxvrixYOQnM6mjD3A==}
+  /dotenv@16.4.5:
+    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
     dev: false
 
@@ -849,8 +849,8 @@ packages:
       fast-decode-uri-component: 1.0.1
     dev: false
 
-  /fast-redact@3.3.0:
-    resolution: {integrity: sha512-6T5V1QK1u4oF+ATxs1lWUmlEk6P2T9HqJG3e2DnHOdVgZy2rFJBoEnrIedcTXlkAHU/zKC+7KETJ+KGGKwxgMQ==}
+  /fast-redact@3.4.0:
+    resolution: {integrity: sha512-2gwPvyna0zwBdxKnng1suu/dTL5s8XEy2ZqH8mwDUwJdDkV8w5kp+JV26mupdK68HmPMbm6yjW9m7/Ys/BHEHg==}
     engines: {node: '>=6'}
     dev: false
 
@@ -873,8 +873,8 @@ packages:
     resolution: {integrity: sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==}
     dev: false
 
-  /fastify@4.26.1:
-    resolution: {integrity: sha512-tznA/G55dsxzM5XChBfcvVSloG2ejeeotfPPJSFaWmHyCDVGMpvf3nRNbsCb/JTBF9RmQFBfuujWt3Nphjesng==}
+  /fastify@4.26.2:
+    resolution: {integrity: sha512-90pjTuPGrfVKtdpLeLzND5nyC4woXZN5VadiNQCicj/iJU4viNHKhsAnb7jmv1vu2IzkLXyBiCzdWuzeXgQ5Ug==}
     dependencies:
       '@fastify/ajv-compiler': 3.5.0
       '@fastify/error': 3.4.1
@@ -884,8 +884,8 @@ packages:
       fast-content-type-parse: 1.1.0
       fast-json-stringify: 5.12.0
       find-my-way: 8.1.0
-      light-my-request: 5.11.0
-      pino: 8.18.0
+      light-my-request: 5.12.0
+      pino: 8.19.0
       process-warning: 3.0.0
       proxy-addr: 2.0.7
       rfdc: 1.3.1
@@ -1115,11 +1115,11 @@ packages:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
     dev: false
 
-  /light-my-request@5.11.0:
-    resolution: {integrity: sha512-qkFCeloXCOMpmEdZ/MV91P8AT4fjwFXWaAFz3lUeStM8RcoM1ks4J/F8r1b3r6y/H4u3ACEJ1T+Gv5bopj7oDA==}
+  /light-my-request@5.12.0:
+    resolution: {integrity: sha512-P526OX6E7aeCIfw/9UyJNsAISfcFETghysaWHQAlQYayynShT08MOj4c6fBCvTWBrHXSvqBAKDp3amUPSCQI4w==}
     dependencies:
-      cookie: 0.5.0
-      process-warning: 2.3.2
+      cookie: 0.6.0
+      process-warning: 3.0.0
       set-cookie-parser: 2.6.0
     dev: false
 
@@ -1256,8 +1256,8 @@ packages:
       whatwg-url: 5.0.0
     dev: false
 
-  /nodemailer@6.9.9:
-    resolution: {integrity: sha512-dexTll8zqQoVJEZPwQAKzxxtFn0qTnjdQTchoU6Re9BUUGBJiOy3YMn/0ShTW6J5M0dfQ1NeDeRTTl4oIWgQMA==}
+  /nodemailer@6.9.12:
+    resolution: {integrity: sha512-pnLo7g37Br3jXbF0bl5DekBJihm2q+3bB3l2o/B060sWmb5l+VqeScAQCBqaQ+5ezRZFzW5SciZNGdRDEbq89w==}
     engines: {node: '>=6.0.0'}
     dev: false
 
@@ -1378,12 +1378,12 @@ packages:
     resolution: {integrity: sha512-cHjPPsE+vhj/tnhCy/wiMh3M3z3h/j15zHQX+S9GkTBgqJuTuJzYJ4gUyACLhDaJ7kk9ba9iRDmbH2tJU03OiA==}
     dev: false
 
-  /pino@8.18.0:
-    resolution: {integrity: sha512-Mz/gKiRyuXu4HnpHgi1YWdHQCoWMufapzooisvFn78zl4dZciAxS+YeRkUxXl1ee/SzU80YCz1zpECCh4oC6Aw==}
+  /pino@8.19.0:
+    resolution: {integrity: sha512-oswmokxkav9bADfJ2ifrvfHUwad6MLp73Uat0IkQWY3iAw5xTRoznXbXksZs8oaOUMpmhVWD+PZogNzllWpJaA==}
     hasBin: true
     dependencies:
       atomic-sleep: 1.0.0
-      fast-redact: 3.3.0
+      fast-redact: 3.4.0
       on-exit-leak-free: 2.1.2
       pino-abstract-transport: 1.1.0
       pino-std-serializers: 6.2.2
@@ -1404,17 +1404,13 @@ packages:
       source-map-js: 1.0.2
     dev: false
 
-  /prisma@5.9.1:
-    resolution: {integrity: sha512-Hy/8KJZz0ELtkw4FnG9MS9rNWlXcJhf98Z2QMqi0QiVMoS8PzsBkpla0/Y5hTlob8F3HeECYphBjqmBxrluUrQ==}
+  /prisma@5.10.2:
+    resolution: {integrity: sha512-hqb/JMz9/kymRE25pMWCxkdyhbnIWrq+h7S6WysJpdnCvhstbJSNP/S6mScEcqiB8Qv2F+0R3yG+osRaWqZacQ==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.9.1
-
-  /process-warning@2.3.2:
-    resolution: {integrity: sha512-n9wh8tvBe5sFmsqlg+XQhaQLumwpqoAUruLwjCopgTmUBjJ/fjtBsJzKleCaIGBOMXYEhp1YfKl4d7rJ5ZKJGA==}
-    dev: false
+      '@prisma/engines': 5.10.2
 
   /process-warning@3.0.0:
     resolution: {integrity: sha512-mqn0kFRl0EoqhnL0GQ0veqFHyIN1yig9RHh/InzORTUiZHFRAur+aMtRkELNwGs9aNwKS6tg/An4NYBPGwvtzQ==}
@@ -1526,8 +1522,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: false
 
-  /sanitize-html@2.11.0:
-    resolution: {integrity: sha512-BG68EDHRaGKqlsNjJ2xUB7gpInPA8gVx/mvjO743hZaeMCZ2DwzW7xvsqZ+KNU4QKwj86HJ3uu2liISf2qBBUA==}
+  /sanitize-html@2.12.1:
+    resolution: {integrity: sha512-Plh+JAn0UVDpBRP/xEjsk+xDCoOvMBwQUf/K+/cBAVuTbtX8bj2VB7S1sL1dssVpykqp0/KPSesHrqXtokVBpA==}
     dependencies:
       deepmerge: 4.3.1
       escape-string-regexp: 4.0.0
