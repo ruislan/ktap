@@ -56,7 +56,7 @@ const home = async function (fastify) {
             return reply
                 .cookie(Keys.cookie.token, user.jwtToken, {
                     path: '/', httpOnly: true, expires, sameSite: true, signed: true,
-                    secure: process.env.COOKIE_SECURE || false,  // XXX 注意：secure如果为true，则需要配置https，否则cookie无效
+                    secure: process.env.COOKIE_SECURE === 'true',  // XXX 注意：secure如果为true，则需要配置https，否则cookie无效
                 })
                 .cookie(Keys.cookie.userId, user.id, { path: '/', expires, }) // 方便客户端使用
                 .code(200).send({ id: user.id });
