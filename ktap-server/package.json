@@ -26,7 +26,7 @@
         "@fastify/sensible": "^5.5.0",
         "@fastify/static": "^6.12.0",
         "@node-rs/jieba": "^1.10.0",
-        "@prisma/client": "^5.11.0",
+        "@prisma/client": "^5.12.1",
         "ajv-errors": "^3.0.0",
         "bcrypt": "^5.1.1",
         "cheerio": "1.0.0-rc.12",
@@ -41,6 +41,6 @@
     },
     "devDependencies": {
         "chokidar": "^3.6.0",
-        "prisma": "^5.11.0"
+        "prisma": "^5.12.1"
     }
 }

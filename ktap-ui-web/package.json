@@ -11,14 +11,14 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tiptap/extension-color": "^2.2.4",
-        "@tiptap/extension-image": "^2.2.4",
-        "@tiptap/extension-list-item": "^2.2.4",
-        "@tiptap/extension-text-style": "^2.2.4",
-        "@tiptap/extension-underline": "^2.2.4",
-        "@tiptap/pm": "^2.2.4",
-        "@tiptap/react": "^2.2.4",
-        "@tiptap/starter-kit": "^2.2.4",
+        "@tiptap/extension-color": "^2.2.5",
+        "@tiptap/extension-image": "^2.2.5",
+        "@tiptap/extension-list-item": "^2.2.5",
+        "@tiptap/extension-text-style": "^2.2.5",
+        "@tiptap/extension-underline": "^2.2.5",
+        "@tiptap/pm": "^2.2.5",
+        "@tiptap/react": "^2.2.5",
+        "@tiptap/starter-kit": "^2.2.5",
         "baseui": "0.0.0-next-ff2e443",
         "compressorjs": "^1.2.1",
         "date-fns": "^2.30.0",
@@ -34,14 +34,14 @@
         "swiper": "^10.3.1"
     },
     "devDependencies": {
-        "@types/react": "^18.2.69",
-        "@types/react-dom": "^18.2.22",
+        "@types/react": "^18.2.74",
+        "@types/react-dom": "^18.2.24",
         "@vitejs/plugin-react-swc": "^3.6.0",
         "eslint": "^8.57.0",
         "eslint-plugin-baseui": "^13.0.0",
         "eslint-plugin-react": "^7.34.1",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.6",
-        "vite": "^5.2.6"
+        "vite": "^5.2.8"
     }
 }
