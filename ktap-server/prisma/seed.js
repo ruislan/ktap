@@ -1096,7 +1096,7 @@ async function initSteam() {
     const user = await db.user.upsert({ create: users[0], update: users[0], where: { id: users[0].id } });
     console.log(`Created user with id: ${user.id}`);
 
-    console.log(`开始初始化搜索页面组件...`);
+    console.log(`开始初始化探索页面组件...`);
     for (const item of discoverPageWidgets) {
         const pageWidget = await db.pageWidget.upsert({ create: item, update: item, where: { id: item.id } });
         console.log(`Created page widget: ${pageWidget.id}`);
@@ -1114,7 +1114,7 @@ async function initSteam() {
             newApp.isVisible = true; // set it visible
             newApp.discussionChannels = {
                 create: [
-                    { name: '综合讨论', description: '各种话题都可以谁便说' }
+                    { name: '综合讨论', description: '各种话题都可以随便说' }
                 ],
             };
             if (newApp) await db.app.create({ data: newApp });

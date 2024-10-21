@@ -399,12 +399,12 @@ const users = async (fastify, opts) => {
         // 关注数, 评测数, 回复数
         const meta = (await fastify.db.$queryRaw`
                 SELECT
-                (SELECT COUNT(FollowUser.user_id) FROM FollowUser WHERE FollowUser.follower_id=${id}) AS followUsers,
-                (SELECT COUNT(FollowApp.app_id) FROM FollowApp WHERE FollowApp.follower_id=${id}) AS followApps,
-                (SELECT COUNT(Review.id) FROM Review WHERE Review.user_id=${id}) AS reviews,
-                (SELECT COUNT(ReviewComment.id) FROM ReviewComment WHERE ReviewComment.user_id=${id}) AS comments,
-                (SELECT COUNT(Discussion.id) FROM Discussion WHERE Discussion.user_id=${id}) AS discussions,
-                (SELECT COUNT(DiscussionPost.id) FROM DiscussionPost WHERE DiscussionPost.user_id=${id}) AS posts
+                (SELECT COUNT("FollowUser".user_id) FROM "FollowUser" WHERE "FollowUser".follower_id=${id}) AS followUsers,
+                (SELECT COUNT("FollowApp".app_id) FROM "FollowApp" WHERE "FollowApp".follower_id=${id}) AS followApps,
+                (SELECT COUNT("Review".id) FROM "Review" WHERE "Review".user_id=${id}) AS reviews,
+                (SELECT COUNT("ReviewComment".id) FROM "ReviewComment" WHERE "ReviewComment".user_id=${id}) AS comments,
+                (SELECT COUNT("Discussion".id) FROM "Discussion" WHERE "Discussion".user_id=${id}) AS discussions,
+                (SELECT COUNT("DiscussionPost".id) FROM "DiscussionPost" WHERE "DiscussionPost".user_id=${id}) AS posts
             `)[0];
 
         meta.follows = {

@@ -173,10 +173,10 @@ async function review(fastify, opts) {
                     fastify.db.reviewImage.deleteMany({ where: { reviewId: id, } }), // 删除关联图片,
                     fastify.db.review.delete({ where: { id } }), // 删除评测
                     fastify.db.timeline.deleteMany({ where: { target: 'Review', targetId: id, userId: review.userId } }), // 删除发布者的时间线，ReviewComment的时间线不需要删除
-                    fastify.db.$queryRaw`
-                        UPDATE App SET score = avgScore FROM
-                        (SELECT COALESCE(AVG(score), 4) AS avgScore FROM review WHERE app_id = ${review.appId})
-                        WHERE App.id = ${review.appId};
+                    fastify.db.$executeRaw`
+                        UPDATE "App" SET score = avgScore FROM
+                        (SELECT COALESCE(AVG(score), 4) AS avgScore FROM "Review" WHERE app_id = ${review.appId})
+                        WHERE "App".id = ${review.appId};
                     `, // XXX 非必每次评测都更新，定时刷新App的评分或异步请求重新计算App积分
                 ]);
                 // 删除上传图片
@@ -248,8 +248,11 @@ async function review(fastify, opts) {
         // 获取某个评测的礼物数据
         async getReviewGifts({ id }) {
             const gifts = await fastify.db.$queryRaw`
-                SELECT Gift.id, Gift.name, Gift.description, Gift.url, Gift.price, count(ReviewGiftRef.user_id) AS count FROM ReviewGiftRef, Gift
-                WHERE Gift.id = ReviewGiftRef.gift_id AND review_id = ${id} GROUP BY ReviewGiftRef.gift_id;
+                SELECT "Gift".id, "Gift".name, "Gift".description, "Gift".url, "Gift".price, count("ReviewGiftRef".user_id) AS count
+                FROM "ReviewGiftRef"
+                JOIN "Gift" ON "Gift".id = "ReviewGiftRef".gift_id
+                WHERE "ReviewGiftRef".review_id = ${id}
+                GROUP BY "Gift".id, "Gift".name, "Gift".description, "Gift".url, "Gift".price;
             `;
             let giftCount = 0;
             gifts.forEach(async (gift) => { gift.count = Number(gift.count) || 0; giftCount += gift.count; });
@@ -258,8 +261,8 @@ async function review(fastify, opts) {
         // 获取某个评测的赞踩数据
         async getReviewThumbs({ id }) {
             return (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM ReviewThumb WHERE direction = 'up' AND review_id = ${id}) AS ups,
-                (SELECT count(*) FROM ReviewThumb WHERE direction = 'down' AND review_id = ${id}) AS downs
+                SELECT (SELECT count(*) FROM "ReviewThumb" WHERE direction = 'up' AND review_id = ${id}) AS ups,
+                (SELECT count(*) FROM "ReviewThumb" WHERE direction = 'down' AND review_id = ${id}) AS downs
             `)[0];
         },
         async createProReview({ appId, name, url, summary, score }) {

@@ -1,6 +1,5 @@
 import path from 'path';
 import dotenv from 'dotenv';
-import prisma from '@prisma/client';
 import fastify from 'fastify';
 import ajvErrors from 'ajv-errors';
 import fastifyStatic from '@fastify/static';

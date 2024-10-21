@@ -38,11 +38,11 @@ async function achievement(fastify, opts) {
         async getUserAchievements({ userId, skip = 0, limit = Pagination.limit.default }) {
             if (!userId) return [];
             const data = await fastify.db.$queryRaw`
-                SELECT Achievement.*, COALESCE(UserAchievementRef.accumulation,0) AS accumulation, UserAchievementRef.unlocked_at
-                FROM Achievement LEFT JOIN (SELECT * FROM UserAchievementRef WHERE UserAchievementRef.user_id = ${userId}) UserAchievementRef
-                ON Achievement.id = UserAchievementRef.achievement_id
-                ORDER BY UserAchievementRef.unlocked_at DESC
-                LIMIT ${skip},${limit}
+                SELECT "Achievement".*, COALESCE("UserAchievementRef".accumulation,0) AS accumulation, "UserAchievementRef".unlocked_at
+                FROM "Achievement" LEFT JOIN (SELECT * FROM "UserAchievementRef" WHERE "UserAchievementRef".user_id = ${userId}) "UserAchievementRef"
+                ON "Achievement".id = "UserAchievementRef".achievement_id
+                ORDER BY "UserAchievementRef".unlocked_at DESC
+                LIMIT ${limit} OFFSET ${skip}
             `;
             return data.map(item => convertToCamelCase(item));
         },

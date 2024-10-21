@@ -40,8 +40,8 @@ const discussions = async (fastify, opts) => {
             const mediaHead = app.media.find(media => media.usage === AppMedia.usage.head);
             const mediaLogo = app.media.find(media => media.usage === AppMedia.usage.logo);
             const appMetaUsers = (await fastify.db.$queryRaw`
-                SELECT COUNT(DISTINCT dp.user_id) AS total FROM DiscussionPost dp WHERE discussion_id IN
-                (SELECT id FROM Discussion WHERE app_id = ${app.id});
+                SELECT COUNT(DISTINCT dp.user_id) AS total FROM "DiscussionPost" dp WHERE discussion_id IN
+                (SELECT id FROM "Discussion" WHERE app_id = ${app.id});
             `)[0]?.total;
             app.meta = {
                 discussions: app._count.discussions || 0,
@@ -215,7 +215,7 @@ const discussions = async (fastify, opts) => {
         if (!data || !data.app.isVisible) return reply.code(404).send();
 
         const metaUsers = (await fastify.db.$queryRaw`
-                SELECT COUNT(DISTINCT user_id) AS total FROM DiscussionPost WHERE discussion_id = ${id};
+                SELECT COUNT(DISTINCT user_id) AS total FROM "DiscussionPost" WHERE discussion_id = ${id};
             `)[0]?.total || 0;
         data.app.media = {
             head: data.app.media.find(media => media.usage === AppMedia.usage.head),
@@ -382,7 +382,10 @@ const discussions = async (fastify, opts) => {
         errorHandler: bizErrorHandler,
         schema: {
             body: {
-                content: { $ref: 'post#/properties/content' },
+                type: 'object',
+                properties: {
+                    content: { $ref: 'post#/properties/content' },
+                },
             }
         },
     }, async function (req, reply) {

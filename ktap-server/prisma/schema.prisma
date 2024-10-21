@@ -3,7 +3,6 @@ generator client {
 }
 
 datasource db {
-  // 注意：sqlite 还不支持 BigInt 的autoincrement，也不支持Json Type 以及 Full-text Search
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
@@ -50,10 +49,10 @@ model User {
 
 // 用户配置信息
 model UserSetting {
-  userId  Int    @id @unique
-  options String @db.Text // 用户设置，JSON 格式
+  userId  Int  @id @unique
+  options Json @db.Json // 用户设置，JSON 格式
   // ref
-  user    User   @relation(fields: [userId], references: [id])
+  user    User @relation(fields: [userId], references: [id])
 }
 
 // 交易记录（避免关键词和容易引起歧义的词Transaction）
@@ -596,7 +595,7 @@ model Notification {
   title     String    @db.VarChar(256) // 通知文本的标题
   content   String    @db.Text // 通知文本内容
   url       String?   @db.VarChar(2048) // 跳转的链接
-  extra     String    @db.Text // 附加内容，json data，用于更加详细和丰富的展现可能需要的不同的内容用于呈现
+  extra     Json      @db.Json // 附加内容，json data，用于更加详细和丰富的展现可能需要的不同的内容用于呈现
   isRead    Boolean   @default(false) @map("is_read") // 是否已读
   readAt    DateTime? @map("read_at") // 已读时间
   createdAt DateTime  @default(now()) @map("created_at") // 创建时间

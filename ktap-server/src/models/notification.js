@@ -66,13 +66,13 @@ async function notification(fastify, opts) {
             let followers = [];
             if (target === Notification.target.App) {
                 followers = await fastify.db.$queryRaw`
-                    SELECT User.id, User.name FROM User, FollowApp
-                    WHERE FollowApp.app_id = ${targetId} AND FollowApp.follower_id = User.id;
+                    SELECT "User".id, "User".name FROM "User", "FollowApp"
+                    WHERE "FollowApp".app_id = ${targetId} AND "FollowApp".follower_id = "User".id;
                 `;
             } else if (target === Notification.target.User) {
                 followers = await fastify.db.$queryRaw`
-                    SELECT User.id, User.name FROM User, FollowUser
-                    WHERE FollowUser.user_id = ${targetId} AND FollowUser.follower_id = User.id;
+                    SELECT "User".id, "User".name FROM "User", "FollowUser"
+                    WHERE "FollowUser".user_id = ${targetId} AND "FollowUser".follower_id = "User".id;
                 `;
             }
             const followerSettings = await fastify.db.userSetting.findMany({ where: { userId: { in: followers.map(f => Number(f.id)) } } });
@@ -105,12 +105,12 @@ async function notification(fastify, opts) {
         async deleteExpiredNotifications() {
             const max = process.env.NOTIFICATION_PER_USER_MAX || 100; // 每个用户最多 100 条。
             const resultCount = await fastify.db.$executeRaw`
-                DELETE FROM Notification
+                DELETE FROM "Notification"
                 WHERE id IN (
                     SELECT id
                     FROM (
                         SELECT n.id, n.user_id, COUNT(*) AS total
-                        FROM Notification AS n
+                        FROM "Notification" AS n
                         GROUP BY n.id, n.user_id
                         HAVING total > ${max}
                     ) AS sub

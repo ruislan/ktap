@@ -132,13 +132,13 @@ async function discussion(fastify, opts) {
 
             await fastify.db.$transaction([
                 fastify.db.$queryRaw`
-                            DELETE FROM DiscussionPostReport WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
+                            DELETE FROM "DiscussionPostReport" WHERE post_id IN (SELECT id FROM "DiscussionPost" WHERE discussion_id = ${id});
                         `,
                 fastify.db.$queryRaw`
-                            DELETE FROM DiscussionPostThumb WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
+                            DELETE FROM "DiscussionPostThumb" WHERE post_id IN (SELECT id FROM "DiscussionPost" WHERE discussion_id = ${id});
                         `,
                 fastify.db.$queryRaw`
-                            DELETE FROM DiscussionPostGiftRef WHERE post_id IN (SELECT id FROM DiscussionPost WHERE discussion_id = ${id});
+                            DELETE FROM "DiscussionPostGiftRef" WHERE post_id IN (SELECT id FROM "DiscussionPost" WHERE discussion_id = ${id});
                         `,
                 fastify.db.discussionPost.deleteMany({ where: { discussionId: id } }),
                 fastify.db.discussion.delete({ where: { id } }),
@@ -165,17 +165,17 @@ async function discussion(fastify, opts) {
         // 统计某个讨论的礼物数量
         async countDiscussionGifts({ id }) {
             return (await fastify.db.$queryRaw`
-                SELECT COUNT(*) AS gifts FROM DiscussionPostGiftRef dpgr
-                JOIN DiscussionPost dp ON dpgr.post_id = dp.id
-                JOIN Discussion d ON dp.discussion_id = d.id
+                SELECT COUNT(*) AS gifts FROM "DiscussionPostGiftRef" dpgr
+                JOIN "DiscussionPost" dp ON dpgr.post_id = dp.id
+                JOIN "Discussion" d ON dp.discussion_id = d.id
                 WHERE d.id = ${id};
             `)[0]?.gifts || 0;
         },
         // 获得某个讨论贴子的礼物情况
         async getDiscussionPostGifts({ id }) {
             const gifts = await fastify.db.$queryRaw`
-                SELECT Gift.id, Gift.name, Gift.description, Gift.url, Gift.price, count(DiscussionPostGiftRef.user_id) AS count FROM DiscussionPostGiftRef, Gift
-                WHERE Gift.id = DiscussionPostGiftRef.gift_id AND post_id = ${id} GROUP BY DiscussionPostGiftRef.gift_id;
+                SELECT "Gift".id, "Gift".name, "Gift".description, "Gift".url, "Gift".price, count("DiscussionPostGiftRef".user_id) AS count FROM "DiscussionPostGiftRef", "Gift"
+                WHERE "Gift".id = "DiscussionPostGiftRef".gift_id AND post_id = ${id} GROUP BY "DiscussionPostGiftRef".gift_id;
             `;
             let giftCount = 0;
             gifts.forEach(async (gift) => { gift.count = Number(gift.count) || 0; giftCount += gift.count; });
@@ -184,8 +184,8 @@ async function discussion(fastify, opts) {
         // 获取某个讨论帖子的赞踩数据
         async getDiscussionPostThumbs({ id }) {
             return (await fastify.db.$queryRaw`
-                SELECT (SELECT count(*) FROM DiscussionPostThumb WHERE direction = 'up' AND post_id = ${id}) AS ups,
-                (SELECT count(*) FROM DiscussionPostThumb WHERE direction = 'down' AND post_id = ${id}) AS downs
+                SELECT (SELECT count(*) FROM "DiscussionPostThumb" WHERE direction = 'up' AND post_id = ${id}) AS ups,
+                (SELECT count(*) FROM "DiscussionPostThumb" WHERE direction = 'down' AND post_id = ${id}) AS downs
             `)[0];
         },
         // 给讨论回帖

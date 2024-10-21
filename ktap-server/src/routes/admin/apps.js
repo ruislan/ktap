@@ -274,7 +274,7 @@ const apps = async function (fastify, opts) {
         const keyword = req.query.keyword || '';
         // 注意这里有多个用户会使用相同的标签
         const count = (await fastify.db.$queryRaw`
-            SELECT COUNT(DISTINCT ref.tag_id) AS total FROM AppUserTagRef ref, Tag tag
+            SELECT COUNT(DISTINCT ref.tag_id) AS total FROM "AppUserTagRef" ref, "Tag" tag
             WHERE ref.app_id = ${id} AND ref.tag_id = tag.id AND tag.name LIKE ${`%${keyword}%`}
         `)[0]?.total || 0;
         let data = await fastify.db.appUserTagRef.findMany({
