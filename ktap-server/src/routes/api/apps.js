@@ -205,18 +205,13 @@ const apps = async function (fastify, opts) {
             }
         });
         if (!data || !data.isVisible) return reply.code(404).send();
-        console.log('---------->0');
         // clear output
         data.genres = data.genres.map(ref => ref.tag);
         data.features = data.features.map(ref => ref.tag);
-        console.log('---------->1');
         // get hot tags
         data.tags = await fastify.tag.getTagsByHot({ id, limit: 15, type: 'app' });
-        console.log('---------->2');
         data.developers = data.developers.map(ref => ref.organization);
-        console.log('---------->3');
         data.publishers = data.publishers.map(ref => ref.organization);
-        console.log('---------->4');
 
         if (data.platforms) {
             data.platforms = data.platforms.map(p => {

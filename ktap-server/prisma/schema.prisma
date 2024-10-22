@@ -608,7 +608,7 @@ model Notification {
 
 // 成就 Start
 model Achievement {
-  id          Int      @id
+  id          Int      @id @default(autoincrement())
   name        String   @db.VarChar(64) //名称
   description String   @db.VarChar(512) //简介
   icon        String   @db.VarChar(2048) //图片

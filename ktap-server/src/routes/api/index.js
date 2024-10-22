@@ -27,6 +27,8 @@ const apiRoutes = async (fastify, opts) => {
     await fastify.register(apiOrganizations, { prefix: '/organizations' });
     await fastify.register(apiDiscover, { prefix: '/discover' });
     await fastify.register(apiDiscussions, { prefix: '/discussions' });
+
+    return;
 };
 
 export default apiRoutes;

@@ -82,9 +82,19 @@ async function app(fastify, opts) {
             return apps;
         },
         async tagApp({ appId, userId, name }) {
-            const theTag = await fastify.db.tag.upsert({ create: { name, category: TagCategory.normal }, update: {}, where: { name } });
+            const theTag = await fastify.db.tag.upsert({
+                create: { name, category: TagCategory.normal },
+                update: { },
+                where: { name }
+            });
             // 用户可能输入了类型或者功能相同的词，要排除掉，这些词是不需要标记的
-            if (theTag.category === TagCategory.normal) await fastify.db.appUserTagRef.upsert({ create: { appId, userId, tagId: theTag.id }, update: {}, where: { appId_userId_tagId: { userId, appId, tagId: theTag.id } } });
+            if (theTag.category === TagCategory.normal) {
+                await fastify.db.appUserTagRef.upsert({
+                    create: { appId, userId, tagId: theTag.id },
+                    update: {},
+                    where: { appId_userId_tagId: { userId, appId, tagId: theTag.id } }
+                });
+            }
         },
 
         // these actions for admin

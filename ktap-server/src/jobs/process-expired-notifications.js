@@ -21,4 +21,6 @@ export default async function job(fastify, opts) {
         job.stop();
         fastify.log.info(`Cron job [${name}] stopped.`);
     });
+
+    return;
 };

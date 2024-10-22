@@ -33,6 +33,8 @@ const adminRoutes = async (fastify, opts) => {
     await fastify.register(adminDiscussions, { prefix: '/discussions' });
     await fastify.register(adminDiscussionPosts, { prefix: '/discussion-posts' });
     await fastify.register(adminHotSearch, { prefix: '/hotsearch' });
+
+    return;
 };
 
 export default adminRoutes;

@@ -47,8 +47,9 @@ export default async function (fastify, opts) {
     await fastify.register(models);
     // schedule jobs
     await fastify.register(jobs);// setup jobs
-
     // routes
     await fastify.register(apiRoutes, { prefix: '/api' });
     await fastify.register(adminRoutes, { prefix: '/admin' });
+
+    return;
 };

@@ -1088,6 +1088,12 @@ async function initBase() {
     }
 
     console.log(`base seeding finished.`);
+
+    await updateSequences([
+        'Achievement',
+        'Buzzword',
+        'Gift',
+    ]);
 }
 
 async function initSteam() {
@@ -1122,6 +1128,11 @@ async function initSteam() {
         }
     }
     console.log(`Seeding finished.`);
+
+    await updateSequences([
+        'User',
+        'PageWidget',
+    ]);
 }
 
 async function initDev() {
@@ -1251,6 +1262,40 @@ async function initDev() {
         console.log(`Created user achievement ref user id: ${ref.userId}`);
     }
     console.log(`Seeding finished.`);
+
+    await updateSequences([
+        'User',
+        'Organization',
+        'App',
+        'Tag',
+        'AppMedia',
+        'AppSocialLink',
+        'AppPlatform',
+        'AppLanguages',
+        'AppAward',
+        'HotSearch',
+        'News',
+        'ProReview',
+        'Review',
+        'ReviewImage',
+        'ReviewComment',
+        'PageWidget',
+        'DiscussionChannel',
+    ]);
+}
+
+//如果是 PG，那么我们显示设置 ID 并不会导致 PG 表中的 ID 自增，所以我们需要再手动更新一次。
+async function updateSequences(tables) {
+    for (const table of tables) {
+        // 这里要把table的第一个字母变成小写
+        const tableName = table.charAt(0).toLowerCase() + table.slice(1);
+        // 获取最后一条数据的 Id
+        const maxIdResult = await db[tableName].findFirst({ orderBy: { id: 'desc' } });
+        const maxId = maxIdResult.id; // 获取最大 ID
+        const nextId = maxId + 1; // 计算下一个 ID
+        // 更新自增序列
+        await db.$executeRawUnsafe(`ALTER SEQUENCE "${table}_id_seq" RESTART WITH ${nextId};`);
+    }
 }
 
 async function main() {
