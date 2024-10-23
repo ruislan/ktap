@@ -1281,10 +1281,12 @@ async function initDev() {
         'ReviewComment',
         'PageWidget',
         'DiscussionChannel',
+        'ReviewGiftRef',
     ]);
 }
 
-//如果是 PG，那么我们显示设置 ID 并不会导致 PG 表中的 ID 自增，所以我们需要再手动更新一次。
+// 如果是 PG，那么我们显示设置 ID 并不会导致 PG 表中的 ID 自增，所以我们需要再手动更新一次。
+// 所有 schema 中 table 的 id 是自增的都要更新序列
 async function updateSequences(tables) {
     for (const table of tables) {
         // 这里要把table的第一个字母变成小写

@@ -248,11 +248,11 @@ async function review(fastify, opts) {
         // 获取某个评测的礼物数据
         async getReviewGifts({ id }) {
             const gifts = await fastify.db.$queryRaw`
-                SELECT "Gift".id, "Gift".name, "Gift".description, "Gift".url, "Gift".price, count("ReviewGiftRef".user_id) AS count
-                FROM "ReviewGiftRef"
-                JOIN "Gift" ON "Gift".id = "ReviewGiftRef".gift_id
-                WHERE "ReviewGiftRef".review_id = ${id}
-                GROUP BY "Gift".id, "Gift".name, "Gift".description, "Gift".url, "Gift".price;
+                SELECT g.id, g.name, g.description, g.url, g.price, count(rg.user_id) AS count
+                FROM "ReviewGiftRef" rg
+                JOIN "Gift" g ON g.id = rg.gift_id
+                WHERE rg.review_id = ${id}
+                GROUP BY g.id, g.name, g.description, g.url, g.price;
             `;
             let giftCount = 0;
             gifts.forEach(async (gift) => { gift.count = Number(gift.count) || 0; giftCount += gift.count; });

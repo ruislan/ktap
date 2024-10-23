@@ -30,6 +30,8 @@ function SettingsPassword() {
                 const data = await res.json();
                 if (res.status === 401 || res.status === 403) {
                     setNotification({ kind: 'negative', message: Messages.noPermission });
+                } else if (res.status === 400) {
+                    setNotification({ kind: 'negative', message: data.message });
                 } else {
                     throw new Error(data.message);
                 }

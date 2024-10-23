@@ -174,8 +174,11 @@ async function discussion(fastify, opts) {
         // 获得某个讨论贴子的礼物情况
         async getDiscussionPostGifts({ id }) {
             const gifts = await fastify.db.$queryRaw`
-                SELECT "Gift".id, "Gift".name, "Gift".description, "Gift".url, "Gift".price, count("DiscussionPostGiftRef".user_id) AS count FROM "DiscussionPostGiftRef", "Gift"
-                WHERE "Gift".id = "DiscussionPostGiftRef".gift_id AND post_id = ${id} GROUP BY "DiscussionPostGiftRef".gift_id;
+                SELECT g.id, g.name, g.description, g.url, g.price, COUNT(d.user_id) AS count
+                FROM "DiscussionPostGiftRef" d
+                JOIN "Gift" g ON g.id = d.gift_id
+                WHERE d.post_id = ${id}
+                GROUP BY g.id, g.name, g.description, g.url, g.price;
             `;
             let giftCount = 0;
             gifts.forEach(async (gift) => { gift.count = Number(gift.count) || 0; giftCount += gift.count; });
