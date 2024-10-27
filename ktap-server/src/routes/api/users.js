@@ -261,7 +261,7 @@ const users = async (fastify, opts) => {
                             }
                         }
                     });
-                    if (!item.data.review?.app?.isVisible) delete item.data.review?.app;
+                    if (!item.data?.review?.app?.isVisible) delete item.data?.review?.app;
                     break;
                 case 'ReviewGiftRef':
                     item.data = await fastify.db.reviewGiftRef.findUnique({
