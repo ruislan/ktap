@@ -72,11 +72,10 @@ docker-compose up -d
 
 ## Build with
 
-* Language: NodeJS v20
-* Web Framework: Fastify
-* Front Framework: ReactJS
-* Styling: BaseWeb UI
-* Database: SQLite/MySQL
+* Language: NodeJS v22
+* FulStack: NextJS v14
+* Styling: Tailwind CSS
+* Database: Postgresql
 * ORM: Prisma
 * Other Libs:
   * day-fns: date helper
@@ -88,10 +87,6 @@ docker-compose up -d
   * nodemailer: email helper
   * node-cache: simple cache
   * node-cron: simple schedule
-
-Note: from version v1.5.0 the database was changed from SQLite to MySQL. There are many differences between SQLite and MySQL, Therefore, versions after v1.5.0 will not be compatible with previous versions.
-
-By the way. SQLite is great for development, demonstration, local storage and personal play, with high efficiency and good performance.
 
 ## Next
 

@@ -80,11 +80,10 @@ docker-compose up -d
 
 ## 环境与工具
 
-* Language: NodeJS v20
-* Web Framework: Fastify
-* Front Framework: ReactJS
-* Styling: BaseWeb UI
-* Database: SQLite/MySQL
+* Language: NodeJS v22
+* FulStack: NextJS v14
+* Styling: Tailwind CSS
+* Database: Postgresql
 * ORM: Prisma
 * Other Libs:
   * day-fns: date helper
@@ -97,15 +96,11 @@ docker-compose up -d
   * node-cache: simple cache
   * node-cron: simple schedule
 
-从 v1.5.0 版本开始，数据库使用 MySQL ，并不再支持 SQLite。 MySQL 和 SQLite有许多不同之处。 所以v1.5.0之后的版本将不兼容前续版本。
-
-SQLite仅仅作为开发、演示、本地存储和个人Play是非常非常棒的，效率高、性能好。
-
 ## 接下来
 
 接下来**可能**会研发的功能...
 
-* [想法] 使用 React-Query 和 Zustand 以及新的 React UI 重构整个前端体系
+* [规划] 使用 NextJS 完成全栈重构
 * [规划] 增加 App 活动事件（线上或者线下活动）
 * [规划] 增加搜索引擎，改进搜索、相关性算法
 * [规划] 增加组织管理（组织所有人自己管理自己的组织）
