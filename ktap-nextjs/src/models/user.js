@@ -1,6 +1,9 @@
-'use strict';
+import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
-import { Trading } from '../utils/constants.js';
+
+import { Trading } from '@/utils/constants.js';
+import prisma from '@/lib/prisma';
+import mailer from '@/lib/mailer.js';
 
 export const USER_CHANGE_NAME_INTERVAL = 1000 * 60 * 60 * 24 * 30; // 30 days
 export const USER_INIT_BALANCE = 100; // 用户初始余额
@@ -29,66 +32,89 @@ export const UserEvents = {
     Registered: 'user.registered',
 }
 
-async function user(fastify, opts) {
-    fastify.decorate('user', {
-        async register({ email, password, name, agree }) {
-            if (!agree) throw new Error(UserErrors.userAgreeRequired);
+const user = {
+    async register({ email, password, name, agree }) {
+        if (!agree) throw new Error(UserErrors.userAgreeRequired);
 
-            const existsEmail = await fastify.db.user.count({ where: { email } }) > 0;
-            if (existsEmail) throw new Error(UserErrors.userEmailDuplicated);
+        const existsEmail = await prisma.user.count({ where: { email } }) > 0;
+        if (existsEmail) throw new Error(UserErrors.userEmailDuplicated);
 
-            const existsName = await fastify.db.user.count({ where: { name } }) > 0;
-            if (existsName) throw new Error(UserErrors.userNameDuplicated);
+        const existsName = await prisma.user.count({ where: { name } }) > 0;
+        if (existsName) throw new Error(UserErrors.userNameDuplicated);
 
-            const passwordHash = await fastify.bcrypt.hash(password);
-
-            const amount = USER_INIT_BALANCE;
-            const user = await fastify.db.$transaction(async (tx) => {
-                const user = await tx.user.create({
-                    data: {
-                        name, email, password: passwordHash,
-                        avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}&size=256`,
-                        birthday: new Date(), gender: UserGender.GENDERLESS, balance: amount
-                    }
-                });
-                await tx.trading.create({ data: { userId: 0, target: 'User', targetId: user.id, amount, type: Trading.type.give, }, }); // 注册成功，赠送余额
-                return user;
+        const passwordHash = bcrypt.hashSync(password);
+        const amount = USER_INIT_BALANCE;
+        const user = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.create({
+                data: {
+                    name,
+                    email,
+                    password: passwordHash,
+                    avatar: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}&size=256`,
+                    birthday: new Date(),
+                    gender: UserGender.GENDERLESS,
+                    balance: amount
+                }
             });
-            // send event
-            await fastify.pubsub.publish(UserEvents.Registered, { user: { ...user } });
-            // XXX 给用户发激活email。 V3
-        },
-        async login({ email, password }) {
-            const user = await fastify.db.user.findUnique({ where: { email } });
-            if (!user) throw new Error(UserErrors.authenticationFailed);
-
-            const isPasswordMatched = await fastify.bcrypt.compare(password, user.password);
-            if (!isPasswordMatched) throw new Error(UserErrors.authenticationFailed);
-
-            if (user.isLocked) throw new Error(UserErrors.userIsLocked);
-
-            const token = await fastify.jwt.sign({ id: Number(user.id), email: user.email, name: user.name, isAdmin: user.isAdmin });
-            user.jwtToken = token;
+            await tx.trading.create({
+                data: {
+                    userId: 0,
+                    target: 'User',
+                    targetId: user.id,
+                    amount,
+                    type: Trading.type.give,
+                },
+            }); // 注册成功，赠送余额
             return user;
-        },
-        async logout({ token }) {
-            await fastify.db.tokenBlackList.create({ data: { token } }); // put this token into blacklist
-        },
-        async forgetPassword({ email }) {
-            const user = (await fastify.db.user.findFirst({
-                where: { email },
-                select: { id: true, name: true, email: true, pwdResetCode: true, pwdResetExpireAt: true },
-            }));
-            if (!user) throw new Error(UserErrors.userNotFound);
+        });
+        // send event
+        await pubsub.publish(UserEvents.Registered, { user: { ...user } });
+        // XXX Next Version 给用户发激活email
+    },
+    async login({ email, password }) { // TODO 这里和 NextAuth 结合起来
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) throw new Error(UserErrors.authenticationFailed);
 
-            const code = uuid().replace(/-/g, '');
-            const expireAt = new Date(Date.now() + 3600000); // 1 hour later
-            await fastify.db.user.update({ where: { id: user.id }, data: { pwdResetCode: code, pwdResetExpireAt: expireAt } });
-            try {
-                await fastify.mailer.sendMail({
-                    to: email,
-                    subject: '重置您在KTap的密码',
-                    html: `
+        const isPasswordMatched = bcrypt.compareSync(password, user.password);
+        if (!isPasswordMatched) throw new Error(UserErrors.authenticationFailed);
+
+        if (user.isLocked) throw new Error(UserErrors.userIsLocked);
+
+        const token = await jwt.sign({
+            id: Number(user.id),
+            email: user.email,
+            name: user.name,
+            isAdmin: user.isAdmin
+        });
+        user.jwtToken = token;
+        return user;
+    },
+    async logout({ token }) { // 这里和 NextAuth 结合起来
+        await prisma.tokenBlackList.create({ data: { token } }); // put this token into blacklist
+    },
+    async forgetPassword({ email }) {
+        const user = (await prisma.user.findFirst({
+            where: { email },
+            select: { id: true, name: true, email: true, pwdResetCode: true, pwdResetExpireAt: true },
+        }));
+        if (!user) throw new Error(UserErrors.userNotFound);
+
+        const code = uuid().replace(/-/g, '');
+        const expireAt = new Date(Date.now() + 3600000); // 1 hour later
+        await prisma.user.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                pwdResetCode: code,
+                pwdResetExpireAt: expireAt
+            }
+        });
+        try {
+            await mailer.sendMail({
+                to: email,
+                subject: '重置您在KTap的密码',
+                html: `
                     <p>您好,</p>
                     <p>点击以下链接来为您在KTap的账户 ${email} 重置密码</p>
                     <p><a href='${process.env.SITE_URL || 'http://localhost'}/password/reset?code=${code}'>${process.env.SITE_URL || 'http://localhost'}/password/reset?code=${code}</a></p>
@@ -96,114 +122,113 @@ async function user(fastify, opts) {
                     <p>感谢您对KTap的喜爱。</p>
                     <p>KTap团队</p>
                 `,
-                });
-            } catch (err) {
-                fastify.log.error(err);
-                throw new Error(UserErrors.mailSendFailed);
+            });
+        } catch (err) {
+            logger.error(err);
+            throw new Error(UserErrors.mailSendFailed);
+        }
+    },
+    async verifyResetPasswordCode({ code }) {
+        const valid = (await prisma.user.count({
+            where: {
+                pwdResetCode: code,
+                pwdResetExpireAt: { gte: new Date(), }
+            },
+        })) > 0;
+        if (!valid) throw new Error(UserErrors.invalidResetPasswordCode);
+    },
+    async resetPassword({ password, code }) {
+        const user = await prisma.user.findFirst({
+            where: {
+                pwdResetCode: code,
+                pwdResetExpireAt: { gte: new Date() }
+            },
+            select: { id: true, name: true, email: true, pwdResetCode: true, pwdResetExpireAt: true },
+        });
+        if (!user) throw new Error(UserErrors.invalidResetPasswordCode);
+
+        const passwordHash = await fastify.bcrypt.hash(password);
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { password: passwordHash, pwdResetCode: null, pwdResetExpireAt: null }
+        });
+    },
+    async updateAvatar({ userId, file }) {
+        const buffer = await file.toBuffer();
+        let uri = await fastify.storage.store(file.filename, buffer);
+        await prisma.user.update({
+            where: { id: userId },
+            data: { avatar: uri }
+        });
+        return uri;
+    },
+    async updateGeneral({ userId, email, name }) {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (user.name === name && user.email === email) return;
+
+        // 检查上次变更时间
+        if (user.name !== name && user.lastUpdatedNameAt) {
+            const lastUpdatedNameAt = new Date(user.lastUpdatedNameAt).getTime();
+            const now = new Date().getTime();
+            if ((now - lastUpdatedNameAt) < USER_CHANGE_NAME_INTERVAL) throw new Error(UserErrors.userNameNotYet);
+        }
+
+        // 检查是否存在相同变更后的名称
+        const existsName = await prisma.user.count({
+            where: {
+                AND: [
+                    { name },
+                    { id: { not: user.id } }
+                ]
             }
-        },
-        async verifyResetPasswordCode({ code }) {
-            const valid = (await fastify.db.user.count({
-                where: {
-                    pwdResetCode: code,
-                    pwdResetExpireAt: { gte: new Date(), }
-                },
-            })) > 0;
-            if (!valid) throw new Error(UserErrors.invalidResetPasswordCode);
-        },
-        async resetPassword({ password, code }) {
-            const user = await fastify.db.user.findFirst({
-                where: {
-                    pwdResetCode: code,
-                    pwdResetExpireAt: { gte: new Date() }
-                },
-                select: { id: true, name: true, email: true, pwdResetCode: true, pwdResetExpireAt: true },
-            });
-            if (!user) throw new Error(UserErrors.invalidResetPasswordCode);
+        }) > 0;
+        if (existsName) throw new Error(UserErrors.userNameDuplicated);
 
-            const passwordHash = await fastify.bcrypt.hash(password);
-            await fastify.db.user.update({
-                where: { id: user.id },
-                data: { password: passwordHash, pwdResetCode: null, pwdResetExpireAt: null }
-            });
-        },
-        async updateAvatar({ userId, file }) {
-            const buffer = await file.toBuffer();
-            let uri = await fastify.storage.store(file.filename, buffer);
-            await fastify.db.user.update({
-                where: { id: userId },
-                data: { avatar: uri }
-            });
-            return uri;
-        },
-        async updateGeneral({ userId, email, name }) {
-            const user = await fastify.db.user.findUnique({ where: { id: userId } });
-            if (user.name === name && user.email === email) return;
-
-            // 检查上次变更时间
-            if (user.name !== name && user.lastUpdatedNameAt) {
-                const lastUpdatedNameAt = new Date(user.lastUpdatedNameAt).getTime();
-                const now = new Date().getTime();
-                if ((now - lastUpdatedNameAt) < USER_CHANGE_NAME_INTERVAL) throw new Error(UserErrors.userNameNotYet);
+        const existsEmail = await prisma.user.count({
+            where: {
+                AND: [
+                    { email },
+                    { id: { not: user.id } }
+                ]
             }
+        }) > 0;
+        if (existsEmail) throw new Error(UserErrors.userEmailDuplicated);
 
-            // 检查是否存在相同变更后的名称
-            const existsName = await fastify.db.user.count({
-                where: {
-                    AND: [
-                        { name },
-                        { id: { not: user.id } }
-                    ]
-                }
-            }) > 0;
-            if (existsName) throw new Error(UserErrors.userNameDuplicated);
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { email, name, lastUpdatedNameAt: new Date(), },
+        });
+    },
+    async updateProfile({ userId, gender, bio, location, birthday }) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { gender, bio, location, birthday: new Date(birthday) },
+        });
+    },
+    async updatePassword({ userId, oldPassword, newPassword }) {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) throw new Error(UserErrors.userOldPasswordWrong);
 
-            const existsEmail = await fastify.db.user.count({
-                where: {
-                    AND: [
-                        { email },
-                        { id: { not: user.id } }
-                    ]
-                }
-            }) > 0;
-            if (existsEmail) throw new Error(UserErrors.userEmailDuplicated);
+        const isPasswordMatched = await fastify.bcrypt.compare(oldPassword, user.password);
+        if (!isPasswordMatched) throw new Error(UserErrors.userOldPasswordWrong);
 
-            await fastify.db.user.update({
-                where: { id: user.id },
-                data: { email, name, lastUpdatedNameAt: new Date(), },
-            });
-        },
-        async updateProfile({ userId, gender, bio, location, birthday }) {
-            await fastify.db.user.update({
-                where: { id: userId },
-                data: { gender, bio, location, birthday: new Date(birthday) },
-            });
-        },
-        async updatePassword({ userId, oldPassword, newPassword }) {
-            const user = await fastify.db.user.findUnique({ where: { id: userId } });
-            if (!user) throw new Error(UserErrors.userOldPasswordWrong);
+        const newPasswordHash = await fastify.bcrypt.hash(newPassword);
+        await prisma.user.update({
+            where: { id: userId },
+            data: { password: newPasswordHash }
+        });
+    },
+    async updateNotificationSettings({ userId, notificationSettings }) {
+        const settings = await prisma.userSetting.findUnique({ where: { userId } });
+        const options = settings?.options ? JSON.parse(settings.options) : {};
+        const newOptions = JSON.stringify({
+            ...options, // copy other settings,
+            notification: notificationSettings, // update notification settings
+        });
+        const item = { userId, options: newOptions };
 
-            const isPasswordMatched = await fastify.bcrypt.compare(oldPassword, user.password);
-            if (!isPasswordMatched) throw new Error(UserErrors.userOldPasswordWrong);
-
-            const newPasswordHash = await fastify.bcrypt.hash(newPassword);
-            await fastify.db.user.update({
-                where: { id: userId },
-                data: { password: newPasswordHash }
-            });
-        },
-        async updateNotificationSettings({ userId, notificationSettings }) {
-            const settings = await fastify.db.userSetting.findUnique({ where: { userId } });
-            const options = settings?.options ? JSON.parse(settings.options) : {};
-            const newOptions = JSON.stringify({
-                ...options, // copy other settings,
-                notification: notificationSettings, // update notification settings
-            });
-            const item = { userId, options: newOptions };
-
-            await fastify.db.userSetting.upsert({ where: { userId }, create: item, update: item });
-        },
-    });
+        await prisma.userSetting.upsert({ where: { userId }, create: item, update: item });
+    },
 };
 
 export default user;

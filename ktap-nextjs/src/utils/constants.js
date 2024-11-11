@@ -1,4 +1,4 @@
-export const Pagination = {
+const Pagination = {
     limit: {
         min: 1,
         mini: 5,
@@ -14,7 +14,7 @@ export const Pagination = {
     },
 };
 
-export const Notification = {
+const Notification = {
     type: { system: 'system', following: 'following', reaction: 'reaction', },
     target: { App: 'App', User: 'User' },
     settings: {
@@ -44,18 +44,18 @@ export const Notification = {
     }
 };
 
-export const Pages = {
+const Pages = {
     discover: 'discover',
 };
 
-export const Trading = {
+const Trading = {
     type: {
         buy: 'buy', // 购买/消费
         give: 'give', // 赠送
     }
 };
 
-export const AppMedia = {
+const AppMedia = {
     // 媒体用途：头图（Head）、宣传横图（Landscape）、宣传竖图（Portrait）、画廊（Gallery)、品牌商标（Logo）
     usage: {
         head: 'head',
@@ -70,13 +70,13 @@ export const AppMedia = {
     }
 };
 
-export const TagCategory = {
+const TagCategory = {
     normal: 'normal', // 普通标签，编辑或者用户使用的，什么类型都可以
     genre: 'genre', // 游戏类型（角色扮演，射击。。。）
     feature: 'feature', // 游戏功能（多人，单人，跨平台合作。。。）
 };
 
-export const SocialLinkBrands = {
+const SocialLinkBrands = {
     bilibili: { id: 'bilibili', name: '哔哩哔哩' },
     discord: { id: 'discord', name: 'Discord' },
     facebook: { id: 'facebook', name: 'Facebook' },
@@ -94,7 +94,7 @@ export const SocialLinkBrands = {
     zhihu: { id: 'zhihu', name: '知乎' },
 };
 
-export const AppPlatform = {
+const AppPlatform = {
     os: {
         windows: 'Windows',
         macos: 'Macos',
@@ -104,7 +104,7 @@ export const AppPlatform = {
     }
 };
 
-export const AppLanguages = {
+const AppLanguages = {
     supported: [
         { id: '英语', name: 'English', },
         { id: '法语', name: 'Français', },
@@ -122,9 +122,22 @@ export const AppLanguages = {
     ]
 }
 
-export const Keys = {
+const Keys = {
     cookie: {
         token: 'token',
         userId: 'user_id',
     }
+};
+
+export {
+    Pagination,
+    Notification,
+    Pages,
+    Trading,
+    AppMedia,
+    TagCategory,
+    SocialLinkBrands,
+    AppPlatform,
+    AppLanguages,
+    Keys
 };
